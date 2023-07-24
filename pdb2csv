@@ -1,20 +1,84 @@
 #!/bin/bash
+set -eu
 
 # $ pdb2csv pdb
 # based on https://pdbj.org/help/pdb-brief?lang=ja
 
-set -u
+function help(){
+cat <<EOF
+pdb2csv
+    convert pdb to csv
 
-pdbFile="$1"
-csvFile="${pdbFile%.pdb}.csv"
+usage:
+	+ pdb2csv pdb
+	+--- convert pdb to csv and save to csv with an appropriate name automatically
+	|
+	+ pdb2csv pdb > csv
+	+--- save to the csv file
+	|
+	+ pdb2csv pdb | <COMMAND>
+	+--- input to the command
+	|
+	+ <COMMAND> | pdb2csv
+	+--- convert the entered pdb data and print to stdout
 
+option usage:
+    -h, -help, --help | display this help
+
+EOF
+}
+
+# ------------------------------------------------------------------
+
+# parse options
+while [ "$#" -gt 0 ] ;
+do
+	case "$1" in
+	-h | -help | --help)
+		help
+		exit
+		;;
+	-*)
+		error "unknown option: '$*'"
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
+# set input filename
+if [ "$#" -gt 0 ]; then
+	# if there are arguments
+	pdbFile="$1"
+elif [ ! -t 0 ]; then
+	# if there is a pipe input
+	pdbFile="-"
+else
+	error "pdb file is not set"
+fi
+
+if [ -t 1 ]; then
+	# when output to the terminal is expected
+	if [ "$pdbFile" = "-" ]; then
+		# if the input was a pipe
+		# output to the terminal (no modification)
+		:
+	else
+		csvFile="${pdbFile%.pdb}.csv"
+		exec > "$csvFile"
+	fi
+fi
+
+# ------------------------------------------------------------------
 
 grepPDBDat=`cat "$pdbFile" |
 		grep -e 'ATOM' -e 'MODEL' -e 'ENDMDL'`
 
 # create column for MODEL number
-modelline=`grep '^MODEL' "$pdbFile"`
-if [ "$modelline" ]; then
+if grep -q '^MODEL' <(echo "$grepPDBDat"); then
+	# if there are MODEL lines
+	#
 	# 1:MODEL     1
 	# 407:ENDMDL
 	# 408:MODEL     2
@@ -44,8 +108,8 @@ if [ "$modelline" ]; then
 		done`
 else
 	numatom=`echo "$grepPDBDat" |
-			grep '^ATOM' |
-			wc -l`
+				grep '^ATOM' |
+				wc -l`
 	modelnumDat=`printf "1%0.s\n" $(seq $numatom)`
 fi
 
@@ -59,13 +123,16 @@ atomDat=`echo "$grepPDBDat" |
 		awk '{printf "%-80s\n", $0}' |
 		perl -pe 's/^.{6}(.{5}).(.{4})(.)(.{3}).(.)(.{4})(.)...(.{8})(.{8})(.{8})(.{6})(.{6}).{10}(.{2})(.{2})$/$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14/ if /^ATOM/'`
 
+# ------------------------------------------------------------------
+# print
+
 # create column name
-echo "model,atomnum,atomname,alt,residuename,chainname,residuenum,resins,x,y,z,occ,thermfac,elemsymb,charge" > "$csvFile"
+echo "model,atomnum,atomname,alt,residuename,chainname,residuenum,resins,x,y,z,occ,thermfac,elemsymb,charge"
 
 # join
 paste -d ',' <(echo "$modelnumDat") <(echo "$atomDat") |
 	sed -r 's/, +/,/g' |
-	sed -r 's/ +,/,/g' >> "$csvFile"
+	sed -r 's/ +,/,/g'
 
 
 
