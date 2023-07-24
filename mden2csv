@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# $ mden2csv mden
+
+set -eu
+
+mdenFilePath="$1"
+csvFilePath="${mdenFilePath}.csv"
+
+
+if [ ! -f "$mdenFilePath" ]; then
+	echo "mden2csv: No such file: $mdenFilePath" >&2
+	exit 1
+fi
+
+numLinePerFrame=`cat "$mdenFilePath" |
+			sed -r 's/ .+//' |
+			sort |
+			uniq |
+			wc -l`
+sedN=`seq 2 "$numLinePerFrame" |
+	sed -r 's/.+/N;/' |
+	while read line ;
+	do
+		echo -n "$line"
+	done`
+
+cat "$mdenFilePath" |
+	sed -r 's/^[^ ]+ +//' | # remove leading Ln
+	sed -r "{${sedN}s/\n/ /g}" | # convert to newline every frame
+	sed -r 's/ +/,/g' > "${csvFilePath}" # write out
+
+

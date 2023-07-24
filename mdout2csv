@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# $ mdout2csv mdout
+
+set -eu
+
+mdoutFilePath="$1"
+csvFilePath="${mdoutFilePath}.csv"
+
+if [ ! -f "$mdoutFilePath" ]; then
+	echo "mdout2csv: No such file: $mdoutFilePath" >&2
+	exit 1
+fi
+
+# extract mdout data for csv
+mdoutData=`cat "$mdoutFilePath" |
+			sed -r -n '/NSTEP.+TIME/,$p' |
+			sed -r '/A V E R A G E S/,$d' |
+			grep -e ' = ' -e '-----' |
+			tr '\n' ' ' |
+			sed -r 's/-----+/\n/g' |
+			sed -r 's/^/  /'`
+
+# extract column names
+# extract by focusing on equals and whitespace characters
+columnNames=`echo "$mdoutData" |
+				sed -r 's/ += +[^ ]+ +/,/g' |
+				sed -r 's/^ +//' |
+				sed -r 's/,$//' |
+				uniq`
+# extract numerical data
+data=`echo "$mdoutData" |
+		sed -r 's/  [^=]+= +/,/g' |
+		sed -r 's/^,//'`
+
+numLineColumnNames=`echo "$columnNames" | wc -l`
+if [ ! "$numLineColumnNames" -eq 1 ]; then
+	echo "mdout2csv: columnNames may not be uniquely determined" >&2
+fi
+
+# write
+echo "$columnNames" > "${csvFilePath}"
+echo "$data" >> "${csvFilePath}"
+
