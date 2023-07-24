@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# $ mkresp glog
+
+set -eu
+
+glogFile="$1"
+mol2File="${glogFile%.*}.mol2"
+
+# get charge and multi
+cm=`cat "$glogFile" |
+	sed -r -n '/Charge.+Multiplicity/p' |
+	head -n 1 |
+	sed -r 's/[A-z =]+/ /g' |
+	sed -r 's/^ //' |
+	sed -r 's/ $//'`
+
+charge="${cm% *}"
+multi="${cm#* }"
+
+antechamber -i "$glogFile" -fi gout -o "$mol2File" -fo mol2 -c resp -nc "$charge" -m "$multi" -at gaff
+antechamber -i "$mol2File" -fi mol2 -o prepin -fo prepi
+parmchk2 -i prepin -f prepi -o frcmod
+
+
