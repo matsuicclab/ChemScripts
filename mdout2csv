@@ -1,19 +1,95 @@
 #!/bin/bash
-
-# $ mdout2csv mdout
-
 set -eu
 
-mdoutFilePath="$1"
-csvFilePath="${mdoutFilePath}.csv"
+function help(){
+cat <<EOF
+mdout2csv
+    convert mdout to csv
 
-if [ ! -f "$mdoutFilePath" ]; then
-	echo "mdout2csv: No such file: $mdoutFilePath" >&2
+usage:
+	+ mdout2csv mdout
+	+--- convert mdout to csv and save to csv with an appropriate name automatically
+	|
+	+ mdout2csv mdout > csv
+	+--- save to the csv file
+	|
+	+ mdout2csv mdout | <COMMAND>
+	+--- input to the command
+	|
+	+ <COMMAND> | mdout2csv
+	+--- convert the entered mdout data and print to stdout
+	|
+	+ mdout2csv <(<COMMAND>)
+	+--- If input by process substitution, print to stdout
+
+option usage:
+    -h, -help, --help | display this help
+
+EOF
+}
+
+function error() {
+	exec 1>&2
+	help
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
 	exit 1
+}
+
+# ------------------------------------------------------------------
+
+# parse options
+while [ "$#" -gt 0 ] ;
+do
+	case "$1" in
+	-h | -help | --help)
+		help
+		exit
+		;;
+	-*)
+		error "unknown option: '$*'"
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
+# set input filename
+if [ "$#" -gt 0 ]; then
+	# if there are arguments
+	mdoutFile="$1"
+elif [ ! -t 0 ]; then
+	# if there is a pipe input
+	mdoutFile="-"
+else
+	error "mdout file is not set"
+fi
+
+# set output destination
+if [ -t 1 ]; then
+	# when output to the terminal is expected
+	if [ "$mdoutFile" = "-" ]; then
+		# if the input was a pipe
+		# output to the terminal (no modification)
+		:
+	elif [[ "$mdoutFile" =~ ^/dev/fd ]]; then
+		# if input by process substitution
+		# output to the terminal (no modification)
+		:
+	else
+		csvFile="${mdoutFile}.csv"
+		exec > "$csvFile"
+	fi
+fi
+
+# ------------------------------------------------------------------
+
+if [ ! -f "$mdoutFile" ]; then
+	error "mdout2csv: No such file: $mdoutFile"
 fi
 
 # extract mdout data for csv
-mdoutData=`cat "$mdoutFilePath" |
+mdoutData=`cat "$mdoutFile" |
 			sed -r -n '/NSTEP.+TIME/,$p' |
 			sed -r '/A V E R A G E S/,$d' |
 			grep -e ' = ' -e '-----' |
@@ -35,10 +111,13 @@ data=`echo "$mdoutData" |
 
 numLineColumnNames=`echo "$columnNames" | wc -l`
 if [ ! "$numLineColumnNames" -eq 1 ]; then
+	# warning
 	echo "mdout2csv: columnNames may not be uniquely determined" >&2
 fi
 
-# write
-echo "$columnNames" > "${csvFilePath}"
-echo "$data" >> "${csvFilePath}"
+# ------------------------------------------------------------------
+# print
+
+echo "$columnNames"
+echo "$data"
 
