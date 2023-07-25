@@ -52,7 +52,9 @@ else
 fi
 
 # ------------------------------------------------------------------
-mol2File=`echo "${glogFile}" | sed -r 's/.(log|out)$//'`
+# remove trailing log(out) and make sure mol2 is attached
+# sed -r 's/.(log|out)$/.mol2/': problem occurs if it does not end with 'log' or 'out'
+mol2File=`echo "${glogFile}" | sed -r 's/.(log|out)$//' | sed -r 's/$/.mol2/'`
 
 # get charge and multi
 cm=`cat "$glogFile" |
