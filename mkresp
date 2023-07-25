@@ -7,8 +7,8 @@ mkresp
     generate prepin and frcmod (RESP/GAFF) from gaussian log file
 
 usage:
-	+ mkresp glog
-	+--- generate prepin and frcmod file in current directory
+    + mkresp glog
+    +--- generate prepin and frcmod file in current directory
          recommended to prepare a dedicated directory in advance
 
 option usage:

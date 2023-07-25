@@ -7,20 +7,20 @@ mdout2csv
     convert mdout to csv
 
 usage:
-	+ mdout2csv mdout
-	+--- convert mdout to csv and save to csv with an appropriate name automatically
-	|
-	+ mdout2csv mdout > csv
-	+--- save to the csv file
-	|
-	+ mdout2csv mdout | <COMMAND>
-	+--- input to the command
-	|
-	+ <COMMAND> | mdout2csv
-	+--- convert the entered mdout data and print to stdout
-	|
-	+ mdout2csv <(<COMMAND>)
-	+--- If input by process substitution, print to stdout
+    + mdout2csv mdout
+    +--- convert mdout to csv and save to csv with an appropriate name automatically
+    |
+    + mdout2csv mdout > csv
+    +--- save to the csv file
+    |
+    + mdout2csv mdout | <COMMAND>
+    +--- input to the command
+    |
+    + <COMMAND> | mdout2csv
+    +--- convert the entered mdout data and print to stdout
+    |
+    + mdout2csv <(<COMMAND>)
+    +--- If input by process substitution, print to stdout
 
 option usage:
     -h, -help, --help | display this help

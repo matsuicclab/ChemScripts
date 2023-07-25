@@ -7,20 +7,20 @@ mden2csv
     convert mden to csv
 
 usage:
-	+ mden2csv mden
-	+--- convert mden to csv and save to csv with an appropriate name automatically
-	|
-	+ mden2csv mden > csv
-	+--- save to the csv file
-	|
-	+ mden2csv mden | <COMMAND>
-	+--- input to the command
-	|
-	+ <COMMAND> | mden2csv
-	+--- convert the entered mden data and print to stdout
-	|
-	+ mden2csv <(<COMMAND>)
-	+--- If input by process substitution, print to stdout
+    + mden2csv mden
+    +--- convert mden to csv and save to csv with an appropriate name automatically
+    |
+    + mden2csv mden > csv
+    +--- save to the csv file
+    |
+    + mden2csv mden | <COMMAND>
+    +--- input to the command
+    |
+    + <COMMAND> | mden2csv
+    +--- convert the entered mden data and print to stdout
+    |
+    + mden2csv <(<COMMAND>)
+    +--- If input by process substitution, print to stdout
 
 option usage:
     -h, -help, --help | display this help

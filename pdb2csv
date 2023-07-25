@@ -8,20 +8,20 @@ pdb2csv
     based on https://pdbj.org/help/pdb-brief?lang=ja
 
 usage:
-	+ pdb2csv pdb
-	+--- convert pdb to csv and save to csv with an appropriate name automatically
-	|
-	+ pdb2csv pdb > csv
-	+--- save to the csv file
-	|
-	+ pdb2csv pdb | <COMMAND>
-	+--- input to the command
-	|
-	+ <COMMAND> | pdb2csv
-	+--- convert the entered pdb data and print to stdout
-	|
-	+ pdb2csv <(<COMMAND>)
-	+--- If input by process substitution, print to stdout
+    + pdb2csv pdb
+    +--- convert pdb to csv and save to csv with an appropriate name automatically
+    |
+    + pdb2csv pdb > csv
+    +--- save to the csv file
+    |
+    + pdb2csv pdb | <COMMAND>
+    +--- input to the command
+    |
+    + <COMMAND> | pdb2csv
+    +--- convert the entered pdb data and print to stdout
+    |
+    + pdb2csv <(<COMMAND>)
+    +--- If input by process substitution, print to stdout
 
 option usage:
     -h, -help, --help | display this help
