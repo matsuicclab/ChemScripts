@@ -21,6 +21,9 @@ usage:
 	|
 	+ <COMMAND> | pdb2csv
 	+--- convert the entered pdb data and print to stdout
+	|
+	+ pdb2csv <(<COMMAND>)
+	+--- If input by process substitution, print to stdout
 
 option usage:
     -h, -help, --help | display this help
@@ -62,6 +65,10 @@ if [ -t 1 ]; then
 	# when output to the terminal is expected
 	if [ "$pdbFile" = "-" ]; then
 		# if the input was a pipe
+		# output to the terminal (no modification)
+		:
+	elif [[ "$pdbFile" =~ ^/dev/fd ]]; then
+		# if input by process substitution
 		# output to the terminal (no modification)
 		:
 	else
