@@ -94,10 +94,9 @@ numLinePerFrame=`cat "$mdenFile" |
 			uniq |
 			wc -l`
 sedN=`seq 2 "$numLinePerFrame" |
-	sed -r 's/.+/N;/' |
 	while read line ;
 	do
-		echo -n "$line"
+		echo -n "N;"
 	done`
 
 
