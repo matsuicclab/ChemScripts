@@ -1,0 +1,43 @@
+#!/bin/bash
+set -eu
+
+function help(){
+cat <<EOF
+gloggeom2xyz
+    convert geometry data in gaussian log to xyz
+
+usage:
+    + gloggeom2xyz log
+    +--- convert log to xyz and save to xyz with an appropriate name automatically
+    |
+    + gloggeom2xyz log > xyz
+    +--- save to the xyz file
+    |
+    + gloggeom2xyz log | <COMMAND>
+    +--- input to the command
+    |
+    + <COMMAND> | gloggeom2xyz
+    +--- convert the entered gaussian log data and print to stdout
+    |
+    + gloggeom2xyz <(<COMMAND>)
+    +--- If input by process substitution, print to stdout
+
+option usage:
+    -h, -help, --help | display this help
+    --orient <s or i> | whether to output standard orientation or input orientation
+
+EOF
+}
+
+function error() {
+	exec 1>&2
+	help
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
+	exit 1
+}
+
+
+
+
+
+
