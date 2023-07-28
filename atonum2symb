@@ -5,6 +5,7 @@ function help(){
 cat <<EOF
 atonum2symb
     convert between atomic number and element symbol
+    also applicable to tabular data such as csv
 
 usage:
     + atonum2symb Na
@@ -14,14 +15,19 @@ usage:
     +--- convert the number '11' to 'Na' and print to stdout
     |
     + <COMMAND> | atonum2symb
-    +--- convert the entered gaussian log data and print to stdout
+    +--- convert the entered data and print to stdout
     |
-    + gloggeom2xyz <(<COMMAND>)
+    + atonum2symb <(<COMMAND>)
     +--- If input by process substitution, print to stdout
 
 option usage:
     -h, -help, --help | display this help
+    -d <delimiter>    | set delimiter
+                      | default: ' '
+    -f <num>          | set target column number
+                      | default: 1
     --orient <s or i> | whether to output standard orientation or input orientation
+                      | UNIMPLEMENTED
 
 EOF
 }
@@ -35,6 +41,8 @@ function error() {
 
 
 # ------------------------------------------------------------------
+# TODO Add processing for headers
+contentStartLineNum=1
 targetcolumnnum=1
 delimiter=" "
 # parse options
@@ -187,19 +195,71 @@ cat <<EOF
 EOF
 }
 
-sourceData=`cat -`
 
-forwardcolumnnum=$(($targetcolumnnum - 1))
+headerEndLineNum=$(($contentStartLineNum - 1))
+sourceData=`cat - | sed -r 's/$/'"${delimiter}"'/' | sed -r 's/^/'"${delimiter}"'/'`
+
+# separate
+if [ "$headerEndLineNum" -eq 0 ]; then
+	headerData=
+else
+	headerData=`echo "$sourceData" | sed -r -n "1,${headerEndLineNum}p"`
+fi
+contentData=`echo "$sourceData" | sed -r -n "${contentStartLineNum},"'$p'`
+
+contentData=`echo "$contentData" |
+		sed -r "s/${delimiter}/${delimiter}\n/${targetcolumnnum}" |
+		sed -r "2~2s/${delimiter}/${delimiter}\n/1" |
+		sed -r '$s/$/\n /'`
+		# Since bash removes the trailing newline character when assigning to a variable,
+		# consider the case where the last line is an empty character
+		# and add a trailing space character
+
+# check
+targetData=`echo "$contentData" |
+		sed -r -n '2~3p' |
+		sed -r "s/${delimiter}"'$//'`
+illegalContentLineNum=`echo "$targetData" |
+			sed -r 's/[0-9]//g' |
+			nl -b a |
+			sed -r '/^ +[0-9]+\t$/d' |
+			sed -r -n 1p |
+			sed -r 's/ //g' |
+			sed -r 's/\t.+//'`
+if [ ! -z "$illegalContentLineNum" ] && [ "$illegalContentLineNum" -gt 0 ]; then
+	# if $illegalContentLineNum is not empty and is greater than 0
+	illegalString=`echo "$targetData" |
+		sed -r -n "${illegalContentLineNum}p"`
+	illegalLineNum=$(($illegalContentLineNum + $headerEndLineNum))
+	error "illegal string: line ${illegalLineNum}: ${illegalString}"
+fi
+
 
 # atomic num -> element symbol
+# if convert 100 in the 4th column to Fm
+# -> sed -r "s/^100,$/Fm,/"
+# generate this sed command with awk for each element
 sedcmd=`printConversionTable |
-			awk '{printf "sed -r \"s/^(([^'"${delimiter}"']*'"${delimiter}"'){'"${forwardcolumnnum}"'})%s'"${delimiter}"'/\\\1%s'"${delimiter}"'/\" | ", $1, $2 }' 2>/dev/null |
-			sed -e 's/| $//'`
+	awk '{printf "sed -r \"2~3s/^%s'"${delimiter}"'$/%s'"${delimiter}"'/\" | ", $1, $2 }' 2>/dev/null |
+	sed -e 's/| $//'`
 
-echo "$sourceData" |
-			sed -r 's/$/'"${delimiter}"'/' |
-			eval "$sedcmd" |
-			sed -r 's/'"${delimiter}"'$//'
+# convert and print
+if [ ! -z "$headerData" ]; then
+	# if $headerData is not empty
+	echo "$headerData"
+fi
+
+echo "$contentData" |
+	eval "$sedcmd" |
+	sed -r '{N;N;s/\n//g}' |
+	sed -r 's/^'"${delimiter}"'//' |
+	sed -r 's/'"${delimiter}"'$//' |
+	sed -r '$d'
+
+
+
+
+
 
 
 
