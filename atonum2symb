@@ -251,6 +251,11 @@ fi
 
 echo "$contentData" |
 	eval "$sedcmd" |
+	sed -e '2~3s/^0/N/' -e '2~3s/^1/U/' -e '2~3s/^2/B/' \
+		-e '2~3s/^3/T/' -e '2~3s/^4/Q/' -e '2~3s/^5/P/' \
+		-e '2~3s/^6/H/' -e '2~3s/^7/S/' -e '2~3s/^8/O/' \
+		-e '2~3s/^9/E/' \
+		-e '2~3y/0123456789/nubtqphsoe/' | # convert numbers greater than 118
 	sed -r '{N;N;s/\n//g}' |
 	sed -r 's/^'"${delimiter}"'//' |
 	sed -r 's/'"${delimiter}"'$//' |
