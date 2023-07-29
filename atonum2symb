@@ -21,11 +21,13 @@ usage:
     +--- If input by process substitution, print to stdout
 
 option usage:
-    -h, -help, --help | display this help
-    -d <delimiter>    | set delimiter
-                      | default: ' '
-    -f <num>          | set target column number
-                      | default: 1
+    -h, -help, --help           | display this help
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --fields <num>          | set target column number
+                                | default: 1
+    -s, --skip <num>            | specify the number of lines to skip at the beginning
+                                | default: 0
     --orient <s or i> | whether to output standard orientation or input orientation
                       | UNIMPLEMENTED
 
@@ -41,8 +43,7 @@ function error() {
 
 
 # ------------------------------------------------------------------
-# TODO Add processing for headers
-contentStartLineNum=1
+headerEndLineNum=0
 targetcolumnnum=1
 delimiter=" "
 # parse options
@@ -53,12 +54,16 @@ do
 		help
 		exit
 		;;
-	-f)
+	-f | -fields | --fields)
 		targetcolumnnum="$2"
 		shift 2
 		;;
-	-d)
+	-d | -delimiter | --delimiter)
 		delimiter="$2"
+		shift 2
+		;;
+	-s | -skip | --skip)
+		headerEndLineNum="$2"
 		shift 2
 		;;
 	-*)
@@ -195,8 +200,7 @@ cat <<EOF
 EOF
 }
 
-
-headerEndLineNum=$(($contentStartLineNum - 1))
+contentStartLineNum=1$(($headerEndLineNum + 1))
 sourceData=`cat - | sed -r 's/$/'"${delimiter}"'/' | sed -r 's/^/'"${delimiter}"'/'`
 
 # separate
