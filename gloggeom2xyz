@@ -36,6 +36,63 @@ function error() {
 	exit 1
 }
 
+function getNumAtom(){
+	# get number of atoms
+	local logFile="$1"
+
+	# get num of atom
+	# 'Input orientation' is not output in some cases, so the number of atoms is counted from 'Standard orientation'
+	cat "$logFile" |
+		sed -r '1,/^ +Standard orientation: +$/d' | # delete from header through route section to orientation
+		sed -e '1iStandard orientation' | # add 'orientation' string that was deleted above to simplify this code
+		sed -r -n '1,/Standard orientation/p' | # extract to include only the first geometry information
+		sed -r '/Standard orientation/,/^ -+$/s/^ -+$//' | # delete the line with only hyphens from the top, twice
+		sed -r '/Standard orientation/,/^ -+$/s/^ -+$//' |
+		sed -r -n '1,/^ -+$/p' | # extract only geometry information
+		sed -e '$d' | # remove last hyphen-only line
+		sed -r '/^$/d' | # extract only lines with coordinates written
+		sed -r -n '/^[ 0-9.-]+$/p' |
+		wc -l # count
+
+}
+
+logFile="$1"
+# Input orientation
+# Standard orientation
+
+
+
+# get geometry
+#                          Input orientation:
+# ---------------------------------------------------------------------
+# Center     Atomic      Atomic             Coordinates (Angstroms)
+# Number     Number       Type             X           Y           Z
+# ---------------------------------------------------------------------
+#      1          6           0       -2.235209    0.056525    0.069806
+#      2          6           0       -0.723949    0.021728    0.006217
+#      3          6           0        0.034492    1.181562    0.234182
+#      4          6           0        1.432938    1.146099    0.206275
+#.......
+#     15          1           0       -0.608339   -2.085353   -0.443042
+# ---------------------------------------------------------------------
+cat "$logFile" |
+	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
+	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
+	sed -r -n '/Input orientation/,/^ -+$/p' | # extract from 'orientation' to hyphen line
+	sed -r -n '/^[ 0-9.-]+$/p' | # extract the line of coordinate data and the last hyphen line
+	sed -r 's/^ -+$//' | # replace last hyphen line with empty line
+	sed -z -r 's/[0-9]\n/n/g' | # combine lines of coordinate data into one line
+	uniq | # drop the same geometry data by uniq
+	sed -r 's/n/\n/g' # convert one row of data back to original table format
+
+
+
+
+
+
+
+
+
 
 
 
