@@ -40,26 +40,44 @@ function getNumAtom(){
 	# get number of atoms
 	local logFile="$1"
 
-	# get num of atom
 	# 'Input orientation' is not output in some cases, so the number of atoms is counted from 'Standard orientation'
 	cat "$logFile" |
-		sed -r '1,/^ +Standard orientation: +$/d' | # delete from header through route section to orientation
-		sed -e '1iStandard orientation' | # add 'orientation' string that was deleted above to simplify this code
-		sed -r -n '1,/Standard orientation/p' | # extract to include only the first geometry information
+		sed -r '1,/^ +Standard orientation: +$/d' |        # delete from header through route section to orientation
+		sed -e '1iStandard orientation' |                  # add 'orientation' string that was deleted above to simplify this code
+		sed -r -n '1,/Standard orientation/p' |            # extract to include only the first geometry information
 		sed -r '/Standard orientation/,/^ -+$/s/^ -+$//' | # delete the line with only hyphens from the top, twice
 		sed -r '/Standard orientation/,/^ -+$/s/^ -+$//' |
-		sed -r -n '1,/^ -+$/p' | # extract only geometry information
-		sed -e '$d' | # remove last hyphen-only line
-		sed -r '/^$/d' | # extract only lines with coordinates written
+		sed -r -n '1,/^ -+$/p' |     # extract only geometry information
+		sed -e '$d' |                # remove last hyphen-only line
+		sed -r '/^$/d' |             # extract only lines with coordinates written
 		sed -r -n '/^[ 0-9.-]+$/p' |
-		wc -l # count
+		wc -l                        # count
 
 }
 
-logFile="$1"
-# Input orientation
-# Standard orientation
+function getMolecularFormula(){
+	# get molecular formula
+	local logFile="$1"
 
+	cat "$logFile" |
+		grep Stoichiometry |
+		sed -r 's/.+ //' |
+		uniq
+}
+
+# set variables
+logFile="$1"
+
+# Input orientation or Standard orientation
+
+# the step number of the structure to retrieve
+stepnum=
+if [[ ! "$stepnum" =~ ^[0-9]+$ ]] && [ ! "$stepnum" = '$' ]; then
+	error "stepnum must be a natural number or '$' for the last line"
+fi
+if [ "$stepnum" = 0 ]; then
+	error "stepnum must be greater than 0"
+fi
 
 
 # get geometry
@@ -78,14 +96,12 @@ logFile="$1"
 cat "$logFile" |
 	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
 	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
-	sed -r -n '/Input orientation/,/^ -+$/p' | # extract from 'orientation' to hyphen line
+	sed -r -n '/Input orientation/,/^ -+$/p' |      # extract from 'orientation' to hyphen line
 	sed -r -n '/^[ 0-9.-]+$/p' | # extract the line of coordinate data and the last hyphen line
-	sed -r 's/^ -+$//' | # replace last hyphen line with empty line
-	sed -z -r 's/[0-9]\n/n/g' | # combine lines of coordinate data into one line
-	uniq | # drop the same geometry data by uniq
-	sed -r 's/n/\n/g' # convert one row of data back to original table format
-
-
+	sed -r 's/^ -+$//' |         # replace last hyphen line with empty line
+	sed -z -r 's/[0-9]\n/n/g' |  # combine lines of coordinate data into one line
+	uniq |                       # drop the same geometry data by uniq
+	sed -r 's/n/\n/g'            # convert one row of data back to original table format
 
 
 
