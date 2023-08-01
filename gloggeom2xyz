@@ -88,16 +88,22 @@ do
 
 		# check
 		if [[ ! "$stepnum" =~ ^[0-9]+$ ]] && [ ! "$stepnum" = '$' ]; then
-			error "stepnum must be a natural number or '$' for the last line"
+			error "--step must be a natural number or '$' for the last line"
 		fi
 		if [ "$stepnum" = 0 ]; then
-			error "stepnum must be greater than 0"
+			error "--step must be greater than 0"
 		fi
 		;;
 	-o | -orient | --orient)
 		# Input orientation or Standard orientation
-
-
+		if [ "$2" = s ]; then
+			orient='Standard orientation'
+		elif [ "$2" = i ]; then
+			orient='Input orientation'
+		else
+			error "--orient must be 's' or 'i'"
+		fi
+		shift 2
 		;;
 	-*)
 		error "unknown option: '$*'"
@@ -136,8 +142,8 @@ if [ -t 1 ]; then
 		:
 	else
 		# remove trailing log(out) and make sure mol2 is attached
-		# sed -r 's/.(log|out)$/.mol2/': problem occurs if it does not end with 'log' or 'out'
-		xyzFile=`echo "${glogFile}" | sed -r 's/.(log|out)$//' | sed -r 's/$/.mol2/'`
+		# sed -r 's/.(log|out)$/.xyz/': problem occurs if it does not end with 'log' or 'out'
+		xyzFile=`echo "${glogFile}" | sed -r 's/.(log|out)$//' | sed -r 's/$/.xyz/'`
 		exec > "$xyzFile"
 	fi
 fi
@@ -148,6 +154,7 @@ fi
 
 
 # get geometry
+# original data in log file:
 #                          Input orientation:
 # ---------------------------------------------------------------------
 # Center     Atomic      Atomic             Coordinates (Angstroms)
@@ -161,14 +168,14 @@ fi
 #     15          1           0       -0.608339   -2.085353   -0.443042
 # ---------------------------------------------------------------------
 cat "$glogFile" |
-	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
-	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
-	sed -r -n '/Input orientation/,/^ -+$/p' |      # extract from 'orientation' to hyphen line
-	sed -r -n '/^[ 0-9.-]+$/p' | # extract the line of coordinate data and the last hyphen line
-	sed -r 's/^ -+$//' |         # replace last hyphen line with empty line
-	sed -z -r 's/[0-9]\n/n/g' |  # combine lines of coordinate data into one line
-	uniq |                       # drop the same geometry data by uniq
-	sed -r 's/n/\n/g'            # convert one row of data back to original table format
+	sed -r '/'"$orient"'/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
+	sed -r '/'"$orient"'/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
+	sed -r -n '/'"$orient"'/,/^ -+$/p' |      # extract from '(Input|Standard) orientation' to hyphen line
+	sed -r -n '/^[ 0-9.-]+$/p' |    # extract the line of coordinate data and the last hyphen line
+	sed -r 's/^ -+$//' |            # replace last hyphen line with empty line
+	sed -z -r 's/([0-9])\n/\1n/g' | # combine lines of coordinate data into one line
+	uniq |                          # drop the same geometry data by uniq
+	sed -r 's/n/\n/g'               # convert one row of data back to original table format
 
 
 
