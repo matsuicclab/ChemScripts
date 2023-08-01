@@ -59,6 +59,10 @@ done
 if [ "$#" -gt 0 ]; then
 	# if there are arguments
 	pdbFile="$1"
+	# check
+	if [ ! -f "$pdbFile" ]; then
+		error "pdb2csv: No such file: $pdbFile"
+	fi
 elif [ ! -t 0 ]; then
 	# if there is a pipe input
 	pdbFile="-"

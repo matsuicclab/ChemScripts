@@ -58,6 +58,10 @@ done
 if [ "$#" -gt 0 ]; then
 	# if there are arguments
 	mdoutFile="$1"
+	# check
+	if [ ! -f "$mdoutFile" ]; then
+		error "mdout2csv: No such file: $mdoutFile"
+	fi
 elif [ ! -t 0 ]; then
 	# if there is a pipe input
 	mdoutFile="-"
@@ -83,10 +87,6 @@ if [ -t 1 ]; then
 fi
 
 # ------------------------------------------------------------------
-
-if [ ! -f "$mdoutFile" ]; then
-	error "mdout2csv: No such file: $mdoutFile"
-fi
 
 # extract mdout data for csv
 mdoutData=`cat "$mdoutFile" |

@@ -58,6 +58,10 @@ done
 if [ "$#" -gt 0 ]; then
 	# if there are arguments
 	mdenFile="$1"
+	# check
+	if [ ! -f "$mdenFile" ]; then
+		error "mden2csv: No such file: $mdenFile"
+	fi
 elif [ ! -t 0 ]; then
 	# if there is a pipe input
 	mdenFile="-"
@@ -83,10 +87,6 @@ if [ -t 1 ]; then
 fi
 
 # ------------------------------------------------------------------
-
-if [ ! -f "$mdenFile" ]; then
-	error "mden2csv: No such file: $mdenFile"
-fi
 
 numLinePerFrame=`cat "$mdenFile" |
 			sed -r 's/ .+//' |
