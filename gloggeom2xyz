@@ -151,7 +151,22 @@ fi
 
 # ------------------------------------------------------------------
 
+# xyz file:
+# 1st line ... num of atom
+# 2nd line ... comment line (arbitrary)
+#     this script prints the molecular formula, stepnum, log file name (and directory)
+# 3rd line-... geometry data:
+#     <symb1> <x1> <y1> <z1>
+#     <symb2> <x2> <y2> <z2>
+#     ...
+#
 
+# print 1st line
+getNumAtom "$glogFile"
+
+# print 2nd line
+getMolecularFormula "$glogFile"
+# TODO
 
 # get geometries
 # original data in log file:
@@ -164,7 +179,7 @@ fi
 #      2          6           0       -0.723949    0.021728    0.006217
 #      3          6           0        0.034492    1.181562    0.234182
 #      4          6           0        1.432938    1.146099    0.206275
-#.......
+# ......
 #     15          1           0       -0.608339   -2.085353   -0.443042
 # ---------------------------------------------------------------------
 geometryData=`cat "$glogFile" |
@@ -181,10 +196,14 @@ if [[ "$stepnum" =~ ^[0-9]+$ ]] && [ "$stepnum" -gt "$maxstepnum" ]; then
 	stepnum="$maxstepnum"
 fi
 
-# get the 'stepnum'th geometry
+# get the 'stepnum'th geometry and print 3rd line
 echo "$geometryData" |
 	sed -r -n "${stepnum}p" | # get the 'stepnum'th
-	sed -r 's/n/\n/g'         # convert one row of data back to original table format
+	sed -r 's/n/\n/g' |       # convert one row of data back to original table format
+	sed -r 's/ +/ /g' |       # fetch lines 2,4,5,6
+	sed -r 's/^ //' |
+	cut -d ' ' -f 2,4,5,6 |
+	atonum2symb -d ' ' -f 1   # convert atomic number to element symbol
 
 
 
