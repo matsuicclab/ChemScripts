@@ -7,24 +7,30 @@ gloggeom2xyz
     convert geometry data in gaussian log to xyz
 
 usage:
-    + gloggeom2xyz log
+    + gloggeom2xyz [option] log
     +--- convert log to xyz and save to xyz with an appropriate name automatically
     |
-    + gloggeom2xyz log > xyz
+    + gloggeom2xyz [option] log > xyz
     +--- save to the xyz file
     |
-    + gloggeom2xyz log | <COMMAND>
+    + gloggeom2xyz [option] log | <COMMAND>
     +--- input to the command
     |
-    + <COMMAND> | gloggeom2xyz
+    + <COMMAND> | gloggeom2xyz [option]
     +--- convert the entered gaussian log data and print to stdout
     |
-    + gloggeom2xyz <(<COMMAND>)
+    + gloggeom2xyz [option] <(<COMMAND>)
     +--- If input by process substitution, print to stdout
 
 option usage:
-    -h, -help, --help | display this help
-    --orient <s or i> | whether to output standard orientation or input orientation
+    -h, -help, --help              | display this help
+    -s, -step, --step <num>        | set number of structure to retrieve
+                                   | only natural numbers or '$' are valid
+                                   | '$' means last structure
+                                   | For example, if you have optimized the structure, the most stable structure will be output.
+                                   | default: '$'
+    -o, -orient, --orient <s or i> | whether to output standard orientation or input orientation
+                                   | default: 's'
 
 EOF
 }
@@ -38,10 +44,10 @@ function error() {
 
 function getNumAtom(){
 	# get number of atoms
-	local logFile="$1"
+	local glogFile="$1"
 
 	# 'Input orientation' is not output in some cases, so the number of atoms is counted from 'Standard orientation'
-	cat "$logFile" |
+	cat "$glogFile" |
 		sed -r '1,/^ +Standard orientation: +$/d' |        # delete from header through route section to orientation
 		sed -e '1iStandard orientation' |                  # add 'orientation' string that was deleted above to simplify this code
 		sed -r -n '1,/Standard orientation/p' |            # extract to include only the first geometry information
@@ -57,27 +63,88 @@ function getNumAtom(){
 
 function getMolecularFormula(){
 	# get molecular formula
-	local logFile="$1"
+	local glogFile="$1"
 
-	cat "$logFile" |
+	cat "$glogFile" |
 		grep Stoichiometry |
 		sed -r 's/.+ //' |
 		uniq
 }
 
-# set variables
-logFile="$1"
+# ------------------------------------------------------------------
 
-# Input orientation or Standard orientation
+# parse options
+while [ "$#" -gt 0 ] ;
+do
+	case "$1" in
+	-h | -help | --help)
+		help
+		exit
+		;;
+	-s | -step | --step)
+		# the step number of the structure to retrieve
+		stepnum="$2"
+		shift 2
 
-# the step number of the structure to retrieve
-stepnum=
-if [[ ! "$stepnum" =~ ^[0-9]+$ ]] && [ ! "$stepnum" = '$' ]; then
-	error "stepnum must be a natural number or '$' for the last line"
+		# check
+		if [[ ! "$stepnum" =~ ^[0-9]+$ ]] && [ ! "$stepnum" = '$' ]; then
+			error "stepnum must be a natural number or '$' for the last line"
+		fi
+		if [ "$stepnum" = 0 ]; then
+			error "stepnum must be greater than 0"
+		fi
+		;;
+	-o | -orient | --orient)
+		# Input orientation or Standard orientation
+
+
+		;;
+	-*)
+		error "unknown option: '$*'"
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
+# set input filename
+if [ "$#" -gt 0 ]; then
+	# if there are arguments
+	glogFile="$1"
+	# check
+	if [ ! -f "$glogFile" ]; then
+		error "gloggeom2xyz: No such file: $glogFile"
+	fi
+elif [ ! -t 0 ]; then
+	# if there is a pipe input
+	glogFile="-"
+else
+	error "log file is not set"
 fi
-if [ "$stepnum" = 0 ]; then
-	error "stepnum must be greater than 0"
+
+# set output destination
+if [ -t 1 ]; then
+	# when output to the terminal is expected
+	if [ "$glogFile" = "-" ]; then
+		# if the input was a pipe
+		# output to the terminal (no modification)
+		:
+	elif [[ "$glogFile" =~ ^/dev/fd ]]; then
+		# if input by process substitution
+		# output to the terminal (no modification)
+		:
+	else
+		# remove trailing log(out) and make sure mol2 is attached
+		# sed -r 's/.(log|out)$/.mol2/': problem occurs if it does not end with 'log' or 'out'
+		xyzFile=`echo "${glogFile}" | sed -r 's/.(log|out)$//' | sed -r 's/$/.mol2/'`
+		exec > "$xyzFile"
+	fi
 fi
+
+
+# ------------------------------------------------------------------
+
 
 
 # get geometry
@@ -93,7 +160,7 @@ fi
 #.......
 #     15          1           0       -0.608339   -2.085353   -0.443042
 # ---------------------------------------------------------------------
-cat "$logFile" |
+cat "$glogFile" |
 	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
 	sed -r '/Input orientation/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
 	sed -r -n '/Input orientation/,/^ -+$/p' |      # extract from 'orientation' to hyphen line
