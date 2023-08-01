@@ -24,10 +24,10 @@ usage:
 
 option usage:
     -h, -help, --help              | display this help
-    -s, -step, --step <num>        | set number of structure to retrieve
+    -s, -step, --step <num>        | set number of geometry to retrieve
                                    | only natural numbers or '$' are valid
-                                   | '$' means last structure
-                                   | For example, if you have optimized the structure, the most stable structure will be output.
+                                   | '$' means last geometry
+                                   | For example, if you have optimized the geometry, the most stable geometry will be output.
                                    | default: '$'
     -o, -orient, --orient <s or i> | whether to output standard orientation or input orientation
                                    | default: 's'
