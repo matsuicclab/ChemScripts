@@ -153,7 +153,7 @@ fi
 
 
 
-# get geometry
+# get geometries
 # original data in log file:
 #                          Input orientation:
 # ---------------------------------------------------------------------
@@ -167,15 +167,24 @@ fi
 #.......
 #     15          1           0       -0.608339   -2.085353   -0.443042
 # ---------------------------------------------------------------------
-cat "$glogFile" |
-	sed -r '/'"$orient"'/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
-	sed -r '/'"$orient"'/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
-	sed -r -n '/'"$orient"'/,/^ -+$/p' |      # extract from '(Input|Standard) orientation' to hyphen line
-	sed -r -n '/^[ 0-9.-]+$/p' |    # extract the line of coordinate data and the last hyphen line
-	sed -r 's/^ -+$//' |            # replace last hyphen line with empty line
-	sed -z -r 's/([0-9])\n/\1n/g' | # combine lines of coordinate data into one line
-	uniq |                          # drop the same geometry data by uniq
-	sed -r 's/n/\n/g'               # convert one row of data back to original table format
+geometryData=`cat "$glogFile" |
+				sed -r '/'"$orient"'/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
+				sed -r '/'"$orient"'/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
+				sed -r -n '/'"$orient"'/,/^ -+$/p' |      # extract from '(Input|Standard) orientation' to hyphen line
+				sed -r -n '/^[ 0-9.-]+$/p' |    # extract the line of coordinate data and the last hyphen line
+				sed -r 's/^ -+$//' |            # replace last hyphen line with empty line
+				sed -z -r 's/([0-9])\n/\1n/g' | # combine lines of coordinate data into one line
+				uniq`                           # drop the same geometry data by uniq
+
+maxstepnum=`echo "$geometryData" | wc -l`
+if [[ "$stepnum" =~ ^[0-9]+$ ]] && [ "$stepnum" -gt "$maxstepnum" ]; then
+	stepnum="$maxstepnum"
+fi
+
+# get the 'stepnum'th geometry
+echo "$geometryData" |
+	sed -r -n "${stepnum}p" | # get the 'stepnum'th
+	sed -r 's/n/\n/g'         # convert one row of data back to original table format
 
 
 
