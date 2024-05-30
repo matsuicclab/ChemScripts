@@ -2,12 +2,16 @@ set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
+function help(){
+	help "mdout2csv" "mdout" "csv"
+}
+
 function parse_option(){
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
 		-h | -help | --help)
-			help "mdout2csv" "mdout" "csv"
+			help
 			exit
 			# shift_args 1
 			;;

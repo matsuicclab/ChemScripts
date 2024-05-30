@@ -20,7 +20,7 @@
 #
 #
 
-function help(){
+function abstract_help(){
 	local cmd="$1"
 	local inp="$2"
 	local out="$3"
