@@ -185,6 +185,10 @@ function parse_args(){
 
 }
 
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
 #function get_default_conversion_patt(){
 #	echo '{s/out$//; s/$/csv/}'
 #}

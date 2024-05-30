@@ -21,6 +21,10 @@ function parse_option(){
 	done
 }
 
+function get_default_conversion_patt(){
+	echo '{s/out$//; s/$/csv/}'
+}
+
 function process(){
 	# $1: inpFile
 	#
