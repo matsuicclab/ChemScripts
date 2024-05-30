@@ -68,7 +68,7 @@ function shift_args(){
 
 function parse_args(){
 	# parse -o option
-	if [ "${args[1]}" = "-o" ]; then
+	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
 		outputDestIsForced=true
 		forcedOutputDestType= # 1: stdout, 2: file(patt), 3: file(fix)
 		local value="${args[2]}"
@@ -121,7 +121,7 @@ function parse_args(){
 	else
 		pipeInInp=false
 		psSubInInp=false
-		while [ "${#args[@]}" -gt 1 ]; then
+		while [ "${#args[@]}" -gt 1 ]
 		do
 			local _inp="${args[1]}"
 			if [ "$_inp" = "-" ]; then

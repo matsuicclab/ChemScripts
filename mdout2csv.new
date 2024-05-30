@@ -3,7 +3,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function parse_option(){
-	while [ "${#args[@]}" -gt 1 ]; then
+	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
 		-h | -help | --help)
