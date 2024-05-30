@@ -1,0 +1,64 @@
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function parse_option(){
+	while [ "${#args[@]}" -gt 1 ]; then
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help "mdout2csv" "mdout" "csv"
+			exit
+			# shift_args 1
+			;;
+		-*)
+			error "unknown option: '$*'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function process(){
+	# $1: inpFile
+	#
+	#
+	local mdoutFile="$1"
+	# extract mdout data for csv
+	local mdoutData=`cat "$mdoutFile" |
+				sed -r -n '/NSTEP.+TIME/,$p' |
+				sed -r '/A V E R A G E S/,$d' |
+				grep -e ' = ' -e '-----' |
+				tr '\n' ' ' |
+				sed -r 's/-----+/\n/g' |
+				sed -r 's/^/  /'`
+
+	# extract column names
+	# extract by focusing on equals and whitespace characters
+	local columnNames=`echo "$mdoutData" |
+					sed -r 's/ += +[^ ]+ +/,/g' |
+					sed -r 's/^ +//' |
+					sed -r 's/,$//' |
+					uniq`
+	# extract numerical data
+	local data=`echo "$mdoutData" |
+					sed -r 's/  [^=]+= +/,/g' |
+					sed -r 's/^,//'`
+
+	local numLineColumnNames=`echo "$columnNames" | wc -l`
+	if [ ! "$numLineColumnNames" -eq 1 ]; then
+		# warning
+		echo "mdout2csv: columnNames may not be uniquely determined" >&2
+	fi
+
+	# ------------------------------------------------------------------
+	# print
+
+	echo "$columnNames"
+	echo "$data"
+}
+
+main "$@"
+
