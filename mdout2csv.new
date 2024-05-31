@@ -18,7 +18,7 @@ function parse_option(){
 			# shift_args 1
 			;;
 		-*)
-			error "unknown option: '$*'"
+			error "unknown option: '${args[1]}'"
 			;;
 		*)
 			break
