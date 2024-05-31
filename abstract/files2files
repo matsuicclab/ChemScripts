@@ -206,9 +206,9 @@ function main(){
 	for i in `seq 0 "$(($numInpFile-1))"`
 	do
 		local inpFile="${inpFiles[i]}"
-		local outFile="${outFiles[i]}"
 		if "$outIsFile"; then
 			# change output file
+			local outFile="${outFiles[i]}"
 			exec > "$outFile"
 		else
 			# Because it always outputs to a file or to standard output
