@@ -26,9 +26,15 @@ function abstract_help(){
 	local cmd="$1"
 	local inp="$2"
 	local out="$3"
+	local inpDetail="$4"
+	local outDetail="$5"
+	local optionUsage="$6"
 cat <<EOF
 ${cmd}
     convert ${inp} to ${out}
+    ${inp}: ${inpDetail}
+    ${out}: ${outDetail}
+    implementation of files2files
 
 usage:
     + ${cmd} ${inp}
@@ -44,10 +50,20 @@ usage:
     +--- convert the entered ${inp} data and print to stdout
     |
     + ${cmd} <(<COMMAND>)
-    +--- If input by process substitution, print to stdout
+    +--- if input by process substitution, print to stdout
+    |
+    + ${cmd} -o ${out} ${inp}
+    + ${cmd} -o - ${inp}
+    +--- if you want to force the output destination, use the -o option
+    |
+    + ${cmd} -o 's/BEF/AFT/' ${inp}1 ${inp}2 ...
+    +--- it is also possible to specify multiple input files. 
+         if you specify a sed subcommand to the -o option, 
+         you can output with your favorite file name.
 
 option usage:
     -h, -help, --help | display this help
+${optionUsage}
 
 EOF
 }
