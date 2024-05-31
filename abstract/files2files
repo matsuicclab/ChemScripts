@@ -59,6 +59,10 @@ function error(){
 	exit 1
 }
 
+function warning(){
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m" >&2 ; shift; done
+}
+
 function set_args(){
 	args=("$0" "$@")
 }

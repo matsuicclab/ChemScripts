@@ -60,7 +60,7 @@ function process(){
 	local numLineColumnNames=`echo "$columnNames" | wc -l`
 	if [ ! "$numLineColumnNames" -eq 1 ]; then
 		# warning
-		echo "mdout2csv: columnNames may not be uniquely determined" >&2
+		warning "mdout2csv: columnNames may not be uniquely determined"
 	fi
 
 	# ------------------------------------------------------------------
