@@ -9,6 +9,10 @@ function help(){
 }
 
 function parse_option(){
+	# set default
+	numThread=1
+	numConf=100
+	
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
