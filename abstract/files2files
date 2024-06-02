@@ -44,7 +44,7 @@ usage:
     +--- save to the ${out} file
     |
     + ${cmd} ${inp} | <COMMAND>
-    +--- input to the command
+    +--- input to the next command
     |
     + <COMMAND> | ${cmd}
     +--- convert the entered ${inp} data and print to stdout
@@ -90,28 +90,31 @@ function shift_args(){
 
 function parse_args(){
 	# parse -o option
+	local outputDestIsForced=
+	local forcedOutputDestType= # unforced, stdout, pattfile, fixfile
+	local forcedOutputDest=
+	local forcedOutputDestPatt=
 	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
 		outputDestIsForced=true
-		forcedOutputDestType= # 1: stdout, 2: file(patt), 3: file(fix)
 		local value="${args[2]}"
 		if [ "$value" = "-" ]; then
-			forcedOutputDestType=1
+			forcedOutputDestType=stdout
 			forcedOutputDest="-"
 		elif echo "" | sed -r "$value" > /dev/null 2> /dev/null; then
-			forcedOutputDestType=2
+			forcedOutputDestType=pattfile
 			forcedOutputDestPatt="$value"
 		else
-			forcedOutputDestType=3
+			forcedOutputDestType=fixfile
 			forcedOutputDest="$value"
 		fi
 		shift_args 2
 	else
 		outputDestIsForced=false
-		forcedOutputDestType=0
+		forcedOutputDestType=unforced
 		forcedOutputDest="-"
 	fi
 
-	# parse option
+	# parse options of implemented script 
 	parse_option
 
 	# parse inp data and out
@@ -127,13 +130,13 @@ function parse_args(){
 			numInpFile=1
 
 			case "$forcedOutputDestType" in
-			0 | 1)
+			unforced | stdout)
 				outIsFile=false
 				;;
-			2)
+			pattfile)
 				error "cannot proceed with pipe input and replacement pattern specification"
 				;;
-			3)
+			fixfile)
 				outIsFile=true
 				outFiles=("$forcedOutputDest")
 				;;
@@ -142,8 +145,8 @@ function parse_args(){
 			error "inp data is not set"
 		fi
 	else
-		pipeInInp=false
-		psSubInInp=false
+		local pipeInInp=false
+		local psSubInInp=false
 		while [ "${#args[@]}" -gt 1 ]
 		do
 			local _inp="${args[1]}"
@@ -160,13 +163,13 @@ function parse_args(){
 
 		if "$pipeInInp" || "$psSubInInp"; then
 			case "$forcedOutputDestType" in
-			0 | 1)
+			unforced | stdout)
 				outIsFile=false
 				;;
-			2)
+			pattfile)
 				error "cannot proceed with replacement pattern specification and pipe input or ps sub"
 				;;
-			3)
+			fixfile)
 				outIsFile=true
 				outFiles=()
 				for i in `seq "$numInpFile"`; do outFiles+=("$forcedOutputDest"); done
@@ -175,7 +178,7 @@ function parse_args(){
 		else
 			# all input is file
 			case "$forcedOutputDestType" in
-			0)
+			unforced)
 				if [ -t 1 ]; then
 					# out to file which is named by default patt
 					outIsFile=true
@@ -189,15 +192,15 @@ function parse_args(){
 				fi
 
 				;;
-			1)
+			stdout)
 				outIsFile=false
 				;;
-			2)
+			pattfile)
 				outIsFile=true
 				outFiles=()
 				for i in `seq 0 "$(($numInpFile-1))"`; do outFiles+=(`echo "${inpFiles[i]}" | sed -r "$forcedOutputDestPatt"`); done
 				;;
-			3)
+			fixfile)
 				outIsFile=true
 				outFiles=()
 				for i in `seq "$numInpFile"`; do outFiles+=("$forcedOutputDest"); done

@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "mdout2csv" "mdout" "csv" "Amber output file" "csv file" ""
+	abstract_help "mdout2csv" "<mdout>" "<csv>" "Amber output file" "csv file" ""
 }
 
 function parse_option(){

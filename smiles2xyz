@@ -1,0 +1,87 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function help(){
+	abstract_help "smiles2xyz" "<smiles>" "<xyz>" "string of SMILES: simplified molecular input line entry system" "xyz file" ""
+}
+
+function parse_option(){
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function get_default_output_path(){
+	echo 'smiles2xyz.xyz'
+}
+
+function process(){
+	# $1: inpStr
+	#
+	#
+	local smiles="$1"
+	
+	if [[ "$smiles" =~ \. ]]; then
+		# In the case of multimolecular systems
+		error "fail to construct Conformer from SMILES because of multimolecular system"
+	fi
+python <<EOF
+from rdkit import Chem
+from rdkit.Chem import AllChem
+
+# generate mol object
+mol = Chem.MolFromSmiles('${smiles}')
+if mol is None:
+	raise RuntimeError('fail to construct Mol from SMILES')
+mol = Chem.AddHs(mol)
+
+# generate conformer
+# https://www.ag.kagawa-u.ac.jp/charlesy/2020/02/26/2231/
+ps = AllChem.ETKDG()
+ps.pruneRmsThresh = 0 # no pruning
+ps.numThreads = numThreads
+cids = AllChem.EmbedMultipleConfs(mol, numConfs, ps)
+
+# optimization
+AllChem.MMFFOptimizeMoleculeConfs(mol, numThreads=numThreads)
+prop = AllChem.MMFFGetMoleculeProperties(mol)
+# calc energy
+energyList = []
+for cid in cids:
+    mmff = AllChem.MMFFGetMoleculeForceField(mol, prop, confId=cid)
+    energyList.append(mmff.CalcEnergy())
+# adopt the one with the lowest energy
+mostStableConformerID = cids[energyList.index(min(energyList))]
+
+conf = mol.GetConformer(mostStableConformerID)
+
+# get xyz from conf
+lineStrList = []
+# obtain and format coordinate data for each atom
+atomSymbolList = [ atom.GetSymbol() for atom in conf.GetOwningMol().GetAtoms()]
+atomPositionList = conf.GetPositions()
+for symbol, (x, y, z) in zip(atomSymbolList,atomPositionList):
+    lineStrList.append('{} {:.4f} {:.4f} {:.4f}'.format(symbol,x,y,z))
+
+EOF
+
+}
+
+main "$@"
+
