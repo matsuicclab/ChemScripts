@@ -17,6 +17,14 @@ function parse_option(){
 			exit
 			# shift_args 1
 			;;
+		-n | --num-thread)
+			numThread="${args[2]}"
+			shift_args 2
+			;;
+		-c | --num-conf)
+			numConf="${args[2]}"
+			shift_args 2
+			;;
 		-*)
 			error "unknown option: '${args[1]}'"
 			;;
@@ -56,10 +64,10 @@ mol = Chem.AddHs(mol)
 ps = AllChem.ETKDG()
 ps.pruneRmsThresh = 0 # no pruning
 ps.numThreads = numThreads
-cids = AllChem.EmbedMultipleConfs(mol, numConfs, ps)
+cids = AllChem.EmbedMultipleConfs(mol, ${numConf}, ps)
 
 # optimization
-AllChem.MMFFOptimizeMoleculeConfs(mol, numThreads=numThreads)
+AllChem.MMFFOptimizeMoleculeConfs(mol, numThreads=${numThread})
 prop = AllChem.MMFFGetMoleculeProperties(mol)
 # calc energy
 energyList = []
