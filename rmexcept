@@ -1,7 +1,26 @@
 #!/bin/bash
 
-# If set -e is used, rm * may fail, so do not specify it.
-set -u
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/common
+
+function help(){
+cat <<EOF
+rmexcept
+    remove everything except specified files
+    this do not remove hidden files
+
+usage:
+    + rmexcept [option] <file>
+    +--- remove everything except <file>
+
+option usage:
+    -h, -help, --help | display this help
+    -r, -R, --recursive | remove directories and their contents recursively 
+
+EOF
+}
+
 
 option=
 while [ "$#" -gt 0 ]
@@ -33,7 +52,10 @@ do
         mv "$f" ".$f"
 done
 
+# If set -e is used, rm * may fail, so do not specify it.
+set +e
 rm ${option} *
+set -e
 
 for i in `seq 0 "$((${#notDeleteFiles[@]} - 1))"`
 do
