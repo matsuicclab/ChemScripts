@@ -12,7 +12,7 @@ function parse_option(){
 	# set default
 	numThread=1
 	numConf=100
-	
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -46,13 +46,31 @@ function get_default_output_path(){
 function process(){
 	# $1: inpStr
 	#
-	#
 	local smiles="$1"
-	
+
 	if [[ "$smiles" =~ \. ]]; then
 		# In the case of multimolecular systems
 		error "fail to construct Conformer from SMILES because of multimolecular system"
 	fi
+
+	# get conformer
+	xyzData=`generateConformer "${smiles}"`
+	numAtom=`echo "$xyzData" | wc -l`
+
+	# print 1st line
+	echo "$numAtom"
+
+	# print 2nd line
+	echo "smiles2xyz: from ${smiles}: `date`"
+
+	# print 3rd line --
+	echo "$xyzData"
+}
+
+function generateConformer(){
+	# $1: smiles
+	smiles="$1"
+
 python <<EOF
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -89,10 +107,9 @@ lineStrList = []
 atomSymbolList = [ atom.GetSymbol() for atom in conf.GetOwningMol().GetAtoms()]
 atomPositionList = conf.GetPositions()
 for symbol, (x, y, z) in zip(atomSymbolList,atomPositionList):
-    lineStrList.append('{} {:.4f} {:.4f} {:.4f}'.format(symbol,x,y,z))
+    print('{} {:.4f} {:.4f} {:.4f}'.format(symbol,x,y,z))
 
 EOF
-
 }
 
 main "$@"
