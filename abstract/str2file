@@ -81,15 +81,15 @@ function parse_args(){
 	else
 		outputDestIsForced=false
 		forcedOutputDestType=unforced
-		forcedOutputDest="-"
+		forcedOutputDest=`get_default_output_path`
 	fi
 
-	# parse options of implemented script 
+	# parse options of implemented script
 	parse_option
 
 	# parse inp data and out
 	inpStr="${args[1]}"
-	if [ "$forcedOutputDestType" = "fixfile" ]; then
+	if [ "$forcedOutputDestType" = "fixfile" ] || [ "$forcedOutputDestType" = "unforced" ] ; then
 		exec > "$forcedOutputDest"
 	fi
 }
@@ -109,6 +109,6 @@ function parse_args(){
 function main(){
 	set_args "$@"
 	parse_args "$@"
-	
-	process "$inpStr"	
+
+	process "$inpStr"
 }
