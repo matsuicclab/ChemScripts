@@ -88,7 +88,8 @@ function parse_args(){
 	parse_option
 
 	# parse inp data
-	if [ "${#args[@]}" = 1 ]; then
+	inpStr="${args[@]:1}"
+	if [ "$inpStr" = "" ]; then
 		# if there are no remaining arguments
 
 		if [ ! -t 0 ]; then
@@ -100,7 +101,7 @@ function parse_args(){
 			error "inp data is not set"
 		fi
 	else
-		inpStr="${args[1]}"
+		:
 	fi
 	# set out
 	if [ "$forcedOutputDestType" = "fixfile" ] || [ "$forcedOutputDestType" = "unforced" ] ; then
