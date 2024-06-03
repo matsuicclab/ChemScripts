@@ -38,7 +38,6 @@ ${optionUsage}
 
 EOF
 }
-}
 
 function parse_args(){
 	# parse options of implemented script
