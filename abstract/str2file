@@ -87,8 +87,22 @@ function parse_args(){
 	# parse options of implemented script
 	parse_option
 
-	# parse inp data and out
-	inpStr="${args[1]}"
+	# parse inp data
+	if [ "${#args[@]}" = 0 ]; then
+		# if there are no remaining arguments
+
+		if [ ! -t 0 ]; then
+			# Without this judgment, it will wait if there is no pipe input and no argument input.
+			# from pipe
+			inpStr=`cat -`
+
+		else
+			error "inp data is not set"
+		fi
+	else
+		inpStr="${args[1]}"
+	fi
+	# set out
 	if [ "$forcedOutputDestType" = "fixfile" ] || [ "$forcedOutputDestType" = "unforced" ] ; then
 		exec > "$forcedOutputDest"
 	fi
