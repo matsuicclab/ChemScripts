@@ -168,9 +168,13 @@ function process(){
 	# for 119 ~
 	sedcmd2="sed -e 'y/nubtqphsoe/0123456789/' -e 'y/NUBTQPHSOE/0123456789/'"
 
-	echo "$symb" |
-		eval "$sedcmd" |
-		eval "$sedcmd2"
+	local num=`echo "$symb" |
+				eval "$sedcmd" |
+				eval "$sedcmd2"`
+	if [[ "$num" =~ [^0-9] ]]; then
+		error "illegal symbol: $symb"
+	fi
+	echo "$num"
 }
 
 main "$@"
