@@ -88,7 +88,7 @@ function parse_args(){
 	parse_option
 
 	# parse inp data
-	if [ "${#args[@]}" = 0 ]; then
+	if [ "${#args[@]}" = 1 ]; then
 		# if there are no remaining arguments
 
 		if [ ! -t 0 ]; then
