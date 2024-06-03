@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "${SCRIPT_DIR}"/abstract/common
+
 function abstract_help(){
 	local cmd="$1"
 	local inp="$2"
@@ -39,26 +41,6 @@ option usage:
 ${optionUsage}
 
 EOF
-}
-
-function error(){
-	exec 1>&2
-	help
-	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
-	exit 1
-}
-
-function warning(){
-	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m" >&2 ; shift; done
-}
-
-function set_args(){
-	args=("$0" "$@")
-}
-
-function shift_args(){
-	local n="$1"
-	args=("${args[@]:$n}")
 }
 
 function parse_args(){
