@@ -7,7 +7,11 @@ cat <<EOF
 Usage: $(basename $0)
   -h            show help
   -d NUM        skip first NUM data points (Default 0)
-  file name	mden file
+
+  use like
+	plotmden <mden>
+  or
+	plotmden -d <NUM> <mden>
 EOF
 
 exit 1
@@ -62,14 +66,11 @@ XpropName=$(echo "$Xprop"| head -n 1)
 YpropName=$(echo "$Yprop"| head -n 1)
 YpropName=(${YpropName//,/ })
 
-
 NumY=${#YpropName[@]}
-
 
 paste -d , <(echo "$Xprop") <(echo "$Yprop") > $CSV
 
-
-# second axis
+# 4 second axis
 if [ "$y2" = 'oui' ]; then
 	PropPosi2=(${yaxis2//,/ })
 	PropPosi2=${PropPosi2[@]}
@@ -86,12 +87,10 @@ if [ "$y2" = 'oui' ]; then
 	paste -d , <(echo "$Xprop") <(echo "$Yprop") <(echo "$Y2prop") > $CSV
 fi
 
-
-
 PropName=$(head -n 1 $CSV)
 PropName=(${PropName//,/ })
 
-
+# comment out
 sed -i '1s/^/#/' $CSV
 
 
@@ -99,8 +98,7 @@ if [ $drop -ne 0 ]; then
     sed -i 2,$((drop + 1))d $DATA
 fi
 
-
-
+# gnuplot inp
 cat << EOF > gnuplot.gp
 set terminal pdfcairo size 10.00in, 6.00in font 'Arial,14'
 set output "$OUT"
@@ -129,7 +127,6 @@ $(if [ "$y2" = 'non' ]; then
 			echo  \""$CSV"\" u 1:"$((i+1))" title \""${YpropName[$((i-1))]}"\" w lp pt 2
 		fi
 	done
-
 elif [ "$y2" = 'oui' ]; then
 	for i in $(seq "$NumY"); do
 		echo  \""$CSV"\" u 1:"$((i+1))" axis x1y1 title \""${YpropName[$((i-1))]}"\" w lp pt 2,\\
@@ -144,10 +141,7 @@ elif [ "$y2" = 'oui' ]; then
 fi)
 EOF
 
-
 gnuplot < gnuplot.gp
 
-#rm $DATA1 $DATA2 $DATA
 
-#echo ''
 echo "scp ${computer}:$(readlink -f ${OUT}) . ; open ${OUT}"
