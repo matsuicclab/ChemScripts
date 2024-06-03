@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# If set -e is used, rm * may fail, so do not specify it.
+set -u
+
+option=
+while [ "$#" -gt 0 ]
+do
+	case "$1" in
+	-r | -R | --recursive)
+		option="-r"
+		shift 1
+		;;
+	-h | -help | --help)
+		# TODO
+		# help
+		exit
+		;;
+	-*)
+		error "unknown option: '$1'"
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
+notDeleteFiles=("$@")
+
+for i in `seq 0 "$((${#notDeleteFiles[@]} - 1))"`
+do
+        f="${notDeleteFiles[i]}"
+        mv "$f" ".$f"
+done
+
+rm ${option} *
+
+for i in `seq 0 "$((${#notDeleteFiles[@]} - 1))"`
+do
+        f="${notDeleteFiles[i]}"
+        mv ".$f" "$f"
+done
+
+
+
+
+
+
+
+
+
+
