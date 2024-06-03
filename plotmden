@@ -1,0 +1,153 @@
+#!/bin/bash
+set -eu 
+trap 'echo "Error occurred at line $LINENO"; exit 1' ERR
+
+function usage(){
+cat <<EOF
+Usage: $(basename $0)
+  -h            show help
+  -d NUM        skip first NUM data points (Default 0)
+  file name	mden file
+EOF
+
+exit 1
+}
+
+computer=pazu
+
+drop=0
+y2='non'
+
+
+while getopts "d:h" OPT ; do
+        case $OPT in
+                d) drop="$OPTARG";;
+                h) usage;;
+               *) usage;;
+        esac
+done
+shift $((OPTIND - 1))
+
+INPUT=$1
+CSV=${INPUT%.*}.csv
+OUT=${INPUT%.*}.pdf
+
+
+
+csvdat=$(mden2csv $INPUT)
+csvhead=$(echo -e "$csvdat"| head -n 1)
+echo "${csvhead}" | tr "," "\n" | nl -b a
+
+# read param which you want to show
+echo "which num is X ?"
+read xaxis
+echo "which nums are Y1 ?"
+read yaxis
+echo "which nums are Y2 ? (if none, please enter!)"
+read yaxis2
+
+if [ -n "$yaxis2" ]; then
+	y2='oui'
+fi
+
+
+PropPosi=(${yaxis//,/ })
+PropPosi=${PropPosi[@]}
+PropPosi=${PropPosi// /,}
+
+Xprop=$(echo "$csvdat" | cut -d , -f "$xaxis"   )
+Yprop=$(echo "$csvdat" | cut -d , -f "$PropPosi")
+
+XpropName=$(echo "$Xprop"| head -n 1)
+YpropName=$(echo "$Yprop"| head -n 1)
+YpropName=(${YpropName//,/ })
+
+
+NumY=${#YpropName[@]}
+
+
+paste -d , <(echo "$Xprop") <(echo "$Yprop") > $CSV
+
+
+# second axis
+if [ "$y2" = 'oui' ]; then
+	PropPosi2=(${yaxis2//,/ })
+	PropPosi2=${PropPosi2[@]}
+	PropPosi2=${PropPosi2// /,}
+
+
+	Y2prop=$(echo "$csvdat" | cut -d , -f "$PropPosi2")
+	
+	Y2propName=$(echo "$Y2prop"| head -n 1)
+	Y2propName=(${Y2propName//,/ })
+	
+	NumY2=${#Y2propName[@]}
+	
+	paste -d , <(echo "$Xprop") <(echo "$Yprop") <(echo "$Y2prop") > $CSV
+fi
+
+
+
+PropName=$(head -n 1 $CSV)
+PropName=(${PropName//,/ })
+
+
+sed -i '1s/^/#/' $CSV
+
+
+if [ $drop -ne 0 ]; then
+    sed -i 2,$((drop + 1))d $DATA
+fi
+
+
+
+cat << EOF > gnuplot.gp
+set terminal pdfcairo size 10.00in, 6.00in font 'Arial,14'
+set output "$OUT"
+
+set key outside font 'Arial,20' samplen 5 spacing 5
+
+set xlabel "$XpropName" font 'Arial,20'
+set ylabel "${YpropName[@]}" font 'Arial,20'
+$( if [ "$y2" = 'oui' ]; then
+	echo "set ytics nomirror"
+#	echo "set y2tics nomirror"
+	echo "set y2tics"
+	echo 'set y2label '\""${Y2propName[@]}"\"' font "Arial,20"'
+fi)
+
+set title "MD Simulation Data" font 'Arial,30'
+
+set datafile separator ","
+
+plot \
+$(if [ "$y2" = 'non' ]; then
+	for i in $(seq "$NumY"); do
+		if [[ "$i" -lt "$NumY" ]]; then
+			echo  \""$CSV"\" u 1:"$((i+1))" title \""${YpropName[$((i-1))]}"\" w lp pt 2,\\
+		else
+			echo  \""$CSV"\" u 1:"$((i+1))" title \""${YpropName[$((i-1))]}"\" w lp pt 2
+		fi
+	done
+
+elif [ "$y2" = 'oui' ]; then
+	for i in $(seq "$NumY"); do
+		echo  \""$CSV"\" u 1:"$((i+1))" axis x1y1 title \""${YpropName[$((i-1))]}"\" w lp pt 2,\\
+	done
+	for i in $(seq "$NumY2"); do
+		if [[ "$i" -lt "$NumY2" ]]; then
+			echo  \""$CSV"\" u 1:"$((i+NumY+1))" axis x1y2 title \""${Y2propName[$((i-1))]}"\" w lp pt 8,\\
+		else
+			echo  \""$CSV"\" u 1:"$((i+NumY+1))" axis x1y2 title \""${Y2propName[$((i-1))]}"\" w lp pt 8
+		fi
+	done
+fi)
+EOF
+
+
+gnuplot < gnuplot.gp
+
+#rm $DATA1 $DATA2 $DATA
+
+#echo ''
+echo "scp ${computer}:$(readlink -f ${OUT}) . ; open ${OUT}"
