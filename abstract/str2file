@@ -83,7 +83,9 @@ function parse_args(){
 			error "inp data is not set"
 		fi
 	else
-		:
+		if [[ "$inpStr" =~ ^/dev/fd ]]; then
+			inpStr=`cat "$inpStr"`
+		fi
 	fi
 	# set out
 	if [ "$forcedOutputDestType" = "fixfile" ] || [ "$forcedOutputDestType" = "unforced" ] ; then
