@@ -163,7 +163,7 @@ function process(){
 	# convert to symbol
 	if [ "$atomnum" -le 118 ]; then
 		# for 1 ~ 118
-		printConversionTable | grep "^$atomnum" | sed -r 's/.+ //'
+		printConversionTable | grep "^${atomnum} " | sed -r 's/.+ //'
 	else
 		# for 119 ~
 		echo "$atomnum" |
