@@ -17,8 +17,6 @@ EOF
 exit 1
 }
 
-computer=pazu
-
 drop=0
 y2='non'
 
@@ -109,7 +107,6 @@ set xlabel "$XpropName" font 'Arial,20'
 set ylabel "${YpropName[@]}" font 'Arial,20'
 $( if [ "$y2" = 'oui' ]; then
 	echo "set ytics nomirror"
-#	echo "set y2tics nomirror"
 	echo "set y2tics"
 	echo 'set y2label '\""${Y2propName[@]}"\"' font "Arial,20"'
 fi)
@@ -142,6 +139,3 @@ fi)
 EOF
 
 gnuplot < gnuplot.gp
-
-
-echo "scp ${computer}:$(readlink -f ${OUT}) . ; open ${OUT}"
