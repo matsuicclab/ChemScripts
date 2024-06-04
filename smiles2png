@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2file
+
+function help(){
+	abstract_help "smiles2png" "<smiles>" "<png>" "string of SMILES: simplified molecular input line entry system" "png file" "`option_help`"
+}
+
+function option_help(){
+cat <<EOF
+    -d, --delete-proton | delete proton
+EOF
+}
+
+function parse_option(){
+	# set default
+	addH=True
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-d | --delete-proton)
+			addH=False
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function get_default_output_path(){
+	echo 'smiles2png.png'
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local smiles="$1"
+	local tempFile=`mktemp -p . temp.XXXXXX.png`
+
+python <<EOF
+from rdkit import Chem
+from rdkit.Chem import Draw
+
+mol = Chem.MolFromSmiles('${smiles}')
+if ${addH}:
+	mol = Chem.AddHs(mol)
+img = Draw.MolToImage(mol, legend='${smiles}')
+pngFile = '${tempFile}'
+img.save(pngFile)
+
+EOF
+
+	cat "$tempFile"
+	rm "$tempFile"
+}
+
+main "$@"
+

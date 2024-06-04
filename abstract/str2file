@@ -1,0 +1,113 @@
+#!/bin/bash
+
+source "${SCRIPT_DIR}"/abstract/common
+
+function abstract_help(){
+	local cmd="$1"
+	local inp="$2"
+	local out="$3"
+	local inpDetail="$4"
+	local outDetail="$5"
+	local optionUsage="$6"
+cat <<EOF
+${cmd}
+    convert ${inp} to ${out}
+    ${inp}: ${inpDetail}
+    ${out}: ${outDetail}
+    implementation of str2file
+
+usage:
+    + ${cmd} ${inp}
+    +--- convert ${inp} to ${out} and print to stdout
+    |
+    + ${cmd} ${inp} > ${out}
+    +--- save to the ${out} file
+    |
+    + ${cmd} ${inp} | <COMMAND>
+    +--- input to the next command
+    |
+    + <COMMAND> | ${cmd}
+    +--- convert the entered ${inp} data and print to stdout
+    |
+    + ${cmd} <(<COMMAND>)
+    +--- if input by process substitution, print to stdout
+    |
+    + ${cmd} -o ${out} ${inp}
+    + ${cmd} -o - ${inp}
+    +--- if you want to force the output destination, use the -o option
+
+option usage:
+    -h, -help, --help | display this help
+${optionUsage}
+
+EOF
+}
+
+function parse_args(){
+	# parse -o option
+	local outputDestIsForced=
+	local forcedOutputDestType= # unforced, stdout, pattfile, fixfile
+	local forcedOutputDest=
+	local forcedOutputDestPatt=
+	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
+		outputDestIsForced=true
+		local value="${args[2]}"
+		if [ "$value" = "-" ]; then
+			forcedOutputDestType=stdout
+			forcedOutputDest="-"
+		else
+			forcedOutputDestType=fixfile
+			forcedOutputDest="$value"
+		fi
+		shift_args 2
+	else
+		outputDestIsForced=false
+		forcedOutputDestType=unforced
+		forcedOutputDest=`get_default_output_path`
+	fi
+
+	# parse options of implemented script
+	parse_option
+
+	# parse inp data
+	inpStr="${args[@]:1}"
+	if [ "$inpStr" = "" ]; then
+		# if there are no remaining arguments
+
+		if [ ! -t 0 ]; then
+			# Without this judgment, it will wait if there is no pipe input and no argument input.
+			# from pipe
+			inpStr=`cat -`
+
+		else
+			error "inp data is not set"
+		fi
+	else
+		if [[ "$inpStr" =~ ^/dev/fd ]]; then
+			inpStr=`cat "$inpStr"`
+		fi
+	fi
+	# set out
+	if [ "$forcedOutputDestType" = "fixfile" ] || [ "$forcedOutputDestType" = "unforced" ] ; then
+		exec > "$forcedOutputDest"
+	fi
+}
+
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
+#function get_default_output_path(){
+#	echo 'str2file.out'
+#}
+
+#function process(){
+#	# $1: inpStr
+#}
+
+function main(){
+	set_args "$@"
+	parse_args "$@"
+
+	process "$inpStr"
+}

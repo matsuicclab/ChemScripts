@@ -1,0 +1,91 @@
+#!/bin/bash
+
+source "${SCRIPT_DIR}"/abstract/common
+
+function abstract_help(){
+	local cmd="$1"
+	local inp="$2"
+	local out="$3"
+	local inpDetail="$4"
+	local outDetail="$5"
+	local optionUsage="$6"
+cat <<EOF
+${cmd}
+    convert ${inp} to ${out}
+    ${inp}: ${inpDetail}
+    ${out}: ${outDetail}
+    implementation of str2str
+
+usage:
+    + ${cmd} ${inp}
+    +--- convert ${inp} to ${out} and print to stdout
+    |
+    + ${cmd} ${inp} > ${out}
+    +--- save to the ${out} file
+    |
+    + ${cmd} ${inp} | <COMMAND>
+    +--- input to the next command
+    |
+    + <COMMAND> | ${cmd}
+    +--- convert the entered ${inp} data and print to stdout
+    |
+    + ${cmd} <(<COMMAND>)
+    +--- if input by process substitution, print to stdout
+
+option usage:
+    -h, -help, --help | display this help
+${optionUsage}
+
+EOF
+}
+
+function parse_args(){
+	# parse options of implemented script
+	parse_option
+
+	# parse inp data
+	inpStr="${args[@]:1}"
+	if [ "$inpStr" = "" ]; then
+		# if there are no remaining arguments
+
+		if [ ! -t 0 ]; then
+			# Without this judgment, it will wait if there is no pipe input and no argument input.
+			# from pipe
+			inpStr=`cat -`
+
+		else
+			error "inp data is not set"
+		fi
+	else
+		if [[ "$inpStr" =~ ^/dev/fd ]]; then
+			inpStr=`cat "$inpStr"`
+		fi
+	fi
+
+	# set out
+	# always stdout
+	:
+
+}
+
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
+#function get_default_output_path(){
+#	echo 'str2file.out'
+#}
+
+#function process(){
+#	# $1: inpStr
+#}
+
+function main(){
+	set_args "$@"
+	parse_args "$@"
+
+	process "$inpStr"
+}
+
+
+

@@ -1,0 +1,252 @@
+#!/bin/bash
+
+source "${SCRIPT_DIR}"/abstract/common
+
+#flowchart
+#check -o option
+#	-o -: stdout
+#	-o file: out to file
+#	-o subpatt: out to file which name is decided by subpatt
+#check input
+#	pipe:
+#		if -o subpatt, error exit
+#		if -o file, then IO follow it
+#		else: stdout
+#	ps sub(any):
+#		if -o subpatt, error exit
+#		if -o file, then IO follow it
+#		else: stdout
+#	file(all):
+#		if -o subpatt and there is even one "-" as input, error exit
+#		if -o file and -o -, then IO follow it
+#		if [-t1] is true, out to file according to the default patt
+#		else: stdout
+#
+#
+
+function abstract_help(){
+	local cmd="$1"
+	local inp="$2"
+	local out="$3"
+	local inpDetail="$4"
+	local outDetail="$5"
+	local optionUsage="$6"
+cat <<EOF
+${cmd}
+    convert ${inp} to ${out}
+    ${inp}: ${inpDetail}
+    ${out}: ${outDetail}
+    implementation of files2files
+
+usage:
+    + ${cmd} ${inp}
+    +--- convert ${inp} to ${out} and save to ${out} with an appropriate name automatically
+    |
+    + ${cmd} ${inp} > ${out}
+    +--- save to the ${out} file
+    |
+    + ${cmd} ${inp} | <COMMAND>
+    +--- input to the next command
+    |
+    + <COMMAND> | ${cmd}
+    +--- convert the entered ${inp} data and print to stdout
+    |
+    + ${cmd} <(<COMMAND>)
+    +--- if input by process substitution, print to stdout
+    |
+    + ${cmd} -o ${out} ${inp}
+    + ${cmd} -o - ${inp}
+    +--- if you want to force the output destination, use the -o option
+    |
+    + ${cmd} -o 's/BEF/AFT/' ${inp}1 ${inp}2 ...
+    +--- it is also possible to specify multiple input files.
+         if you specify a sed subcommand to the -o option,
+         you can output with your favorite file name.
+
+option usage:
+    -h, -help, --help | display this help
+${optionUsage}
+
+EOF
+}
+
+function error(){
+	exec 1>&2
+	help
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
+	exit 1
+}
+
+function warning(){
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m" >&2 ; shift; done
+}
+
+function set_args(){
+	args=("$0" "$@")
+}
+
+function shift_args(){
+	local n="$1"
+	args=("${args[@]:$n}")
+}
+
+function parse_args(){
+	# parse -o option
+	local outputDestIsForced=
+	local forcedOutputDestType= # unforced, stdout, pattfile, fixfile
+	local forcedOutputDest=
+	local forcedOutputDestPatt=
+	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
+		outputDestIsForced=true
+		local value="${args[2]}"
+		if [ "$value" = "-" ]; then
+			forcedOutputDestType=stdout
+			forcedOutputDest="-"
+		elif echo "" | sed -r "$value" > /dev/null 2> /dev/null; then
+			forcedOutputDestType=pattfile
+			forcedOutputDestPatt="$value"
+		else
+			forcedOutputDestType=fixfile
+			forcedOutputDest="$value"
+		fi
+		shift_args 2
+	else
+		outputDestIsForced=false
+		forcedOutputDestType=unforced
+		forcedOutputDest="-"
+	fi
+
+	# parse options of implemented script
+	parse_option
+
+	# parse inp data and out
+	inpFiles=("${args[@]:1}")
+	numInpFile="${#inpFiles[@]}"
+	if [ "$numInpFile" = 0 ]; then
+		# if there are no remaining arguments
+
+		if [ ! -t 0 ]; then
+			# Without this judgment, it will wait if there is no pipe input and no argument input.
+			# from pipe
+			inpFiles=("-")
+			numInpFile=1
+
+			case "$forcedOutputDestType" in
+			unforced | stdout)
+				outIsFile=false
+				;;
+			pattfile)
+				error "cannot proceed with pipe input and replacement pattern specification"
+				;;
+			fixfile)
+				outIsFile=true
+				outFiles=("$forcedOutputDest")
+				;;
+			esac
+		else
+			error "inp data is not set"
+		fi
+	else
+		local pipeInInp=false
+		local psSubInInp=false
+		while [ "${#args[@]}" -gt 1 ]
+		do
+			local _inp="${args[1]}"
+			if [ "$_inp" = "-" ]; then
+				# if input from pipe
+				pipeInInp=true
+
+			elif [[ "$_inp" =~ ^/dev/fd ]]; then
+				# if input by process substitution
+				psSubInInp=true
+			fi
+			shift_args 1
+		done
+
+		if "$pipeInInp" || "$psSubInInp"; then
+			case "$forcedOutputDestType" in
+			unforced | stdout)
+				outIsFile=false
+				;;
+			pattfile)
+				error "cannot proceed with replacement pattern specification and pipe input or ps sub"
+				;;
+			fixfile)
+				outIsFile=true
+				outFiles=()
+				for i in `seq "$numInpFile"`; do outFiles+=("$forcedOutputDest"); done
+				;;
+			esac
+		else
+			# all input is file
+			case "$forcedOutputDestType" in
+			unforced)
+				if [ -t 1 ]; then
+					# out to file which is named by default patt
+					outIsFile=true
+					local patt=`get_default_conversion_patt`
+					outFiles=()
+					for i in `seq 0 "$(($numInpFile-1))"`; do outFiles+=(`echo "${inpFiles[i]}" | sed -r "$patt"`); done
+
+				else
+					outIsFile=false
+
+				fi
+
+				;;
+			stdout)
+				outIsFile=false
+				;;
+			pattfile)
+				outIsFile=true
+				outFiles=()
+				for i in `seq 0 "$(($numInpFile-1))"`; do outFiles+=(`echo "${inpFiles[i]}" | sed -r "$forcedOutputDestPatt"`); done
+				;;
+			fixfile)
+				outIsFile=true
+				outFiles=()
+				for i in `seq "$numInpFile"`; do outFiles+=("$forcedOutputDest"); done
+				;;
+			esac
+		fi
+	fi
+
+}
+
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
+#function get_default_conversion_patt(){
+#	echo '{s/out$//; s/$/csv/}'
+#}
+
+#function process(){
+#	# $1: inpFile
+#	# limit 'cat "$1"' to one execution because of cat -
+#}
+
+function main(){
+	set_args "$@"
+	parse_args "$@"
+
+	for i in `seq 0 "$(($numInpFile-1))"`
+	do
+		local inpFile="${inpFiles[i]}"
+		if "$outIsFile"; then
+			# change output file
+			local outFile="${outFiles[i]}"
+			exec > "$outFile"
+		else
+			# Because it always outputs to a file or to standard output
+			:
+		fi
+
+		# convert file
+		process "$inpFile"
+	done
+}
+
+
+
+

@@ -1,151 +1,107 @@
 #!/bin/bash
+
 set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-cat <<EOF
-pdb2csv
-    convert pdb to csv
-    based on https://pdbj.org/help/pdb-brief?lang=ja
-
-usage:
-    + pdb2csv pdb
-    +--- convert pdb to csv and save to csv with an appropriate name automatically
-    |
-    + pdb2csv pdb > csv
-    +--- save to the csv file
-    |
-    + pdb2csv pdb | <COMMAND>
-    +--- input to the command
-    |
-    + <COMMAND> | pdb2csv
-    +--- convert the entered pdb data and print to stdout
-    |
-    + pdb2csv <(<COMMAND>)
-    +--- If input by process substitution, print to stdout
-
-option usage:
-    -h, -help, --help | display this help
-
-EOF
+	abstract_help "pdb2csv" "<pdb>" "<csv>" "PDB: protein data bank based on https://pdbj.org/help/pdb-brief?lang=ja" "csv file" ""
 }
 
-function error() {
-	exec 1>&2
-	help
-	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
-	exit 1
+function parse_option(){
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
 }
 
-# ------------------------------------------------------------------
+function get_default_conversion_patt(){
+	echo '{s/.pdb$//; s/$/.csv/}'
+}
 
-# parse options
-while [ "$#" -gt 0 ] ;
-do
-	case "$1" in
-	-h | -help | --help)
-		help
-		exit
-		;;
-	-*)
-		error "unknown option: '$*'"
-		;;
-	*)
-		break
-		;;
-	esac
-done
-
-# set input filename
-if [ "$#" -gt 0 ]; then
-	# if there are arguments
-	pdbFile="$1"
-elif [ ! -t 0 ]; then
-	# if there is a pipe input
-	pdbFile="-"
-else
-	error "pdb file is not set"
-fi
-
-# set output destination
-if [ -t 1 ]; then
-	# when output to the terminal is expected
-	if [ "$pdbFile" = "-" ]; then
-		# if the input was a pipe
-		# output to the terminal (no modification)
-		:
-	elif [[ "$pdbFile" =~ ^/dev/fd ]]; then
-		# if input by process substitution
-		# output to the terminal (no modification)
-		:
-	else
-		csvFile="${pdbFile%.pdb}.csv"
-		exec > "$csvFile"
-	fi
-fi
-
-# ------------------------------------------------------------------
-
-grepPDBDat=`cat "$pdbFile" |
-		grep -e 'ATOM' -e 'MODEL' -e 'ENDMDL'`
-
-# create column for MODEL number
-if grep -q '^MODEL' <(echo "$grepPDBDat"); then
-	# if there are MODEL lines
+function process(){
+	# $1: inpFile
 	#
-	# 1:MODEL     1
-	# 407:ENDMDL
-	# 408:MODEL     2
-	# 814:ENDMDL
-	# 815:MODEL     3
-	# 1221:ENDMDL
-	# ...
-	# ->
-	# 1 1 407
-	# 2 408 814
-	# 3 815 1221
-	# ...
-	# ->
-	# 1 (repeat 407-1+1=407 times)
-	# 2 (repeat 814-408+1=407 times)
-	# 3 (407 times)
-	# ...
-	modelnumDat=`echo "$grepPDBDat" |
-		grep -n -e 'MODEL' -e 'ENDMDL' |
-		sed -r '{/MODEL/N;s/\n/:/}' |
-		sed -r 's/[^0-9]+/ /g' |
-		awk '{printf "%s %s %s\n", $2, $1, $3}' |
-		while read m i f
-		do
-			# repeat model number for number of atoms
-			printf "$m%0.s\n" $(seq $i $f) | sed -e '1,2d'
-		done`
-else
-	numatom=`echo "$grepPDBDat" |
-				grep '^ATOM' |
-				wc -l`
-	modelnumDat=`printf "1%0.s\n" $(seq $numatom)`
-fi
+	local pdbFile="$1"
+	grepPDBDat=`cat "$pdbFile" |
+			grep -e 'ATOM' -e 'MODEL' -e 'ENDMDL'`
 
-# create column for atomtype, xyz, ...
-#             v            v          vvv                                          vvvvvvvvvv
-#000000 00011 1 1111 1 112 2 2 2222 2 223 33333333 34444444 44455555 555556 666666 6667777777 77 78
-#123456 78901 2 3456 7 890 1 2 3456 7 890 12345678 90123456 78901234 567890 123456 7890123456 78 90
-#ATOM    5465   EP2    WAT     1093         11.613    9.700   24.880   1.00   0.00            XP
-atomDat=`echo "$grepPDBDat" |
-		grep '^ATOM' |
-		awk '{printf "%-80s\n", $0}' |
-		perl -pe 's/^.{6}(.{5}).(.{4})(.)(.{3}).(.)(.{4})(.)...(.{8})(.{8})(.{8})(.{6})(.{6}).{10}(.{2})(.{2})$/$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14/ if /^ATOM/'`
+	# create column for MODEL number
+	if grep -q '^MODEL' <(echo "$grepPDBDat"); then
+		# if there are MODEL lines
+		#
+		# 1:MODEL     1
+		# 407:ENDMDL
+		# 408:MODEL     2
+		# 814:ENDMDL
+		# 815:MODEL     3
+		# 1221:ENDMDL
+		# ...
+		# ->
+		# 1 1 407
+		# 2 408 814
+		# 3 815 1221
+		# ...
+		# ->
+		# 1 (repeat 407-1+1=407 times)
+		# 2 (repeat 814-408+1=407 times)
+		# 3 (407 times)
+		# ...
+		modelnumDat=`echo "$grepPDBDat" |
+			grep -n -e 'MODEL' -e 'ENDMDL' |
+			sed -r '{/MODEL/N;s/\n/:/}' |
+			sed -r 's/[^0-9]+/ /g' |
+			awk '{printf "%s %s %s\n", $2, $1, $3}' |
+			while read m i f
+			do
+				# repeat model number for number of atoms
+				printf "$m%0.s\n" $(seq $i $f) | sed -e '1,2d'
+			done`
+	else
+		numatom=`echo "$grepPDBDat" |
+					grep '^ATOM' |
+					wc -l`
+		modelnumDat=`printf "1%0.s\n" $(seq $numatom)`
+	fi
 
-# ------------------------------------------------------------------
-# print
+	# create column for atomtype, xyz, ...
+	#             v            v          vvv                                          vvvvvvvvvv
+	#000000 00011 1 1111 1 112 2 2 2222 2 223 33333333 34444444 44455555 555556 666666 6667777777 77 78
+	#123456 78901 2 3456 7 890 1 2 3456 7 890 12345678 90123456 78901234 567890 123456 7890123456 78 90
+	#ATOM    5465   EP2    WAT     1093         11.613    9.700   24.880   1.00   0.00            XP
+	atomDat=`echo "$grepPDBDat" |
+			grep '^ATOM' |
+			awk '{printf "%-80s\n", $0}' |
+			perl -pe 's/^.{6}(.{5}).(.{4})(.)(.{3}).(.)(.{4})(.)...(.{8})(.{8})(.{8})(.{6})(.{6}).{10}(.{2})(.{2})$/$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14/ if /^ATOM/'`
 
-# create column name
-echo "model,atomnum,atomname,alt,residuename,chainname,residuenum,resins,x,y,z,occ,thermfac,elemsymb,charge"
+	# ------------------------------------------------------------------
+	# print
 
-# join
-paste -d ',' <(echo "$modelnumDat") <(echo "$atomDat") |
-	sed -r 's/, +/,/g' |
-	sed -r 's/ +,/,/g'
+	# create column name
+	echo "model,atomnum,atomname,alt,residuename,chainname,residuenum,resins,x,y,z,occ,thermfac,elemsymb,charge"
+
+	# join
+	paste -d ',' <(echo "$modelnumDat") <(echo "$atomDat") |
+		sed -r 's/, +/,/g' |
+		sed -r 's/ +,/,/g'
+
+}
+
+main "$@"
+
+
 
 
 

@@ -1,0 +1,282 @@
+#!/bin/bash
+set -eu
+
+function help(){
+cat <<EOF
+gloggeom2xyz
+    convert geometry data in gaussian log to xyz
+
+usage:
+    + gloggeom2xyz [option] log
+    +--- convert log to xyz and save to xyz with an appropriate name automatically
+    |
+    + gloggeom2xyz [option] log > xyz
+    +--- save to the xyz file
+    |
+    + gloggeom2xyz [option] log | <COMMAND>
+    +--- input to the command
+    |
+    + <COMMAND> | gloggeom2xyz [option]
+    +--- convert the entered gaussian log data and print to stdout
+    |
+    + gloggeom2xyz [option] <(<COMMAND>)
+    +--- If input by process substitution, print to stdout
+
+option usage:
+    -h, -help, --help              | display this help
+    -o, -opt,  --opt               | print final result of geometry optimization
+                                   | The automatically assigned output file name is test.opt.xyz (or .nonopt.xyz) for test.log(.out)
+    -a, -all,  --all               | print all unique geometries
+                                   | The automatically assigned output file name is test.1.xyz, test.2.xyz, ... for test.log(.out)
+    -o, -orient, --orient <s or i> | whether to output standard orientation or input orientation
+                                   | default: 's'
+
+EOF
+}
+
+function error() {
+	exec 1>&2
+	help
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
+	exit 1
+}
+
+function getNumAtom(){
+	# get number of atoms
+	local glogFile="$1"
+
+	# 'Input orientation' is not output in some cases, so the number of atoms is counted from 'Standard orientation'
+	cat "$glogFile" |
+		sed -r '1,/^ +Standard orientation: +$/d' |        # delete from header through route section to orientation
+		sed -e '1iStandard orientation' |                  # add 'orientation' string that was deleted above to simplify this code
+		sed -r -n '1,/Standard orientation/p' |            # extract to include only the first geometry information
+		sed -r '/Standard orientation/,/^ -+$/s/^ -+$//' | # delete the line with only hyphens from the top, twice
+		sed -r '/Standard orientation/,/^ -+$/s/^ -+$//' |
+		sed -r -n '1,/^ -+$/p' |     # extract only geometry information
+		sed -e '$d' |                # remove last hyphen-only line
+		sed -r '/^$/d' |             # extract only lines with coordinates written
+		sed -r -n '/^[ 0-9.-]+$/p' |
+		wc -l                        # count
+
+}
+
+function getMolecularFormula(){
+	# get molecular formula
+	local glogFile="$1"
+
+	cat "$glogFile" |
+		grep Stoichiometry |
+		sed -r 's/.+ //' |
+		uniq
+}
+
+# ------------------------------------------------------------------
+
+# parse options
+while [ "$#" -gt 0 ] ;
+do
+	case "$1" in
+	-h | -help | --help)
+		help
+		exit
+		;;
+	-s | -step | --step)
+		# the step number of the structure to retrieve
+		stepnum="$2"
+		shift 2
+
+		# check
+		if [[ ! "$stepnum" =~ ^[0-9]+$ ]] && [ ! "$stepnum" = '$' ]; then
+			error "--step must be a natural number or '$' for the last line"
+		fi
+		if [ "$stepnum" = 0 ]; then
+			error "--step must be greater than 0"
+		fi
+		;;
+	-o | -orient | --orient)
+		# Input orientation or Standard orientation
+		if [ "$2" = s ]; then
+			orientPatt='^ +Standard orientation: +$'
+		elif [ "$2" = i ]; then
+			orientPatt='^ +Input orientation: +$'
+		else
+			error "--orient must be 's' or 'i'"
+		fi
+		shift 2
+		;;
+	-*)
+		error "unknown option: '$*'"
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
+# set input filename
+if [ "$#" -gt 0 ]; then
+	# if there are arguments
+	glogFile="$1"
+	# check
+	if [ ! -f "$glogFile" ]; then
+		error "gloggeom2xyz: No such file: $glogFile"
+	fi
+elif [ ! -t 0 ]; then
+	# if there is a pipe input
+	glogFile="-"
+else
+	error "log file is not set"
+fi
+
+
+function setoutput(){
+	# set output destination
+	local inputFile="$1"
+	local outputExt="$2"
+
+	exec 3>&1
+
+	if [ -t 1 ]; then
+		# when output to the terminal is expected
+		if [ "$glogFile" = "-" ]; then
+			# if the input was a pipe
+			# output to the terminal (no modification)
+			exec >&3
+		elif [[ "$glogFile" =~ ^/dev/fd ]]; then
+			# if input by process substitution
+			# output to the terminal (no modification)
+			exec >&3
+		else
+			# remove trailing log(out) and make sure xyz is attached
+			# sed -r 's/.(log|out)$/.xyz/': problem occurs if it does not end with 'log' or 'out'
+			local outputFile=`echo "${inputFile}" | sed -r 's/.(log|out)$//' | sed -r 's/$/.'"${outputExt}"'/'`
+			exec > "$outputFile"
+		fi
+	fi
+}
+
+
+
+# ------------------------------------------------------------------
+
+# xyz file:
+# 1st line ... num of atom
+# 2nd line ... comment line (arbitrary)
+#     this script prints the molecular formula, stepnum, log file name (and directory)
+# 3rd line-... geometry data:
+#     <symb1> <x1> <y1> <z1>
+#     <symb2> <x2> <y2> <z2>
+#     ...
+#
+
+# set 1st line
+firstLine=`getNumAtom "$glogFile"`
+# set var for 2nd line
+molForm=`getMolecularFormula "$glogFile"`
+glogDir=$(cd "$(dirname ${glogFile})"; pwd | sed -r 's@.+/@@')
+datetime=`date`
+
+# get geometries
+# original data in log file:
+#                          Input orientation:
+# ---------------------------------------------------------------------
+# Center     Atomic      Atomic             Coordinates (Angstroms)
+# Number     Number       Type             X           Y           Z
+# ---------------------------------------------------------------------
+#      1          6           0       -2.235209    0.056525    0.069806
+#      2          6           0       -0.723949    0.021728    0.006217
+#      3          6           0        0.034492    1.181562    0.234182
+#      4          6           0        1.432938    1.146099    0.206275
+# ......
+#     15          1           0       -0.608339   -2.085353   -0.443042
+# ---------------------------------------------------------------------
+# TODO implement test cmd
+if [ "opt" ]; then
+	# print optimized geometry
+
+	# judge opt success or fail
+	optEndMsg=`cat "$glogFile" |
+				grep -e 'Optimization completed' -e 'Optimization stopped' |
+				head -n 1`
+
+	if [[ "$optEndMsg" =~ completed ]]; then
+		optstatus='opt'
+	elif [[ "$optEndMsg" =~ stopped ]]; then
+		optstatus='nonopt'
+	else
+		error "geometry optimization may not be finished or executed"
+	fi
+
+	# -----------------------------------------------------------------------
+	# print
+	setoutput "$glogFile" "${optstatus}.xyz"
+
+	# print 1st line
+	echo "$firstLine"
+	# print 2nd line
+	secondLine="Geometry of the ${optstatus} ${molForm} in @${HOSTNAME}:${glogDir}/${glogFile##*/}, ${datetime}"
+	echo "$secondLine"
+
+	# get optimized geometry and print
+	cat "$glogFile" |
+		sed -r -n '/^'"$optEndMsg"'$/,$p' |           # extract log data after structural optimization
+		sed -r '/'"$orientPatt"'/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
+		sed -r '/'"$orientPatt"'/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
+		sed -r -n '/'"$orientPatt"'/,/^ -+$/p' |      # extract from '(Input|Standard) orientation' to hyphen line
+		sed -r -n '/^[ 0-9.-]+$/p' |                  # extract the line of coordinate data and the last hyphen line
+		sed -r '/^ -+$/,$d' |                         # delete the after the third hyphen only line
+		sed -r 's/ +/ /g' |                           # fetch lines 2,4,5,6
+		sed -r 's/^ //' |
+		cut -d ' ' -f 2,4,5,6 |
+		atonum2symb -d ' ' -f 1   # convert atomic number to element symbol
+
+
+else
+	# print all geometries
+
+	geometryDataList=`cat "$glogFile" |
+					sed -r '/'"$orientPatt"'/,/^ -+$/s/^ -+$//' | # replace the first hyphen line with an empty line
+					sed -r '/'"$orientPatt"'/,/^ -+$/s/^ -+$//' | # replace the second hyphen line with an empty line
+					sed -r -n '/'"$orientPatt"'/,/^ -+$/p' |      # extract from '(Input|Standard) orientation' to hyphen line
+					sed -r -n '/^[ 0-9.-]+$/p' |    # extract the line of coordinate data and the last hyphen line
+					sed -r 's/^ -+$//' |            # replace last hyphen line with empty line
+					sed -z -r 's/([0-9])\n/\1n/g' | # combine lines of coordinate data into one line
+					uniq`                           # drop the same geometry data by uniq
+
+	maxstepnum=`echo "$geometryDataList" | wc -l`
+
+	seq "$maxstepnum" |
+		while read stepnum
+		do
+			setoutput "$glogFile" "${stepnum}.xyz"
+
+			# print 1st line
+			echo "$firstLine"
+
+			# print 2nd line
+			secondLine="Geometry of the ${stepnum}th ${molForm} in @${HOSTNAME}:${glogDir}/${glogFile##*/}, ${datetime}"
+			echo "$secondLine"
+
+			# get 'stepnum'th geometry and print
+			echo "$geometryDataList" |
+				sed -r -n "${stepnum}p" | # get the 'stepnum'th
+				sed -r 's/n/\n/g' |       # convert one row of data back to original table format
+				sed -r 's/ +/ /g' |       # fetch lines 2,4,5,6
+				sed -r 's/^ //' |
+				cut -d ' ' -f 2,4,5,6 |
+				atonum2symb -d ' ' -f 1   # convert atomic number to element symbol
+
+		done
+fi
+
+
+
+
+
+
+
+
+
+
+
+

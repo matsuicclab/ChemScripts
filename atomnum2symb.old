@@ -1,0 +1,325 @@
+#!/bin/bash
+set -eu
+
+function help(){
+cat <<EOF
+atonum2symb
+    convert between atomic number and element symbol
+    also applicable to tabular data such as csv
+
+usage:
+    + <COMMAND> | atonum2symb
+    +--- convert the entered data and print to stdout
+
+option usage:
+    -h, -help, --help           | display this help
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --fields <num>          | set target column number
+                                | default: 1
+    -s, --skip <num>            | specify the number of lines to skip at the beginning
+                                | default: 0
+    -t, --to <n or s>           | specify conversion destination, atomic number (n) or element symbol (s)
+                                | default: 's'
+
+EOF
+}
+
+function error() {
+	exec 1>&2
+	help
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
+	exit 1
+}
+
+function printConversionTable(){
+cat <<EOF
+1 H
+2 He
+3 Li
+4 Be
+5 B
+6 C
+7 N
+8 O
+9 F
+10 Ne
+11 Na
+12 Mg
+13 Al
+14 Si
+15 P
+16 S
+17 Cl
+18 Ar
+19 K
+20 Ca
+21 Sc
+22 Ti
+23 V
+24 Cr
+25 Mn
+26 Fe
+27 Co
+28 Ni
+29 Cu
+30 Zn
+31 Ga
+32 Ge
+33 As
+34 Se
+35 Br
+36 Kr
+37 Rb
+38 Sr
+39 Y
+40 Zr
+41 Nb
+42 Mo
+43 Tc
+44 Ru
+45 Rh
+46 Pd
+47 Ag
+48 Cd
+49 In
+50 Sn
+51 Sb
+52 Te
+53 I
+54 Xe
+55 Cs
+56 Ba
+57 La
+58 Ce
+59 Pr
+60 Nd
+61 Pm
+62 Sm
+63 Eu
+64 Gd
+65 Tb
+66 Dy
+67 Ho
+68 Er
+69 Tm
+70 Yb
+71 Lu
+72 Hf
+73 Ta
+74 W
+75 Re
+76 Os
+77 Ir
+78 Pt
+79 Au
+80 Hg
+81 Tl
+82 Pb
+83 Bi
+84 Po
+85 At
+86 Rn
+87 Fr
+88 Ra
+89 Ac
+90 Th
+91 Pa
+92 U
+93 Np
+94 Pu
+95 Am
+96 Cm
+97 Bk
+98 Cf
+99 Es
+100 Fm
+101 Md
+102 No
+103 Lr
+104 Rf
+105 Db
+106 Sg
+107 Bh
+108 Hs
+109 Mt
+110 Ds
+111 Rg
+112 Cn
+113 Nh
+114 Fl
+115 Mc
+116 Lv
+117 Ts
+118 Og
+EOF
+}
+
+# ------------------------------------------------------------------
+# set variables
+headerEndLineNum=0
+targetcolumnnum=1
+delimiter=" "
+convdest=s
+# parse options
+while [ "$#" -gt 0 ] ;
+do
+	case "$1" in
+	-h | -help | --help)
+		help
+		exit
+		;;
+	-f | -fields | --fields)
+		targetcolumnnum="$2"
+		shift 2
+		;;
+	-d | -delimiter | --delimiter)
+		delimiter="$2"
+		shift 2
+		;;
+	-s | -skip | --skip)
+		headerEndLineNum="$2"
+		shift 2
+		;;
+	-t | -to | --to)
+		convdest="$2"
+		shift 2
+		;;
+	-*)
+		error "unknown option: '$*'"
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
+contentStartLineNum=$(($headerEndLineNum + 1))
+
+# ------------------------------------------------------------------
+#
+# get data
+if [ ! -p /dev/stdin ]; then
+	error "no input from pipe"
+fi
+sourceData=`cat -`
+
+# separate source for header and content
+if [ "$headerEndLineNum" -eq 0 ]; then
+	headerData=
+else
+	headerData=`echo "$sourceData" | sed -r -n "1,${headerEndLineNum}p"`
+fi
+contentData=`echo "$sourceData" | sed -r -n "${contentStartLineNum},"'$p'`
+
+
+# conversion outline:
+#
+# ,A, B, 2, C, D,
+# ,E, F, 10, G, H,
+# ...
+# ->
+# ,A, B,
+# 2,
+# C, D,
+# ,E, F,
+# 10,
+# G, H,
+# ...
+# ->
+# ,A, B,
+# He,
+# C, D,
+# ,E, F,
+# Ne,
+# G, H,
+# ...
+# ->
+# ,A, B, He, C, D,
+# ,E, F, Ne, G, H,
+# ...
+contentData=`echo "$contentData" |
+		sed -r 's/$/'"${delimiter}"'/' | # add trailing and leading delimiters
+		sed -r 's/^/'"${delimiter}"'/' |
+		sed -r "s/${delimiter}/${delimiter}\n/${targetcolumnnum}" | # split 1 line into 3 lines
+		sed -r "2~2s/${delimiter}/${delimiter}\n/1" |
+		sed -r '$s/$/\n /'`
+		# Since bash removes the trailing newline character when assigning to a variable,
+		# consider the case where the last line is an empty character
+		# and add a trailing space character
+
+# check if it doesn't contain characters that can't be converted
+targetData=`echo "$contentData" |
+		sed -r -n '2~3p' |
+		sed -r "s/${delimiter}"'$//'`
+if [ "$convdest" = s ]; then
+	# atomic num -> element symbol
+	# check if it contains non-numeric characters
+	legalCharPatt="[0-9]"
+else
+	legalCharPatt="[A-z]"
+fi
+illegalContentLineNum=`echo "$targetData" |
+			sed -r "s/${legalCharPatt}//g" |
+			nl -b a | # print line number
+			sed -r '/^ +[0-9]+\t$/d' |
+				# remove lines that contained only normal characters
+				# this '[0-9]' represents the line number printed by nl, so it has nothing to do with legalCharPatt
+			sed -r -n 1p | # get line number
+			sed -r 's/ //g' |
+			sed -r 's/\t.+//'`
+if [ ! -z "$illegalContentLineNum" ] && [ "$illegalContentLineNum" -gt 0 ]; then
+	# if $illegalContentLineNum is not empty and is greater than 0
+	illegalString=`echo "$targetData" |
+		sed -r -n "${illegalContentLineNum}p"`
+	illegalLineNum=$(($illegalContentLineNum + $headerEndLineNum))
+	error "illegal string: line ${illegalLineNum}: ${illegalString}"
+fi
+
+
+# if convert 100 to Fm (delimiter: ','), sed -r "s/^100,$/Fm,/"
+# generate this sed command with awk for each element
+if [ "$convdest" = s ]; then
+	# convert to symbol
+	# for 1 ~ 118
+	sedcmd=`printConversionTable |
+		awk '{printf "sed -r \"2~3s/^%s'"${delimiter}"'$/%s'"${delimiter}"'/\" | ", $1, $2 }' 2>/dev/null |
+		sed -e 's/| $//'`
+	# for 119 ~
+	sedcmd2="sed -e '2~3s/^0/N/' -e '2~3s/^1/U/' -e '2~3s/^2/B/' \
+				-e '2~3s/^3/T/' -e '2~3s/^4/Q/' -e '2~3s/^5/P/' \
+				-e '2~3s/^6/H/' -e '2~3s/^7/S/' -e '2~3s/^8/O/' \
+				-e '2~3s/^9/E/' \
+				-e '2~3y/0123456789/nubtqphsoe/'"
+else
+	# convert to atomic num
+	# for 1 ~ 118
+	sedcmd=`printConversionTable |
+		awk '{printf "sed -r \"2~3s/^%s'"${delimiter}"'$/%s'"${delimiter}"'/\" | ", $2, $1 }' 2>/dev/null |
+		sed -e 's/| $//'`
+	# for 119 ~
+	sedcmd2="sed -e 'y/nubtqphsoe/0123456789/' -e 'y/NUBTQPHSOE/0123456789/'"
+fi
+
+# ------------------------------------------------------------------
+# convert and print
+if [ ! -z "$headerData" ]; then
+	# if $headerData is not empty
+	echo "$headerData"
+fi
+
+echo "$contentData" |
+	eval "$sedcmd" | # convert 1 ~ 118
+	eval "$sedcmd2" | # convert 118 ~
+	sed -r '{N;N;s/\n//g}' |
+	sed -r 's/^'"${delimiter}"'//' |
+	sed -r 's/'"${delimiter}"'$//' |
+	sed -r '$d'
+
+
+
+
+
+
+
+

@@ -47,6 +47,10 @@ done
 if [ "$#" -gt 0 ]; then
 	# if there are arguments
 	glogFile="$1"
+	# check
+	if [ ! -f "$glogFile" ]; then
+		error "mkresp: No such file: $glogFile"
+	fi
 else
 	error "gaussian log file is not set"
 fi

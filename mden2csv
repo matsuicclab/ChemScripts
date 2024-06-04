@@ -1,109 +1,60 @@
 #!/bin/bash
 set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-cat <<EOF
-mden2csv
-    convert mden to csv
-
-usage:
-    + mden2csv mden
-    +--- convert mden to csv and save to csv with an appropriate name automatically
-    |
-    + mden2csv mden > csv
-    +--- save to the csv file
-    |
-    + mden2csv mden | <COMMAND>
-    +--- input to the command
-    |
-    + <COMMAND> | mden2csv
-    +--- convert the entered mden data and print to stdout
-    |
-    + mden2csv <(<COMMAND>)
-    +--- If input by process substitution, print to stdout
-
-option usage:
-    -h, -help, --help | display this help
-
-EOF
+	abstract_help "mden2csv" "<mden>" "<csv>" "Amber energy file" "csv file" ""
 }
 
-function error() {
-	exec 1>&2
-	help
-	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
-	exit 1
-}
-
-# ------------------------------------------------------------------
-
-# parse options
-while [ "$#" -gt 0 ] ;
-do
-	case "$1" in
-	-h | -help | --help)
-		help
-		exit
-		;;
-	-*)
-		error "unknown option: '$*'"
-		;;
-	*)
-		break
-		;;
-	esac
-done
-
-# set input filename
-if [ "$#" -gt 0 ]; then
-	# if there are arguments
-	mdenFile="$1"
-elif [ ! -t 0 ]; then
-	# if there is a pipe input
-	mdenFile="-"
-else
-	error "mden file is not set"
-fi
-
-# set output destination
-if [ -t 1 ]; then
-	# when output to the terminal is expected
-	if [ "$mdenFile" = "-" ]; then
-		# if the input was a pipe
-		# output to the terminal (no modification)
-		:
-	elif [[ "$mdenFile" =~ ^/dev/fd ]]; then
-		# if input by process substitution
-		# output to the terminal (no modification)
-		:
-	else
-		csvFile="${mdenFile}.csv"
-		exec > "$csvFile"
-	fi
-fi
-
-# ------------------------------------------------------------------
-
-if [ ! -f "$mdenFile" ]; then
-	error "mden2csv: No such file: $mdenFile"
-fi
-
-numLinePerFrame=`cat "$mdenFile" |
-			sed -r 's/ .+//' |
-			sort |
-			uniq |
-			wc -l`
-sedN=`seq 2 "$numLinePerFrame" |
-	while read line ;
+function parse_option(){
+	while [ "${#args[@]}" -gt 1 ]
 	do
-		echo -n "N;"
-	done`
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
 
+function get_default_conversion_patt(){
+	echo '{s/$/.csv/}'
+}
 
-# convert and print
-cat "$mdenFile" |
-	sed -r 's/^[^ ]+ +//' | # remove leading Ln
-	sed -r "{${sedN}s/\n/ /g}" | # convert to newline every frame
-	sed -r 's/ +/,/g'
+function process(){
+	# $1: inpFile
+	#
 
+	local mdenFile="$1"
+	local mdenData=`cat "$mdenFile"`
+
+	numLinePerFrame=`echo "$mdenData" |
+						sed -r 's/ .+//' |
+						sort |
+						uniq |
+						wc -l`
+
+	sedN=`seq 2 "$numLinePerFrame" |
+		while read line ;
+		do
+			echo -n "N;"
+		done`
+
+	# convert and print
+	echo "$mdenData" |
+		sed -r 's/^[^ ]+ +//' | # remove leading Ln
+		sed -r "{${sedN}s/\n/ /g}" | # convert to newline every frame
+		sed -r 's/ +/,/g'
+}
+
+main "$@"
 
