@@ -95,7 +95,7 @@ sed -i '1s/^/#/' $CSV
 
 
 if [ $drop -ne 0 ]; then
-    sed -i 2,$((drop + 1))d $DATA
+    sed -i 2,$((drop + 1))d $CSV
 fi
 
 # gnuplot inp
