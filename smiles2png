@@ -50,11 +50,15 @@ function process(){
 	local smiles="$1"
 	local tempFile=`mktemp -p . temp.XXXXXX.png`
 
+	trap "rm ${tempFile}" 2 3 9 15
+
 python <<EOF
 from rdkit import Chem
 from rdkit.Chem import Draw
 
 mol = Chem.MolFromSmiles('${smiles}')
+if mol is None:
+	raise RuntimeError('fail to construct Mol from SMILES')
 if ${addH}:
 	mol = Chem.AddHs(mol)
 img = Draw.MolToImage(mol, legend='${smiles}')
