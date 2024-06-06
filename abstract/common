@@ -20,7 +20,7 @@ function shift_args(){
 }
 
 function initialize_output(){
-	exec 99>&1
+	exec {stdout}>&1
 }
 # execute to initialize
 initialize_output
@@ -38,7 +38,7 @@ function set_output(){
 	fi
 
 	if [ "$output" = "-" ]; then
-		exec >&99
+		exec >&{stdout}
 	elif "$append" ; then
 		exec >> "$output"
 	else
