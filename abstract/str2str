@@ -64,16 +64,12 @@ function parse_args(){
 
 	# set out
 	# always stdout
-	:
+	set_output -
 
 }
 
 #function parse_option(){
 #	# parse option from "${args[@]}"
-#}
-
-#function get_default_output_path(){
-#	echo 'str2file.out'
 #}
 
 #function process(){

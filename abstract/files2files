@@ -134,13 +134,14 @@ function parse_args(){
 			case "$forcedOutputDestType" in
 			unforced | stdout)
 				outIsFile=false
+				outputs=("-")
 				;;
 			pattfile)
 				error "cannot proceed with pipe input and replacement pattern specification"
 				;;
 			fixfile)
 				outIsFile=true
-				outFiles=("$forcedOutputDest")
+				outputs=("$forcedOutputDest")
 				;;
 			esac
 		else
@@ -163,18 +164,19 @@ function parse_args(){
 			shift_args 1
 		done
 
+		outputs=()
 		if "$pipeInInp" || "$psSubInInp"; then
 			case "$forcedOutputDestType" in
 			unforced | stdout)
 				outIsFile=false
+				for i in `seq "$numInpFile"`; do outputs+=("-"); done
 				;;
 			pattfile)
 				error "cannot proceed with replacement pattern specification and pipe input or ps sub"
 				;;
 			fixfile)
 				outIsFile=true
-				outFiles=()
-				for i in `seq "$numInpFile"`; do outFiles+=("$forcedOutputDest"); done
+				for i in `seq "$numInpFile"`; do outputs+=("$forcedOutputDest"); done
 				;;
 			esac
 		else
@@ -185,27 +187,25 @@ function parse_args(){
 					# out to file which is named by default patt
 					outIsFile=true
 					local patt=`get_default_conversion_patt`
-					outFiles=()
-					for i in `seq 0 "$(($numInpFile-1))"`; do outFiles+=(`echo "${inpFiles[i]}" | sed -r "$patt"`); done
+					for i in `seq 0 "$(($numInpFile-1))"`; do outputs+=(`echo "${inpFiles[i]}" | sed -r "$patt"`); done
 
 				else
 					outIsFile=false
+					for i in `seq "$numInpFile"`; do outputs+=("-"); done
 
 				fi
-
 				;;
 			stdout)
 				outIsFile=false
+				for i in `seq "$numInpFile"`; do outputs+=("-"); done
 				;;
 			pattfile)
 				outIsFile=true
-				outFiles=()
-				for i in `seq 0 "$(($numInpFile-1))"`; do outFiles+=(`echo "${inpFiles[i]}" | sed -r "$forcedOutputDestPatt"`); done
+				for i in `seq 0 "$(($numInpFile-1))"`; do outputs+=(`echo "${inpFiles[i]}" | sed -r "$forcedOutputDestPatt"`); done
 				;;
 			fixfile)
 				outIsFile=true
-				outFiles=()
-				for i in `seq "$numInpFile"`; do outFiles+=("$forcedOutputDest"); done
+				for i in `seq "$numInpFile"`; do outputs+=("$forcedOutputDest"); done
 				;;
 			esac
 		fi
@@ -233,14 +233,8 @@ function main(){
 	for i in `seq 0 "$(($numInpFile-1))"`
 	do
 		local inpFile="${inpFiles[i]}"
-		if "$outIsFile"; then
-			# change output file
-			local outFile="${outFiles[i]}"
-			exec > "$outFile"
-		else
-			# Because it always outputs to a file or to standard output
-			:
-		fi
+		local output="${outputs[i]}"
+		set_output "$output"
 
 		# convert file
 		process "$inpFile"

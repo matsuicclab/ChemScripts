@@ -1,9 +1,8 @@
 #!/bin/bash
 
 function error(){
-	exec 1>&2
 	help
-	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m"; shift; done
+	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m" >&2 ; shift; done
 	exit 1
 }
 
@@ -19,3 +18,32 @@ function shift_args(){
 	local n="$1"
 	args=("${args[@]:$n}")
 }
+
+function initialize_output(){
+	exec 99>&1
+}
+# execute to initialize
+initialize_output
+
+function set_output(){
+	# set_output [--append] <output>
+	# if output is -, then print to stdout
+	local append=false
+	local output=
+	if [ "$1" = "--append" ]; then
+		append=true
+		output="$2"
+	else
+		output="$1"
+	fi
+
+	if [ "$output" = "-" ]; then
+		exec >&99
+	elif "$append" ; then
+		exec >> "$output"
+	else
+		exec > "$output"
+	fi
+}
+
+

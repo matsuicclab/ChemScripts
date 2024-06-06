@@ -87,10 +87,10 @@ function parse_args(){
 			inpStr=`cat "$inpStr"`
 		fi
 	fi
+
 	# set out
-	if [ "$forcedOutputDestType" = "fixfile" ] || [ "$forcedOutputDestType" = "unforced" ] ; then
-		exec > "$forcedOutputDest"
-	fi
+	local output="$forcedOutputDest"
+	set_output "$output"
 }
 
 #function parse_option(){
