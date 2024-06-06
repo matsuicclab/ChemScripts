@@ -50,7 +50,7 @@ function process(){
 	local smiles="$1"
 	local tempFile=`mktemp -p . temp.XXXXXX.png`
 
-	trap "rm ${tempFile}" 2 3 9 15
+	trap "rm ${tempFile}" ERR
 
 python <<EOF
 from rdkit import Chem
