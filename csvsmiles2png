@@ -13,7 +13,8 @@ function parse_option(){
 	delimiter=,
 	linenumOfHeader=0
 	field=
-	numLineOfGroup=1
+	numPerColumn=4
+	numPerRow=5
 	addH=False
 
 	# parse option
@@ -29,7 +30,7 @@ function parse_option(){
 			delimiter="$2"
 			shift_args 2
 			;;
-		-c | -header | --header)
+		-e | -header | --header)
 			linenumOfHeader="$2"
 			shift_args 2
 			;;
@@ -37,8 +38,12 @@ function parse_option(){
 			field="$2"
 			shift_args 2
 			;;
-		-g | -group | --group)
-			numLineOfGroup="$2"
+		-pc | -per-colomn | --per-column)
+			numPerColumn="$2"
+			shift_args 2
+			;;
+		-pr | -per-row | --per-row)
+			numPerRow="$2"
 			shift_args 2
 			;;
 		-p | --add-proton)
@@ -53,6 +58,8 @@ function parse_option(){
 			;;
 		esac
 	done
+
+	sizeOfGroup=`expr "$numPerColumn" \* "$numPerRow"`
 
 	if [ ! "$field" ]; then
 		error "specify column containing SMILES with the -f option"
@@ -80,10 +87,10 @@ function process(){
 	exec {csvDataFdNum}< <(echo "$csvData")
 	local csvDataFd="/dev/fd/${csvDataFdNum}"
 	# get datasize
-	local datasize=`print_datasize "$csvDataFd"`
+	local datasize=`get_datasize "$csvDataFd"`
 
 	# calculate the total number of pages by roundingup-dividing
-	local numpage=`expr \( "$datasize" + "$numLineOfGroup" - 1 \) / "$numLineOfGroup"`
+	local numpage=`expr \( "$datasize" + "$sizeOfGroup" - 1 \) / "$sizeOfGroup"`
 	# get output list with comma separated
 	local outputList=`get_outputlist 1 "$numpage" | xargs -L 1 printf "'%s', "`
 
@@ -97,7 +104,10 @@ import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import Draw
 
-csvData = pd.read_csv('${csvDataFd}')
+csvData = pd.read_csv('${csvDataFd}',
+						header=[${linenumOfHeader}],
+						delimiter='${delimiter}'
+					)
 outputList = [${outputList}]
 smilesList = list(csvData[csvData.columns[${field}]].values)
 molList = [Chem.MolFromSmiles(s) for s in smilesList]
@@ -105,20 +115,17 @@ if ${addH}:
 	molList = [Chem.AddHs(m) if m is not None else None for m in molList]
 legendList = [str(i) for i in range(1,1+${datasize})]
 
-groupedMolList = [molList[i*${numLineOfGroup}:(i+1)*${numLineOfGroup}] for i in range(${numpage})]
-groupedLegendList = [legendList[i*${numLineOfGroup}:(i+1)*${numLineOfGroup}] for i in range(${numpage})]
+groupedMolList = [molList[i*${sizeOfGroup}:(i+1)*${sizeOfGroup}] for i in range(${numpage})]
+groupedLegendList = [legendList[i*${sizeOfGroup}:(i+1)*${sizeOfGroup}] for i in range(${numpage})]
 for mlist, llist, output in zip(groupedMolList, groupedLegendList, outputList):
-	img = Draw.MolsToGridImage(mlist, molsPerRow=5, subImgSize=(1000,500), legends=llist)
+	img = Draw.MolsToGridImage(mlist, molsPerRow=${numPerRow}, subImgSize=(1000,500), legends=llist)
 	img.save(output)
-
-# TODO make molsPerRow variable
-# TODO consider a little more about the output format
 
 EOF
 
 }
 
-function print_datasize(){
+function get_datasize(){
 	local csvFile="$1"
 
 python <<EOF
