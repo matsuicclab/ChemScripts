@@ -1,0 +1,140 @@
+#!/bin/bash
+
+source "${SCRIPT_DIR}"/abstract/common
+
+function abstract_help(){
+	local cmd="$1"
+	local inp="$2"
+	local out="$3"
+	local inpDetail="$4"
+	local outDetail="$5"
+	local optionUsage="$6"
+cat <<EOF
+${cmd}
+    convert ${inp} to ${out}
+    ${inp}: ${inpDetail}
+    ${out}: ${outDetail}
+    implementation of files2files
+
+usage:
+    + ${cmd} ${inp}
+    +--- convert ${inp} to ${out} and save to ${out} with an appropriate sequential name automatically
+    |
+    + ${cmd} -o 'example.%d.out' ${inp}
+    +--- decide output destinations with -o
+    |    use format (%d) to number
+    |
+    + <COMMAND> | ${cmd}
+    + ${cmd} <(<COMMAND>)
+    +--- convert the entered ${inp} data and save to automatically determined files
+    |
+    + ${cmd} ${inp} > ${out}
+    + ${cmd} ${inp} | <COMMAND>
+    + ${cmd} -o - ${inp}
+    +--- NOT support output to a redirect or pipe
+
+option usage:
+    -h, -help, --help | display this help
+${optionUsage}
+
+EOF
+}
+
+#flowchart
+#- check -o option
+#   specified -> use specified format
+#   not specified
+#   - inp is file     -> use get_outputfilename_format
+#   - inp is not file -> use get_default_outputfilename_format
+#
+function parse_args(){
+	# parse -o option
+	local forcedOutputFileNameFormat=
+	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
+		forcedOutputFileNameFormat="${args[2]}"
+		shift_args 2
+	else
+		forcedOutputFileNameFormat=
+	fi
+
+	# parse options of implemented script
+	parse_option
+
+	# parse inp data
+	if [ "${#args[@]}" = 1 ]; then
+		# if there are no remaining arguments
+
+		if [ ! -t 0 ]; then
+			# Without this judgment, it will wait if there is no pipe input and no argument input.
+			# from pipe
+			exec {pipeinput}<&0
+			inpFile="/dev/fd/${pipeinput}"
+
+		else
+			error "inp data is not set"
+		fi
+	else
+		inpFile="${args[1]}"
+	fi
+
+	# set
+	if [ "$forcedOutputFileNameFormat" ]; then
+		outputFileNameFormat="$forcedOutputFileNameFormat"
+	elif [[ "$inpFile" =~ ^/dev/fd ]]; then
+		outputFileNameFormat=`get_default_outputfilename_format`
+	else
+		outputFileNameFormat=`get_outputfilename_format "$inpFile"`
+	fi
+
+	check_filename_format "$outputFileNameFormat"
+}
+
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
+function check_filename_format(){
+	if [[ ! "$1" =~ % ]]; then
+		error "illegal filename format: $1"
+	fi
+}
+
+#function get_default_outputfilename_format(){
+#	echo 'file2seqfiles.%d.out'
+#}
+
+#function get_outputfilename_format(){
+#	# $1: inpFile
+#	echo "$1" | sed -r 's/\.inp$/.%d.out/'
+#}
+
+function set_output_by_serialnumber(){
+	# $1: num
+	#
+	local num="$1"
+	local outFile=`printf "${outputFileNameFormat}" "$num"`
+	set_output "$outFile"
+}
+
+function get_outputlist(){
+	# $1: first serial number
+	# $2: last serial number
+	seq "$1" "$2" |
+		xargs -L 1 printf "${outputFileNameFormat}\n"
+}
+
+#function process(){
+#	# $1: inpFile
+#	# limit 'cat "$1"' to one execution because of cat -
+#}
+
+function main(){
+	set_args "$@"
+	parse_args "$@"
+
+	process "$inpFile"
+}
+
+
+
+

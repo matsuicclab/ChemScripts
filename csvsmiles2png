@@ -1,0 +1,140 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function help(){
+	abstract_help "csvsmiles2png" "<csv>" "<png>" "csv file" "png files" ""
+}
+
+function parse_option(){
+	# set default
+	delimiter=,
+	linenumOfHeader=0
+	field=
+	numLineOfGroup=1
+	addH=False
+
+	# parse option
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-d | -delimiter | --delimiter)
+			delimiter="$2"
+			shift_args 2
+			;;
+		-c | -header | --header)
+			linenumOfHeader="$2"
+			shift_args 2
+			;;
+		-f | -field | --field)
+			field="$2"
+			shift_args 2
+			;;
+		-g | -group | --group)
+			numLineOfGroup="$2"
+			shift_args 2
+			;;
+		-p | --add-proton)
+			addH=True
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+
+	if [ ! "$field" ]; then
+		error "specify column containing SMILES with the -f option"
+	elif [[ ! "$field" =~ ^[0-9]+$ ]]; then
+		error "-f option can only be specified as an integer (>=0)"
+	fi
+}
+
+function get_default_outputfilename_format(){
+	echo 'csvsmiles2png.%d.png'
+}
+
+function get_outputfilename_format(){
+	# $1: inpFile
+	echo "$1" | sed -r 's/\.csv$/.%d.png/'
+}
+
+
+function process(){
+	# $1: inpFile
+	#
+	local csvFile="$1"
+	local csvData=`cat "$csvFile"`
+
+	exec {csvDataFdNum}< <(echo "$csvData")
+	local csvDataFd="/dev/fd/${csvDataFdNum}"
+	# get datasize
+	local datasize=`print_datasize "$csvDataFd"`
+
+	# calculate the total number of pages by roundingup-dividing
+	local numpage=`expr \( "$datasize" + "$numLineOfGroup" - 1 \) / "$numLineOfGroup"`
+	# get output list with comma separated
+	local outputList=`get_outputlist 1 "$numpage" | xargs -L 1 printf "'%s', "`
+
+	# reset
+	exec {csvDataFdNum}< <(echo "$csvData")
+	csvDataFd="/dev/fd/${csvDataFdNum}"
+
+	# generate pngs
+python <<EOF
+import pandas as pd
+from rdkit import Chem
+from rdkit.Chem import Draw
+
+csvData = pd.read_csv('${csvDataFd}')
+outputList = [${outputList}]
+smilesList = list(csvData[csvData.columns[${field}]].values)
+molList = [Chem.MolFromSmiles(s) for s in smilesList]
+if ${addH}:
+	molList = [Chem.AddHs(m) if m is not None else None for m in molList]
+legendList = [str(i) for i in range(1,1+${datasize})]
+
+groupedMolList = [molList[i*${numLineOfGroup}:(i+1)*${numLineOfGroup}] for i in range(${numpage})]
+groupedLegendList = [legendList[i*${numLineOfGroup}:(i+1)*${numLineOfGroup}] for i in range(${numpage})]
+for mlist, llist, output in zip(groupedMolList, groupedLegendList, outputList):
+	img = Draw.MolsToGridImage(mlist, molsPerRow=5, subImgSize=(1000,500), legends=llist)
+	img.save(output)
+
+# TODO make molsPerRow variable
+# TODO consider a little more about the output format
+
+EOF
+
+}
+
+function print_datasize(){
+	local csvFile="$1"
+
+python <<EOF
+import pandas as pd
+
+csvData = pd.read_csv('${csvFile}',
+						header=[${linenumOfHeader}],
+						delimiter='${delimiter}'
+					)
+print(len(csvData))
+EOF
+}
+
+
+
+main "$@"
+
+
+
