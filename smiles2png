@@ -10,13 +10,13 @@ function help(){
 
 function option_help(){
 cat <<EOF
-    -d, --delete-proton | delete proton
+    -p, --add-proton | delete proton
 EOF
 }
 
 function parse_option(){
 	# set default
-	addH=True
+	addH=False
 
 	while [ "${#args[@]}" -gt 1 ]
 	do
@@ -26,8 +26,8 @@ function parse_option(){
 			exit
 			# shift_args 1
 			;;
-		-d | --delete-proton)
-			addH=False
+		-p | --add-proton)
+			addH=True
 			shift_args 1
 			;;
 		-*)
