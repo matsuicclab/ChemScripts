@@ -92,7 +92,7 @@ function process(){
 	# calculate the total number of pages by roundingup-dividing
 	local numpage=`expr \( "$datasize" + "$sizeOfGroup" - 1 \) / "$sizeOfGroup"`
 	# get output list with comma separated
-	local outputList=`get_outputlist 1 "$numpage" | xargs -L 1 printf "'%s', "`
+	local outputList=`get_outputlist 1 "$numpage" | xargs -d '\n' -I{} printf "'%s', " "{}"`
 
 	# reset
 	exec {csvDataFdNum}< <(echo "$csvData")
