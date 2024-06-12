@@ -9,6 +9,8 @@ function help(){
 }
 
 function parse_option(){
+	varfunc=
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -18,59 +20,92 @@ function parse_option(){
 			# shift_args 1
 			;;
 		--num-atom)
+			varfunc=get_num_atom
 			;;
 		--num-elec)
+			varfunc=get_num_elec
 			;;
 		--num-a-elec)
+			varfunc=get_num_a_elec
 			;;
 		--num-b-elec)
+			varfunc=get_num_b_elec
 			;;
 		--charge)
+			varfunc=get_charge
 			;;
 		--multiplicity)
+			varfunc=get_num_elec
 			;;
 		--stoichiometry)
+			varfunc=get_stoichiometry
 			;;
 		--basis)
+			varfunc=get_basis
 			;;
 		--theory)
+			varfunc=get_theory
 			;;
 		--SCF-energy)
+			varfunc=get_scf_energy
 			;;
 		--total-opt-step)
+			varfunc=get_total_opt_step
 			;;
 		--geometry)
+			local step="${args[2]}"
+			varfunc="get_geometry $step"
+			;;
+		--opt-geometry)
+			varfunc=get_opt_geometry
 			;;
 		--num-im-freq)
+			varfunc=get_num_im_freq
 			;;
 		--scr-path)
+			varfunc=get_scr_path
 			;;
 		--version)
+			varfunc=get_version
 			;;
 		--exit-status)
+			varfunc=get_exit_status
 			;;
 		--cpu-time)
+			varfunc=get_cpu_time
 			;;
 		--elapsed-time)
+			varfunc=get_elapsed_time
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
 			;;
 		*)
-			break
 			;;
 		esac
+
+		# use only the first argument
+		break
 	done
 }
-
 
 function process(){
 	# $1: inpFile
 	#
-	local glogData=`cat "$1"`
-
+	local glogFile="$1"
+	$varfunc "$glogFile"
 
 }
+
+function get_num_atom(){
+	# $1: inpFile
+	cat "$1" |
+		grep 'NAtoms' |
+		tail -n 1 |
+		sed -r 's/.+NAtoms= +//' |
+		sed -r 's/ .+//'
+}
+
 
 main "$@"
 
