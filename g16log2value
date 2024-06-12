@@ -274,9 +274,25 @@ function get_exit_status(){
 }
 
 function get_cpu_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Job cpu time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
+		xargs echo |
+		xargs -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s`
 }
 
 function get_elapsed_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Elapsed time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
+		xargs echo |
+		xargs -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s`
 }
 
 main "$@"
