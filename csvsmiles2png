@@ -27,23 +27,23 @@ function parse_option(){
 			# shift_args 1
 			;;
 		-d | -delimiter | --delimiter)
-			delimiter="$2"
+			delimiter="${args[2]}"
 			shift_args 2
 			;;
 		-e | -header | --header)
-			linenumOfHeader="$2"
+			linenumOfHeader="${args[2]}"
 			shift_args 2
 			;;
 		-f | -field | --field)
-			field="$2"
+			field="${args[2]}"
 			shift_args 2
 			;;
 		-pc | -per-colomn | --per-column)
-			numPerColumn="$2"
+			numPerColumn="${args[2]}"
 			shift_args 2
 			;;
 		-pr | -per-row | --per-row)
-			numPerRow="$2"
+			numPerRow="${args[2]}"
 			shift_args 2
 			;;
 		-p | --add-proton)
