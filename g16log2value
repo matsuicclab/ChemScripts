@@ -11,8 +11,7 @@ function help(){
 function parse_option(){
 	varfunc=
 
-	while [ "${#args[@]}" -gt 1 ]
-	do
+	if [ "${#args[@]}" -gt 1 ]; then
 		case "${args[1]}" in
 		-h | -help | --help)
 			help
@@ -55,6 +54,7 @@ function parse_option(){
 		--geometry)
 			local step="${args[2]}"
 			varfunc="get_geometry $step"
+			shift_args 1
 			;;
 		--opt-geometry)
 			varfunc=get_opt_geometry
@@ -77,17 +77,17 @@ function parse_option(){
 		--elapsed-time)
 			varfunc=get_elapsed_time
 			;;
-		-*)
-			error "unknown option: '${args[1]}'"
-			;;
 		*)
+			error "unknown option: '${args[1]}'"
 			;;
 		esac
 
-		# use only the first argument
+		# use only the first argument (except --geometry)
 		shift_args 1
-		break
-	done
+
+	else
+		error "specify option"
+	fi
 }
 
 function process(){
