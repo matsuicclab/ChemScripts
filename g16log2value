@@ -1,0 +1,78 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/file2str
+
+function help(){
+	abstract_help "g16log2value" "<g16log>" "<value>" "gaussian log file" "arbitary value" ""
+}
+
+function parse_option(){
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		--num-atom)
+			;;
+		--num-elec)
+			;;
+		--num-a-elec)
+			;;
+		--num-b-elec)
+			;;
+		--charge)
+			;;
+		--multiplicity)
+			;;
+		--stoichiometry)
+			;;
+		--basis)
+			;;
+		--theory)
+			;;
+		--SCF-energy)
+			;;
+		--total-opt-step)
+			;;
+		--geometry)
+			;;
+		--num-im-freq)
+			;;
+		--scr-path)
+			;;
+		--version)
+			;;
+		--exit-status)
+			;;
+		--cpu-time)
+			;;
+		--elapsed-time)
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+
+function process(){
+	# $1: inpFile
+	#
+	local glogData=`cat "$1"`
+
+
+}
+
+main "$@"
+
+
+
