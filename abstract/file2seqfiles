@@ -14,7 +14,7 @@ ${cmd}
     convert ${inp} to ${out}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
-    implementation of files2files
+    implementation of file2seqfiles
 
 usage:
     + ${cmd} ${inp}
