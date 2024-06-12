@@ -10,7 +10,7 @@ function help(){
 
 function option_help(){
 cat <<EOF
-    -p, --add-proton | delete proton
+    -p, --add-proton | add proton
 EOF
 }
 
