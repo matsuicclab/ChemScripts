@@ -62,8 +62,8 @@ function parse_option(){
 		--num-im-freq)
 			varfunc=get_num_im_freq
 			;;
-		--scr-path)
-			varfunc=get_scr_path
+		--scr-files-path)
+			varfunc=get_scr_files_path
 			;;
 		--version)
 			varfunc=get_version
@@ -189,9 +189,94 @@ function get_theory(){
 }
 
 function get_scf_energy(){
+	# $1: logData
+	echo "$1" |
+		grep 'SCF Done' |
+		tail -n 1 |
+		sed -r 's/.+=//' |
+		sed -r 's/A\.U\..+//' |
+		sed -r 's/ //g'
 }
 
 function get_total_opt_step(){
+	# $1: logData
+	echo "$1" |
+		grep 'Step number' |
+		grep 'out of a maximum of' |
+		wc -l
+}
+
+function get_geometry(){
+	# $1: stepnum
+	# $2: logData
+	local step="$1"
+	local logData="$2"
+	#echo "$1" |
+
+}
+
+function get_opt_geometry(){
+	# $1: logData
+	local logData="$1"
+	local totalStep=`get_total_opt_step "$logData"`
+	get_geometry "$totalStep" "$logData"
+}
+
+function get_num_im_freq(){
+	# $1: logData
+	echo "$1" |
+		sed -r -n '/\*{6}.+imaginary frequencies.+\*{6}/p' |
+		tail -n 1 |
+		sed -r 's/[^0-9]//g'
+}
+
+function get_scr_files_path(){
+	# $1: logData
+	local logData="$1"
+	local inpFilePath=`echo "$logData" |
+						grep 'scrdir' |
+						head -n 1 |
+						sed -r 's/ *-scrdir=.+//' |
+						sed -r 's/.* +//' |
+						sed -r 's/"//g'`
+	local PID=`echo "$logData" |
+				grep ' PID=' |
+				head -n 1 |
+				sed -r 's/.+ //' |
+				sed -r 's/[^0-9]//g'`
+
+	# get a pattern of the d2e, rwf, int files
+	local otherFilePathPattern=`echo "$inpFilePath" | sed -r "s/-[^-]+$/-${PID}./"`
+
+	local scrFilesPath=`ls -l "$inpFilePath" "$otherFilePathPattern"* 2>/dev/null |
+					 		sed -r 's/^([^ ]+ +){2}//' |
+					 		sed -r -n "/^`whoami`/p" |
+					 		sed -r 's/^([^ ]+ +){6}//'`
+	if [ "$scrFilesPath" ]; then
+		echo "$scrFilesPath"
+	else
+		warning "scr file not found"
+	fi
+}
+
+function get_version(){
+	# $1: logData
+	echo "$1" |
+		sed -r -n '/^ +\*+ *$/,$p' |
+		head |
+		grep -i gaussian |
+		head -n 1 |
+		sed -r 's/  /,/g' |
+		cut -d , -f 2
+}
+
+function get_exit_status(){
+}
+
+function get_cpu_time(){
+}
+
+function get_elapsed_time(){
 }
 
 main "$@"
