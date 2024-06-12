@@ -85,6 +85,7 @@ function parse_option(){
 		esac
 
 		# use only the first argument
+		shift_args 1
 		break
 	done
 }
