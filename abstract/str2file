@@ -107,7 +107,7 @@ function parse_args(){
 
 function main(){
 	set_args "$@"
-	parse_args "$@"
+	parse_args
 
 	process "$inpStr"
 }

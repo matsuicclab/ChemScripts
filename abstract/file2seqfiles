@@ -130,7 +130,7 @@ function get_outputlist(){
 
 function main(){
 	set_args "$@"
-	parse_args "$@"
+	parse_args
 
 	process "$inpFile"
 }
