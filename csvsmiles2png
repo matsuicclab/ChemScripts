@@ -2,7 +2,7 @@
 
 set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
-source "${SCRIPT_DIR}"/abstract/files2files
+source "${SCRIPT_DIR}"/abstract/file2seqfiles
 
 function help(){
 	abstract_help "csvsmiles2png" "<csv>" "<png>" "csv file" "png files" ""
