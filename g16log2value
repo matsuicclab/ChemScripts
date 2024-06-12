@@ -94,19 +94,105 @@ function process(){
 	# $1: inpFile
 	#
 	local glogFile="$1"
-	$varfunc "$glogFile"
+	local glogData=`cat "$glogFile"`
+	$varfunc "$glogData"
 
 }
 
 function get_num_atom(){
-	# $1: inpFile
-	cat "$1" |
+	# $1: logData
+	echo "$1" |
 		grep 'NAtoms' |
 		tail -n 1 |
 		sed -r 's/.+NAtoms= +//' |
 		sed -r 's/ .+//'
 }
 
+function get_num_elec(){
+	# $1: logData
+	echo "$1" |
+		grep 'alpha electrons' |
+		tail -n 1 |
+		sed -r 's/[^0-9]/ /g' |
+		sed -r 's/ +/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/ / + /' |
+		xargs expr
+}
+
+function get_num_a_elec(){
+	# $1: logData
+	echo "$1" |
+		grep 'alpha electrons' |
+		tail -n 1 |
+		sed -r 's/[^0-9]/ /g' |
+		sed -r 's/ +/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/ .+//'
+}
+
+function get_num_b_elec(){
+	# $1: logData
+	echo "$1" |
+		grep 'beta electrons' |
+		tail -n 1 |
+		sed -r 's/[^0-9]/ /g' |
+		sed -r 's/ +/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/^[^ ]+ //' |
+		sed -r 's/ +$//'
+}
+
+function get_charge(){
+	# $1: logData
+	echo "$1" |
+		grep 'Charge' |
+		grep 'Multiplicity' |
+		tail -n 1 |
+		sed -r 's/[^0-9+-]+/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/ .+//'
+}
+
+function get_multiplicity(){
+	# $1: logData
+	echo "$1" |
+		grep 'Charge' |
+		grep 'Multiplicity' |
+		tail -n 1 |
+		sed -r 's/[^0-9+-]+/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/^[^ ]+ //' |
+		sed -r 's/ $//'
+}
+
+function get_stoichiometry(){
+	# $1: logData
+	echo "$1" |
+		grep 'Stoichiometry' |
+		tail -n 1 |
+		sed -r 's/ +$//' |
+		sed -r 's/.+ //'
+}
+
+function get_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'Standard basis' |
+		tail -n 1 |
+		sed -r 's/^[^:]+://' |
+		sed -r 's/^ +//' |
+		sed -r 's/ +$//'
+}
+
+function get_theory(){
+}
+
+function get_scf_energy(){
+}
+
+function get_total_opt_step(){
+}
 
 main "$@"
 
