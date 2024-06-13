@@ -42,6 +42,15 @@ function parse_option(){
 		--basis)
 			varfunc=get_basis
 			;;
+		--num-basis)
+			varfunc=get_num_basis
+			;;
+		--num-primitive-basis)
+			varfunc=get_primitive_basis
+			;;
+		--num-cartesian-basis)
+			varfunc=get_cartesian_basis
+			;;
 		--theory)
 			varfunc=get_theory
 			;;
@@ -74,8 +83,14 @@ function parse_option(){
 		--cpu-time)
 			varfunc=get_cpu_time
 			;;
+		--total-cpu-time)
+			varfunc=get_total_cpu_time
+			;;
 		--elapsed-time)
 			varfunc=get_elapsed_time
+			;;
+		--total-elapsed-time)
+			varfunc=get_total_elapsed_time
 			;;
 		*)
 			error "unknown option: '${args[1]}'"
@@ -185,6 +200,36 @@ function get_basis(){
 		sed -r 's/ +$//'
 }
 
+function get_num_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'basis functions' |
+		grep primitive |
+		tail -n 1 |
+		sed -r 's/[^0-9]+/ /g' |
+		awk '{print $1}'
+}
+
+function get_primitive_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'basis functions' |
+		grep primitive |
+		tail -n 1 |
+		sed -r 's/[^0-9]+/ /g' |
+		awk '{print $2}'
+}
+
+function get_cartesian_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'basis functions' |
+		grep primitive |
+		tail -n 1 |
+		sed -r 's/[^0-9]+/ /g' |
+		awk '{print $3}'
+}
+
 function get_theory(){
 }
 
@@ -279,9 +324,21 @@ function get_cpu_time(){
 		grep 'Job cpu time' |
 		sed -r 's/.+://' |
 		sed -r 's/\.$//' |
+		xargs -d '\n' -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
+}
+
+function get_total_cpu_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Job cpu time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
 		xargs echo |
 		xargs -I{} date --date '19700101 {}' +%s |
-		xargs -I{} expr {} - `date --date '19700101' +%s`
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
 }
 
 function get_elapsed_time(){
@@ -290,10 +347,23 @@ function get_elapsed_time(){
 		grep 'Elapsed time' |
 		sed -r 's/.+://' |
 		sed -r 's/\.$//' |
+		xargs -d '\n' -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
+}
+
+function get_total_elapsed_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Elapsed time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
 		xargs echo |
 		xargs -I{} date --date '19700101 {}' +%s |
-		xargs -I{} expr {} - `date --date '19700101' +%s`
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
 }
+
 
 main "$@"
 
