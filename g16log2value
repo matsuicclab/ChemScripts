@@ -345,6 +345,52 @@ function get_version(){
 }
 
 function get_exit_status(){
+	# $1: logData
+	local logData="$1"
+	local error=`__get_error_status "$logData"`
+	if [ "$error" ]; then
+		echo "$error"
+	else
+		echo "Normal termination"
+	fi
+}
+
+function __get_error_status(){
+	# $1: logData
+	local logData="$1"
+
+	#gaussianExitsSuddenly
+	#If there is no Error termination (or Normal termination) in the last 4 lines
+	if [ ! "`echo \"$logData\" | tail -n 4 | grep -e 'Normal termination' -e 'Error termination'`" ]; then
+		echo "gaussianExitsSuddenly"
+		return
+	fi
+
+	#failSCFConvg
+	#If SCF calculation does not converge
+	# TODO fix the problem of incorrect judgment when scf=xqc
+	[ "`echo \"$logData\" | grep 'Convergence criterion not met'`" ] &&
+		echo "failSCFConvg"
+
+	#failOpt
+	#If optimization fails
+	[ "`echo \"$logData\" | grep 'Optimization stopped'`" ] &&
+		echo "failOpt"
+
+	#smallInteratomicDistance
+	#If interatomic distance is too small and it fails
+	[ "`echo \"$logData\" | grep 'Small interatomic distances encountered'`" ] &&
+		echo "smallInteratomicDistance"
+
+	#FormBXProblem
+	#If the structure becomes a straight line or plane during the structural optimization process
+	[ "`echo \"$logData\" | grep -e 'FormBX had a problem' -e 'Linear angle in Tors' -e 'Linear angle in Bend' -e 'Error in internal coordinate system'`" ] &&
+		echo "FormBXProblem"
+
+	#NotEnoughMaxDisk
+	#If the program ends due to insufficient disk space
+	[ "`echo \"$logData\" | grep -e 'Transformation cannot fit in the specified MaxDisk.' -e 'Not enough resources for E2 calculation.'`" ] &&
+		echo "NotEnoughMaxDisk"
 }
 
 function get_cpu_time(){
