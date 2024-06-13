@@ -21,11 +21,11 @@ cat <<EOF
 	--num-basis           | num of basis function
 	--num-primitive-basis | num of primitive basis function
 	--num-cartesian-basis | num of cartesian basis function
-	--theory         | theory of electronic state
+	--theory         | theory of electronic state (unimplemented)
 	--SCF-energy     | SCF energy (total energy in B.O. approx.)
 	--total-opt-step | total num of optimization step
-	--geometry <num> | geometry in step <num>
-	--opt-geometry   | optimized geometry
+	--geometry <num> | geometry in step <num> (unimplemented)
+	--opt-geometry   | optimized geometry (unimplemented)
 	--num-im-freq    | num of imaginary frequencies
 	--scr-files-path | scratch files path
 	--version        | gaussian version
@@ -260,6 +260,7 @@ function get_cartesian_basis(){
 }
 
 function get_theory(){
+	error "unimplemented"
 }
 
 function get_scf_energy(){
@@ -285,6 +286,8 @@ function get_geometry(){
 	# $2: logData
 	local step="$1"
 	local logData="$2"
+
+	error "unimplemented"
 	#echo "$1" |
 
 }
