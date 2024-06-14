@@ -35,6 +35,7 @@ function process(){
 	# $1: inpFile
 	#
 	local xyzFile="$1"
+	local xyzContents=`cat "$xyzFile"`
 
 	# convert and print
 	echo "$xyzContents" |
