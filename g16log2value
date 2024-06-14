@@ -11,29 +11,29 @@ function help(){
 function option_help(){
 cat <<EOF
     --num-atom   | num of atoms
-	--num-elec   | num of electrons
-	--num-a-elec | num of alpha-electrons
-	--num-b-elec | num of beta-electrons
-	--charge        | charge
-	--multiplicity  | multiplicity
-	--stoichiometry | stoichiometry
-	--basis               | basis function
-	--num-basis           | num of basis function
-	--num-primitive-basis | num of primitive basis function
-	--num-cartesian-basis | num of cartesian basis function
-	--theory         | theory of electronic state (unimplemented)
-	--SCF-energy     | SCF energy (total energy in B.O. approx.)
-	--total-opt-step | total num of optimization step
-	--geometry <num> | geometry in step <num> (unimplemented)
-	--opt-geometry   | optimized geometry (unimplemented)
-	--num-im-freq    | num of imaginary frequencies
-	--scr-files-path | scratch files path
-	--version        | gaussian version
-	--exit-status    | gaussian exit status
-	--cpu-time           | cpu time for each internal job step
-	--total-cpu-time     | total cpu time
-	--elapsed-time       | elapsed time for each internal job step
-	--total-elapsed-time | total elapsed time
+    --num-elec   | num of electrons
+    --num-a-elec | num of alpha-electrons
+    --num-b-elec | num of beta-electrons
+    --charge        | charge
+    --multiplicity  | multiplicity
+    --stoichiometry | stoichiometry
+    --basis               | basis function
+    --num-basis           | num of basis function
+    --num-primitive-basis | num of primitive basis function
+    --num-cartesian-basis | num of cartesian basis function
+    --theory         | theory of electronic state (unimplemented)
+    --SCF-energy     | SCF energy (total energy in B.O. approx.)
+    --total-opt-step | total num of optimization step
+    --geometry <num> | geometry in step <num> (unimplemented)
+    --opt-geometry   | optimized geometry (unimplemented)
+    --num-im-freq    | num of imaginary frequencies
+    --scr-files-path | scratch files path
+    --version        | gaussian version
+    --exit-status    | gaussian exit status
+    --cpu-time           | cpu time for each internal job step
+    --total-cpu-time     | total cpu time
+    --elapsed-time       | elapsed time for each internal job step
+    --total-elapsed-time | total elapsed time
 EOF
 }
 
