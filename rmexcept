@@ -7,8 +7,8 @@ source "${SCRIPT_DIR}"/abstract/common
 function help(){
 cat <<EOF
 rmexcept
-    remove everything except specified files
-    this do not remove hidden files
+    remove all files in the current directory except the specified files
+    this does not remove hidden files
 
 usage:
     + rmexcept [option] <file>
@@ -16,7 +16,7 @@ usage:
 
 option usage:
     -h, -help, --help | display this help
-    -r, -R, --recursive | remove directories and their contents recursively 
+    -r, -R, --recursive | remove directories and their contents recursively
 
 EOF
 }
@@ -45,12 +45,18 @@ do
 done
 
 notDeleteFiles=("$@")
+evacuatedFiles=()
 
 for i in `seq 0 "$((${#notDeleteFiles[@]} - 1))"`
 do
         f="${notDeleteFiles[i]}"
-        mv "$f" ".$f"
+        f2=`mktemp -p . .XXXXXX`
+        evacuatedFiles+=("$f2")
+        mv "$f" "$f2"
 done
+
+# redundant processing
+shopt -u dotglob
 
 # If set -e is used, rm * may fail, so do not specify it.
 set +e
@@ -60,7 +66,8 @@ set -e
 for i in `seq 0 "$((${#notDeleteFiles[@]} - 1))"`
 do
         f="${notDeleteFiles[i]}"
-        mv ".$f" "$f"
+        f2="${evacuatedFiles[i]}"
+        mv "$f2" "$f"
 done
 
 
