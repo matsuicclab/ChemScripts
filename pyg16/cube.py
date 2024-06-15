@@ -1,0 +1,941 @@
+import re
+import itertools
+import copy
+
+import numpy as np
+from scipy.interpolate import RegularGridInterpolator
+
+class Cube:
+    """
+    gaussianのユーティリティcubegenが生成するcubeファイルを読み込むクラス
+
+    cubeファイル内の単位はBohrで統一されているので
+    (cubegenでの作成時にBohrとangstromを間接的に指定するがそれは入力パラメータの単位を指している)
+    特に読み込み時に一部を単位変換することはしない。
+    ただし、Cubeクラス利用者が単位を指定できるようにsetUnit()が存在する。
+    """
+    def __init__(self, **args):
+        if 'filePath' in args.keys():
+            self.__init__fromFile(**args)
+        elif 'cubeData' in args.keys():
+            self.__init__fromCubeData(**args)
+        else:
+            raise ValueError('args must contain filePath or cubeData')
+
+
+    def __init__fromFile(self, filePath=None, valueNames=None):
+        # 値チェック
+        if filePath is None:
+            raise ValueError('filePath is None')
+
+        # ファイル読み込み
+        with open(filePath, mode='r') as f:
+            try:
+                data = [s.strip() for s in f.readlines()]
+            except UnicodeDecodeError as e:
+                # binaryではないか
+                print('Cube file, {} may be a binary file'.format(filePath))
+                print(e)
+                exit()
+
+
+        # ヘッダー行が存在するか
+        # 3行目に'E'が含まれていないかどうかで判別
+        if 'E' in data[2]:
+            raise IOError('Cube file, {} may not contain header'.format(filePath))
+
+        # 3行目からfloatの配列に変換
+        titleData = data[0:2]
+        numData = data[2:]
+        numData = [re.split(' +', s) for s in numData]
+        numData = [[float(s) for s in l] for l in numData]
+
+        # 結合
+        data = titleData + numData
+
+        # 単位
+        self.__unit = 'Bohr'
+        # 原子数
+        self.__numAtom = int(data[2][0])
+        # 格子点の基準点（開始位置）
+        self.__startingPoint = np.array(data[2][1:4])
+        # データの次元 (設定されてなければ1にする)
+        if len(data[2]) == 4:
+            self.__valueDim = 1
+        else:
+            self.__valueDim = int(data[2][4])
+
+        # 値の名前設定
+        # 先に初期化しておく
+        self.__valueNames = None
+        self.__valueNames = self.__checkValueNames(valueNames)
+
+        # 格子のステップ数と単位ベクトル
+        # np.ndarray: [n1,n2,n3] (np.int32)
+        self.__numGridPoint = np.array([int(l[0]) for l in data[3:6]])
+        # np.ndarray: [[v1x,v1y,v1z], [v2x,v2y,v2z], [v3x,v3y,v3z]]
+        self.__stepVector = np.array([l[1:4] for l in data[3:6]])
+
+        # 原子番号、原子座標
+        # np.ndarray: shape: (numAtom,) (np.int32)
+        self.__atomicNumData = np.array([int(l[0]) for l in data[6:6+self.__numAtom]])
+        # np.ndarray: shape: (numAtom, 3)
+        self.__atomXYZData = np.array([[l[2],l[3],l[4]] for l in data[6:6+self.__numAtom]])
+
+        # cubeデータ取り出し
+        # 平坦化し、3次元の行列に変換
+        self.__cubeData = np.array(
+                            list(itertools.chain.from_iterable(data[6+self.__numAtom:]))
+                        ).reshape(*self.__numGridPoint,self.__valueDim)
+
+        # contourデータ保持
+        self.__contourList = []
+
+    def __init__fromCubeData(self, startingPoint=None, stepVector=None, numGridPoint=None, cubeData=None, valueDim=1, valueNames=None, atomicNumData=None, atomXYZData=None, unit='Bohr'):
+        """
+        格子データが既に存在する場合に利用する
+
+        unitはstartingPoint, stepVectorの単位の指定に使う
+        AngstromとBohrが有効
+
+        cubeDataはnp.ndarrayであり、
+        shapeは1次元(nx*ny*nz*valueDim,)または3次元(nx,ny,nz)(valueDim==1)、
+        複数の格子データが存在する場合は4次元(nx,ny,nz,valueDim)とする
+        """
+        # 値チェック
+        if startingPoint is None:
+            raise ValueError('startingPoint is None')
+        if stepVector is None:
+            raise ValueError('stepVector is None')
+        if numGridPoint is None:
+            raise ValueError('numGridPoint is None')
+        if cubeData is None:
+            raise ValueError('cubeData is None')
+
+        # startingPoint
+        if type(startingPoint) not in [np.ndarray, list, tuple]:
+            # startingPointはnp.ndarrayかlistかtupleである必要がある
+            raise TypeError('type of startingPoint must be np.ndarray or list, or tuple.')
+        elif type(startingPoint) in [list, tuple]:
+            # np.ndarrayに変換
+            startingPoint = np.array(startingPoint)
+        if startingPoint.shape != (3,):
+            raise ValueError('shape of startingPoint must be (3,)')
+        if startingPoint.dtype.name not in ['float64', 'int32', 'int64']:
+            raise TypeError('dtype of startingPoint must be float64 or int32')
+
+        # stepVector
+        if type(stepVector) not in [np.ndarray, list, tuple]:
+            # stepVectorはnp.ndarrayかlistかtupleである必要がある
+            raise TypeError('type of stepVector must be np.ndarray or list, or tuple.')
+        elif type(stepVector) in [list, tuple]:
+            # np.ndarrayに変換
+            stepVector = np.array(stepVector)
+        if stepVector.shape != (3,3):
+            raise ValueError('shape of stepVector must be (3,3)')
+        if stepVector.dtype.name not in ['float64', 'int32', 'int64']:
+            raise TypeError('dtype of stepVector must be float64 or int32, or int64')
+
+        # numGridPoint
+        if type(numGridPoint) is not np.ndarray:
+            # listかtupleならnp.ndarrayに変換
+            if type(numGridPoint) not in [list, tuple]:
+                raise TypeError('type of numGridPoint must be np.ndarray, list or tuple')
+            else:
+                numGridPoint = np.array(numGridPoint)
+        if numGridPoint.shape != (3,):
+            raise ValueError('length of numGridPoint must be 3')
+        if numGridPoint.dtype.name not in ['int32', 'int64']:
+            raise TypeError('dtype of numGridPoint must be int32 or int64')
+
+        # valueDim
+        if type(valueDim) is not int:
+            raise TypeError('type of valueDim must be int')
+        if valueDim < 1:
+            raise ValueError('valueDim must be larger than 0')
+
+        # cubeData
+        if type(cubeData) not in [np.ndarray, list, tuple]:
+            # cubeDataはnp.ndarrayかlistかtupleである必要がある
+            raise TypeError('type of cubeData must be np.ndarray or list, or tuple.')
+        elif type(cubeData) in [list, tuple]:
+            # np.ndarrayに変換
+            cubeData = np.array(cubeData)
+        if cubeData.dtype.name != 'float64':
+            raise TypeError('type of elements of cubeData must be float64')
+        if len(cubeData.shape) == 1:
+            cubeData = cubeData.reshape(*numGridPoint, valueDim)
+        elif len(cubeData.shape) == 3 and valueDim == 1:
+            cubeData = cubeData.reshape(*numGridPoint, 1)
+        elif len(cubeData.shape) == 4:
+            # reshapeする必要はないがnumGridPointに一致するかは確認する
+            if cubeData.shape != tuple(list(numGridPoint) + [valueDim]):
+                raise ValueError('shape of cubeData must match (nx,ny,nz,valueDim)')
+        else:
+            # いずれでもなかった場合
+            raise ValueError('shape of cubeData must be (nx*ny*nz*valueDim,) or (nx,ny,nz)(valueDim==1), or (nx,ny,nz,valueDim)')
+
+        self.__startingPoint = startingPoint
+        self.__stepVector = stepVector
+        self.__numGridPoint = numGridPoint
+        self.__unit = unit
+        self.__valueDim = valueDim
+        self.__cubeData = cubeData
+
+        # 値の名前設定
+        # 先に初期化しておく
+        self.__valueNames = None
+        self.__valueNames = self.__checkValueNames(valueNames)
+
+        # atomicNumData, atomXYZData
+        if atomicNumData is not None and atomXYZData is not None:
+            if type(atomicNumData) in [list, tuple]:
+                # listかtupleの場合は変換しておく
+                atomicNumData = np.array(atomicNumData)
+            if type(atomicNumData) is not np.ndarray:
+                # listかtupleならnp.ndarrayに変換
+                raise TypeError('type of atomicNumData must be np.ndarray, list or tuple')
+            if atomicNumData.dtype.name not in ['int32','int64'] or any(atomicNumData < 1):
+                # 要素は自然数のintのみ
+                raise TypeError('elements of atomicNumData must be positive, and the type must be int')
+            if len(atomicNumData.shape) != 1:
+                raise ValueError('shape of atomicNumData must be (*,)')
+
+            if type(atomXYZData) in [list, tuple]:
+                # listやtupleの場合は変換しておく
+                atomXYZData = np.array(atomXYZData)
+            if type(atomXYZData) is not np.ndarray:
+                raise TypeError('type of atomXYZData must be np.ndarray or list, or tuple')
+            if atomXYZData.dtype.name != 'float64':
+                raise TypeError('dtype of atomXYZData must be float64')
+            if len(atomXYZData.shape) != 2 or atomXYZData.shape[1] != 3:
+                raise ValueError('shape of atomXYZData must be (*,3)')
+            # 要素数は一致しているか
+            if len(atomicNumData) != len(atomXYZData):
+                raise ValueError('The number of atoms differs between atomicNumData and atomXYZData')
+
+            # メンバに設定
+            self.__numAtom = len(atomicNumData)
+            self.__atomicNumData = atomicNumData
+            self.__atomXYZData = atomXYZData
+        else:
+            # どちらかが欠けている場合は設定しない
+            self.__numAtom = 0
+            self.__atomicNumData = None
+            self.__atomXYZData = None
+
+
+    def __checkValueNames(self, valueNames):
+        """
+        追加するvalueNamesが適切な値になっているかをチェックし、可能ならば修正したもの(intかstrのlist)を返す
+        self.__valueDimは先に更新されていることを想定
+        """
+
+        if valueNames is not None:
+            # valueNameが指定されている場合
+            if type(valueNames) is int or type(valueNames) is str:
+                valueNames = [valueNames]
+            if len(valueNames) != self.__valueDim:
+                raise ValueError('The length of valueName does not fit the number of cube data')
+            for n in valueNames:
+                if type(n) is not int and type(n) is not str:
+                    raise ValueError('ValueNames must be str list or int list.')
+        elif valueNames is None:
+            if self.__valueNames is None:
+                # まだ一つも値が存在しない場合
+                numAlreadyExists = 0
+            else:
+                # 既に値が存在していて、今回は追加する値の名前を決める場合
+                numAlreadyExists = len(self.__valueNames)
+
+            # 追加後の値の数
+            newValueDim = numAlreadyExists + len(valueNames)
+            # 追加する値の名前を設定
+            valueNames = list(range(numAlreadyExists,newValueDim))
+
+        return valueNames
+
+    def giveCubeData(self):
+        """
+        cubeデータと値の名前リストのコピーを返す
+        """
+        return copy.deepcopy(self.__valueNames), copy.deepcopy(self.__cubeData)
+
+    def giveStepVector(self):
+        """
+        cubeデータの実座標復元のための格子ベクトルを返す
+        """
+        return copy.deepcopy(self.__stepVector)
+
+    def giveNumGridPoint(self):
+        """
+        グリッドの各方向の点数を返す
+        """
+        return copy.deepcopy(self.__numGridPoint)
+
+    def giveStartingPoint(self):
+        """
+        cubeデータの実座標復元のための格子の開始位置を返す
+        """
+        return copy.deepcopy(self.__startingPoint)
+
+    def giveNodeCoord(self):
+        """
+        格子座標を返す
+        return: np.ndarray (shape: (na, nb, nc, 3))
+        """
+        na, nb, nc = self.__numGridPoint
+        a,b,c = np.meshgrid(np.arange(na),np.arange(nb),np.arange(nc), indexing='ij')
+        sv1 = self.__stepVector[0]
+        sv2 = self.__stepVector[1]
+        sv3 = self.__stepVector[2]
+        nodeCoord = self.__startingPoint + a[:,:,:,np.newaxis] * sv1 + b[:,:,:,np.newaxis] * sv2 + c[:,:,:,np.newaxis] * sv3
+        return nodeCoord
+
+    def giveAtomData(self):
+        """
+        各原子の原子番号と核座標を返す
+        return: (np.ndarray, np.ndarray)
+            [0]: shape: (numAtom,) (np.int32)
+            [1]: shape: (numAtom, 3)
+        """
+        return copy.deepcopy(self.__atomicNumData), copy.deepcopy(self.__atomXYZData)
+
+    def __convertCoordToOrtho(self, r):
+        """
+        実座標(xyz)を直交座標(ijk)へ変換する
+
+        r: np.ndarray (shape: (n, 3) or (3,))
+        return: np.ndarray (shape: (n, 3) or (3,))
+        """
+        # -> r = r0 + [v1,v2,v3] @ p
+        #    p = V^-1 (r-r0)
+
+        if r.shape == (3,):
+            _r = r.reshape(1,3)
+        else:
+            _r = r
+
+        V = self.__stepVector.T
+        Vinv = np.linalg.inv(V)
+        p = (Vinv @ (_r - self.__startingPoint).T).T # shape: (n, 3)
+
+        if r.shape == (3,):
+            return p.reshape(3)
+        else:
+            return p
+
+
+    def interpolate(self, r, method='linear'):
+        """
+        補間値を計算
+        https://zenn.dev/tab_ki/articles/interpolation_of_3d_data
+
+        r: 補間する位置ベクトル: np.ndarray (shape: (n, 3))
+        return: 補間値: np.ndarray (shape: (n, valueDim))
+        """
+
+        # RegularGridInterpolatorを使って補間計算を行う
+        # ただし、補間関数を生成するときに、グリッド位置を
+        # [0,1,...,na], [0,1,...,nb], [0,1,...,nc]の3配列で指定する仕様であるため、
+        # 実格子座標(r)を直交系座標(p)へ変換する(__convertCoordToOrtho)
+
+        # 補間関数の生成
+        na, nb, nc = self.__numGridPoint
+        # bounds_error: Falseの場合、補外することになった場合適当な値を代わりにセットする(デフォルト: np.nan)
+        interp = RegularGridInterpolator((np.arange(na), np.arange(nb), np.arange(nc)), self.__cubeData, bounds_error=False)
+
+        # 指定された座標を直交系に変換
+        p = self.__convertCoordToOrtho(r)
+
+        # 補間手法を設定
+        interp.method = method
+        # 補間値を計算
+        return interp(p)
+
+
+    def addCubeData(self, newCubeData, valueNames=None):
+        """
+        cubeデータを新しく追加する
+        newCubeData: numpy配列((x方向の点数)*(y方向の点数)*(z方向の点数)*(値の数)の次元)
+        """
+        # numpy配列か
+        if type(newCubeData) is not np.ndarray:
+            raise ValueError('Type of newCubeData must be numpy array')
+
+        # 次元をチェック
+        if len(self.__cubeData.shape) != len(newCubeData.shape) or self.__cubeData.shape[:-1] != newCubeData.shape[:-1]:
+            raise ValueError('Does not fit the xyz dimension of the existing cubeData.')
+
+        # 値の数を更新
+        self.__valueDim += newCubeData.shape[-1]
+
+        # 値の名前をチェックし更新
+        valueNames = self.__checkValueNames(valueNames)
+        self.__valueNames.extend(valueNames)
+
+        # 問題なければcubeDataに追加
+        self.__cubeData = np.block([self.__cubeData, newCubeData])
+
+    def write(self, cubeFilePath, header=True):
+        """
+        CubeデータをCubeファイルに書き出し
+
+        cubeFilePath: 書き出し先
+        header: ヘッダーを入れるかどうか
+        """
+        if type(header) is not bool:
+            raise ValueError('type of \'header\' must be bool')
+        if type(cubeFilePath) is not str:
+            raise ValueError('type of \'cubeFilePath\' must be str')
+
+        """
+        Cubeファイル仕様(https://qiita.com/sahayan/items/ac700c5478920e2cd3dd)
+        - 1,2行目...タイトル(コメント)
+        - 3行目...{原子数} {格子点の(0,0,0)位置x} {y} {z} {Cubeデータの次元数}
+        - 4行目...{1つ目の格子ベクトル方向への格子点数} {1つ目の格子ベクトルx} {y} {z}
+        - 5行目...2つ目の格子ベクトル
+        - 6行目...3つ目の格子ベクトル
+        - 7行目~...{原子番号} {価電子数} {x} {y} {z}
+            - 原子データが存在しない場合は書き出さないようにする
+            - ここまでヘッダー
+        - 以降...{Cubeデータ(0,0,0,0)} {(0,0,0,1)} {(0,0,0,2)} {(0,0,0,3)} {(0,0,0,4)} {(0,0,0,5)}
+            - 各行6個ずつ値を出力
+            - (0,0,n3,d)まで出力したら改行して(0,1,0,0)から再開
+        """
+        if header:
+            header1 = 'Cube Data generated by Gaussian-Utility LoadCUBE.Cube.write()\n'
+            header2 = 'value:{}\n'.format(self.__valueNames)
+            header3 = '{} {} {} {} {}\n'.format(self.__numAtom, *self.__startingPoint, self.__valueDim)
+            header456 = ''.join(['{} {} {} {}\n'.format(n,*v) for n,v in zip(self.__numGridPoint,self.__stepVector)])
+            if self.__atomicNumData is not None:
+                header7 = ''.join(['{} {} {} {} {}\n'.format(n,n,*v) for n,v in zip(self.__atomicNumData,self.__atomXYZData)])
+            else:
+                header7 = ''
+
+            headerContents = ''.join([header1,header2,header3,header456,header7])
+        else:
+            headerContents = ''
+
+        # format用のテンプレートを予め最後まで作っておいて、一気にcubeDataを流し込む感じで作る
+        # (0,0,n3,d)までの間に6個値を出力する行の数と、端数の行の数(0 or 1)を取得し、(0,0,n3,d)までのテンプレートをまず作成
+        numValueTon3d = self.__cubeData.shape[2] * self.__cubeData.shape[3]
+        numLineSixValue = numValueTon3d // 6
+        numFraction = numValueTon3d % 6 # 端数行に含まれる値の数
+        numLineFraction = np.sign(numFraction) # 端数行の数(0 or 1)
+        sixValueLineTemplate = ''.join(['{} ' for i in range(6)]) + '\n'
+        fractionLineTemplate = ''.join(['{} ' for i in range(numFraction)]) + '\n'
+        formatTemplate = ''.join([sixValueLineTemplate for i in range(numLineSixValue)] + [fractionLineTemplate for i in range(numLineFraction)])
+        formatTemplate = ''.join(itertools.repeat(formatTemplate, self.__cubeData.shape[0] * self.__cubeData.shape[1]))
+
+        mainContents = formatTemplate.format(*self.__cubeData.reshape(-1))
+
+        # 書き出し
+        with open(cubeFilePath, mode='w') as f:
+            f.write(headerContents)
+            f.write(mainContents)
+
+
+    def debug(self):
+        print('startingPoint')
+        print(self.__startingPoint)
+        print('----')
+        print('valueDim')
+        print(self.__valueDim)
+        print('----')
+        print('numGridPoint')
+        print(self.__numGridPoint)
+        print('----')
+        print('stepVector')
+        print(self.__stepVector)
+        print('----')
+        print('atomicNum')
+        print(self.__atomicNumData)
+        print('----')
+        print('atomXYZData')
+        print(self.__atomXYZData)
+        print('----')
+        print('cubeData[:5]')
+        print(self.__cubeData[:5])
+        print('cubeData[-5:]')
+        print(self.__cubeData[-5:])
+        print(self.__cubeData.shape)
+
+    def setUnit(self, unit='Bohr'):
+        """
+        座標の単位を設定
+        デフォルト: Bohr
+        """
+        bohrLength = 0.529177210903 # [angstrom]
+
+        if self.__unit == unit:
+            # 変更なし
+            return
+        elif unit == 'Bohr':
+            # 現在: Angstrom
+            # 変更後: Bohr
+            factor = 1/bohrLength
+        elif unit == 'Angstrom':
+            # 現在: Bohr
+            # 変更後: Angstrom
+            factor = bohrLength
+        else:
+            raise ValueError('invalid unit')
+
+        # 変換
+        self.__startingPoint *= factor
+        self.__stepVector *= factor
+        self.__atomXYZData *= factor
+        self.__unit = unit
+
+
+class Slice:
+    """
+    Cubeから生成されたスライス面のデータクラス
+    """
+    def __init__(self, cube, pos=None, normal=None, pcaauto=False):
+        """
+        スライスデータを生成
+        pos: np.ndarray (shape: (3,))
+        normal: np.ndarray (shape: (3,))
+        pcaauto: PCA分析を使ってスライス面を自動決定
+
+        """
+        # posとnormalを設定
+        if pcaauto:
+            from sklearn.decomposition import PCA
+            # 原子核の座標を取得
+            atomNo, nucxyz = cube.giveAtomData()
+            pos = np.mean(nucxyz, axis=0)
+
+            # PCA実行
+            pca = PCA()
+            pca.fit(nucxyz - pos)
+            # PC3軸目を法線に設定する
+            normal = pca.components_[-1]
+        else:
+            if pos is None or normal is None:
+                raise ValueError()
+            elif type(pos) is not np.ndarray or type(normal) is not np.ndarray:
+                raise TypeError()
+            elif pos.shape != (3,) or normal.shape != (3,):
+                raise ValueError()
+
+        self.__pos = pos
+        self.__normal = normal
+
+        # 面の接線ベクトルを生成
+        normVector = normal / np.linalg.norm(normal)
+        for tanVector in np.diag([1,1,1]): # 接線ベクトルの候補3つを順に判定
+            # 直交化
+            tanVector = tanVector - (tanVector@normVector) * normVector
+            if np.all(tanVector == 0):
+                # もしもtanVectorとnormVectorが線形従属ならば
+                continue
+            else:
+                # 線形独立の場合
+                break
+        tan2Vector = np.cross(normVector, tanVector)
+
+        # 規格化
+        tanVector  = tanVector  / np.linalg.norm(tanVector)
+        tan2Vector = tan2Vector / np.linalg.norm(tan2Vector)
+        self.__tanVector = tanVector
+        self.__tan2Vector = tan2Vector
+
+        # スライスの座標を生成
+        #
+        # スライスの幅がcubeの範囲を上回るように調整するために、
+        # 1. cubeの格子辺12本の端点v1,v2を用意
+        # 2. 格子辺12本とスライスの交点を計算
+        #     pos + alpha * t1 + beta * t2 = v1 + gamma * (v2 - v1)
+        #     -> [t1, t2, v1-v2]@[alpha,beta,gamma] = v1 - pos
+        # 3. 内分点(0<=gamma<=1)になるものだけを抽出
+        # 4. 内分点の座標からスライスの幅を決める
+        # 5. スライスの幅から適当な間隔でスライス上の座標を生成
+        # 6. 生成した座標がcubeの範囲内に存在するか確認
+
+        # 1.
+        #
+        # nsv1 = a * sv1 (== v1-v2)
+        # -> nsv2, nsv3を使ってv1を生成([0,nsv2,nsv3,nsv2+nsv3])、そこからnsv1を足してv2を生成
+        svs = cube.giveStepVector() # shape: (3,3)
+        nsvs = cube.giveNumGridPoint()[:,np.newaxis] * svs # shape: (3,3)
+        arr = nsvs[[1,2, 0,2, 0,1]].reshape(3,2,3) # shape: (3,2,3)
+        arr2 = np.sum(arr, keepdims=True, axis=1)  # shape: (3,1,3): nsv2+nsv3に相当
+        v1s = cube.giveStartingPoint() + np.hstack([np.zeros(arr2.shape), arr, arr2]) # shape: (3,4,3)
+        v2s = nsvs[[0, 1, 2],np.newaxis,:] + v1s           # shape: (3,4,3)
+
+        # 2.
+        #
+        # 交点座標計算
+        # 12本の交点を同時に計算
+        delta = (v2s-v1s).reshape(-1,3) # shape: (12,3)
+        A = np.stack([np.tile(tanVector, (12,1)), np.tile(tan2Vector, (12,1)), -delta], axis=2) # shape: (12,3,3)
+        b = (v1s.reshape(-1,3) - pos)[:,:,np.newaxis] # shape: (12,3,1)
+        Apinv = np.linalg.pinv(A) # shape: (12,3,3)
+        abg = Apinv @ b # alpha,beta,gamma, shape: (12,3,1)
+        # gammaの情報が重要なので、そこだけ取り出す
+        gamma = abg[:,2,:].reshape(-1)
+
+        # 3.
+        #
+        # 内分点に絞り込み
+        # Aが正則でない場合はgammaがinfになるように修正する
+        gamma = abg[:,2,:].reshape(-1)
+        gamma = np.where(np.abs(np.sign(np.linalg.det(A)))==0,np.inf,gamma)
+        isInternal = (gamma>=0) & (gamma<=1)
+        # 交点を実際に計算する
+        gamma = gamma[isInternal] # shape: (*,3)
+        v1s = v1s.reshape(-1,3)[isInternal] # shape: (*,3)
+        delta = delta[isInternal] # shape: (*,3)
+        intersec = v1s + gamma.reshape(-1,1) * delta # shape: (*,3)
+
+        # 4.
+        #
+        # 交点の中心centerから各交点を見て、t1,t2方向の幅を決める。
+        center = np.mean(intersec, axis=0) # shape: (3,)
+        self.__center = center
+        #
+        intersec_c1, intersec_c2 = self.project3DCoordToSlice(intersec) # shape: (*,)
+        intersec_c = np.stack([intersec_c1, intersec_c2]).T # shape: (*,2)
+        mincomponent = np.min(intersec_c, axis=0) # shape: (2,)
+        maxcomponent = np.max(intersec_c, axis=0) # shape: (2,)
+
+        # 5.
+        #
+        # min~maxの間を適当な間隔で生成
+        numpatch = 100
+        c1, c2 = np.meshgrid(np.linspace(mincomponent[0], maxcomponent[0], numpatch), np.linspace(mincomponent[1], maxcomponent[1], numpatch)) # shape: (numpatch, numpatch)
+        self.__numpatch = numpatch
+        self.__c1 = c1
+        self.__c2 = c2
+        # スライス上の点の座標を生成
+        r = self.convert2DCoordTo3DCoord(c1, c2).reshape(numpatch,numpatch,3) # shape: (numpatch,numpatch,3)
+
+        # 6.
+        #
+        # スライス上の値を計算し、Sliceを生成
+        value = cube.interpolate(r.reshape(-1,3)).reshape(numpatch, numpatch)
+
+        self.__r = r
+        self.__value = value
+
+    def give3DCoord(self):
+        """
+        return: shape: (numpatch,numpatch,3)
+        """
+        return copy.deepcopy(self.__r)
+    def give2DCoord(self):
+        """
+        return: (shape: (numpatch,numpatch), shape: (numpatch,numpatch))
+        """
+        return copy.deepcopy(self.__c1), copy.deepcopy(self.__c2)
+    def convert2DCoordTo3DCoord(self, c1, c2):
+        """
+        c1, c2: shape: (*,)
+        return: shape: (*,3)
+        """
+        r = self.__center + c1.reshape(-1,1) * self.__tanVector + c2.reshape(-1,1) * self.__tan2Vector
+        return r
+    def project3DCoordToSlice(self, r):
+        """
+        r: shape: (*,3)
+        return: c1,c2 : shape: (*,)
+        """
+        components = (r - self.__center) @ np.stack([self.__tanVector, self.__tan2Vector], axis=1) # shape: (*,2)
+        return components[:,0], components[:,1]
+
+    def giveSliceValue(self):
+        """
+        return: shape: (numpatch,numpatch)
+        """
+        return copy.deepcopy(self.__value)
+    def give3DRange(self):
+        """
+        return: shape: (3,2) : [[xmin,xmax],[ymin,ymax],[zmin,zmax]]
+        """
+        _value = self.__value.reshape(-1) # shape: (numpatch**2,)
+        _r = self.__r.reshape(-1,3)       # shape: (numpatch**2,3)
+        _r_notnan = _r[~np.isnan(_value)]
+        result = np.vstack([np.min(_r, axis=0), np.max(_r, axis=0)]) # shape: (2,3)
+        return result.T # shape: (3,2)
+
+
+class CubeVisualizer:
+    """
+    仮称
+    """
+    def __init__(self):
+        pass
+
+    def __giveRadius(self, n, scale):
+        """
+        原子半径
+        周期      2r[A]
+        1(1-2)       0.7878
+        2(3-10)      1.0918
+        3(11-18)     1.1801
+        4(19-36)     1.2477
+        5(37-54)     1.29
+        6(55-86)     1.34
+        7(87-118)    1.3903
+
+
+        n: 原子番号 (np.ndarray, shape:(n,))
+        """
+        def convertToRadius(n):
+            if n<=2:
+                return 0.7878/2
+            elif n<=10:
+                return 1.0918/2
+            elif n<=18:
+                return 1.1801/2
+            elif n<=36:
+                return 1.2477/2
+            elif n<=54:
+                return 1.29/2
+            elif n<=86:
+                return 1.34/2
+            else:
+                return 1.3903/2
+
+        return np.array([convertToRadius(ni) for ni in n]) * scale
+
+    def __giveColorConfig(self, n):
+        """
+        原子番号から色を設定
+        """
+        colorDict = {
+            1 : [204,204,204],
+            2 : [216,255,255],
+            3 : [204,124,255],
+            4 : [204,255,  0],
+            5 : [255,181,181],
+            6 : [142,142,142],
+            7 : [ 25, 25,229],
+            8 : [229,  0,  0],
+            9 : [178,255,255],
+            10: [175,226,244],
+            11: [170, 91,242],
+            12: [178,204,  0],
+            13: [209,165,165],
+            14: [127,153,153],
+            15: [255,127,  0],
+            16: [255,198, 40],
+            17: [ 25,239, 25],
+            18: [127,209,226]
+        }
+        colorConfig = ['rgb({},{},{})'.format(*colorDict[ni]) for ni in n]
+
+        return colorConfig
+
+    def giveMoleculeSurfacePlot(self, cube, scale=0.75):
+        """
+        分子の描画オブジェクトを生成
+        scale: 原子半径のスケールを調整
+
+        return: list of plotly.graph_objects.Surface
+        """
+        import plotly.graph_objects as go
+
+        atomNo, center = cube.giveAtomData()
+        radius = self.__giveRadius(atomNo, scale)
+        colorConfig = self.__giveColorConfig(atomNo)
+
+        datList = []
+        for c, r, n, rgb in zip(center, radius, atomNo, colorConfig):
+            theta = np.linspace(0,np.pi,15)
+            phi = np.linspace(0,2*np.pi,15)
+            theta, phi = np.meshgrid(theta, phi)
+            x = r * np.sin(theta) * np.cos(phi) + c[0]
+            y = r * np.sin(theta) * np.sin(phi) + c[1]
+            z = r * np.cos(theta) + c[2]
+
+            surfaceDat = go.Surface(
+                x=x, y=y, z=z,
+                colorscale=[[0,rgb],[1,rgb]],
+                showscale=False
+            )
+            datList.append(surfaceDat)
+
+        return datList
+
+    def giveIsosurfacePlot(self, cube, value, enableNegative=True):
+        """
+        等値面プロットを生成
+        return: plotly.graph_objects.Isosurface
+        """
+        import plotly.graph_objects as go
+
+        # 各節点の座標を取得
+        node = cube.giveNodeCoord()
+        # 各点における値を取得
+        _, cubedata = cube.giveCubeData()
+
+        if enableNegative:
+            isomax = abs(value)
+            isomin = -abs(value)
+        else:
+            isomax = isomin = value
+
+        cubeIsosurfaceDat = go.Isosurface(
+            x=node[:,:,:,0].reshape(-1),
+            y=node[:,:,:,1].reshape(-1),
+            z=node[:,:,:,2].reshape(-1),
+            value=cubedata[:,:,:,0].reshape(-1),
+            isomin=isomin,
+            isomax=isomax,
+            caps=dict(x_show=False, y_show=False, z_show=False)
+        )
+
+        return cubeIsosurfaceDat
+
+    def giveSlicePlot(self, slice):
+        """
+        スライスプロットを生成
+
+        return: plotly.graph_objects.Surface
+        """
+        import plotly.graph_objects as go
+
+        r = slice.give3DCoord()
+        value = slice.giveSliceValue()
+
+        sliceDat = go.Surface(
+            x=r[:,:,0], y=r[:,:,1], z=r[:,:,2],
+            surfacecolor=value
+        )
+
+        return sliceDat
+
+    def giveIsolinesPlot(self, slice, numIsoline=None, stepIsoline=0.5, cutIsolineNote=None, thresholdNoteArrow=-np.inf):
+        """
+        スライス上の等値線プロットを生成
+        numIsoline: 等値線の数を設定
+        stepIsoline: 等値線の間隔を設定
+        cutIsolineNote: 等値線のレベル表記を省く対象を関数で設定
+        thresholdNoteArrow: 等値線のレベル表記に矢印を用いる閾値を設定(閾値以下に対して矢印を用いる)
+
+        return: list of plotly.graph_objects.Scatter3d, list of annotations
+        """
+        import plotly.graph_objects as go
+        import matplotlib.pyplot as plt
+
+        if cutIsolineNote is None:
+            cutIsolineNote = lambda level : False
+
+        # スライスのデータを取得
+        c1, c2 = slice.give2DCoord()
+        value = slice.giveSliceValue()
+        # スライスの代表長さ
+        sliceRepLength1 = np.max(c1)-np.min(c1)
+        sliceRepLength2 = np.max(c2)-np.min(c2)
+
+        # isolineのレベルを決定
+        level_min = np.nanmin(value)
+        level_max = np.nanmax(value)
+        if numIsoline is not None:
+            # numIsolineが指定されている場合はレベルの数を指定する
+            levels = np.linspace(level_min, level_max, numIsoline)
+        else:
+            # stepIsolineが指定されている場合はレベルの間隔を指定する
+            # levelがstepIsolineの整数倍になるように調整
+            levels = np.arange(
+                        np.ceil(level_min/stepIsoline)*stepIsoline,
+                        (np.floor(level_max/stepIsoline)+1)*stepIsoline,
+                        stepIsoline
+                    )
+
+        #
+        # matplotのcontourを使って座標を取得する
+        isolines = plt.contour(c1, c2, value, levels=levels)
+        plt.close() # これがないとplt.contour()が描画されるのでそれを防ぐ
+        # 等値線の座標を折れ線グラフで描画する
+        isolineDatList = []
+        annotationList = []
+        for i in range(len(isolines.collections)):
+            paths = isolines.collections[i].get_paths()
+            for j in range(len(paths)):
+                isoline_c1 = paths[j].vertices[:, 0] # shape: (*,)
+                isoline_c2 = paths[j].vertices[:, 1] # shape: (*,)
+                r = slice.convert2DCoordTo3DCoord(isoline_c1, isoline_c2) # shape: (*,3)
+                x = r[:,0]
+                y = r[:,1]
+                z = r[:,2]
+                level = levels[i]
+                trace = go.Scatter3d(x=x, y=y, z=z, mode='lines', line=dict(width=2, cmin=levels[0], cmax=levels[-1], color=np.ones_like(x)*level), showlegend=False)
+                isolineDatList.append(trace)
+
+                # annotation
+                if cutIsolineNote(level):
+                    continue
+                c1i = isoline_c1[0]
+                c2i = isoline_c2[0]
+                c1f = isoline_c1[-1]
+                c2f = isoline_c2[-1]
+                length = np.sum(np.sqrt(np.diff(isoline_c1)**2 + np.diff(isoline_c2)**2))
+                isLooped = (abs(c1i-c1f)<1e-10*sliceRepLength1) and (abs(c2i-c2f)<1e-10*sliceRepLength2)
+                annotationList.append(dict(
+                    text=level, x=x[0], y=y[0], z=z[0], font=dict(color='black'),
+                    showarrow=bool((length<thresholdNoteArrow) and isLooped),
+                    bgcolor='white', opacity=0.8
+                ))
+
+        return isolineDatList, annotationList
+
+"""
+上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
+"""
+def visualizeCubeSlice(cube=None, cubefile=None, option=None):
+    # load cube data
+    if cube is None:
+        cube = Cube(filePath=cubefile)
+
+    node = cube.giveNodeCoord()
+    xmin = node[:,:,:,0].min()
+    xmax = node[:,:,:,0].max()
+    ymin = node[:,:,:,1].min()
+    ymax = node[:,:,:,1].max()
+    zmin = node[:,:,:,2].min()
+    zmax = node[:,:,:,2].max()
+
+    cvis = CubeVisualizer()
+
+    molplotDatList = None
+    if cube.giveAtomData()[0] is not None:
+        molplotDatList = cvis.giveMoleculeSurfacePlot(cube, scale=1.5)
+
+    slice = Slice(cube, pos=np.zeros(3), normal=np.array([0,0,1]))
+    sliceDat = cvis.giveSlicePlot(slice)
+    isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, stepIsoline=0.5, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
+
+    sliceDat['colorscale'] = 'rainbow'
+    sliceDat['lighting'] = {'ambient':1.0}
+    for d in isolineDatList:
+        d['line']['colorscale'] = [[0,'rgb(0,0,0)'],[1,'rgb(0,0,0)']]
+    datList = [sliceDat, *isolineDatList]
+    if molplotDatList is not None:
+        datList.extend(molplotDatList)
+
+    fig = go.Figure(data=datList)
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(range=(xmin, xmax), showgrid=False, showticklabels=False, showbackground=False, title=''),
+            yaxis=dict(range=(ymin, ymax), showgrid=False, showticklabels=False, showbackground=False, title=''),
+            zaxis=dict(range=(zmin, zmax), showgrid=False, showticklabels=False, showbackground=False, title=''),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=(ymax-ymin)/(xmax-xmin), z=(zmax-zmin)/(xmax-xmin)),
+            camera=dict(
+                eye=dict(x=0, y=0, z=1),
+                up=dict(x=0,y=1,z=0)
+            ),
+            annotations=annotationList
+        ),
+        margin=dict(
+            l=20, r=20, t=10, b=10
+        )
+    )
+
+    fig.show()
+
