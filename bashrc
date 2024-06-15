@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # get the absolute path of this script
-declare -r ChemScript_bashrc_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE}")"; pwd)"
+ChemScript_bashrc_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE}")"; pwd)"
 
 # set PATH
 export PATH="${PATH}:${ChemScript_bashrc_SCRIPT_DIR}/bash"
