@@ -21,8 +21,17 @@ cat <<EOF
     --num-basis           | num of basis function
     --num-primitive-basis | num of primitive basis function
     --num-cartesian-basis | num of cartesian basis function
-    --theory         | theory of electronic state (unimplemented)
-    --SCF-energy     | SCF energy (total energy in B.O. approx.)
+    --theory          | theory of electronic state (unimplemented)
+    --solvation-model | solvation model
+    --solvent         | solvent
+    --SCF-energy        | SCF energy (total energy in B.O. approx.)
+    --total-energy      | total energy (= --SCF-energy)
+    --ZPVE-energy       | zero-point vibration energy
+    --total-ZPVE-energy | total energy + ZPVE
+    --internal-energy   | internal energy
+    --gibbs-energy      | gibbs energy
+    --temperature       | temperature
+    --pressure          | pressure
     --total-opt-step | total num of optimization step
     --geometry <num> | geometry in step <num> (unimplemented)
     --opt-geometry   | optimized geometry (unimplemented)
@@ -83,8 +92,35 @@ function parse_option(){
 		--theory)
 			varfunc=get_theory
 			;;
+		--solvation-model)
+			varfunc=get_solvation_model
+			;;
+		--solvent)
+			varfunc=get_solvent
+			;;
 		--SCF-energy)
-			varfunc=get_scf_energy
+			varfunc=get_total_energy
+			;;
+		--total-energy)
+			varfunc=get_total_energy
+			;;
+		--ZPVE-energy)
+			varfunc=get_ZPVE_energy
+			;;
+		--total-ZPVE-energy)
+			varfunc=get_total_ZPVE_energy
+			;;
+		--internal-energy)
+			varfunc=get_internal_energy
+			;;
+		--gibbs-energy)
+			varfunc=get_gibbs_energy
+			;;
+		--temperature)
+			varfunc=get_temperature
+			;;
+		--pressure)
+			varfunc=get_pressure
 			;;
 		--total-opt-step)
 			varfunc=get_total_opt_step
@@ -263,7 +299,12 @@ function get_theory(){
 	error "unimplemented"
 }
 
-function get_scf_energy(){
+function get_solvation_model(){
+}
+function get_solvent(){
+}
+
+function get_total_energy(){
 	# $1: logData
 	echo "$1" |
 		grep 'SCF Done' |
@@ -271,6 +312,19 @@ function get_scf_energy(){
 		sed -r 's/.+=//' |
 		sed -r 's/A\.U\..+//' |
 		sed -r 's/ //g'
+}
+
+function get_ZPVE_energy(){
+}
+function get_total_ZPVE_energy(){
+}
+function get_internal_energy(){
+}
+function get_gibbs_energy(){
+}
+function get_temperature(){
+}
+function get_pressure(){
 }
 
 function get_total_opt_step(){
