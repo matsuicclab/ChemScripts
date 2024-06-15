@@ -300,8 +300,10 @@ function get_theory(){
 }
 
 function get_solvation_model(){
+	error "unimplemented"
 }
 function get_solvent(){
+	error "unimplemented"
 }
 
 function get_total_energy(){
@@ -315,16 +317,22 @@ function get_total_energy(){
 }
 
 function get_ZPVE_energy(){
+	error "unimplemented"
 }
 function get_total_ZPVE_energy(){
+	error "unimplemented"
 }
 function get_internal_energy(){
+	error "unimplemented"
 }
 function get_gibbs_energy(){
+	error "unimplemented"
 }
 function get_temperature(){
+	error "unimplemented"
 }
 function get_pressure(){
+	error "unimplemented"
 }
 
 function get_total_opt_step(){
