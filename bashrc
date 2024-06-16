@@ -5,7 +5,7 @@ ChemScript_bashrc_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE}")"; pwd)"
 
 # set PATH
 export PATH="${PATH}:${ChemScript_bashrc_SCRIPT_DIR}/bash"
-export PYTHONPATH="${PYTHONPATH}:${ChemScript_bashrc_SCRIPT_DIR}/pyg16"
+export PYTHONPATH="${PYTHONPATH}:${ChemScript_bashrc_SCRIPT_DIR}/python"
 
 # set complete
 source "${ChemScript_bashrc_SCRIPT_DIR}/bash/complete.sh"
