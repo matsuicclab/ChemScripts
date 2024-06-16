@@ -24,7 +24,7 @@ function _g16log2value(){
 	    --SCF-energy
 	    --total-energy
 	    --ZPVE-energy
-	    --total-ZPVE-energy
+	    --total+ZPVE-energy
 	    --internal-energy
 	    --gibbs-energy
 	    --temperature
