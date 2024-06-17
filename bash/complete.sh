@@ -230,20 +230,96 @@ complete -F __complete_files2files_no_option mdout2csv
 
 
 ###################################################################
-# no difine of mkresp
+function __complete_mkresp(){
+	local cur prev cword
+	_get_comp_words_by_ref -n : cur prev cword
 
+	local flagoptionlist=(
+		-h --help
+	)
+	local valueoptionlist=()
+	local fileoptionlist=()
+	
+	if [[ "$cur" =~ ^- ]]; then
+		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
+		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
+	else
+		if [[ " ${flagoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		elif [[ " ${valueoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		elif [[ " ${fileoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		else
+			COMPREPLY=( $(compgen -f -- "$cur") )
+		fi
+	fi
+}
+complete -F __complete_mkresp mkresp
 
 ###################################################################
 complete -F __complete_files2files_no_option pdb2csv
 
 
 ###################################################################
-# no difine of plotmden
+function __complete_plotmden(){
+	local cur prev cword
+	_get_comp_words_by_ref -n : cur prev cword
+
+	local flagoptionlist=(
+		-h
+	)
+	local valueoptionlist=(
+		-d
+	)
+	local fileoptionlist=()
+	
+	if [[ "$cur" =~ ^- ]]; then
+		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
+		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
+	else
+		if [[ " ${flagoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		elif [[ " ${valueoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		elif [[ " ${fileoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		else
+			COMPREPLY=( $(compgen -f -- "$cur") )
+		fi
+	fi
+}
+complete -F __complete_plotmden plotmden
 
 
 ###################################################################
-# no difine of rmexcept
+function __complete_rmexcept(){
+	local cur prev cword
+	_get_comp_words_by_ref -n : cur prev cword
 
+	local flagoptionlist=(
+		-h --help
+		-r --recursive
+	)
+	local valueoptionlist=()
+	local fileoptionlist=()
+	
+	if [[ "$cur" =~ ^- ]]; then
+		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
+		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
+	else
+		if [[ " ${flagoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=( $(compgen -f -- "$cur") )
+		elif [[ " ${valueoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		elif [[ " ${fileoptionlist[@]} " =~ \ ${prev}\  ]]; then
+			COMPREPLY=()
+		else
+			COMPREPLY=( $(compgen -f -- "$cur") )
+		fi
+	fi
+}
+complete -F __complete_rmexcept rmexcept
 
 ###################################################################
 function __complete_smiles2png(){
