@@ -995,7 +995,9 @@ class CubeVisualizer:
 """
 上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
 """
-def visualizeCubeSlice(cube=None, cubefile=None, option=None):
+def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=None, pcaauto=None, cutIsolineNote=None, thresholdNoteArrow=None):
+    import plotly.graph_objects as go
+
     # load cube data
     if cube is None:
         cube = Cube(filePath=cubefile)
@@ -1010,11 +1012,13 @@ def visualizeCubeSlice(cube=None, cubefile=None, option=None):
 
     cvis = CubeVisualizer()
 
-    molplotDatList = None
+    datList = []
+
     if cube.giveAtomData()[0] is not None:
         molplotDatList = cvis.giveMoleculeSurfacePlot(cube, scale=1.5)
+        datList.extend(molplotDatList)
 
-    slice = Slice(cube, pos=np.zeros(3), normal=np.array([0,0,1]))
+    slice = Slice(cube, pos=slicecenter, normal=slicenormal, pcaauto=pcaauto)
     sliceDat = cvis.giveSlicePlot(slice)
     isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, stepIsoline=0.5, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
 
@@ -1022,9 +1026,9 @@ def visualizeCubeSlice(cube=None, cubefile=None, option=None):
     sliceDat['lighting'] = {'ambient':1.0}
     for d in isolineDatList:
         d['line']['colorscale'] = [[0,'rgb(0,0,0)'],[1,'rgb(0,0,0)']]
-    datList = [sliceDat, *isolineDatList]
-    if molplotDatList is not None:
-        datList.extend(molplotDatList)
+
+    datList.append(sliceDat)
+    datList.extend(isolineDatList)
 
     fig = go.Figure(data=datList)
     fig.update_layout(
