@@ -1050,12 +1050,20 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicepos=None, slicenormal=None
     datList.extend(isolineDatList)
 
     # set camera parameter
+    # convert to rad from deg
+    camerarotate = camerarotate / 180 * np.pi
     slicecenter = slice.giveSliceCenter()
     slicenormal = slice.giveSliceNormalVector()
     slicetangent = slice.giveSliceTangentVector()
-    camerapos = slicecenter + slicenormal * (16.8 / np.abs(xmax-xmin) * 100 / camerazoom)
+    camerapos = slicenormal * (16.8 / np.abs(xmax-xmin) * 100 / camerazoom)
     # rotation around normal axis
     cameraup = slicetangent * np.cos(camerarotate) + slicenormal * (slicenormal@slicetangent) * (1-np.cos(camerarotate)) + np.cross(slicenormal,slicetangent)*np.sin(camerarotate)
+
+    print('slicecenter: {}'.format(slicecenter))
+    print('slicenormal: {}'.format(slicenormal))
+    print('slicetangent: {}'.format(slicetangent))
+    print('camerapos: {}'.format(camerapos))
+    print('cameraup: {}'.format(cameraup))
 
     fig = go.Figure(data=datList)
     fig.update_layout(
