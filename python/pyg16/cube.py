@@ -424,9 +424,9 @@ class Cube:
         numLineSixValue = numValueTon3d // 6
         numFraction = numValueTon3d % 6 # 端数行に含まれる値の数
         numLineFraction = np.sign(numFraction) # 端数行の数(0 or 1)
-        sixValueLineTemplate = ''.join(['{} ' for i in range(6)]) + '\n'
-        fractionLineTemplate = ''.join(['{} ' for i in range(numFraction)]) + '\n'
-        formatTemplate = ''.join([sixValueLineTemplate for i in range(numLineSixValue)] + [fractionLineTemplate for i in range(numLineFraction)])
+        sixValueLineTemplate = ''.join(['{} ' for _ in range(6)]) + '\n'
+        fractionLineTemplate = ''.join(['{} ' for _ in range(numFraction)]) + '\n'
+        formatTemplate = ''.join([sixValueLineTemplate for _ in range(numLineSixValue)] + [fractionLineTemplate for _ in range(numLineFraction)])
         formatTemplate = ''.join(itertools.repeat(formatTemplate, self.__cubeData.shape[0] * self.__cubeData.shape[1]))
 
         mainContents = formatTemplate.format(*self.__cubeData.reshape(-1))
@@ -494,19 +494,19 @@ class Slice:
     """
     Cubeから生成されたスライス面のデータクラス
     """
-    def __init__(self, cube, pos=None, normal=None, pcaauto=False):
+    def __init__(self, cube, pos=None, normal=None, pcaAuto=False):
         """
         スライスデータを生成
         pos: np.ndarray (shape: (3,))
         normal: np.ndarray (shape: (3,))
-        pcaauto: PCA分析を使ってスライス面を自動決定
+        pcaAuto: PCA分析を使ってスライス面を自動決定
 
         """
         # posとnormalを設定
-        if pcaauto:
+        if pcaAuto:
             from sklearn.decomposition import PCA
             # 原子核の座標を取得
-            atomNo, nucxyz = cube.giveAtomData()
+            _, nucxyz = cube.giveAtomData()
             pos = np.mean(nucxyz, axis=0)
 
             # PCA実行
@@ -867,7 +867,7 @@ class CubeVisualizer:
         colorConfig = self.__giveColorConfig(atomNo)
 
         datList = []
-        for c, r, n, rgb in zip(center, radius, atomNo, colorConfig):
+        for c, r, rgb in zip(center, radius, colorConfig):
             theta = np.linspace(0,np.pi,15)
             phi = np.linspace(0,2*np.pi,15)
             theta, phi = np.meshgrid(theta, phi)
@@ -1012,12 +1012,12 @@ class CubeVisualizer:
 """
 上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
 """
-def visualizeCubeSlice(cube=None, cubefile=None, slicepos=None, slicenormal=None, pcaauto=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None, camerazoom=100, camerarotate=0):
+def visualizeCubeSlice(cube=None, cubeFile=None, slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None, cameraZoom=100, cameraRotate=0, printParam=False):
     import plotly.graph_objects as go
 
     # load cube data
     if cube is None:
-        cube = Cube(filePath=cubefile)
+        cube = Cube(filePath=cubeFile)
 
     node = cube.giveNodeCoord()
     xmin = node[:,:,:,0].min()
@@ -1037,10 +1037,12 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicepos=None, slicenormal=None
         datList.extend(molplotDatList)
 
     # set slice plot
-    slice = Slice(cube, pos=slicepos, normal=slicenormal, pcaauto=pcaauto)
+    slice = Slice(cube, pos=slicePos, normal=sliceNormal, pcaAuto=pcaAuto)
     sliceDat = cvis.giveSlicePlot(slice)
     isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
 
+    sliceDat['cmin'] = cmin
+    sliceDat['cmax'] = cmax
     sliceDat['colorscale'] = 'rainbow'
     sliceDat['lighting'] = {'ambient':1.0}
     for d in isolineDatList:
@@ -1051,19 +1053,13 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicepos=None, slicenormal=None
 
     # set camera parameter
     # convert to rad from deg
-    camerarotate = camerarotate / 180 * np.pi
-    slicecenter = slice.giveSliceCenter()
-    slicenormal = slice.giveSliceNormalVector()
-    slicetangent = slice.giveSliceTangentVector()
-    camerapos = slicenormal * (16.8 / np.abs(xmax-xmin) * 100 / camerazoom)
+    cameraRotate = cameraRotate / 180 * np.pi
+    sliceCenter = slice.giveSliceCenter()
+    sliceNormal = slice.giveSliceNormalVector()
+    sliceTangent = slice.giveSliceTangentVector()
+    cameraPos = sliceNormal * (16.8 / np.abs(xmax-xmin) * 100 / cameraZoom)
     # rotation around normal axis
-    cameraup = slicetangent * np.cos(camerarotate) + slicenormal * (slicenormal@slicetangent) * (1-np.cos(camerarotate)) + np.cross(slicenormal,slicetangent)*np.sin(camerarotate)
-
-    print('slicecenter: {}'.format(slicecenter))
-    print('slicenormal: {}'.format(slicenormal))
-    print('slicetangent: {}'.format(slicetangent))
-    print('camerapos: {}'.format(camerapos))
-    print('cameraup: {}'.format(cameraup))
+    cameraUp = sliceTangent * np.cos(cameraRotate) + sliceNormal * (sliceNormal@sliceTangent) * (1-np.cos(cameraRotate)) + np.cross(sliceNormal,sliceTangent)*np.sin(cameraRotate)
 
     fig = go.Figure(data=datList)
     fig.update_layout(
@@ -1074,8 +1070,8 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicepos=None, slicenormal=None
             aspectmode='manual',
             aspectratio=dict(x=1, y=(ymax-ymin)/(xmax-xmin), z=(zmax-zmin)/(xmax-xmin)),
             camera=dict(
-                eye=dict(x=camerapos[0], y=camerapos[1], z=camerapos[2]),
-                up=dict(x=cameraup[0], y=cameraup[1], z=cameraup[2])
+                eye=dict(x=cameraPos[0], y=cameraPos[1], z=cameraPos[2]),
+                up=dict(x=cameraUp[0], y=cameraUp[1], z=cameraUp[2])
             ),
             annotations=annotationList
         ),
@@ -1085,4 +1081,17 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicepos=None, slicenormal=None
     )
 
     fig.show()
+
+    if printParam:
+        v = slice.giveSliceValue()
+
+        print('minValue'.format(np.min(v)))
+        print('maxValue'.format(np.max(v)))
+        print('cmin: {}'.format(cmin))
+        print('cmax: {}'.format(cmax))
+        print('sliceCenter: {}'.format(sliceCenter))
+        print('sliceNormal: {}'.format(sliceNormal))
+        print('sliceTangent: {}'.format(sliceTangent))
+        print('cameraPos: {}'.format(cameraPos))
+        print('cameraUp: {}'.format(cameraUp))
 
