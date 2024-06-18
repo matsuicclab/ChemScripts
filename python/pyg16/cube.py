@@ -918,7 +918,7 @@ class CubeVisualizer:
 
         return sliceDat
 
-    def giveIsolinesPlot(self, slice, numIsoline=None, stepIsoline=0.5, cutIsolineNote=None, thresholdNoteArrow=-np.inf):
+    def giveIsolinesPlot(self, slice, numIsoline=None, stepIsoline=1, cutIsolineNote=None, thresholdNoteArrow=-np.inf):
         """
         スライス上の等値線プロットを生成
         numIsoline: 等値線の数を設定
@@ -998,7 +998,7 @@ class CubeVisualizer:
 """
 上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
 """
-def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=None, pcaauto=None, cutIsolineNote=None, thresholdNoteArrow=None):
+def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=None, pcaauto=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None):
     import plotly.graph_objects as go
 
     # load cube data
@@ -1023,7 +1023,7 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=N
 
     slice = Slice(cube, pos=slicecenter, normal=slicenormal, pcaauto=pcaauto)
     sliceDat = cvis.giveSlicePlot(slice)
-    isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, stepIsoline=0.5, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
+    isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
 
     sliceDat['colorscale'] = 'rainbow'
     sliceDat['lighting'] = {'ambient':1.0}
