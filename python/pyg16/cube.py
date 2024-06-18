@@ -61,14 +61,18 @@ class Cube:
         self.__startingPoint = np.array(data[2][1:4])
         # データの次元 (設定されてなければ1にする)
         if len(data[2]) == 4:
-            self.__valueDim = 1
+            valueDim = 1
         else:
-            self.__valueDim = int(data[2][4])
+            valueDim = int(data[2][4])
 
         # 値の名前設定
         # 先に初期化しておく
+        self.__valueDim = 0
         self.__valueNames = None
-        self.__valueNames = self.__checkValueNames(valueNames)
+        # チェック
+        valueNames =  self.__checkValueNames(valueNames, valueDim)
+        self.__valueDim = valueDim
+        self.__valueNames = valueNames
 
         # 格子のステップ数と単位ベクトル
         # np.ndarray: [n1,n2,n3] (np.int32)
@@ -179,13 +183,16 @@ class Cube:
         self.__stepVector = stepVector
         self.__numGridPoint = numGridPoint
         self.__unit = unit
-        self.__valueDim = valueDim
         self.__cubeData = cubeData
 
         # 値の名前設定
         # 先に初期化しておく
+        self.__valueDim = 0
         self.__valueNames = None
-        self.__valueNames = self.__checkValueNames(valueNames)
+        # チェック
+        valueNames =  self.__checkValueNames(valueNames, valueDim)
+        self.__valueDim = valueDim
+        self.__valueNames = valueNames
 
         # atomicNumData, atomXYZData
         if atomicNumData is not None and atomXYZData is not None:
@@ -224,36 +231,28 @@ class Cube:
             self.__atomicNumData = None
             self.__atomXYZData = None
 
-
-    def __checkValueNames(self, valueNames):
+    def __checkValueNames(self, newValueNames, newValueDim):
         """
         追加するvalueNamesが適切な値になっているかをチェックし、可能ならば修正したもの(intかstrのlist)を返す
-        self.__valueDimは先に更新されていることを想定
+
         """
-
-        if valueNames is not None:
-            # valueNameが指定されている場合
-            if type(valueNames) is int or type(valueNames) is str:
-                valueNames = [valueNames]
-            if len(valueNames) != self.__valueDim:
-                raise ValueError('The length of valueName does not fit the number of cube data')
-            for n in valueNames:
-                if type(n) is not int and type(n) is not str:
+        if newValueNames is not None:
+            if type(newValueNames) in [int, str]:
+                # 型をリストに変換
+                newValueNames = [newValueNames]
+            if type(newValueNames) in [list, tuple]:
+                if len(newValueNames) != newValueDim:
+                    raise ValueError('The length of valueName does not fit the number of cube data')
+                if any([type(n) not in [int, str] for n in newValueNames]):
                     raise ValueError('ValueNames must be str list or int list.')
-        elif valueNames is None:
-            if self.__valueNames is None:
-                # まだ一つも値が存在しない場合
-                numAlreadyExists = 0
+
             else:
-                # 既に値が存在していて、今回は追加する値の名前を決める場合
-                numAlreadyExists = len(self.__valueNames)
+                raise ValueError('ValueNames must be str list or int list.')
 
-            # 追加後の値の数
-            newValueDim = numAlreadyExists + len(valueNames)
-            # 追加する値の名前を設定
-            valueNames = list(range(numAlreadyExists,newValueDim))
+        else:
+            newValueNames = ['value{}'.format(i) for i in range(self.__valueDim,self.__valueDim+newValueDim)]
 
-        return valueNames
+        return newValueNames
 
     def giveCubeData(self):
         """
@@ -354,7 +353,7 @@ class Cube:
         return interp(p)
 
 
-    def addCubeData(self, newCubeData, valueNames=None):
+    def addCubeData(self, newCubeData, newValueNames=None):
         """
         cubeデータを新しく追加する
         newCubeData: numpy配列((x方向の点数)*(y方向の点数)*(z方向の点数)*(値の数)の次元)
@@ -367,12 +366,14 @@ class Cube:
         if len(self.__cubeData.shape) != len(newCubeData.shape) or self.__cubeData.shape[:-1] != newCubeData.shape[:-1]:
             raise ValueError('Does not fit the xyz dimension of the existing cubeData.')
 
-        # 値の数を更新
-        self.__valueDim += newCubeData.shape[-1]
+        # 値の数を取得
+        newValueDim = newCubeData.shape[-1]
 
-        # 値の名前をチェックし更新
-        valueNames = self.__checkValueNames(valueNames)
-        self.__valueNames.extend(valueNames)
+        # 値の名前設定
+        # チェック
+        newValueNames = self.__checkValueNames(newValueNames, newValueDim)
+        self.__valueDim += newValueDim
+        self.__valueNames.extend(newValueNames)
 
         # 問題なければcubeDataに追加
         self.__cubeData = np.block([self.__cubeData, newCubeData])
