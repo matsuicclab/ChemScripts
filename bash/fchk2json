@@ -42,63 +42,62 @@ function process(){
 	keyStartLineNum=`echo "$fchkData" | sed -r -n '/^.{40}   [IRC]   /='`
 	keyEndLineNum=`echo "$keyStartLineNum" | sed -e 1d | xargs -L 1 -I{} expr {} - 1 ; echo "$totalNumLine"`
 	paste <(echo "$keyStartLineNum") <(echo "$keyEndLineNum") |
-	        while read start end
-	        do
-	                item=`echo "$fchkData" | sed -n "${start},${end}p"`
-	                jsonrep=`convert_item_to_JSON_representation "$item"`
-	                comma=,
-	                if [ "$end" = "$totalNumLine" ]; then
-	                        comma=
-	                fi
-	                echo "${jsonrep}${comma}"
-	        done |
-	        sed -e '1i {' |
-	        sed -e '$a }'
+		while read start end
+		do
+			item=`echo "$fchkData" | sed -n "${start},${end}p"`
+			jsonrep=`convert_item_to_JSON_representation "$item"`
+			comma=,
+			if [ "$end" = "$totalNumLine" ]; then
+				comma=
+			fi
+			echo "${jsonrep}${comma}"
+		done |
+		sed -e '1i {' |
+		sed -e '$a }'
 }
 
 function convert_item_to_JSON_representation(){
-        # $1: item
-        local item firstLine key valuetype isList value
-        item="$1"
-        firstLine=`echo "$item" |
-                        head -n 1 |
-                        sed -r 's/^(.{40})   ([IRC])   (.+)/\1\n\2\n\3/' |
-                        sed -r 's/^ +//' |
-                        sed -r 's/ +$//'`
+	# $1: item
+	local item firstLine key valuetype isList value
+	item="$1"
+	firstLine=`echo "$item" |
+				head -n 1 |
+				sed -r 's/^(.{40})   ([IRC])   (.+)/\1\n\2\n\3/' |
+				sed -r 's/^ +//' |
+				sed -r 's/ +$//'`
+	
+	key=`echo "$firstLine" | sed -n 1p`
+	valuetype=`echo "$firstLine" | sed -n 2p`
+	isList=`echo "$firstLine" |
+				sed -n 3p |
+				grep 'N=' |
+				if [ "\`cat -\`" ]; then
+					echo true
+				else
+					echo false
+				fi`
 
-        key=`echo "$firstLine" | sed -n 1p`
-        valuetype=`echo "$firstLine" | sed -n 2p`
-        isList=`echo "$firstLine" |
-                        sed -n 3p |
-                        grep 'N=' |
-                        if [ "\`cat -\`" ]; then
-                                echo true
-                        else
-                                echo false
-                        fi`
-
-
-        if "$isList"; then
-                value=`echo "$item" | sed -e 1d`
-                if [ "$valuetype" = R ] || [ "$valuetype" = I ] ; then
-                        value=`echo "$value" |
-                                        sed -r 's/^ +//' |
-                                        sed -r 's/$/ /' |
-                                        sed -r 's/ +/,/g' |
-                                        sed -r '$s/,$//'`
-                        value="[${value}]"
-                else
-                        # if string
-                        value=`echo "$value" |
-                                while IFS= read -r line; do echo -n "$line" ; done |
-                                sed -r 's/ +$//'`
-                        value="\"${value}\""
-                fi
-        else
-                value=`echo "$firstLine" | sed -n 3p`
-        fi
-
-        echo "\"${key}\": ${value}"
+	if "$isList"; then
+	value=`echo "$item" | sed -e 1d`
+	if [ "$valuetype" = R ] || [ "$valuetype" = I ] ; then
+		value=`echo "$value" |
+				sed -r 's/^ +//' |
+				sed -r 's/$/ /' |
+				sed -r 's/ +/,/g' |
+				sed -r '$s/,$//'`
+		value="[${value}]"
+	else
+		# if string
+		value=`echo "$value" |
+				while IFS= read -r line; do echo -n "$line" ; done |
+				sed -r 's/ +$//'`
+		value="\"${value}\""
+	fi
+	else
+		value=`echo "$firstLine" | sed -n 3p`
+	fi
+	
+	echo "\"${key}\": ${value}"
 }
 
 main "$@"

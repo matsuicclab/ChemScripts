@@ -28,10 +28,16 @@ fchk.calcElectronDensity([0, 0, 0])
     - eliminate title section
     - geometry
     - theory
+- g16log2xyz (wrapper of g16log2value --opt-geometry)
+- g16log2csv
 - csvsmiles2xyz
 - name2smiles
 - bohr2ang
 - ang2bohr
+- glog2prep (extend of mkresp)
+- smiles2prep
+- bkill-all
+- jdel-all
 
 
 

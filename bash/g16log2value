@@ -27,7 +27,7 @@ cat <<EOF
     --SCF-energy        | SCF energy (total energy in B.O. approx.)
     --total-energy      | total energy (= --SCF-energy)
     --ZPVE-energy       | zero-point vibration energy
-    --total-ZPVE-energy | total energy + ZPVE
+    --total+ZPVE-energy | total energy + ZPVE
     --internal-energy   | internal energy
     --gibbs-energy      | gibbs energy
     --temperature       | temperature
@@ -107,8 +107,8 @@ function parse_option(){
 		--ZPVE-energy)
 			varfunc=get_ZPVE_energy
 			;;
-		--total-ZPVE-energy)
-			varfunc=get_total_ZPVE_energy
+		--total+ZPVE-energy)
+			varfunc=get_total+ZPVE_energy
 			;;
 		--internal-energy)
 			varfunc=get_internal_energy
@@ -317,22 +317,53 @@ function get_total_energy(){
 }
 
 function get_ZPVE_energy(){
-	error "unimplemented"
+	# $1: logData
+	echo "$logData" |
+		sed -r -n '/Zero-point correction=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
 }
-function get_total_ZPVE_energy(){
-	error "unimplemented"
+
+function get_total+ZPVE_energy(){
+	# $1: logData
+	echo "$logData" |
+		sed -r -n '/Sum of electronic and zero-point Energies=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
 }
+
 function get_internal_energy(){
-	error "unimplemented"
+	# $1: logData
+	echo "$logData" |
+		sed -n -r '/Sum of electronic and thermal Energies=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
 }
+
 function get_gibbs_energy(){
-	error "unimplemented"
+	# $1: logData
+	echo "$logData" |
+		sed -n -r '/Sum of electronic and thermal Free Energies=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
 }
+
 function get_temperature(){
-	error "unimplemented"
+	# $1: logData
+	echo "$logData" |
+		grep Temperature |
+		head -n 1 |
+		sed -r 's/.+Temperature +//' |
+		sed -r 's/ +Kelvin.+//'
 }
+
 function get_pressure(){
-	error "unimplemented"
+	# $1: logData
+	echo "$logData" |
+		grep Temperature |
+		head -n 1 |
+		sed -r 's/.+Pressure +//' |
+		sed -r 's/ +Atm.+//'
 }
 
 function get_total_opt_step(){
@@ -405,8 +436,8 @@ function get_version(){
 		head |
 		grep -i gaussian |
 		head -n 1 |
-		sed -r 's/  /,/g' |
-		cut -d , -f 2
+		sed -r 's/^[^:]+: +//' |
+		sed -r 's/ .+//'
 }
 
 function get_exit_status(){
