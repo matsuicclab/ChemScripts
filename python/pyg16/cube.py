@@ -1085,8 +1085,8 @@ def visualizeCubeSlice(cube=None, cubeFile=None, slicePos=None, sliceNormal=None
     if printParam:
         v = slice.giveSliceValue()
 
-        print('minValue'.format(np.min(v)))
-        print('maxValue'.format(np.max(v)))
+        print('minValue: {}'.format(np.min(v)))
+        print('maxValue: {}'.format(np.max(v)))
         print('cmin: {}'.format(cmin))
         print('cmax: {}'.format(cmax))
         print('sliceCenter: {}'.format(sliceCenter))
