@@ -933,6 +933,8 @@ class CubeVisualizer:
 
         if cutIsolineNote is None:
             cutIsolineNote = lambda level : False
+        if thresholdNoteArrow is None:
+            thresholdNoteArrow = -np.inf
 
         # スライスのデータを取得
         c1, c2 = slice.give2DCoord()
