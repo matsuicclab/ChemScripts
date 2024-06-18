@@ -522,9 +522,6 @@ class Slice:
             elif pos.shape != (3,) or normal.shape != (3,):
                 raise ValueError()
 
-        self.__pos = pos
-        self.__normal = normal
-
         # 面の接線ベクトルを生成
         normVector = normal / np.linalg.norm(normal)
         for tanVector in np.diag([1,1,1]): # 接線ベクトルの候補3つを順に判定
@@ -543,6 +540,7 @@ class Slice:
         tan2Vector = tan2Vector / np.linalg.norm(tan2Vector)
         self.__tanVector = tanVector
         self.__tan2Vector = tan2Vector
+        self.__normVector = normVector
 
         # スライスの座標を生成
         #
@@ -583,7 +581,6 @@ class Slice:
         #
         # 内分点に絞り込み
         # Aが正則でない場合はgammaがinfになるように修正する
-        gamma = abg[:,2,:].reshape(-1)
         gamma = np.where(np.abs(np.sign(np.linalg.det(A)))==0,np.inf,gamma)
         isInternal = (gamma>=0) & (gamma<=1)
         # 交点を実際に計算する
@@ -661,6 +658,23 @@ class Slice:
         _r_notnan = _r[~np.isnan(_value)]
         result = np.vstack([np.min(_r, axis=0), np.max(_r, axis=0)]) # shape: (2,3)
         return result.T # shape: (3,2)
+    def giveSliceCenter(self):
+        """
+        return: shape: (3,)
+        """
+        return copy.deepcopy(self.__center)
+    def giveSliceNormalVector(self):
+        """
+        normal vector (normalized)
+        return: shape: (3,)
+        """
+        return copy.deepcopy(self.__normVector)
+    def giveSliceTangentVector(self):
+        """
+        tangent vector (normalized)
+        return: shape: (3,)
+        """
+        return copy.deepcopy(self.__tanVector)
 
 
 class CubeVisualizer:
@@ -998,7 +1012,7 @@ class CubeVisualizer:
 """
 上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
 """
-def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=None, pcaauto=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None):
+def visualizeCubeSlice(cube=None, cubefile=None, slicepos=None, slicenormal=None, pcaauto=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None, camerazoom=100, camerarotate=0):
     import plotly.graph_objects as go
 
     # load cube data
@@ -1017,11 +1031,13 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=N
 
     datList = []
 
+    # set molecule plot
     if cube.giveAtomData()[0] is not None:
         molplotDatList = cvis.giveMoleculeSurfacePlot(cube, scale=1.5)
         datList.extend(molplotDatList)
 
-    slice = Slice(cube, pos=slicecenter, normal=slicenormal, pcaauto=pcaauto)
+    # set slice plot
+    slice = Slice(cube, pos=slicepos, normal=slicenormal, pcaauto=pcaauto)
     sliceDat = cvis.giveSlicePlot(slice)
     isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
 
@@ -1033,6 +1049,14 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=N
     datList.append(sliceDat)
     datList.extend(isolineDatList)
 
+    # set camera parameter
+    slicecenter = slice.giveSliceCenter()
+    slicenormal = slice.giveSliceNormalVector()
+    slicetangent = slice.giveSliceTangentVector()
+    camerapos = slicecenter + slicenormal * (16.8 / np.abs(xmax-xmin) * 100 / camerazoom)
+    # rotation around normal axis
+    cameraup = slicetangent * np.cos(camerarotate) + slicenormal * (slicenormal@slicetangent) * (1-np.cos(camerarotate)) + np.cross(slicenormal,slicetangent)*np.sin(camerarotate)
+
     fig = go.Figure(data=datList)
     fig.update_layout(
         scene=dict(
@@ -1042,8 +1066,8 @@ def visualizeCubeSlice(cube=None, cubefile=None, slicecenter=None, slicenormal=N
             aspectmode='manual',
             aspectratio=dict(x=1, y=(ymax-ymin)/(xmax-xmin), z=(zmax-zmin)/(xmax-xmin)),
             camera=dict(
-                eye=dict(x=0, y=0, z=1),
-                up=dict(x=0,y=1,z=0)
+                eye=dict(x=camerapos[0], y=camerapos[1], z=camerapos[2]),
+                up=dict(x=cameraup[0], y=cameraup[1], z=cameraup[2])
             ),
             annotations=annotationList
         ),
