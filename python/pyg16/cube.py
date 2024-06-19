@@ -497,11 +497,16 @@ class Slice:
     def __init__(self, cube, pos=None, normal=None, pcaAuto=False):
         """
         スライスデータを生成
-        pos: np.ndarray (shape: (3,))
-        normal: np.ndarray (shape: (3,))
-        pcaAuto: PCA分析を使ってスライス面を自動決定
+        pos: np.ndarray or list (shape: (3,))
+        normal: np.ndarray or list (shape: (3,))
+        pcaAuto: 原子座標に関してPCA分析を使ってスライス面を自動決定
 
         """
+        if type(pos) is list:
+            pos = np.array(pos)
+        if type(normal) is list:
+            normal = np.array(normal)
+
         # posとnormalを設定
         if pcaAuto:
             from sklearn.decomposition import PCA
@@ -1012,7 +1017,7 @@ class CubeVisualizer:
 """
 上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
 """
-def visualizeCubeSlice(cube=None, cubeFile=None, slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None, cameraZoom=100, cameraRotate=0, printParam=False):
+def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None, cameraZoom=100, cameraRotate=0, printParam=False):
     import plotly.graph_objects as go
 
     # load cube data
@@ -1080,11 +1085,15 @@ def visualizeCubeSlice(cube=None, cubeFile=None, slicePos=None, sliceNormal=None
         )
     )
 
-    fig.show()
+    if type(outFile) is str:
+        fig.write_image(outFile)
+    else:
+        fig.show()
 
     if printParam:
         v = slice.giveSliceValue()
 
+        print('cubeFile: {}'.format(cubeFile))
         print('minValue: {}'.format(np.nanmin(v)))
         print('maxValue: {}'.format(np.nanmax(v)))
         print('cmin: {}'.format(cmin))
