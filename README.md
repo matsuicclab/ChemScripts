@@ -3,6 +3,15 @@
 scripts for input and output in computational chemical calculation
 
 # setup
+1. download by `git clone` or `wget`
+```
+git clone https://github.com/matsuicclab/ChemScripts
+or
+wget https://github.com/matsuicclab/ChemScripts/archive/master.tar.gz
+tar xpvf master.tar.gz
+```
+
+2. set environment variables (append to .bashrc)
 ```
 source <DIR>/bashrc # replace the text <DIR> to this directory according to your environment
 ```
