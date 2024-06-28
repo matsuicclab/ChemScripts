@@ -161,16 +161,17 @@ function process(){
 	fi
 
 	# convert to atomic num
-	# for 1 ~ 118
-	sedcmd=`printConversionTable |
-		awk '{printf "sed -r \"s/^%s$/%s/\" | ", $2, $1 }' 2>/dev/null |
-		sed -e 's/| $//'`
-	# for 119 ~
-	sedcmd2="sed -e 'y/nubtqphsoe/0123456789/' -e 'y/NUBTQPHSOE/0123456789/'"
 
-	local num=`echo "$symb" |
-				eval "$sedcmd" |
-				eval "$sedcmd2"`
+	# for 1 ~ 118
+	local num=`printConversionTable |
+					grep " ${symb}$" |
+					sed -r 's/ .+//'`
+	# for 119 ~
+	if [ ! "$num" ]; then
+		num=`echo "$symb" | sed -e 'y/nubtqphsoeNUBTQPHSOE/01234567890123456789/'`
+	fi
+
+	# check
 	if [[ "$num" =~ [^0-9] ]]; then
 		error "illegal symbol: $symb"
 	fi
