@@ -163,9 +163,12 @@ function process(){
 	# convert to symbol
 	if [ "$atomnum" -le 118 ]; then
 		# for 1 ~ 118
-		printConversionTable | grep "^${atomnum} " | sed -r 's/.+ //'
+		printConversionTable | # get table
+			grep "^${atomnum} " | # get row with specified atomic number
+			sed -r 's/.+ //' # get the element symbol
 	else
 		# for 119 ~
+		# convert to element system name
 		echo "$atomnum" |
 			sed -e 's/^0/N/' -e 's/^1/U/' -e 's/^2/B/' \
 					-e 's/^3/T/' -e 's/^4/Q/' -e 's/^5/P/' \

@@ -52,8 +52,8 @@ function process(){
 	# convert and print
 	echo "$mdenData" |
 		sed -r 's/^[^ ]+ +//' | # remove leading Ln
-		sed -r "{${sedN}s/\n/ /g}" | # convert to newline every frame
-		sed -r 's/ +/,/g'
+		sed -r "{${sedN}s/\n/ /g}" | # convert to one line every frame
+		sed -r 's/ +/,/g' # replace spaces with comma
 }
 
 main "$@"
