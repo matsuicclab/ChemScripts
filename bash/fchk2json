@@ -30,81 +30,99 @@ function get_default_conversion_patt(){
 	echo '{s/.fchk$//; s/$/.json/}'
 }
 
+
+function get_random_string_not_exist_in_string(){
+	# $1: string
+	local string randstr
+
+	string="$1"
+	while true
+	do
+		randstr=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16`
+		if grep -q "$randstr" <(echo "$string"); then
+			continue
+		else
+			break
+		fi
+	done
+	echo "$randstr"
+}
+
+
 function process(){
 	# $1: inpFile
 	#
-	local fchkFile fchkData totalNumLine keyStartLineNum keyEndLineNum
+	local fchkFile fchkData
+	local label startlistlabel endlabel
 
 	fchkFile="$1"
 	fchkData=`cat "$fchkFile"`
 
-	totalNumLine=`echo "$fchkData" | wc -l`
-	keyStartLineNum=`echo "$fchkData" | sed -r -n '/^.{40}   [IRC]   /='`
-	keyEndLineNum=`echo "$keyStartLineNum" | sed -e 1d | xargs -L 1 -I{} expr {} - 1 ; echo "$totalNumLine"`
-	paste <(echo "$keyStartLineNum") <(echo "$keyEndLineNum") |
-		while read start end
-		do
-			# convert each data to json notation
+	# get a string that does not exist in fchkData and create some labels
+	label=`get_random_string_not_exist_in_string "$fchkData"`
+	startnumlistlabel="${label} start of numlist"
+	startcharlistlabel="${label} start of charlist"
+	endlabel="${label} end of item"
 
-			item=`echo "$fchkData" | sed -n "${start},${end}p"`
-			jsonrep=`convert_item_to_JSON_representation "$item"`
-
-			# add a comma at the end of all data except the last one
-			comma=,
-			if [ "$end" = "$totalNumLine" ]; then
-				comma=
-			fi
-
-			# print as a json item
-			echo "${jsonrep}${comma}"
-		done |
+	# convert to json format
+	#-- input into pipe
+	echo "$fchkData" |
+		#-- insert a label at the end of one data item
+		sed -r "/^.{40}   [IRC]   /i ${endlabel}" |
+		#-- remove data at the beginning without keywords
+		sed -r "1,/^${endlabel}/d" |
+		#-- append label to last line
+		sed -r '$a '"${endlabel}" |
+		#-- lists of numbers and chars are additionally labeled before the data
+		sed -r "/^.{40}   [IR]   N=/a ${startnumlistlabel}" |
+		sed -r "/^.{40}   C   N=/a ${startcharlistlabel}" |
+		#-- process rows with keywords
+		sed -r '/^.{40}   [IRC]   /{
+			s/^(.{40})   [IRC]   (.+)/\1\n:\n\2,/; # convert to keyword\n:\n1234, or keyword\n:\nN=   1234,
+			s/\nN=.+/\n/; # if N=, the size of the list is printed, and it is unnecessary for json, so remove it
+			s/^ */"/; # keyword***** -> "keyword*****
+			s/ +$//;
+			s/ *\n:\n */" : / # -> "keyword \n:\n *****"
+		}' |
+		#-- process lists of numbers
+		#-- process matching lines together using the pattern space and hold space
+		sed -r "/^${startnumlistlabel}/,/^${endlabel}/{
+			/^${startnumlistlabel}/{s/.*//;h}; # replace with empty and copy to the hold space
+			/${endlabel}/!{H;d}; # append to the hold space and delete spaces
+			/^${endlabel}/{
+				x;              # change the pattern space with the hold space and process list data as one string
+				s/^/\n/;        # rewrite fchk list data to json array format
+				s/$/\n/;
+				s/\n+/\n/g;
+				s/\n +/ \n/g;
+				s/^ +//;
+				s/^\n *//;
+				s/ *\n$//;
+				s/ +/, /g;
+				s/^/[/; s/$/],/
+			}
+		}" |
+		#-- process lists of chars
+		sed -r "/^${startcharlistlabel}/,/^${endlabel}/{
+			/^${startcharlistlabel}/{s/.*//;h};
+			/${endlabel}/!{H;d};
+			/^${endlabel}/{
+				x;
+				s/\n//g; # delete all newline characters and convert to a single line string
+				s/^ +//; # remove leading and trailing whitespace characters
+				s/ +$//;
+				s/^/\"/; # surround with double quotes
+				s/$/\",/
+			}
+		}" |
+		#-- remove label
+		grep -v "${label}" |
+		#-- remove unnecessary comma at the end of the last item
+		sed -r '$s/,$//' |
+		#-- add {} to indicate object type in json format
 		sed -e '1i {' |
 		sed -e '$a }'
-}
 
-function convert_item_to_JSON_representation(){
-	# $1: item
-	local item firstLine key valuetype isList value
-	item="$1"
-
-	# get the first line
-	# and divide it into three parts: key name, data type, and value
-	firstLine=`echo "$item" |
-				head -n 1 |
-				sed -r 's/^(.{40})   ([IRC])   (.+)/\1\n\2\n\3/' |
-				sed -r 's/^ +//' |
-				sed -r 's/ +$//'`
-
-	key=`echo "$firstLine" | sed -n 1p`
-	valuetype=`echo "$firstLine" | sed -n 2p`
-
-	if grep -q 'N=' <(echo "$firstLine" | sed -n 3p); then
-		# if list
-
-		value=`echo "$item" | sed -e 1d`
-		if [ "$valuetype" = R ] || [ "$valuetype" = I ] ; then
-			# if value list
-			value=`echo "$value" |
-					sed -r 's/^ +//' |
-					sed -r 's/$/ /' |
-					sed -r 's/ +/,/g' |
-					sed -r '$s/,$//'`
-			value="[${value}]"
-		else
-			# if string list
-			value=`echo "$value" |
-					while IFS= read -r line; do echo -n "$line" ; done |
-					sed -r 's/ +$//'`
-			value="\"${value}\""
-		fi
-	else
-		# if not list
-
-		value=`echo "$firstLine" | sed -n 3p`
-	fi
-
-	# print as a json item
-	echo "\"${key}\": ${value}"
 }
 
 main "$@"
