@@ -44,12 +44,18 @@ function process(){
 	paste <(echo "$keyStartLineNum") <(echo "$keyEndLineNum") |
 		while read start end
 		do
+			# convert each data to json notation
+
 			item=`echo "$fchkData" | sed -n "${start},${end}p"`
 			jsonrep=`convert_item_to_JSON_representation "$item"`
+
+			# add a comma at the end of all data except the last one
 			comma=,
 			if [ "$end" = "$totalNumLine" ]; then
 				comma=
 			fi
+
+			# print as a json item
 			echo "${jsonrep}${comma}"
 		done |
 		sed -e '1i {' |
@@ -60,43 +66,44 @@ function convert_item_to_JSON_representation(){
 	# $1: item
 	local item firstLine key valuetype isList value
 	item="$1"
+
+	# get the first line
+	# and divide it into three parts: key name, data type, and value
 	firstLine=`echo "$item" |
 				head -n 1 |
 				sed -r 's/^(.{40})   ([IRC])   (.+)/\1\n\2\n\3/' |
 				sed -r 's/^ +//' |
 				sed -r 's/ +$//'`
-	
+
 	key=`echo "$firstLine" | sed -n 1p`
 	valuetype=`echo "$firstLine" | sed -n 2p`
-	isList=`echo "$firstLine" |
-				sed -n 3p |
-				grep 'N=' |
-				if [ "\`cat -\`" ]; then
-					echo true
-				else
-					echo false
-				fi`
 
-	if "$isList"; then
-	value=`echo "$item" | sed -e 1d`
-	if [ "$valuetype" = R ] || [ "$valuetype" = I ] ; then
-		value=`echo "$value" |
-				sed -r 's/^ +//' |
-				sed -r 's/$/ /' |
-				sed -r 's/ +/,/g' |
-				sed -r '$s/,$//'`
-		value="[${value}]"
+	if grep -q 'N=' <(echo "$firstLine" | sed -n 3p); then
+		# if list
+
+		value=`echo "$item" | sed -e 1d`
+		if [ "$valuetype" = R ] || [ "$valuetype" = I ] ; then
+			# if value list
+			value=`echo "$value" |
+					sed -r 's/^ +//' |
+					sed -r 's/$/ /' |
+					sed -r 's/ +/,/g' |
+					sed -r '$s/,$//'`
+			value="[${value}]"
+		else
+			# if string list
+			value=`echo "$value" |
+					while IFS= read -r line; do echo -n "$line" ; done |
+					sed -r 's/ +$//'`
+			value="\"${value}\""
+		fi
 	else
-		# if string
-		value=`echo "$value" |
-				while IFS= read -r line; do echo -n "$line" ; done |
-				sed -r 's/ +$//'`
-		value="\"${value}\""
-	fi
-	else
+		# if not list
+
 		value=`echo "$firstLine" | sed -n 3p`
 	fi
-	
+
+	# print as a json item
 	echo "\"${key}\": ${value}"
 }
 
