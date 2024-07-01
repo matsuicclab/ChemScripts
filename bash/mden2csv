@@ -43,11 +43,8 @@ function process(){
 						uniq |
 						wc -l`
 
-	sedN=`seq 2 "$numLinePerFrame" |
-		while read line ;
-		do
-			echo -n "N;"
-		done`
+	sedN=`yes 'N;' |
+			head -n $((${numLinePerFrame} - 1))`
 
 	# convert and print
 	echo "$mdenData" |
