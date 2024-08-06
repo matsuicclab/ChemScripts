@@ -22,10 +22,15 @@ cat <<EOF
     --num-primitive-basis | num of primitive basis function
     --num-cartesian-basis | num of cartesian basis function
     --theory          | theory of electronic state (unimplemented)
+    --is-unrestricted | is it UHF? (true/false)
     --solvation-model | solvation model
     --solvent         | solvent
     --SCF-energy        | SCF energy (total energy in B.O. approx.)
     --total-energy      | total energy (= --SCF-energy)
+	--alpha-orbital-energy <orbital> | alpha orbital energy
+	--beta-orbital-energy <orbital>  | beta orbital energy
+	--orbital-energy <orbital>       | alpha & beta orbital energy
+	    <orbital> | specify the orbital you want: all / occall / virtall / HOMO1 / HOMO2 / .. / LUMO1 / ..
     --ZPVE-energy       | zero-point vibration energy
     --total+ZPVE-energy | total energy + ZPVE
     --internal-energy   | internal energy
@@ -92,6 +97,9 @@ function parse_option(){
 		--theory)
 			varfunc=get_theory
 			;;
+		--is-unrestricted)
+			varfunc=is_unrestricted
+			;;
 		--solvation-model)
 			varfunc=get_solvation_model
 			;;
@@ -103,6 +111,43 @@ function parse_option(){
 			;;
 		--total-energy)
 			varfunc=get_total_energy
+			;;
+		--alpha-orbital-energy)
+		--beta-orbital-energy)
+		--orbital-energy)
+			local __spin __args
+
+			# どの関数が指定されたか
+			case "${args[1]}" in
+			--alpha-orbital-energy)
+				__spin=Alpha
+				;;
+			--beta-orbital-energy)
+				__spin=Beta
+				;;
+			--orbital-energy)
+				__spin=Both
+				;;
+			esac
+
+			# 引数解釈
+			while :
+			do
+				case "${args[2]}" in
+				all | occall | virtall | HOMO* | LUMO*)
+					__args="${__args} ${args[2]}"
+					shift_args 1
+					;;
+				*)
+					break
+					;;
+				esac
+			done
+			if [ "${__args}" ]; then
+				varfunc="get_orbital_energy ${__spin} ${__args}"
+			else
+				error "unknown option for --orbital-energy: '${args[2]}'"
+			fi
 			;;
 		--ZPVE-energy)
 			varfunc=get_ZPVE_energy
@@ -162,7 +207,6 @@ function parse_option(){
 			;;
 		esac
 
-		# use only the first argument (except --geometry)
 		shift_args 1
 
 	else
@@ -299,6 +343,15 @@ function get_theory(){
 	error "unimplemented"
 }
 
+function is_unrestricted(){
+	# $1: logData
+	if echo "$1" | grep -q 'Beta .*eigenvalues'; then
+		echo true
+	else
+		echo false
+	fi
+}
+
 function get_solvation_model(){
 	error "unimplemented"
 }
@@ -315,6 +368,157 @@ function get_total_energy(){
 		sed -r 's/A\.U\..+//' |
 		sed -r 's/ //g'
 }
+
+function __get_orbital_energy_list(){
+	# $1: logData
+	local logData energyData
+	logData="$1"
+
+	energyData=`echo "$logData" |
+					grep -B 1 -e 'Alpha .*eigenvalues' -e 'Beta .*eigenvalues' |
+					tac |
+					sed -r -n '1,/^--/p' |
+					tac |
+					grep eigenvalues`
+
+	alphaOccEnergyList=`echo "$energyData" |
+							grep 'Alpha  occ' |
+							sed -r 's/.+-- +//' |
+							tr ' ' '\n' |
+							sed -r '/^$/d'`
+	alphaVirtEnergyList=`echo "$energyData" |
+							grep 'Alpha virt' |
+							sed -r 's/.+-- +//' |
+							tr ' ' '\n' |
+							sed -r '/^$/d'`
+	if echo "$energyData" | grep -q 'Beta'; then
+		betaOccEnergyList=`echo "$energyData" |
+								grep 'Beta  occ' |
+								sed -r 's/.+-- +//' |
+								tr ' ' '\n' |
+								sed -r '/^$/d'`
+		betaVirtEnergyList=`echo "$energyData" |
+								grep 'Beta virt' |
+								sed -r 's/.+-- +//' |
+								tr ' ' '\n' |
+								sed -r '/^$/d'`
+	else
+		betaOccEnergyList="$occAlphaEnergyList"
+		betaVirtEnergyList="$virtAlphaEnergyList"
+	fi
+
+	bothOccEnergyList=`echo "${alphaOccEnergyList}\n${betaOccEnergyList}" | sort -n`
+	bothVirtEnergyList=`echo "${alphaVirtEnergyList}\n${betaVirtEnergyList}" | sort -n`
+	alphaAllEnergyList=`echo "${alphaOccEnergyList}\n${alphaVirtEnergyList}" | sort -n`
+	betaAllEnergyList=`echo "${betaOccEnergyList}\n${betaVirtEnergyList}" | sort -n`
+	bothAllEnergyList=`echo "${bothOccEnergyList}\n${bothVirtEnergyList}" | sort -n`
+}
+
+function __get_orbital_energy(){
+	# 先に__get_orbital_energy_list()を実行しておくこと
+	# $1: spin (Alpha, Beta, Both)
+	# $2: orbitalName
+	local spin orbitalName
+	spin="$1"
+	orbitalName="$2"
+
+	case "${orbitalName}" in
+	all | occall | virtall)
+		case "${spin}-${orbitalName}" in
+		Alpha-all)
+			echo "$alphaAllEnergyList"
+			;;
+		Beta-all)
+			echo "$betaAllEnergyList"
+			;;
+		Both-all)
+			echo "$bothAllEnergyList"
+			;;
+		Alpha-occall)
+			echo "$alphaOccEnergyList"
+			;;
+		Beta-occall)
+			echo "$betaOccEnergyList"
+			;;
+		Both-occall)
+			echo "$bothOccEnergyList"
+			;;
+		Alpha-virtall)
+			echo "$alphaVirtEnergyList"
+			;;
+		Beta-virtall)
+			echo "$betaVirtEnergyList"
+			;;
+		Both-virtall)
+			echo "$bothVirtEnergyList"
+			;;
+		esac
+		;;
+	HOMO* | LUMO*)
+		pos=`echo "$orbitalName" | sed -r 's/^(HOMO|LUMO)//'`
+		if [ ! "$pos" ]; then
+			pos=1
+		fi
+		if [[ ! "$pos" =~ ^[0-9]+$ ]]; then
+			error "invalid orbital name: ${orbitalName}"
+		fi
+		case "${spin}-${orbitalName}" in
+		Alpha-HOMO*)
+			echo "$alphaOccEnergyList" |
+				tac |
+				sed -n "${pos}p"
+			;;
+		Beta-HOMO*)
+			echo "$betaOccEnergyList" |
+				tac |
+				sed -n "${pos}p"
+			;;
+		Both-HOMO*)
+			echo "$bothOccEnergyList" |
+				tac |
+				sed -n "${pos}p"
+			;;
+		Alpha-LUMO*)
+			echo "$alphaVirtEnergyList" |
+				sed -n "${pos}p"
+			;;
+		Beta-LUMO*)
+			echo "$betaVirtEnergyList" |
+				sed -n "${pos}p"
+			;;
+		Both-LUMO*)
+			echo "$bothVirtEnergyList" |
+				sed -n "${pos}p"
+			;;
+		esac
+		;;
+	*)
+		;;
+	esac
+
+}
+
+function get_orbital_energy(){
+	# $1:    spin
+	# $2-:   orbitalNames
+	# ${!#}: logData
+	local spin logData
+	spin="$1"
+	shift 1
+
+	# logデータを取得
+	logData="${!#}"
+	# 軌道エネルギーリストを設定
+	__get_orbital_energy_list "$logData"
+
+	# 各orbitalNameに対して対応するエネルギーを取得
+	for i in `seq $(($# - 1))`
+	do
+		orbitalName="${i}"
+		__get_orbital_energy "$spin" "$orbitalName"
+	done
+}
+
 
 function get_ZPVE_energy(){
 	# $1: logData
@@ -466,12 +670,12 @@ function __get_error_status(){
 	#If SCF calculation does not converge
 	# TODO fix the problem of incorrect judgment when scf=xqc
 	[ "`echo \"$logData\" | grep 'Convergence criterion not met'`" ] &&
-		echo "failSCFConvg"
+		echo "failSCFConvergence"
 
 	#failOpt
 	#If optimization fails
 	[ "`echo \"$logData\" | grep 'Optimization stopped'`" ] &&
-		echo "failOpt"
+		echo "failOptimization"
 
 	#smallInteratomicDistance
 	#If interatomic distance is too small and it fails
