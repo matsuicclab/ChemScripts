@@ -20,8 +20,8 @@ usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and print to stdout
     |
-    + ${cmd} ${inp} > ${out}
-    +--- save to the ${out} file
+    + ${cmd} ${inp} > file
+    +--- save to the file
     |
     + ${cmd} ${inp} | <COMMAND>
     +--- input to the next command
