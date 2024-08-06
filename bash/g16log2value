@@ -382,35 +382,39 @@ function __get_orbital_energy_list(){
 
 	alphaOccEnergyList=`echo "$energyData" |
 							grep 'Alpha  occ' |
-							sed -r 's/.+-- +//' |
-							tr ' ' '\n' |
-							sed -r '/^$/d'`
+							sed -r 's/.+-- //' |
+							sed -r 's/(.{10})/\1\n/g' |
+							sed -r '/^$/d' |
+							sed -r 's/^ *//'`
 	alphaVirtEnergyList=`echo "$energyData" |
 							grep 'Alpha virt' |
-							sed -r 's/.+-- +//' |
-							tr ' ' '\n' |
-							sed -r '/^$/d'`
+							sed -r 's/.+-- //' |
+							sed -r 's/(.{10})/\1\n/g' |
+							sed -r '/^$/d' |
+							sed -r 's/^ *//'`
 	if echo "$energyData" | grep -q 'Beta'; then
 		betaOccEnergyList=`echo "$energyData" |
 								grep 'Beta  occ' |
-								sed -r 's/.+-- +//' |
-								tr ' ' '\n' |
-								sed -r '/^$/d'`
+								sed -r 's/.+-- //' |
+								sed -r 's/(.{10})/\1\n/g' |
+								sed -r '/^$/d' |
+								sed -r 's/^ *//'`
 		betaVirtEnergyList=`echo "$energyData" |
 								grep 'Beta virt' |
-								sed -r 's/.+-- +//' |
-								tr ' ' '\n' |
-								sed -r '/^$/d'`
+								sed -r 's/.+-- //' |
+								sed -r 's/(.{10})/\1\n/g' |
+								sed -r '/^$/d' |
+								sed -r 's/^ *//'`
 	else
 		betaOccEnergyList="$alphaOccEnergyList"
 		betaVirtEnergyList="$alphaVirtEnergyList"
 	fi
 
-	bothOccEnergyList=`echo "${alphaOccEnergyList}\n${betaOccEnergyList}" | sort -n`
-	bothVirtEnergyList=`echo "${alphaVirtEnergyList}\n${betaVirtEnergyList}" | sort -n`
-	alphaAllEnergyList=`echo "${alphaOccEnergyList}\n${alphaVirtEnergyList}" | sort -n`
-	betaAllEnergyList=`echo "${betaOccEnergyList}\n${betaVirtEnergyList}" | sort -n`
-	bothAllEnergyList=`echo "${bothOccEnergyList}\n${bothVirtEnergyList}" | sort -n`
+	bothOccEnergyList=`echo -e "${alphaOccEnergyList}\n${betaOccEnergyList}" | sort -n`
+	bothVirtEnergyList=`echo -e "${alphaVirtEnergyList}\n${betaVirtEnergyList}" | sort -n`
+	alphaAllEnergyList=`echo -e "${alphaOccEnergyList}\n${alphaVirtEnergyList}" | sort -n`
+	betaAllEnergyList=`echo -e "${betaOccEnergyList}\n${betaVirtEnergyList}" | sort -n`
+	bothAllEnergyList=`echo -e "${bothOccEnergyList}\n${bothVirtEnergyList}" | sort -n`
 }
 
 function __get_orbital_energy(){
@@ -513,8 +517,9 @@ function get_orbital_energy(){
 	# 各orbitalNameに対して対応するエネルギーを取得
 	for i in `seq $(($# - 1))`
 	do
-		orbitalName="${i}"
+		orbitalName="$1"
 		__get_orbital_energy "$spin" "$orbitalName"
+		shift 1
 	done
 }
 
