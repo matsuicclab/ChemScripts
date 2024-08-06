@@ -112,9 +112,7 @@ function parse_option(){
 		--total-energy)
 			varfunc=get_total_energy
 			;;
-		--alpha-orbital-energy)
-		--beta-orbital-energy)
-		--orbital-energy)
+		--alpha-orbital-energy | --beta-orbital-energy | --orbital-energy)
 			local __spin __args
 
 			# どの関数が指定されたか

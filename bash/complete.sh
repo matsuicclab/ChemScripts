@@ -185,6 +185,7 @@ function __complete_g16log2value(){
 		--num-primitive-basis
 		--num-cartesian-basis
 	    --theory
+	    --is-unrestricted
 	    --solvation-model
 	    --solvent
 	    --SCF-energy
@@ -207,6 +208,9 @@ function __complete_g16log2value(){
 		--total-elapsed-time
 	)
 	local valueoptionlist=(
+		--alpha-orbital-energy
+		--beta-orbital-energy
+		--orbital-energy
 		--geometry
 	)
 	local fileoptionlist=()
@@ -239,7 +243,7 @@ function __complete_mkresp(){
 	)
 	local valueoptionlist=()
 	local fileoptionlist=()
-	
+
 	if [[ "$cur" =~ ^- ]]; then
 		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
 		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
@@ -273,7 +277,7 @@ function __complete_plotmden(){
 		-d
 	)
 	local fileoptionlist=()
-	
+
 	if [[ "$cur" =~ ^- ]]; then
 		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
 		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
@@ -303,7 +307,7 @@ function __complete_rmexcept(){
 	)
 	local valueoptionlist=()
 	local fileoptionlist=()
-	
+
 	if [[ "$cur" =~ ^- ]]; then
 		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
 		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
