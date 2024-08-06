@@ -402,8 +402,8 @@ function __get_orbital_energy_list(){
 								tr ' ' '\n' |
 								sed -r '/^$/d'`
 	else
-		betaOccEnergyList="$occAlphaEnergyList"
-		betaVirtEnergyList="$virtAlphaEnergyList"
+		betaOccEnergyList="$alphaOccEnergyList"
+		betaVirtEnergyList="$alphaVirtEnergyList"
 	fi
 
 	bothOccEnergyList=`echo "${alphaOccEnergyList}\n${betaOccEnergyList}" | sort -n`
