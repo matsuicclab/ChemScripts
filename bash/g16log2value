@@ -114,6 +114,7 @@ function parse_option(){
 			;;
 		--alpha-orbital-energy | --beta-orbital-energy | --orbital-energy)
 			local __spin __args
+			__args=
 
 			# どの関数が指定されたか
 			case "${args[1]}" in
