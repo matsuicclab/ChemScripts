@@ -5,10 +5,26 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "atomnum2symb" "<num>" "<symb>" "atomic number" "element symbol" ""
+	abstract_help "atomnum2symb" "<num>" "<symb>" "atomic number" "element symbol" "`option_help`"
+}
+
+function option_help(){
+cat <<EOF
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --field <num>           | set target column number
+                                | default: 1
+    -s, --skip <num>            | set the title section
+                                | default: 0
+EOF
 }
 
 function parse_option(){
+	# set default
+	delimiter=' '
+	targetColumnNum=1
+	headerEndLineNum=0
+	
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -16,6 +32,18 @@ function parse_option(){
 			help
 			exit
 			# shift_args 1
+			;;
+		-d | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-f | --field)
+			targetColumnNum="${args[2]}"
+			shift_args 2
+			;;
+		-s | --skip)
+			headerEndLineNum="${args[2]}"
+			shift_args 2
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
@@ -154,28 +182,103 @@ EOF
 function process(){
 	# $1: inpStr
 	#
-	local atomnum="$1"
-
-	if [[ "$atomnum" =~ [^0-9] ]]; then
-		error "illegal character: $atomnum"
-	fi
-
-	# convert to symbol
-	if [ "$atomnum" -le 118 ]; then
-		# for 1 ~ 118
-		printConversionTable | # get table
-			grep "^${atomnum} " | # get row with specified atomic number
-			sed -r 's/.+ //' # get the element symbol
+	local inpStr
+	inpStr="$1"
+	
+	# extract header part
+	if [ "$headerEndLineNum" -eq 0 ]; then
+		headerData=
 	else
-		# for 119 ~
-		# convert to element system name
-		echo "$atomnum" |
-			sed -e 's/^0/N/' -e 's/^1/U/' -e 's/^2/B/' \
-					-e 's/^3/T/' -e 's/^4/Q/' -e 's/^5/P/' \
-					-e 's/^6/H/' -e 's/^7/S/' -e 's/^8/O/' \
-					-e 's/^9/E/' \
-					-e 'y/0123456789/nubtqphsoe/'
+		headerData=`echo "$inpStr" | sed -n "1,${headerEndLineNum}p"`
 	fi
+	
+	# get the number of the line after the line where the header ends
+	contentStartLineNum=$(($headerEndLineNum + 1))
+	# extract content part
+	contentData=`echo "$inpStr" | sed -n "${contentStartLineNum},"'$p'`
+
+	#-------------------------------------------------------
+	# conversion outline:
+	# A, B, 2, C, D
+	# E, F, 10, G, H
+	# ...
+	# ->
+	# ,A, B, 2, C, D,
+	# ,E, F, 10, G, H,
+	# ...
+	# ->
+	# ,A, B,
+	# 2,
+	# C, D,
+	# ,E, F,
+	# 10,
+	# G, H,
+	# ...
+	# ->
+	# ,A, B,
+	# He,
+	# C, D,
+	# ,E, F,
+	# Ne,
+	# G, H,
+	# ...
+	# ->
+	# ,A, B, He, C, D,
+	# ,E, F, Ne, G, H,
+	# ...
+	contentData=`echo "$contentData" |
+			sed -r 's/$/'"${delimiter}"'/' | # add trailing and leading delimiters
+			sed -r 's/^/'"${delimiter}"'/' |
+			sed -r "s/${delimiter}/${delimiter}\n/${targetcolumnnum}" | # split 1 line into 3 lines
+			sed -r "2~2s/${delimiter}/${delimiter}\n/1" |
+			sed -r '$s/$/\n /'`
+			# Since bash removes the trailing newline character when assigning to a variable,
+			# consider the case where the last line is an empty character
+			# and add a trailing space character
+			
+	#-------------------------------------------------------
+	# check if it doesn't contain characters that can't be converted
+	targetData=`echo "$contentData" |
+			sed -r -n '2~3p' |
+			sed -r "s/${delimiter}"'$//'`
+	legalCharPatt="[0-9]"
+	illegalContentLineNum=`echo "$targetData" |
+				sed -r "s/${legalCharPatt}//g" |
+				nl -b a | # print line number
+				sed -r '/^ +[0-9]+\t$/d' |
+					# remove lines that contained only normal characters
+					# this '[0-9]' represents the line number printed by nl, so it has nothing to do with legalCharPatt
+				sed -r -n 1p | # get line number
+				sed -r 's/ //g' |
+				sed -r 's/\t.+//'`
+	if [ ! -z "$illegalContentLineNum" ] && [ "$illegalContentLineNum" -gt 0 ]; then
+		# if $illegalContentLineNum is not empty and is greater than 0
+		illegalString=`echo "$targetData" |
+						sed -n "${illegalContentLineNum}p"`
+		illegalLineNum=$(($illegalContentLineNum + $headerEndLineNum))
+		error "illegal string: line ${illegalLineNum}: ${illegalString}"
+	fi	
+	
+	#-------------------------------------------------------
+	# prepare sed cmd
+	sedcmd=`printConversionTable |
+				awk "{printf 's/^%s${delimiter}$/%s${delimiter}/; ', $1, $2}"` 2>/dev/null`
+	sedcmd2='s/^0/N/; s/^1/U/; s/^2/B/; s/^3/T/; s/^4/Q/; s/^5/P/; s/^6/H/; s/^7/S/; s/^8/O/; s/^9/E/; y/0123456789/nubtqphsoe/'
+
+	# ------------------------------------------------------------------
+	# convert and print
+	if [ ! -z "$headerData" ]; then
+		# if $headerData is not empty
+		echo "$headerData"
+	fi
+	
+	echo "$contentData" |
+		sed -r "2~3{${sedcmd}; ${sedcmd2}}" | # convert num to symb
+		sed -r '{N;N;s/\n//g}' | # restore to original shape
+		sed -r 's/^'"${delimiter}"'//' |
+		sed -r 's/'"${delimiter}"'$//' |
+		sed -r '$d'
+		
 }
 
 main "$@"
