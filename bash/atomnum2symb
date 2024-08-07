@@ -273,7 +273,7 @@ function process(){
 	fi
 	
 	echo "$contentData" |
-		sed -r "2~3{${sedcmd}; ${sedcmd2}}" | # convert num to symb
+		sed -r "2~3{${sedcmd}; ${sedcmd2};}" | # convert num to symb
 		sed -r '{N;N;s/\n//g}' | # restore to original shape
 		sed -r 's/^'"${delimiter}"'//' |
 		sed -r 's/'"${delimiter}"'$//' |
