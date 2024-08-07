@@ -1,4 +1,75 @@
 #!/bin/bash
 
-atomnum2symb --reverse "$@"
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+
+function help(){
+	abstract_help "symb2atomnum" "<symb>" "<num>" "element symbol" "atomic number" "`option_help`"
+}
+
+function option_help(){
+cat <<EOF
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --field <num>           | set target column number
+                                | default: 1
+    -s, --skip <num>            | set the title section
+                                | default: 0
+EOF
+}
+
+function parse_option(){
+	# set default
+	delimiter=' '
+	targetColumnNum=1
+	headerEndLineNum=0
+	reverse=false
+	
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-d | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-f | --field)
+			targetColumnNum="${args[2]}"
+			shift_args 2
+			;;
+		-s | --skip)
+			headerEndLineNum="${args[2]}"
+			shift_args 2
+			;;
+		-r | --reverse)
+			reverse=true
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local inpStr
+	inpStr="$1"
+	if "$reverse"; then
+		atomnum2symb -d "$delimiter" -f "$targetColumnNum" -s "$headerEndLineNum" "$inpStr"
+	else
+		atomnum2symb --reverse -d "$delimiter" -f "$targetColumnNum" -s "$headerEndLineNum" "$inpStr"
+	fi
+}
+
+main "$@"
 
