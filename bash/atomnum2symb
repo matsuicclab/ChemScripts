@@ -48,6 +48,7 @@ function parse_option(){
 			;;
 		-r | --reverse)
 			reverse=true
+			shift_args 1
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
