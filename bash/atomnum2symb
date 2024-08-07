@@ -24,6 +24,7 @@ function parse_option(){
 	delimiter=' '
 	targetColumnNum=1
 	headerEndLineNum=0
+	reverse=false
 	
 	while [ "${#args[@]}" -gt 1 ]
 	do
@@ -44,6 +45,9 @@ function parse_option(){
 		-s | --skip)
 			headerEndLineNum="${args[2]}"
 			shift_args 2
+			;;
+		-r | --reverse)
+			reverse=true
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
@@ -185,6 +189,28 @@ function process(){
 	local inpStr
 	inpStr="$1"
 	
+	#-------------------------------------------------------
+	if "$reverse"; then
+		# valid characters to convert from
+		legalCharPatt="[A-z]"
+		# prepare sed cmd
+		# s/^H,$/1,/; s/^He,$/2,/; s/^Li,$/3,/; ... (delimiter: ',')
+		sedcmd=`printConversionTable |
+					awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $2, d, $1, d }'`
+		sedcmd2='y/nubtqphsoe/0123456789/; y/NUBTQPHSOE/0123456789/'
+	
+	else
+		# valid characters to convert from
+		legalCharPatt="[0-9]"
+		# prepare sed cmd
+		# s/^1,$/H,/; s/^2,$/He,/; s/^3,$/Li,/; ... (delimiter: ',')
+		sedcmd=`printConversionTable |
+					awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $1, d, $2, d }'`
+		sedcmd2='s/^0/N/; s/^1/U/; s/^2/B/; s/^3/T/; s/^4/Q/; s/^5/P/; s/^6/H/; s/^7/S/; s/^8/O/; s/^9/E/; y/0123456789/nubtqphsoe/'
+		
+	fi
+	
+	#-------------------------------------------------------
 	# extract header part
 	if [ "$headerEndLineNum" -eq 0 ]; then
 		headerData=
@@ -241,7 +267,6 @@ function process(){
 	targetData=`echo "$contentData" |
 			sed -r -n '2~3p' |
 			sed -r "s/${delimiter}"'$//'`
-	legalCharPatt="[0-9]"
 	illegalContentLineNum=`echo "$targetData" |
 				sed -r "s/${legalCharPatt}//g" |
 				nl -b a | # print line number
@@ -259,12 +284,6 @@ function process(){
 		error "illegal string: line ${illegalLineNum}: ${illegalString}"
 	fi	
 	
-	#-------------------------------------------------------
-	# prepare sed cmd
-	sedcmd=`printConversionTable |
-				awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $1, d, $2, d }'`
-	sedcmd2='s/^0/N/; s/^1/U/; s/^2/B/; s/^3/T/; s/^4/Q/; s/^5/P/; s/^6/H/; s/^7/S/; s/^8/O/; s/^9/E/; y/0123456789/nubtqphsoe/'
-
 	# ------------------------------------------------------------------
 	# convert and print
 	if [ ! -z "$headerData" ]; then
