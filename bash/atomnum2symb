@@ -229,7 +229,7 @@ function process(){
 	contentData=`echo "$contentData" |
 			sed -r 's/$/'"${delimiter}"'/' | # add trailing and leading delimiters
 			sed -r 's/^/'"${delimiter}"'/' |
-			sed -r "s/${delimiter}/${delimiter}\n/${targetcolumnnum}" | # split 1 line into 3 lines
+			sed -r "s/${delimiter}/${delimiter}\n/${targetColumnNum}" | # split 1 line into 3 lines
 			sed -r "2~2s/${delimiter}/${delimiter}\n/1" |
 			sed -r '$s/$/\n /'`
 			# Since bash removes the trailing newline character when assigning to a variable,
@@ -262,7 +262,7 @@ function process(){
 	#-------------------------------------------------------
 	# prepare sed cmd
 	sedcmd=`printConversionTable |
-				awk "{printf 's/^%s${delimiter}$/%s${delimiter}/; ', $1, $2}"` 2>/dev/null`
+				awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $1, d, $2, d }'`
 	sedcmd2='s/^0/N/; s/^1/U/; s/^2/B/; s/^3/T/; s/^4/Q/; s/^5/P/; s/^6/H/; s/^7/S/; s/^8/O/; s/^9/E/; y/0123456789/nubtqphsoe/'
 
 	# ------------------------------------------------------------------
