@@ -14,7 +14,7 @@ cat <<EOF
     --title  | set the title section
     --charge | set charge
     --multi  | set multiplicity
-             | --multi 1 / --multi 2 / ... / 
+             | --multi 1 / --multi 2 / ... 
              | --multi low / --multi high / --multi high2 / ... (determined from the number of electrons)
     --gen    | set basis function when gen is specified in route 
              | --gen 'H-Ar,Ga-Kr' '6-31G**' 'Fe,I,Ce' 'Lanl2dz'
@@ -30,6 +30,7 @@ function parse_option(){
 	titlesection='%TITLE%'
 	charge=0
 	multiplicity=
+	spinstate=
 	genecp=
 
 	while [ "${#args[@]}" -gt 1 ]
@@ -57,7 +58,19 @@ function parse_option(){
 			shift_args 2
 			;;
 		--multi)
-			multiplicity="${args[2]}"
+			local __multi
+			__multi="${args[2]}"
+			if [[ "$__multi" =~ ^[0-9]+$ ]]; then
+				multiplicity="$__multi"
+			elif [ "$__multi" = low ]; then
+				spinstate=0
+			elif [ "$__multi" = high ]; then
+				spinstate=1
+			elif [[ "$__multi" =~ ^high[0-9]+$ ]]; then
+				spinstate="${__multi/high/}"
+			else
+				error "invalid value for --multi: ${__multi}"
+			fi
 			shift_args 2
 			;;
 		--genecp)
@@ -92,22 +105,50 @@ function process(){
 	uniqElementList=`echo "$elementList" | sort | uniq`
 	
 	# set multiplicity
-	# count the total number of electrons
-	# and determine whether the number is odd or even.
-	# - if even, multiplicity = 1, 3, 5, ...
-	# - if odd,  multiplicity = 2, 4, 6, ...
-	numElecMod2=`echo "$elementList" | symb2atomnum | awk -v c="$charge" '{s += $1} END {print (s-c)%2}'`
-	if [ "$numElecMod2" -eq 0 ]; then
-		# if even
+	if [ "$spinstate" ]; then
+		# count the total number of electrons
+		# and determine whether the number is odd or even.
+		# - if even, multiplicity = 1, 3, 5, ...
+		# - if odd,  multiplicity = 2, 4, 6, ...
+		numElecMod2=`echo "$elementList" | symb2atomnum | awk -v c="$charge" '{s += $1} END {print (s-c)%2}'`
+		
+		# reset multiplicity
+		multiplicity=$((2 * ${spinstate} + 1 + ${numElecMod2}))			
 		
 	else
-		# if odd
+		# multiplicity is already set with --multi option
+		:
 	fi
 
 	# set genecp
 	
+	# save to gjf
+	# - print link0
+	echo "$link0command"
 	
+	# - print route section
+	echo "$routesection"
+	
+	# - print a empty line
+	echo ""
+	
+	# - print title section
+	echo "$titlesection"
+	
+	# - print a empty line
+	echo ""
+	
+	# - print charge and multiplicity
+	echo "${charge} ${multiplicity}"
 
+	# - print a molecule structure
+	echo "$coordData"
+	
+	# - print a empty line
+	echo ""
+	
+	# - print genecp
+	# TODO implement
 }
 
 main "$@"
