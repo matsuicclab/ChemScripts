@@ -1,0 +1,130 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+
+function help(){
+	abstract_help "len2len" "<unit1>" "<unit2>" "length in 'unit1'" "length in 'unit2'" "`option_help`"
+}
+
+function option_help(){
+cat <<EOF
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --field <num>           | set target column number
+                                | default: 1
+    -s, --skip <num>            | set the title section
+                                | default: 0
+    --from <unit> | a.u. / bohr / angstrom / nm / m
+    --to <unit>   | a.u. / bohr / angstrom / nm / m
+EOF
+}
+
+function parse_option(){
+	# set default
+	delimiter=' '
+	targetColumnNum=1
+	headerEndLineNum=0
+	fromunit=
+	tounit=
+	
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-d | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-f | --field)
+			targetColumnNum="${args[2]}"
+			shift_args 2
+			;;
+		-s | --skip)
+			headerEndLineNum="${args[2]}"
+			shift_args 2
+			;;
+		--from)
+			fromunit="${args[2]}"
+			shift_args 2
+			;;
+		--to)
+			tounit="${args[2]}"
+			shift_args 2
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+	
+	if [ ! "$fromunit" ] ; then
+		error "--from option is unspecified"
+	fi
+	if [ ! "$tounit" ] ; then
+		error "--to option is unspecified" 
+	fi
+	
+	# calc unit conversion factor
+	fromunitfactor=`get_factor "$fromunit"`
+	tounitfactor=`get_factor "$tounit"`
+	factor=`awk "BEGIN {print 1 / ${fromunitfactor} * ${tounitfactor} }"`
+}
+
+function get_factor(){
+	# $1: unitname
+	local unitname
+	unitname="$1"
+	case "$unitname" in
+	au | a.u. | bohr)
+		factor=1
+		;;
+	angstrom)
+		factor="0.529177210903"
+		;;
+	nm)
+		factor="( 0.529177210903 * 1e-1 )"
+		;;
+	m)
+		factor="( 0.529177210903 * 1e-10 )"
+		;;
+	*)
+		error "specified unit is invalid: ${unitname}"
+		;;
+	esac
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local inpStr
+	inpStr="$1"
+	
+	echo "$inpStr" |
+		awk -v headerend="${headerEndLineNum}" \	# set table data format
+			-v field="${targetColumnNum}" \			# 
+			-v delimiter="${delimiter}" \			#
+			-v factor="${factor}" \					# set factor
+			'BEGIN {FS="["delimiter"]"; OFS=delimiter} # set delimiter  
+			{
+				if (NR > headerend && NF >= field) {
+					$field=$field*factor; print $0	# convert
+				} else {
+					print $0						# do nothing
+				}
+			}'
+	
+}
+
+main "$@"
+
+
+
