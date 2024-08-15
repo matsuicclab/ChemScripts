@@ -43,15 +43,14 @@ visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
     - theory
 - g16log2xyz (wrapper of g16log2value --opt-geometry)
 - g16log2csv
+- xyz2gjf
 - csvsmiles2xyz
 - name2smiles
 - name2xyz (For complexes that are difficult to express in SMILES notation)
 - pdbid2pdb
-- bohr2ang
-- ang2bohr
 - glog2prep (extend of mkresp)
 - smiles2prep
-- bkill-all
+- bkill-all -> bkill 0
 - jdel-all
 
 
