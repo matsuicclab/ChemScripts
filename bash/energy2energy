@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "len2len" "<unit1>" "<unit2>" "length in 'unit1'" "length in 'unit2'" "`option_help`"
+	abstract_help "energy2energy" "<unit1>" "<unit2>" "energy in 'unit1'" "energy in 'unit2'" "`option_help`"
 }
 
 function option_help(){
@@ -16,7 +16,7 @@ cat <<EOF
                                 | default: 1
     -s, --skip <num>            | set the title section
                                 | default: 0
-    --from <unit> | a.u. / bohr / angstrom / nm / m
+    --from <unit> | a.u. / hartree / kcal/mol / eV / J / K / cm-1
     --to <unit>   | same as above
 EOF
 }
@@ -84,18 +84,31 @@ function get_factor(){
 	local unitname
 	unitname="$1"
 	case "$unitname" in
-	au | a.u. | bohr | Bohr)
+	au | a.u. | hartree | Hartree)
 		factor=1
 		;;
-	A | angstrom | Angstrom)
-		# 1[a.u.] = 0.529177210544[A] from https://en.wikipedia.org/wiki/Atomic_units
-		factor="0.529177210544"
+	J)
+		# 1[a.u.] = 4.3597447222060e-18[J] from https://en.wikipedia.org/wiki/Atomic_units
+		factor="4.3597447222060e-18"
 		;;
-	nm)
-		factor="( 0.529177210903 * 1e-1 )"
+	eV)
+		# 1[J] = 1[C.V]
+		# 1[C] = 1/1.602176634e-19[e] from https://en.wikipedia.org/wiki/Elementary_charge
+		factor="27.211386245981"
 		;;
-	m)
-		factor="( 0.529177210903 * 1e-10 )"
+	K)
+		# kB = 1.380649e-23[J/K] from https://en.wikipedia.org/wiki/Boltzmann_constant
+		factor="315775.02480399"
+		;;
+	cm-1)
+		# h = 6.62607015e-34[J.s] from https://en.wikipedia.org/wiki/Planck_constant
+		# c = 299792458[m/s]      from https://en.wikipedia.org/wiki/Speed_of_light
+		factor="219474.63136314"
+		;;
+	kcal/mol)
+		# 1[J] = 1/4.184[cal]    from https://en.wikipedia.org/wiki/Calorie
+		# 1[mol] = 6.02214076e23 from  https://en.wikipedia.org/wiki/Avogadro_constant
+		factor="627.50947406290"
 		;;
 	*)
 		error "specified unit is invalid: ${unitname}"
