@@ -208,6 +208,8 @@ function process(){
 	fi
 
 	# set genecp
+	gensection=
+	ecpsection=
 	if [ "$gendict" ]; then
 		gensection=`generate_genecp_section gen "${elementList}"`
 	fi
