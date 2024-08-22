@@ -28,8 +28,8 @@ function parse_option(){
 	link0command='%LINK0%'
 	routesection='%ROUTE%'
 	titlesection='%TITLE%'
-	charge=0           # default
-	spinstate=low      # default
+	charge=0           # default (= --charge 0)
+	spinstate=0        # default (= --multi low)
 	fixedmultiplicity= # initialize for unbound variable
 	gendict=
 	ecpdict=
