@@ -172,13 +172,13 @@ function generate_genecp_section(){
 			basis=`echo "$dict" |
 					sed -r -n "/^[^:]*${element}[^:]*:/p" |
 					head -n 1 |
-					sed -r 's/^[^:]*://'`
+					sed -r 's/^[^:]*: *//'`
 			if [ "$basis" ]; then
 				echo "${element} 0"
 				echo "${basis}"
 				echo "****"
 			else
-				error "no basis setting"
+				error "No basis functions specified: ${element}"
 			fi
 		done
 }
