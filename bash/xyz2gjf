@@ -17,9 +17,9 @@ cat <<EOF
              | --multi 1 / --multi 2 / ... 
              | --multi low / --multi high / --multi high2 / ... (determined from the number of electrons)
     --gen    | set basis function when gen is specified in route 
-             | --gen 'H-Ar,Ga-Kr' '6-31G**' 'Fe,I,Ce' 'Lanl2dz'
+             | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz'
     --ecp    | set effective core potential
-             | --ecp 'Fe,I,Ce' 'Lanl2dz'
+             | --ecp 'Fe,I,Ce: Lanl2dz'
 EOF
 }
 
@@ -31,7 +31,8 @@ function parse_option(){
 	charge=0
 	multiplicity=
 	spinstate=
-	genecp=
+	gendict=
+	ecpdict=
 
 	while [ "${#args[@]}" -gt 1 ]
 	do
@@ -73,10 +74,23 @@ function parse_option(){
 			fi
 			shift_args 2
 			;;
-		--genecp)
-			# TODO
-		
-			shift_args 2
+		--gen)
+			shift_args 1
+			gendict= # re-initialize
+			while [[ ! "$args[1]" =~ ^-- ]];
+			do
+				append_to_genecp_dict gen "${args[1]}"
+				shift_args 1
+			done
+			;;
+		--ecp)
+			shift_args 1
+			ecpdict= # re-initialize
+			while [[ ! "$args[1]" =~ ^-- ]];
+			do
+				append_to_genecp_dict ecp "${args[1]}"
+				shift_args 1
+			done
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
@@ -92,6 +106,80 @@ function get_default_conversion_patt(){
 	echo '{s/.xyz$//; s/$/.gjf/}'
 }
 
+function append_to_genecp_dict(){
+	# $1: gen / ecp
+	# $2: 'symblist: basis'
+	local symblist basis extendedsymblist
+	
+	symblist=`echo "$2" | sed -r 's/:.*//'`
+	basis=`echo "$2" | sed -r 's/^[^:]*://'`
+	extendedsymblist=`parse_symb_list "$symblist"`
+	if [ "$1" = 'gen' ]; then
+		gendict="${gendict}\n${extendedsymblist}: ${basis}"
+	else
+		ecpdict="${ecpdict}\n${extendedsymblist}: ${basis}"
+	fi
+}
+
+function parse_symb_list(){
+	# $1: str
+	# H-Ar,Ga-Kr,Fe,I
+	# -> H,He,Li,Be,B,C,N,O,F,Ne,Na,Mg,Al,Si,P,S,Cl,Ar,Ga,Ge,As,Se,Br,Kr,Fe,I
+	local str patt str2 numlist symblist
+	
+	str=`echo "$1" | sed -r 's/,/ /g'`
+	
+	patt=`echo "$str" | sed -r 's/[A-z]+/%s/g'`
+	
+	str2=`echo "$str" |
+			sed -r 's/([- ])/\n\1\n/g' |
+			sed -r -n '/[A-z]/p' |
+			symb2atomnum`
+	str2=`echo "$str2" |
+			tr '\n' ' ' |
+			xargs printf "${patt}\n"`
+	
+	numlist=`echo "$str2" |
+				sed -r 's/ /\n/g' |
+				sed -r '/-/!s/^(.+)$/\1-\1/; /^-/s/-/1-/; /-$/s/-/-118/; /-/s/-/ /1' |
+				xargs -L 1 seq`
+	symblist=`echo "$numlist" |
+		atomnum2symb |
+		tr '\n' ','`
+	
+	echo "$symblist"
+}
+
+function generate_genecp_section(){
+	# $1: gen / ecp
+	# $2: elementList
+	# ex. elementList: 'C\nH\nH\nH\nO\nH'
+	local dict
+	if [ "$1" = "gen" ]; then
+		dict="${gendict}"
+	else
+		dict="${ecpdict}"
+	fi
+	
+	echo "$2" |
+		sort | 
+		uniq |
+		while read element
+		do
+			basis=`echo "$dict" |
+					sed -r -n "/^[^:]*${element}[^:]*:/p" |
+					head -n 1 |
+					sed -r 's/^[^:]*://'`
+			if [ "$basis" ]; then
+				echo "${element} 0"
+				echo "${basis}"
+				echo "****"
+			else
+				error "no basis setting"
+			fi
+		done
+}
+
 function process(){
 	# $1: inpFile
 	#
@@ -102,7 +190,6 @@ function process(){
 	coordData=`echo "$xyzData" | sed -n '3,$p'`
 	# list the elements that exist
 	elementList=`echo "$coordData" | cut -d ' ' -f 1`
-	uniqElementList=`echo "$elementList" | sort | uniq`
 	
 	# set multiplicity
 	if [ "$spinstate" ]; then
@@ -121,7 +208,13 @@ function process(){
 	fi
 
 	# set genecp
-	
+	if [ "$gendict" ]; then
+		gensection=`generate_genecp_section gen "${elementList}"`
+	fi
+	if [ "$ecpdict" ]; then
+		ecpsection=`generate_genecp_section ecp "${elementList}"`
+	fi
+		
 	# save to gjf
 	# - print link0
 	echo "$link0command"
@@ -148,7 +241,15 @@ function process(){
 	echo ""
 	
 	# - print genecp
-	# TODO implement
+	if [ "$gensection" ]; then
+		echo "$gensection"
+		echo ""
+	fi
+	if [ "$ecpsection" ]; then
+		echo "$ecpsection"
+		echo ""
+		echo ""
+	fi
 }
 
 main "$@"
