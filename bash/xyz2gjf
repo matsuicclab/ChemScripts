@@ -28,9 +28,9 @@ function parse_option(){
 	link0command='%LINK0%'
 	routesection='%ROUTE%'
 	titlesection='%TITLE%'
-	charge=0
-	multiplicity=
-	spinstate=
+	charge=0           # default
+	spinstate=low      # default
+	fixedmultiplicity= # initialize for unbound variable
 	gendict=
 	ecpdict=
 
@@ -62,7 +62,7 @@ function parse_option(){
 			local __multi
 			__multi="${args[2]}"
 			if [[ "$__multi" =~ ^[0-9]+$ ]]; then
-				multiplicity="$__multi"
+				fixedmultiplicity="$__multi"
 			elif [ "$__multi" = low ]; then
 				spinstate=0
 			elif [ "$__multi" = high ]; then
@@ -192,7 +192,11 @@ function process(){
 	elementList=`echo "$coordData" | cut -d ' ' -f 1`
 	
 	# set multiplicity
-	if [ "$spinstate" ]; then
+	if [ "$fixedmultiplicity" ]; then
+		# multiplicity is already set with --multi option
+		multiplicity="$fixedmultiplicity"
+		
+	else
 		# count the total number of electrons
 		# and determine whether the number is odd or even.
 		# - if even, multiplicity = 1, 3, 5, ...
@@ -202,9 +206,6 @@ function process(){
 		# reset multiplicity
 		multiplicity=$((2 * ${spinstate} + 1 + ${numElecMod2}))			
 		
-	else
-		# multiplicity is already set with --multi option
-		:
 	fi
 
 	# set genecp
