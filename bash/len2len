@@ -112,10 +112,10 @@ function process(){
 	inpStr="$1"
 	
 	echo "$inpStr" |
-		awk -v headerend="${headerEndLineNum}" \	# set table data format
-			-v field="${targetColumnNum}" \			# 
-			-v delimiter="${delimiter}" \			#
-			-v factor="${factor}" \					# set factor
+		awk -v headerend="${headerEndLineNum}" \
+			-v field="${targetColumnNum}" \
+			-v delimiter="${delimiter}" \
+			-v factor="${factor}" \
 			'BEGIN {FS="["delimiter"]"; OFS=delimiter} # set delimiter  
 			{
 				if (NR > headerend && NF >= field) {
