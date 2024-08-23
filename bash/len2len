@@ -101,6 +101,8 @@ function get_factor(){
 		error "specified unit is invalid: ${unitname}"
 		;;
 	esac
+	
+	echo "$factor"
 }
 
 function process(){
