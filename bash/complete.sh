@@ -189,6 +189,7 @@ function __complete_energy2energy(){
 		-d --delimiter
 		-f --field
 		-s --skip
+		--format
 		--from
 		--to
 	)

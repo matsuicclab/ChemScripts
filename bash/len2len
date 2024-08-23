@@ -16,6 +16,8 @@ cat <<EOF
                                 | default: 1
     -s, --skip <num>            | set the title section
                                 | default: 0
+    --format <fmt>              | set format for print
+                                | default: %.10g
     --from <unit> | a.u. / bohr / angstrom / nm / m
     --to <unit>   | same as above
 EOF
@@ -28,6 +30,7 @@ function parse_option(){
 	headerEndLineNum=0
 	fromunit=
 	tounit=
+	format='%.10g'
 	
 	while [ "${#args[@]}" -gt 1 ]
 	do
@@ -47,6 +50,10 @@ function parse_option(){
 			;;
 		-s | --skip)
 			headerEndLineNum="${args[2]}"
+			shift_args 2
+			;;
+		--format)
+			format="${args[2]}"
 			shift_args 2
 			;;
 		--from)
@@ -115,8 +122,12 @@ function process(){
 		awk -v headerend="${headerEndLineNum}" \
 			-v field="${targetColumnNum}" \
 			-v delimiter="${delimiter}" \
+			-v format="${format}" \
 			-v factor="${factor}" \
-			'BEGIN {FS="["delimiter"]"; OFS=delimiter} # set delimiter  
+			'BEGIN {
+				FS="["delimiter"]"; OFS=delimiter; # set delimiter
+				OFMT=format # format when printing
+			}
 			{
 				if (NR > headerend && NF >= field) {
 					$field=$field*factor; print $0	# convert
