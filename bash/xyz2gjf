@@ -83,7 +83,7 @@ function parse_option(){
 		--gen)
 			shift_args 1
 			gendict= # re-initialize
-			while [ ! "${args[1]}" = -- ] && echo " ${optionlist[@]} " | grep -q "${args[1]}"
+			while [ ! "${args[1]}" = -- ] && ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}"
 			do
 				append_to_genecp_dict gen "${args[1]}"
 				shift_args 1
@@ -95,7 +95,7 @@ function parse_option(){
 		--ecp)
 			shift_args 1
 			ecpdict= # re-initialize
-			while [ ! "${args[1]}" = -- ] && echo " ${optionlist[@]} " | grep -q "${args[1]}"
+			while [ ! "${args[1]}" = -- ] && ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}"
 			do
 				append_to_genecp_dict ecp "${args[1]}"
 				shift_args 1
