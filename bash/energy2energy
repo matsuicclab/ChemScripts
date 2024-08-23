@@ -83,7 +83,7 @@ function parse_option(){
 	# calc unit conversion factor
 	fromunitfactor=`get_factor "$fromunit"`
 	tounitfactor=`get_factor "$tounit"`
-	factor=`awk "BEGIN {print 1 / ${fromunitfactor} * ${tounitfactor} }"`
+	factor=`awk -v format="${format}" "BEGIN {OFMT=format; print 1 / ${fromunitfactor} * ${tounitfactor} }"`
 }
 
 function get_factor(){
@@ -143,9 +143,11 @@ function process(){
 			}
 			{
 				if (NR > headerend && NF >= field) {
-					$field=$field*factor; print $0	# convert
+					# convert
+					$field=sprintf(OFMT, $field*factor); print $0
 				} else {
-					print $0						# do nothing
+					# do nothing
+					print $0
 				}
 			}'
 	
