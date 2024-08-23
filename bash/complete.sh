@@ -142,7 +142,22 @@ function __complete_str2str_no_option(){
 }
 
 ###################################################################
-complete -F __complete_str2str_no_option atomnum2symb
+###################################################################
+###################################################################
+function __complete_atomnum2symb(){
+	local flagoptionlist=(
+		-h --help
+	)
+	local valueoptionlist=(
+		-d --delimiter
+		-f --field
+		-s --skip
+	)
+	local fileoptionlist=()
+
+	__complete_str2str
+}
+complete -F __complete_atomnum2symb atomnum2symb
 
 
 ###################################################################
@@ -163,6 +178,25 @@ function __complete_csvsmiles2png(){
 	__complete_file2seqfiles
 }
 complete -F __complete_csvsmiles2png csvsmiles2png
+
+
+###################################################################
+function __complete_energy2energy(){
+	local flagoptionlist=(
+		-h --help
+	)
+	local valueoptionlist=(
+		-d --delimiter
+		-f --field
+		-s --skip
+		--from
+		--to
+	)
+	local fileoptionlist=()
+
+	__complete_str2str
+}
+complete -F __complete_energy2energy energy2energy
 
 
 ###################################################################
@@ -223,6 +257,10 @@ complete -F __complete_g16log2value g16log2value
 
 ###################################################################
 complete -F __complete_files2files_no_option inpcrd2crd
+
+
+###################################################################
+complete -F __complete_energy2energy len2len
 
 
 ###################################################################
@@ -357,7 +395,29 @@ complete -F __complete_smiles2xyz smiles2xyz
 
 
 ###################################################################
-complete -F __complete_str2str_no_option symb2atomnum
+complete -F __complete_atomnum2symb symb2atomnum
+
+
+###################################################################
+function __complete_xyz2gjf(){
+	local flagoptionlist=(
+		-h --help
+	)
+	local valueoptionlist=(
+		--link0
+		--route
+		--title
+		--charge
+		--multi
+		--gen
+		--ecp
+	)
+	local fileoptionlist=()
+
+	__complete_files2files
+}
+
+complete -F __complete_xyz2gjf xyz2gjf
 
 
 ###################################################################
