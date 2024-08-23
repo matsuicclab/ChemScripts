@@ -9,18 +9,19 @@ function help(){
 
 function option_help(){
 cat <<EOF
-    --link0  | set the link0 command
-    --route  | set the route section
-    --title  | set the title section
-    --charge | set charge
-    --multi  | set multiplicity
+    --link0  | set the link0 command (default: %LINK0%)
+    --route  | set the route section (default: %ROUTE%)
+    --title  | set the title section (default: %TITLE%)
+    --charge | set charge            (default: 0)
+    --multi  | set multiplicity      (default: low)
              | --multi 1 / --multi 2 / ... 
              | --multi low / --multi high / --multi high2 / ... (determined from the number of electrons)
     --gen    | set basis function when gen is specified in route 
-             | -- is required to indicate the end of the option
-             | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' --
+             | if this option is last, -- is required to indicate the end of the option
+             | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
     --ecp    | set effective core potential
-             | --ecp 'Fe,I,Ce: Lanl2dz' --
+             | same specification as --gen
+             | --ecp 'Fe,I,Ce: Lanl2dz'
 EOF
 }
 
@@ -34,6 +35,10 @@ function parse_option(){
 	fixedmultiplicity= # initialize for unbound variable
 	gendict=
 	ecpdict=
+	local optionlist=(
+		-h -help --help
+		--link0 --route --title --charge --multi --gen --ecp
+	)
 
 	while [ "${#args[@]}" -gt 1 ]
 	do
@@ -78,22 +83,26 @@ function parse_option(){
 		--gen)
 			shift_args 1
 			gendict= # re-initialize
-			while [ ! "${args[1]}" = -- ];
+			while [ ! "${args[1]}" = -- ] && echo " ${optionlist[@]} " | grep -q "${args[1]}"
 			do
 				append_to_genecp_dict gen "${args[1]}"
 				shift_args 1
 			done
-			shift_args 1 # for '--'
+			if [ "${args[1]}" = -- ]; then
+				shift_args 1 # for '--'
+			fi
 			;;
 		--ecp)
 			shift_args 1
 			ecpdict= # re-initialize
-			while [ ! "${args[1]}" = -- ];
+			while [ ! "${args[1]}" = -- ] && echo " ${optionlist[@]} " | grep -q "${args[1]}"
 			do
 				append_to_genecp_dict ecp "${args[1]}"
 				shift_args 1
 			done
-			shift_args 1 # for '--'
+			if [ "${args[1]}" = -- ]; then
+				shift_args 1 # for '--'
+			fi
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
