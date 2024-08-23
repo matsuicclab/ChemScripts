@@ -95,18 +95,21 @@ ps.pruneRmsThresh = 0 # no pruning
 ps.numThreads = ${numThreads}
 cids = AllChem.EmbedMultipleConfs(mol, ${numConfs}, ps)
 
-# optimization
-AllChem.MMFFOptimizeMoleculeConfs(mol, numThreads=${numThreads})
-prop = AllChem.MMFFGetMoleculeProperties(mol)
-# calc energy
-energyList = []
-for cid in cids:
-    mmff = AllChem.MMFFGetMoleculeForceField(mol, prop, confId=cid)
-    energyList.append(mmff.CalcEnergy())
-# adopt the one with the lowest energy
-mostStableConformerID = cids[energyList.index(min(energyList))]
+mmffprop = AllChem.MMFFGetMoleculeProperties(mol)
+if mmffprop is not None:
+	# optimization
+	AllChem.MMFFOptimizeMoleculeConfs(mol, numThreads=${numThreads})
+	# calc energy
+	energyList = [AllChem.MMFFGetMoleculeForceField(mol, mmffprop, confId=cid).CalcEnergy() for cid in cids]
+else:
+	# optimization
+	AllChem.UFFOptimizeMoleculeConfs(mol, numThreads=${numThreads})
+	# calc energy
+	energyList = [AllChem.UFFGetMoleculeForceField(mol, confId=cid).CalcEnergy() for cid in cids]
 
-conf = mol.GetConformer(mostStableConformerID)
+# adopt the one with the lowest energy
+mostStableConfId = cids[energyList.index(min(energyList))]
+conf = mol.GetConformer(mostStableConfId)
 
 # get xyz from conf
 lineStrList = []
