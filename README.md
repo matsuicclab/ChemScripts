@@ -19,11 +19,25 @@ source <DIR>/bashrc # replace the text <DIR> to this directory according to your
 # to use
 ## bash
 ```
-$ atomnum2symb 'Ca'
-20
-$ smiles2xyz 'CCO'
-$ g16log2value --SCF-energy test.log
--76.4341246819
+# generate smiles and structure
+$ name='ethanol'
+$ name2smiles "$name" | smiles2xyz -o test.xyz
+
+# calc energy with Gaussian
+$ xyz2gjf -o test_0.gjf --link0 '%chk=test_0.chk' --route '# opt b3lyp/6-31G(d)' --charge 0 test.xyz
+$ g16 test_0.gjf
+$ g16log2value --SCF-energy test_0.log
+-155.033799257
+
+# calc energy of cation with Gaussian
+$ xyz2gjf -o test_1.gjf --link0 '%chk=test_1.chk' --route '# opt b3lyp/6-31G(d)' --charge 1 test.xyz
+$ g16 test_1.gjf
+$ g16log2value --SCF-energy test_1.log
+-154.664421473
+
+# calc DeltaE in kcal/mol
+$ (g16log2value --SCF-energy test_1.log ; g16log2value --SCF-energy test_0.log) | energy2energy --from a.u. --to kcal/mol --format '%.10f' | tr '\n' ' ' | awk '{print $1-$2}'
+231.788
 ```
 
 ## python
@@ -43,9 +57,7 @@ visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
     - theory
 - g16log2xyz (wrapper of g16log2value --opt-geometry)
 - g16log2csv
-- xyz2gjf
 - csvsmiles2xyz
-- name2smiles
 - name2xyz (For complexes that are difficult to express in SMILES notation)
 - pdbid2pdb
 - glog2prep (extend of mkresp)
