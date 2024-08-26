@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+
+function help(){
+	abstract_help "pubchemid2smiles" "<id>" "<smiles>" "PubChem ID" "SMILES" "`option_help`"
+}
+
+#function option_help(){
+#cat <<EOF
+#EOF
+#}
+
+function parse_option(){
+	# set default
+	
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local cid smiles
+	
+	cid="$1"
+	smiles=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/CanonicalSMILES/TXT")
+	
+	# print
+	echo "$smiles"
+	
+}
+
+main "$@"
+
+
+
