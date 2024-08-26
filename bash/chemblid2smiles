@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "chemblid2smiles" "<name>" "<smiles>" "ChEMBL ID" "SMILES" "`option_help`"
+	abstract_help "chemblid2smiles" "<CHEMBLID>" "<smiles>" "ChEMBL ID" "SMILES" "`option_help`"
 }
 
 #function option_help(){
@@ -47,6 +47,7 @@ function process(){
 		error "ChEMBL ID is invalid: ${id}"
 	fi
 	
+	# reference: https://www.ebi.ac.uk/chembl/api/data/docs
 	xmldata=$(wget -qO- "https://www.ebi.ac.uk/chembl/api/data/molecule/${id}")
 	smiles=`echo "$xmldata" |
 				tr '\n' ' ' |
