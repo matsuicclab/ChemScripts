@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+
+function help(){
+	abstract_help "chemblid2smiles" "<name>" "<smiles>" "ChEMBL ID" "SMILES" "`option_help`"
+}
+
+#function option_help(){
+#cat <<EOF
+#EOF
+#}
+
+function parse_option(){
+	# set default
+	
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local id xmldata smiles
+	
+	id="$1"
+	if [[ "$id" =~ ^[0-9]+$ ]]; then
+		id="CHEMBL${id}"
+	fi
+	if [[ ! "$id" =~ ^CHEMBL[0-9]+$ ]]; then
+		error "ChEMBL ID is invalid: ${id}"
+	fi
+	
+	xmldata=$(wget -qO- "https://www.ebi.ac.uk/chembl/api/data/molecule/${id}")
+	smiles=`echo "$xmldata" |
+				tr '\n' ' ' |
+				sed -r 's/^.+(canonical_smiles.+canonical_smiles).+$/\1/' |
+				sed -r 's/^[^>]+> *//' |
+				sed -r 's/ *<[^<]+$//'`
+	
+	# print
+	echo "$smiles"
+	
+}
+
+main "$@"
+
+
+
