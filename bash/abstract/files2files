@@ -74,11 +74,13 @@ EOF
 # to override
 function comment_about_script(){
 	# print comment
+	:
 }
 
 # to override
 function option_help(){
 	# print option help
+	:
 }
 
 function parse_args(){
