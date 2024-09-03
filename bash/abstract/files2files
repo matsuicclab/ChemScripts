@@ -3,22 +3,22 @@
 source "${SCRIPT_DIR}"/abstract/common
 
 #flowchart
-#check -o option
-#	-o -: stdout
-#	-o file: out to file
-#	-o subpatt: out to file which name is decided by subpatt
+#check -O option
+#	-O -: stdout
+#	-O file: out to file
+#	-O subpatt: out to file which name is decided by subpatt
 #check input
 #	pipe:
-#		if -o subpatt, error exit
-#		if -o file, then IO follow it
+#		if -O subpatt, error exit
+#		if -O file, then IO follow it
 #		else: stdout
 #	ps sub(any):
-#		if -o subpatt, error exit
-#		if -o file, then IO follow it
+#		if -O subpatt, error exit
+#		if -O file, then IO follow it
 #		else: stdout
 #	file(all):
-#		if -o subpatt and there is even one "-" as input, error exit
-#		if -o file and -o -, then IO follow it
+#		if -O subpatt and there is even one "-" as input, error exit
+#		if -O file and -O -, then IO follow it
 #		if [-t1] is true, out to file according to the default patt
 #		else: stdout
 #
@@ -54,13 +54,13 @@ usage:
     + ${cmd} <(<COMMAND>)
     +--- if input by process substitution, print to stdout
     |
-    + ${cmd} -o ${out} ${inp}
-    + ${cmd} -o - ${inp}
-    +--- if you want to force the output destination, use the -o option
+    + ${cmd} -O ${out} ${inp}
+    + ${cmd} -O - ${inp}
+    +--- if you want to force the output destination, use the -O option
     |
-    + ${cmd} -o 's/BEF/AFT/' ${inp}1 ${inp}2 ...
+    + ${cmd} -O 's/BEF/AFT/' ${inp}1 ${inp}2 ...
     +--- it is also possible to specify multiple input files.
-         if you specify a sed subcommand to the -o option,
+         if you specify a sed subcommand to the -O option,
          you can output with your favorite file name.
 
 option usage:
@@ -71,12 +71,12 @@ EOF
 }
 
 function parse_args(){
-	# parse -o option
+	# parse -O option
 	local outputDestIsForced=
 	local forcedOutputDestType= # unforced, stdout, pattfile, fixfile
 	local forcedOutputDest=
 	local forcedOutputDestPatt=
-	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
+	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-O" ]; then
 		outputDestIsForced=true
 		local value="${args[2]}"
 		if [ "$value" = "-" ]; then

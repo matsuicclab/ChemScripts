@@ -32,9 +32,9 @@ usage:
     + ${cmd} <(<COMMAND>)
     +--- if input by process substitution, print to stdout
     |
-    + ${cmd} -o ${out} ${inp}
-    + ${cmd} -o - ${inp}
-    +--- if you want to force the output destination, use the -o option
+    + ${cmd} -O ${out} ${inp}
+    + ${cmd} -O - ${inp}
+    +--- if you want to force the output destination, use the -O option
 
 option usage:
     -h, -help, --help | display this help
@@ -44,12 +44,12 @@ EOF
 }
 
 function parse_args(){
-	# parse -o option
+	# parse -O option
 	local outputDestIsForced=
 	local forcedOutputDestType= # unforced, stdout, pattfile, fixfile
 	local forcedOutputDest=
 	local forcedOutputDestPatt=
-	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
+	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-O" ]; then
 		outputDestIsForced=true
 		local value="${args[2]}"
 		if [ "$value" = "-" ]; then

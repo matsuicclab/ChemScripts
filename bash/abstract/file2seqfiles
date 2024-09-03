@@ -20,8 +20,8 @@ usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and save to ${out} with an appropriate sequential name automatically
     |
-    + ${cmd} -o 'example.%d.out' ${inp}
-    +--- decide output destinations with -o
+    + ${cmd} -O 'example.%d.out' ${inp}
+    +--- decide output destinations with -O
     |    use format (%d) to number
     |
     + <COMMAND> | ${cmd}
@@ -30,7 +30,7 @@ usage:
     |
     + ${cmd} ${inp} > ${out}
     + ${cmd} ${inp} | <COMMAND>
-    + ${cmd} -o - ${inp}
+    + ${cmd} -O - ${inp}
     +--- NOT support output to a redirect or pipe
 
 option usage:
@@ -41,16 +41,16 @@ EOF
 }
 
 #flowchart
-#- check -o option
+#- check -O option
 #   specified -> use specified format
 #   not specified
 #   - inp is file     -> use get_outputfilename_format
 #   - inp is not file -> use get_default_outputfilename_format
 #
 function parse_args(){
-	# parse -o option
+	# parse -O option
 	local forcedOutputFileNameFormat=
-	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-o" ]; then
+	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-O" ]; then
 		forcedOutputFileNameFormat="${args[2]}"
 		shift_args 2
 	else

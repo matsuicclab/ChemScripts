@@ -50,12 +50,12 @@ function __complete_files2files(){
 	if [[ "$cur" =~ ^- ]]; then
 		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
 		if [ "$cword" -eq 1 ]; then
-			# add -o option
-			totaloptionlist="-o ${totaloptionlist}"
+			# add -O option
+			totaloptionlist="-O ${totaloptionlist}"
 		fi
 		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
 	else
-		if [ "$prev" = -o ] && [ "$cword" -eq 2 ]; then
+		if [ "$prev" = -O ] && [ "$cword" -eq 2 ]; then
 			COMPREPLY=( $(compgen -f -- "$cur") )
 		elif [[ " ${flagoptionlist[@]} " =~ \ ${prev}\  ]]; then
 			COMPREPLY=( $(compgen -f -- "$cur") )
@@ -85,12 +85,12 @@ function __complete_str2file(){
 	if [[ "$cur" =~ ^- ]]; then
 		local totaloptionlist="${flagoptionlist[@]} ${valueoptionlist[@]} ${fileoptionlist[@]}"
 		if [ "$cword" -eq 1 ]; then
-			# add -o option
-			totaloptionlist="-o ${totaloptionlist}"
+			# add -O option
+			totaloptionlist="-O ${totaloptionlist}"
 		fi
 		COMPREPLY=( $(compgen -W "$totaloptionlist" -- "$cur") )
 	else
-		if [ "$prev" = -o ] && [ "$cword" -eq 2 ]; then
+		if [ "$prev" = -O ] && [ "$cword" -eq 2 ]; then
 			COMPREPLY=( $(compgen -f -- "$cur") )
 		elif [[ " ${flagoptionlist[@]} " =~ \ ${prev}\  ]]; then
 			COMPREPLY=()
