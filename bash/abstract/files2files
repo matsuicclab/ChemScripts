@@ -72,7 +72,6 @@ EOF
 
 function parse_args(){
 	# Default value if -O is not set
-	outputDestIsForced=false
 	forcedOutputDestType=unforced  # unforced, stdout, pattfile, fixfile
 	forcedOutputDest="-"
 	forcedOutputDestPatt=
@@ -176,7 +175,6 @@ function parse_args(){
 
 function parse_O_option(){
 	# parse -O option
-	outputDestIsForced=true
 	local value="${args[2]}"
 	if [ "$value" = "-" ]; then
 		forcedOutputDestType=stdout
