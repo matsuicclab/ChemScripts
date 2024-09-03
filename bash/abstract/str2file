@@ -18,7 +18,7 @@ ${cmd}
 
 usage:
     + ${cmd} ${inp}
-    +--- convert ${inp} to ${out} and print to stdout
+    +--- convert ${inp} to ${out} file with a default name
     |
     + ${cmd} ${inp} > ${out}
     +--- save to the ${out} file
@@ -27,10 +27,10 @@ usage:
     +--- input to the next command
     |
     + <COMMAND> | ${cmd}
-    +--- convert the entered ${inp} data and print to stdout
+    +--- convert the entered ${inp} data and save to a file with a default name
     |
     + ${cmd} <(<COMMAND>)
-    +--- if input by process substitution, print to stdout
+    +--- if input by process substitution, save to a file with a default name
     |
     + ${cmd} -O ${out} ${inp}
     + ${cmd} -O - ${inp}
@@ -45,8 +45,8 @@ EOF
 
 function parse_args(){
 	# Default value if -O is not set
-	forcedOutputDestType=unforced  # unforced, stdout, pattfile, fixfile
-	forcedOutputDest=`get_default_output_path`
+	forcedOutputDestType=unforced  # unforced, stdout, fixfile
+	forcedOutputDest=
 
 	# parse options of implemented script
 	parse_option
@@ -71,7 +71,17 @@ function parse_args(){
 	fi
 
 	# set out
-	local output="$forcedOutputDest"
+	local output
+	if [ "$forcedOutputDestType" = unforced ]; then
+		if [ -t 1 ]; then
+			output=`get_default_output_path`
+		else
+			output="-"
+		fi
+	else
+		output="$forcedOutputDest"
+	fi
+
 	set_output "$output"
 }
 
