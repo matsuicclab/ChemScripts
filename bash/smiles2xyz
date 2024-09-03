@@ -10,11 +10,12 @@ function help(){
 
 function comment_about_script(){
 cat <<EOF
-	Molecular structures is generated using RDKit.
-	Generate an initial structure using the ETKDG method,
-	perform optimization using MMFF,
-	and output the resulting structure as the final output.
-	MMFF cannot be used for some molecular structures. In that case, use UFF.
+    Molecular structures is generated using RDKit.
+    Generate an initial structure using the ETKDG method,
+    perform optimization using MMFF,
+    and output the resulting structure as the final output.
+    MMFF cannot be used for some molecular structures. In that case, use UFF.
+
 EOF
 }
 
