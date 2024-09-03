@@ -65,7 +65,6 @@ visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
 - bkill-all -> bkill 0
 - jdel-all
 
-- Rewriting -o option to -O option
-- Remove limitation of -o option position
-- Include a description of scripts in help
+- error handling for chemblid2smiles, name2smiles, pdbid2pdb, pubchemid2smiles
+
 
