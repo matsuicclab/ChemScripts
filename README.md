@@ -59,12 +59,13 @@ visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
 - g16log2csv
 - csvsmiles2xyz
 - name2xyz (For complexes that are difficult to express in SMILES notation)
-- pdbid2pdb
 - glog2prep (extend of mkresp)
 - smiles2prep
+- mksolv
 - bkill-all -> bkill 0
 - jdel-all
 
-
-
+- Rewriting -o option to -O option
+- Remove limitation of -o option position
+- Include a description of scripts in help
 
