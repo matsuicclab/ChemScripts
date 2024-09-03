@@ -44,27 +44,11 @@ EOF
 }
 
 function parse_args(){
-	# parse -O option
-	local outputDestIsForced=
-	local forcedOutputDestType= # unforced, stdout, pattfile, fixfile
-	local forcedOutputDest=
-	local forcedOutputDestPatt=
-	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-O" ]; then
-		outputDestIsForced=true
-		local value="${args[2]}"
-		if [ "$value" = "-" ]; then
-			forcedOutputDestType=stdout
-			forcedOutputDest="-"
-		else
-			forcedOutputDestType=fixfile
-			forcedOutputDest="$value"
-		fi
-		shift_args 2
-	else
-		outputDestIsForced=false
-		forcedOutputDestType=unforced
-		forcedOutputDest=`get_default_output_path`
-	fi
+	# Default value if -O is not set
+	outputDestIsForced=false
+	forcedOutputDestType=unforced  # unforced, stdout, pattfile, fixfile
+	forcedOutputDest=`get_default_output_path`
+	forcedOutputDestPatt=
 
 	# parse options of implemented script
 	parse_option
@@ -91,6 +75,22 @@ function parse_args(){
 	# set out
 	local output="$forcedOutputDest"
 	set_output "$output"
+}
+
+function parse_O_option(){
+	# parse -O option
+
+	outputDestIsForced=true
+	local value="${args[2]}"
+	if [ "$value" = "-" ]; then
+		forcedOutputDestType=stdout
+		forcedOutputDest="-"
+	else
+		forcedOutputDestType=fixfile
+		forcedOutputDest="$value"
+	fi
+	shift_args 2
+
 }
 
 #function parse_option(){

@@ -37,6 +37,9 @@ function parse_option(){
 			exit
 			# shift_args 1
 			;;
+		-O)
+			parse_O_option
+			;;
 		-d | -delimiter | --delimiter)
 			delimiter="${args[2]}"
 			shift_args 2

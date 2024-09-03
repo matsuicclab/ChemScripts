@@ -71,30 +71,11 @@ EOF
 }
 
 function parse_args(){
-	# parse -O option
-	local outputDestIsForced=
-	local forcedOutputDestType= # unforced, stdout, pattfile, fixfile
-	local forcedOutputDest=
-	local forcedOutputDestPatt=
-	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-O" ]; then
-		outputDestIsForced=true
-		local value="${args[2]}"
-		if [ "$value" = "-" ]; then
-			forcedOutputDestType=stdout
-			forcedOutputDest="-"
-		elif echo "" | sed -r "$value" > /dev/null 2> /dev/null; then
-			forcedOutputDestType=pattfile
-			forcedOutputDestPatt="$value"
-		else
-			forcedOutputDestType=fixfile
-			forcedOutputDest="$value"
-		fi
-		shift_args 2
-	else
-		outputDestIsForced=false
-		forcedOutputDestType=unforced
-		forcedOutputDest="-"
-	fi
+	# Default value if -O is not set
+	outputDestIsForced=false
+	forcedOutputDestType=unforced  # unforced, stdout, pattfile, fixfile
+	forcedOutputDest="-"
+	forcedOutputDestPatt=
 
 	# parse options of implemented script
 	parse_option
@@ -190,6 +171,24 @@ function parse_args(){
 			esac
 		fi
 	fi
+
+}
+
+function parse_O_option(){
+	# parse -O option
+	outputDestIsForced=true
+	local value="${args[2]}"
+	if [ "$value" = "-" ]; then
+		forcedOutputDestType=stdout
+		forcedOutputDest="-"
+	elif echo "" | sed -r "$value" > /dev/null 2> /dev/null; then
+		forcedOutputDestType=pattfile
+		forcedOutputDestPatt="$value"
+	else
+		forcedOutputDestType=fixfile
+		forcedOutputDest="$value"
+	fi
+	shift_args 2
 
 }
 

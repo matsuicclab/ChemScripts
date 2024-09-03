@@ -26,6 +26,9 @@ function parse_option(){
 			exit
 			# shift_args 1
 			;;
+		-O)
+			parse_O_option
+			;;
 		-p | --add-proton)
 			addH=True
 			shift_args 1

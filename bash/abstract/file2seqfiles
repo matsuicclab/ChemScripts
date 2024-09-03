@@ -48,15 +48,6 @@ EOF
 #   - inp is not file -> use get_default_outputfilename_format
 #
 function parse_args(){
-	# parse -O option
-	local forcedOutputFileNameFormat=
-	if [ "${#args[@]}" -ge 2 ] && [ "${args[1]}" = "-O" ]; then
-		forcedOutputFileNameFormat="${args[2]}"
-		shift_args 2
-	else
-		forcedOutputFileNameFormat=
-	fi
-
 	# parse options of implemented script
 	parse_option
 
@@ -78,15 +69,25 @@ function parse_args(){
 	fi
 
 	# set
-	if [ "$forcedOutputFileNameFormat" ]; then
+	if [ "${forcedOutputFileNameFormat+isdefined}" ] && [ "${forcedOutputFileNameFormat}" ]; then
+		# if forcedOutputFileNameFormat is defined and is not an empty string
 		outputFileNameFormat="$forcedOutputFileNameFormat"
+
 	elif [[ "$inpFile" =~ ^/dev/fd ]]; then
 		outputFileNameFormat=`get_default_outputfilename_format`
+
 	else
 		outputFileNameFormat=`get_outputfilename_format "$inpFile"`
+
 	fi
 
 	check_filename_format "$outputFileNameFormat"
+}
+
+function parse_O_option(){
+	# parse -O option
+	forcedOutputFileNameFormat="${args[2]}"
+	shift_args 2
 }
 
 #function parse_option(){

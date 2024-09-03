@@ -8,7 +8,9 @@ function __complete_file2seqfiles_no_option(){
 	local flagoptionlist=(
 		-h --help
 	)
-	local valueoptionlist=()
+	local valueoptionlist=(
+		-O
+	)
 	local fileoptionlist=()
 	__complete_file2seqfiles
 }
@@ -72,7 +74,9 @@ function __complete_files2files_no_option(){
 	local flagoptionlist=(
 		-h --help
 	)
-	local valueoptionlist=()
+	local valueoptionlist=(
+		-O
+	)
 	local fileoptionlist=()
 	__complete_files2files
 }
@@ -107,7 +111,9 @@ function __complete_str2file_no_option(){
 	local flagoptionlist=(
 		-h --help
 	)
-	local valueoptionlist=()
+	local valueoptionlist=(
+		-O
+	)
 	local fileoptionlist=()
 	__complete_str2file
 }
@@ -167,6 +173,7 @@ function __complete_csvsmiles2png(){
 		-p --add-proton
 	)
 	local valueoptionlist=(
+		-O
 		-d --delimiter
 		-e --header
 		-f --field
@@ -370,7 +377,9 @@ function __complete_smiles2png(){
 		-h --help
 		-p --add-proton
 	)
-	local valueoptionlist=()
+	local valueoptionlist=(
+		-O
+	)
 	local fileoptionlist=()
 
 	__complete_str2file
@@ -386,7 +395,9 @@ function __complete_smiles2xyz(){
 		-n --num-threads
 		-c --num-confs
 	)
-	local valueoptionlist=()
+	local valueoptionlist=(
+		-O
+	)
 	local fileoptionlist=()
 
 	__complete_str2file
@@ -405,6 +416,7 @@ function __complete_xyz2gjf(){
 		-h --help
 	)
 	local valueoptionlist=(
+		-O
 		--link0
 		--route
 		--title
