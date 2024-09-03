@@ -5,13 +5,15 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2file
 
 function help(){
-	abstract_help "smiles2xyz" "<smiles>" "<xyz>" "string of SMILES: simplified molecular input line entry system" "xyz file" "`option_help`"
+	abstract_help "smiles2xyz" "<smiles>" "<xyz>" "string of SMILES: simplified molecular input line entry system" "xyz file"
 }
 
 function option_help(){
 cat <<EOF
+    -h, -help, --help | display this help
     -n, --num-threads | number of parallels used for execution
     -c, --num-confs   | number of candidate conformations
+
 EOF
 }
 

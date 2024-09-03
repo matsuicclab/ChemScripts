@@ -5,13 +5,15 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2file
 
 function help(){
-	abstract_help "pdbid2pdb" "<id>" "<pdb>" "PDB ID" "PDB" "`option_help`"
+	abstract_help "pdbid2pdb" "<id>" "<pdb>" "PDB ID" "PDB"
 }
 
-#function option_help(){
-#cat <<EOF
-#EOF
-#}
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
+}
 
 function parse_option(){
 	while [ "${#args[@]}" -gt 1 ]
@@ -40,17 +42,17 @@ function process(){
 	# $1: inpStr
 	#
 	local id
-	
+
 	id="$1"
-	
+
 	# 出力先の設定について考え直す
 	# 取得できなかった場合のエラーハンドリングについて仕様を詰める
 
 	pdbdata=$(wget -qO- "https://files.rcsb.org/download/${id}.pdb")
-	
+
 	# print
 	echo "$pdbdata"
-	
+
 }
 
 main "$@"

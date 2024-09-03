@@ -8,14 +8,17 @@ function abstract_help(){
 	local out="$3"
 	local inpDetail="$4"
 	local outDetail="$5"
-	local optionUsage="$6"
+
+	local comment=`comment_about_script`
+	local optionUsage=`option_help`
+
 cat <<EOF
 ${cmd}
     convert ${inp} to ${out}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of str2file
-
+	${comment}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} file with a default name
@@ -37,10 +40,18 @@ usage:
     +--- if you want to force the output destination, use the -O option
 
 option usage:
-    -h, -help, --help | display this help
 ${optionUsage}
-
 EOF
+}
+
+# to override
+function comment_about_script(){
+	# print comment
+}
+
+# to override
+function option_help(){
+	# print option help
 }
 
 function parse_args(){
@@ -100,14 +111,17 @@ function parse_O_option(){
 
 }
 
+# to override
 #function parse_option(){
 #	# parse option from "${args[@]}"
 #}
 
+# to override
 #function get_default_output_path(){
 #	echo 'str2file.out'
 #}
 
+# to override
 #function process(){
 #	# $1: inpStr
 #}

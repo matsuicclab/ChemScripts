@@ -5,17 +5,19 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "name2smiles" "<name>" "<smiles>" "compound name" "SMILES" "`option_help`"
+	abstract_help "name2smiles" "<name>" "<smiles>" "compound name" "SMILES"
 }
 
-#function option_help(){
-#cat <<EOF
-#EOF
-#}
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
+}
 
 function parse_option(){
 	# set default
-	
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -38,15 +40,15 @@ function process(){
 	# $1: inpStr
 	#
 	local name encodedname cid smiles
-	
+
 	name="$1"
 	encodedname=`echo -n "$name" | xxd -p | sed -r 's/(..)/%\1/g'`
 	cid=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodedname}/cids/TXT")
 	smiles=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/CanonicalSMILES/TXT")
-	
+
 	# print
 	echo "$smiles"
-	
+
 }
 
 main "$@"

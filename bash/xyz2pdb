@@ -5,7 +5,14 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "xyz2pdb" "<xyz>" "<pdb>" "xyz file" "PDB: protein data bank" ""
+	abstract_help "xyz2pdb" "<xyz>" "<pdb>" "xyz file" "PDB: protein data bank"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
 }
 
 function parse_option(){

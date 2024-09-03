@@ -4,7 +4,14 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "fchk2json" "<fchk>" "<json>" "Formatted checkpoint file" "JavaScript object notation file" ""
+	abstract_help "fchk2json" "<fchk>" "<json>" "Formatted checkpoint file" "JavaScript object notation file"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
 }
 
 function parse_option(){

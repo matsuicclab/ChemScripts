@@ -5,11 +5,12 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "len2len" "<unit1>" "<unit2>" "length in 'unit1'" "length in 'unit2'" "`option_help`"
+	abstract_help "len2len" "<unit1>" "<unit2>" "length in 'unit1'" "length in 'unit2'"
 }
 
 function option_help(){
 cat <<EOF
+    -h, -help, --help | display this help
     -d, --delimiter <delimiter> | set delimiter
                                 | default: ' '
     -f, --field <num>           | set target column number
@@ -20,6 +21,7 @@ cat <<EOF
                                 | default: %.10g
     --from <unit> | a.u. / bohr / angstrom / nm / m
     --to <unit>   | same as above
+
 EOF
 }
 
@@ -31,7 +33,7 @@ function parse_option(){
 	fromunit=
 	tounit=
 	format='%.10g'
-	
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -72,14 +74,14 @@ function parse_option(){
 			;;
 		esac
 	done
-	
+
 	if [ ! "$fromunit" ] ; then
 		error "--from option is unspecified"
 	fi
 	if [ ! "$tounit" ] ; then
-		error "--to option is unspecified" 
+		error "--to option is unspecified"
 	fi
-	
+
 	# calc unit conversion factor
 	fromunitfactor=`get_factor "$fromunit"`
 	tounitfactor=`get_factor "$tounit"`
@@ -108,7 +110,7 @@ function get_factor(){
 		error "specified unit is invalid: ${unitname}"
 		;;
 	esac
-	
+
 	echo "$factor"
 }
 
@@ -117,7 +119,7 @@ function process(){
 	#
 	local inpStr
 	inpStr="$1"
-	
+
 	echo "$inpStr" |
 		awk -v headerend="${headerEndLineNum}" \
 			-v field="${targetColumnNum}" \
@@ -137,7 +139,7 @@ function process(){
 					print $0
 				}
 			}'
-	
+
 }
 
 main "$@"

@@ -5,11 +5,12 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "symb2atomnum" "<symb>" "<num>" "element symbol" "atomic number" "`option_help`"
+	abstract_help "symb2atomnum" "<symb>" "<num>" "element symbol" "atomic number"
 }
 
 function option_help(){
 cat <<EOF
+    -h, -help, --help | display this help
     -d, --delimiter <delimiter> | set delimiter
                                 | default: ' '
     -f, --field <num>           | set target column number
@@ -25,7 +26,7 @@ function parse_option(){
 	targetColumnNum=1
 	headerEndLineNum=0
 	reverse=false
-	
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in

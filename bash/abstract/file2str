@@ -8,14 +8,17 @@ function abstract_help(){
 	local out="$3"
 	local inpDetail="$4"
 	local outDetail="$5"
-	local optionUsage="$6"
+
+	local comment=`comment_about_script`
+	local optionUsage=`option_help`
+
 cat <<EOF
 ${cmd}
     convert ${inp} to ${out}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of file2str
-
+	${comment}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and print to stdout
@@ -33,10 +36,18 @@ usage:
     +--- if input by process substitution, print to stdout
 
 option usage:
-    -h, -help, --help | display this help
 ${optionUsage}
-
 EOF
+}
+
+# to override
+function comment_about_script(){
+	# print comment
+}
+
+# to override
+function option_help(){
+	# print option help
 }
 
 function parse_args(){
@@ -66,10 +77,12 @@ function parse_args(){
 
 }
 
+# to override
 #function parse_option(){
 #	# parse option from "${args[@]}"
 #}
 
+# to override
 #function process(){
 #	# $1: inpFile
 #	# limit 'cat "$1"' to one execution because of cat -

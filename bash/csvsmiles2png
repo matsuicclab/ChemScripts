@@ -5,17 +5,19 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/file2seqfiles
 
 function help(){
-	abstract_help "csvsmiles2png" "<csv>" "<png>" "csv file" "png files" "`option_help`"
+	abstract_help "csvsmiles2png" "<csv>" "<png>" "csv file" "png files"
 }
 
 function option_help(){
 cat <<EOF
+    -h, -help, --help | display this help
     -d, --delimiter | delimiter used in csv
     -e, --header    | line number of header (>=0)
     -f, --field     | column number of SMILES (>=0)
     -pc, --per-column | number of molecules arranged per column in the image
     -pr, --per-row    | number of molecules arranged per row in the image
     -p, --add-proton  | add proton
+
 EOF
 }
 

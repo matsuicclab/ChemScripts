@@ -8,14 +8,17 @@ function abstract_help(){
 	local out="$3"
 	local inpDetail="$4"
 	local outDetail="$5"
-	local optionUsage="$6"
+
+	local comment=`comment_about_script`
+	local optionUsage=`option_help`
+
 cat <<EOF
 ${cmd}
     convert ${inp} to ${out}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of file2seqfiles
-
+	${comment}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and save to ${out} with an appropriate sequential name automatically
@@ -34,11 +37,20 @@ usage:
     +--- NOT support output to a redirect or pipe
 
 option usage:
-    -h, -help, --help | display this help
 ${optionUsage}
-
 EOF
 }
+
+# to override
+function comment_about_script(){
+	# print comment
+}
+
+# to override
+function option_help(){
+	# print option help
+}
+
 
 #flowchart
 #- check -O option
@@ -90,6 +102,7 @@ function parse_O_option(){
 	shift_args 2
 }
 
+# to override
 #function parse_option(){
 #	# parse option from "${args[@]}"
 #}
@@ -100,10 +113,12 @@ function check_filename_format(){
 	fi
 }
 
+# to override
 #function get_default_outputfilename_format(){
 #	echo 'file2seqfiles.%d.out'
 #}
 
+# to override
 #function get_outputfilename_format(){
 #	# $1: inpFile
 #	echo "$1" | sed -r 's/\.inp$/.%d.out/'
@@ -124,6 +139,7 @@ function get_outputlist(){
 		xargs -L 1 printf "${outputFileNameFormat}\n"
 }
 
+# to override
 #function process(){
 #	# $1: inpFile
 #	# limit 'cat "$1"' to one execution because of cat -

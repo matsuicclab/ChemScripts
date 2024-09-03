@@ -5,17 +5,19 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "chemblid2smiles" "<id>" "<smiles>" "ChEMBL ID" "SMILES" "`option_help`"
+	abstract_help "chemblid2smiles" "<id>" "<smiles>" "ChEMBL ID" "SMILES"
 }
 
-#function option_help(){
-#cat <<EOF
-#EOF
-#}
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
+}
 
 function parse_option(){
 	# set default
-	
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -38,7 +40,7 @@ function process(){
 	# $1: inpStr
 	#
 	local id xmldata smiles
-	
+
 	id="$1"
 	if [[ "$id" =~ ^[0-9]+$ ]]; then
 		id="CHEMBL${id}"
@@ -46,7 +48,7 @@ function process(){
 	if [[ ! "$id" =~ ^CHEMBL[0-9]+$ ]]; then
 		error "ChEMBL ID is invalid: ${id}"
 	fi
-	
+
 	# reference: https://www.ebi.ac.uk/chembl/api/data/docs
 	xmldata=$(wget -qO- "https://www.ebi.ac.uk/chembl/api/data/molecule/${id}")
 	smiles=`echo "$xmldata" |
@@ -54,10 +56,10 @@ function process(){
 				sed -r 's/^.+(canonical_smiles.+canonical_smiles).+$/\1/' |
 				sed -r 's/^[^>]+> *//' |
 				sed -r 's/ *<[^<]+$//'`
-	
+
 	# print
 	echo "$smiles"
-	
+
 }
 
 main "$@"

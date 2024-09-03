@@ -5,11 +5,12 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/file2str
 
 function help(){
-	abstract_help "g16log2value" "<g16log>" "<value>" "gaussian log file" "arbitary value" "`option_help`"
+	abstract_help "g16log2value" "<g16log>" "<value>" "gaussian log file" "arbitary value"
 }
 
 function option_help(){
 cat <<EOF
+    -h, -help, --help | display this help
     --num-atom   | num of atoms
     --num-elec   | num of electrons
     --num-a-elec | num of alpha-electrons
@@ -48,6 +49,7 @@ cat <<EOF
     --total-cpu-time     | total cpu time
     --elapsed-time       | elapsed time for each internal job step
     --total-elapsed-time | total elapsed time
+
 EOF
 }
 
@@ -216,8 +218,8 @@ function parse_option(){
 function process(){
 	# $1: inpFile
 	#
-	local glogFile glogData 
-	
+	local glogFile glogData
+
 	glogFile="$1"
 	glogData=`cat "$glogFile"`
 	$varfunc "$glogData"

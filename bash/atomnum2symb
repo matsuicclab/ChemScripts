@@ -5,17 +5,19 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "atomnum2symb" "<num>" "<symb>" "atomic number" "element symbol" "`option_help`"
+	abstract_help "atomnum2symb" "<num>" "<symb>" "atomic number" "element symbol"
 }
 
 function option_help(){
 cat <<EOF
+    -h, -help, --help | display this help
     -d, --delimiter <delimiter> | set delimiter
                                 | default: ' '
     -f, --field <num>           | set target column number
                                 | default: 1
     -s, --skip <num>            | set the title section
                                 | default: 0
+
 EOF
 }
 
@@ -25,7 +27,7 @@ function parse_option(){
 	targetColumnNum=1
 	headerEndLineNum=0
 	reverse=false
-	
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -189,7 +191,7 @@ function process(){
 	#
 	local inpStr
 	inpStr="$1"
-	
+
 	#-------------------------------------------------------
 	if "$reverse"; then
 		# valid characters to convert from
@@ -199,7 +201,7 @@ function process(){
 		sedcmd=`printConversionTable |
 					awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $2, d, $1, d }'`
 		sedcmd2='y/nubtqphsoe/0123456789/; y/NUBTQPHSOE/0123456789/'
-	
+
 	else
 		# valid characters to convert from
 		legalCharPatt="[0-9]"
@@ -208,9 +210,9 @@ function process(){
 		sedcmd=`printConversionTable |
 					awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $1, d, $2, d }'`
 		sedcmd2='s/^0/N/; s/^1/U/; s/^2/B/; s/^3/T/; s/^4/Q/; s/^5/P/; s/^6/H/; s/^7/S/; s/^8/O/; s/^9/E/; y/0123456789/nubtqphsoe/'
-		
+
 	fi
-	
+
 	#-------------------------------------------------------
 	# extract header part
 	if [ "$headerEndLineNum" -eq 0 ]; then
@@ -218,7 +220,7 @@ function process(){
 	else
 		headerData=`echo "$inpStr" | sed -n "1,${headerEndLineNum}p"`
 	fi
-	
+
 	# get the number of the line after the line where the header ends
 	contentStartLineNum=$(($headerEndLineNum + 1))
 	# extract content part
@@ -262,7 +264,7 @@ function process(){
 			# Since bash removes the trailing newline character when assigning to a variable,
 			# consider the case where the last line is an empty character
 			# and add a trailing space character
-			
+
 	#-------------------------------------------------------
 	# check if it doesn't contain characters that can't be converted
 	targetData=`echo "$contentData" |
@@ -283,22 +285,22 @@ function process(){
 						sed -n "${illegalContentLineNum}p"`
 		illegalLineNum=$(($illegalContentLineNum + $headerEndLineNum))
 		error "illegal string: line ${illegalLineNum}: ${illegalString}"
-	fi	
-	
+	fi
+
 	# ------------------------------------------------------------------
 	# convert and print
 	if [ ! -z "$headerData" ]; then
 		# if $headerData is not empty
 		echo "$headerData"
 	fi
-	
+
 	echo "$contentData" |
 		sed -r "2~3{${sedcmd}; ${sedcmd2};}" | # convert num to symb
 		sed -r '{N;N;s/\n//g}' | # restore to original shape
 		sed -r 's/^'"${delimiter}"'//' |
 		sed -r 's/'"${delimiter}"'$//' |
 		sed -r '$d'
-		
+
 }
 
 main "$@"

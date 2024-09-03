@@ -4,11 +4,12 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "xyz2gjf" "<xyz>" "<gjf>" "xyz file" "gaussian input file" "`option_help`"
+	abstract_help "xyz2gjf" "<xyz>" "<gjf>" "xyz file" "gaussian input file"
 }
 
 function option_help(){
 cat <<EOF
+    -h, -help, --help | display this help
     --link0  | set the link0 command (default: %LINK0%)
     --route  | set the route section (default: %ROUTE%)
     --title  | set the title section (default: %TITLE%)
@@ -22,6 +23,7 @@ cat <<EOF
     --ecp    | set effective core potential
              | same specification as --gen
              | --ecp 'Fe,I,Ce: Lanl2dz'
+
 EOF
 }
 
