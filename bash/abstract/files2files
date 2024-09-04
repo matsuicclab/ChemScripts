@@ -40,7 +40,8 @@ ${cmd}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of files2files
-    ${comment}
+    ${comment}${comment:+
+}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and save to ${out} with an appropriate name automatically
@@ -67,7 +68,8 @@ usage:
          you can output with your favorite file name.
 
 option usage:
-${optionUsage}
+${optionUsage}${optionUsage:+
+}
 EOF
 }
 

@@ -18,13 +18,14 @@ ${cmd}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of str2str
-    ${comment}
+    ${comment}${comment:+
+}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and print to stdout
     |
-    + ${cmd} ${inp} > ${out}
-    +--- save to the ${out} file
+    + ${cmd} ${inp} > file
+    +--- save to the file
     |
     + ${cmd} ${inp} | <COMMAND>
     +--- input to the next command
@@ -33,10 +34,11 @@ usage:
     +--- convert the entered ${inp} data and print to stdout
     |
     + ${cmd} <(<COMMAND>)
-    +--- if input by process substitution, print to stdout
+    +--- handle input by process substitution, print to stdout
 
 option usage:
-${optionUsage}
+${optionUsage}${optionUsage:+
+}
 EOF
 }
 

@@ -18,7 +18,8 @@ ${cmd}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of file2seqfiles
-    ${comment}
+    ${comment}${comment:+
+}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and save to ${out} with an appropriate sequential name automatically
@@ -37,7 +38,8 @@ usage:
     +--- NOT support output to a redirect or pipe
 
 option usage:
-${optionUsage}
+${optionUsage}${optionUsage:+
+}
 EOF
 }
 

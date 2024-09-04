@@ -18,7 +18,8 @@ ${cmd}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of str2file
-    ${comment}
+    ${comment}${comment:+
+}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} file with a default name
@@ -40,7 +41,8 @@ usage:
     +--- if you want to force the output destination, use the -O option
 
 option usage:
-${optionUsage}
+${optionUsage}${optionUsage:+
+}
 EOF
 }
 

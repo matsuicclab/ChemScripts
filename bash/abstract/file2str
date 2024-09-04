@@ -18,7 +18,8 @@ ${cmd}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of file2str
-    ${comment}
+    ${comment}${comment:+
+}
 usage:
     + ${cmd} ${inp}
     +--- convert ${inp} to ${out} and print to stdout
@@ -36,7 +37,8 @@ usage:
     +--- if input by process substitution, print to stdout
 
 option usage:
-${optionUsage}
+${optionUsage}${optionUsage:+
+}
 EOF
 }
 
