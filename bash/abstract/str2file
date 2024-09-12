@@ -89,7 +89,7 @@ function parse_args(){
 	local output
 	if [ "$forcedOutputDestType" = unforced ]; then
 		if [ -t 1 ]; then
-			output=`get_default_output_path`
+			output=`get_default_output_path "$inpStr"`
 		else
 			output="-"
 		fi

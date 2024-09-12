@@ -38,7 +38,11 @@ function parse_option(){
 }
 
 function get_default_output_path(){
-	echo 'pdbid2pdb.pdb'
+	# $1: inpStr
+	local id
+	id="$1"
+	
+	echo "${id}.pdb"
 }
 
 function process(){
@@ -51,10 +55,8 @@ function process(){
 	# 出力先の設定について考え直す
 	# 取得できなかった場合のエラーハンドリングについて仕様を詰める
 
-	pdbdata=$(wget -qO- "https://files.rcsb.org/download/${id}.pdb")
-
-	# print
-	echo "$pdbdata"
+	# get and print
+	wget -qO- "https://files.rcsb.org/download/${id}.pdb"
 
 }
 
