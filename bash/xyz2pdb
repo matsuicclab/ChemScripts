@@ -11,6 +11,7 @@ function help(){
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help
+    -r, --residue | set residue name
 
 EOF
 }
@@ -26,6 +27,10 @@ function parse_option(){
 			;;
 		-O)
 			parse_O_option
+			;;
+		-r | --residue)
+			residueName=`printf '%3s' "${args[1]}"`
+			shift_args 1
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
@@ -51,7 +56,7 @@ function process(){
 	echo "$xyzContents" |
 			sed -r '1,2d' | # delete the header
 			nl | # set serial number of atoms
-			xargs printf "ATOM  %5d %-4s R01     1    %8.3f%8.3f%8.3f\n" # print
+			xargs printf "ATOM  %5d %-4s ${residueName}     1    %8.3f%8.3f%8.3f\n" # print
 
 }
 
