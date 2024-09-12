@@ -40,7 +40,7 @@ ${cmd}
     ${inp}: ${inpDetail}
     ${out}: ${outDetail}
     implementation of files2files
-    ${comment}${comment:+
+${comment}${comment:+
 }
 usage:
     + ${cmd} ${inp}
