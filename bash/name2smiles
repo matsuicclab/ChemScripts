@@ -43,8 +43,8 @@ function process(){
 
 	name="$1"
 	encodedname=`echo -n "$name" | xxd -p | sed -r 's/(..)/%\1/g'`
-	cid=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodedname}/cids/TXT")
-	smiles=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/CanonicalSMILES/TXT")
+	# cid=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodedname}/cids/TXT")
+	smiles=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodedname}/property/CanonicalSMILES/TXT")
 
 	# print
 	echo "$smiles"
