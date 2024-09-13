@@ -20,7 +20,7 @@ function shift_args(){
 }
 
 function initialize_output(){
-	exec {stdout}>&1
+	exec {ChemScript_common_stdout_fd}>&1
 }
 # execute to initialize
 initialize_output
@@ -38,7 +38,7 @@ function set_output(){
 	fi
 
 	if [ "$output" = "-" ]; then
-		exec >&${stdout}
+		exec >&${ChemScript_common_stdout_fd}
 	elif "$append" ; then
 		exec >> "$output"
 	else
