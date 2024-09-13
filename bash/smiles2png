@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2file
 
 function help(){
-	abstract_help "smiles2png" "<smiles>" "<png>" "string of SMILES: simplified molecular input line entry system" "png file"
+	abstract_help "smiles2png" "smiles" "png" "string of SMILES: simplified molecular input line entry system" "png file"
 }
 
 function option_help(){

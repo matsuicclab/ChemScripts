@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "len2len" "<unit1>" "<unit2>" "length in 'unit1'" "length in 'unit2'"
+	abstract_help "len2len" "unit1" "unit2" "length in 'unit1'" "length in 'unit2'"
 }
 
 function option_help(){

@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/file2str
 
 function help(){
-	abstract_help "g16log2value" "<g16log>" "<value>" "gaussian log file" "arbitary value"
+	abstract_help "g16log2value" "g16log" "value" "gaussian log file" "arbitary value"
 }
 
 function option_help(){

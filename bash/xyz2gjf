@@ -4,7 +4,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "xyz2gjf" "<xyz>" "<gjf>" "xyz file" "gaussian input file"
+	abstract_help "xyz2gjf" "xyz" "gjf" "xyz file" "gaussian input file"
 }
 
 function option_help(){

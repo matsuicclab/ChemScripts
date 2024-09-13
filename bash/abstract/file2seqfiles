@@ -14,27 +14,27 @@ function abstract_help(){
 
 cat <<EOF
 ${cmd}
-    convert ${inp} to ${out}
-    ${inp}: ${inpDetail}
-    ${out}: ${outDetail}
+    convert <${inp}> to <${out}>
+    <${inp}>: ${inpDetail}
+    <${out}>: ${outDetail}
     implementation of file2seqfiles
 ${comment}${comment:+
 }
 usage:
-    + ${cmd} ${inp}
-    +--- convert ${inp} to ${out} and save to ${out} with an appropriate sequential name automatically
+    + ${cmd} <${inp}>
+    +--- convert <${inp}> to <${out}> and save to <${out}> with an appropriate sequential name automatically
     |
-    + ${cmd} -O 'example.%d.out' ${inp}
+    + ${cmd} -O 'example.%d.out' <${inp}>
     +--- decide output destinations with -O
     |    use format (%d) to number
     |
     + <COMMAND> | ${cmd}
     + ${cmd} <(<COMMAND>)
-    +--- convert the entered ${inp} data and save to automatically determined files
+    +--- convert the entered <${inp}> data and save to automatically determined files
     |
-    + ${cmd} ${inp} > ${out}
-    + ${cmd} ${inp} | <COMMAND>
-    + ${cmd} -O - ${inp}
+    + ${cmd} <${inp}> > <${out}>
+    + ${cmd} <${inp}> | <COMMAND>
+    + ${cmd} -O - <${inp}>
     +--- NOT support output to a redirect or pipe
 
 option usage:

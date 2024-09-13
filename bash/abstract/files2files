@@ -36,33 +36,33 @@ function abstract_help(){
 
 cat <<EOF
 ${cmd}
-    convert ${inp} to ${out}
-    ${inp}: ${inpDetail}
-    ${out}: ${outDetail}
+    convert <${inp}> to <${out}>
+    <${inp}>: ${inpDetail}
+    <${out}>: ${outDetail}
     implementation of files2files
 ${comment}${comment:+
 }
 usage:
-    + ${cmd} ${inp}
-    +--- convert ${inp} to ${out} and save to ${out} with an appropriate name automatically
+    + ${cmd} <${inp}>
+    +--- convert <${inp}> to <${out}> and save to <${out}> with an appropriate name automatically
     |
-    + ${cmd} ${inp} > ${out}
-    +--- save to the ${out} file
+    + ${cmd} <${inp}> > <${out}>
+    +--- save to the <${out}> file
     |
-    + ${cmd} ${inp} | <COMMAND>
+    + ${cmd} <${inp}> | <COMMAND>
     +--- input to the next command
     |
     + <COMMAND> | ${cmd}
-    +--- convert the entered ${inp} data and print to stdout
+    +--- convert the entered <${inp}> data and print to stdout
     |
     + ${cmd} <(<COMMAND>)
     +--- if input by process substitution, print to stdout
     |
-    + ${cmd} -O ${out} ${inp}
-    + ${cmd} -O - ${inp}
+    + ${cmd} -O <${out}> <${inp}>
+    + ${cmd} -O - <${inp}>
     +--- if you want to force the output destination, use the -O option
     |
-    + ${cmd} -O 's/BEF/AFT/' ${inp}1 ${inp}2 ...
+    + ${cmd} -O 's/BEF/AFT/' <${inp}1> <${inp}2> ...
     +--- it is also possible to specify multiple input files.
          if you specify a sed subcommand to the -O option,
          you can output with your favorite file name.

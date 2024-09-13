@@ -4,7 +4,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "inpcrd2crd" "<inpcrd>" "<crd>" "Amber input initial coordinate file" "Amber trajectory file (ascii)"
+	abstract_help "inpcrd2crd" "inpcrd" "crd" "Amber input initial coordinate file" "Amber trajectory file (ascii)"
 }
 
 function option_help(){

@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 
 function help(){
-	abstract_help "symb2atomnum" "<symb>" "<num>" "element symbol" "atomic number"
+	abstract_help "symb2atomnum" "symb" "num" "element symbol" "atomic number"
 }
 
 function option_help(){

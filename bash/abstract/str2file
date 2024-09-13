@@ -14,30 +14,30 @@ function abstract_help(){
 
 cat <<EOF
 ${cmd}
-    convert ${inp} to ${out}
-    ${inp}: ${inpDetail}
-    ${out}: ${outDetail}
+    convert <${inp}> to <${out}>
+    <${inp}>: ${inpDetail}
+    <${out}>: ${outDetail}
     implementation of str2file
 ${comment}${comment:+
 }
 usage:
-    + ${cmd} ${inp}
-    +--- convert ${inp} to ${out} file with a default name
+    + ${cmd} <${inp}>
+    +--- convert <${inp}> to <${out}> file with a default name
     |
-    + ${cmd} ${inp} > ${out}
-    +--- save to the ${out} file
+    + ${cmd} <${inp}> > <${out}>
+    +--- save to the <${out}> file
     |
-    + ${cmd} ${inp} | <COMMAND>
+    + ${cmd} <${inp}> | <COMMAND>
     +--- input to the next command
     |
     + <COMMAND> | ${cmd}
-    +--- convert the entered ${inp} data and save to a file with a default name
+    +--- convert the entered <${inp}> data and save to a file with a default name
     |
     + ${cmd} <(<COMMAND>)
     +--- if input by process substitution, save to a file with a default name
     |
-    + ${cmd} -O ${out} ${inp}
-    + ${cmd} -O - ${inp}
+    + ${cmd} -O <${out}> <${inp}>
+    + ${cmd} -O - <${inp}>
     +--- if you want to force the output destination, use the -O option
 
 option usage:

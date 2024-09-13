@@ -14,24 +14,24 @@ function abstract_help(){
 
 cat <<EOF
 ${cmd}
-    convert ${inp} to ${out}
-    ${inp}: ${inpDetail}
-    ${out}: ${outDetail}
+    convert <${inp}> to <${out}>
+    <${inp}>: ${inpDetail}
+    <${out}>: ${outDetail}
     implementation of file2str
 ${comment}${comment:+
 }
 usage:
-    + ${cmd} ${inp}
-    +--- convert ${inp} to ${out} and print to stdout
+    + ${cmd} <${inp}>
+    +--- convert <${inp}> to <${out}> and print to stdout
     |
-    + ${cmd} ${inp} > file
+    + ${cmd} <${inp}> > file
     +--- save to the file
     |
-    + ${cmd} ${inp} | <COMMAND>
+    + ${cmd} <${inp}> | <COMMAND>
     +--- input to the next command
     |
     + <COMMAND> | ${cmd}
-    +--- convert the entered ${inp} data and print to stdout
+    +--- convert the entered <${inp}> data and print to stdout
     |
     + ${cmd} <(<COMMAND>)
     +--- if input by process substitution, print to stdout

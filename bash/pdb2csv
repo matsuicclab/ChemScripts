@@ -5,7 +5,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "pdb2csv" "<pdb>" "<csv>" "PDB: protein data bank based on https://pdbj.org/help/pdb-brief?lang=ja" "csv file"
+	abstract_help "pdb2csv" "pdb" "csv" "PDB: protein data bank based on https://pdbj.org/help/pdb-brief?lang=ja" "csv file"
 }
 
 function comment_about_script(){
