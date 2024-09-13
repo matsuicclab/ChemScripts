@@ -8,6 +8,13 @@ function help(){
 	abstract_help "pdbid2pdb" "<id>" "<pdb>" "PDB ID" "PDB"
 }
 
+function comment_about_script(){
+cat <<EOF
+    Data is obtained by scraping from RCSB PDB database
+
+EOF
+}
+
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help
@@ -41,7 +48,7 @@ function get_default_output_path(){
 	# $1: inpStr
 	local id
 	id="$1"
-	
+
 	echo "${id}.pdb"
 }
 

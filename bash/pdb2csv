@@ -8,6 +8,14 @@ function help(){
 	abstract_help "pdb2csv" "<pdb>" "<csv>" "PDB: protein data bank based on https://pdbj.org/help/pdb-brief?lang=ja" "csv file"
 }
 
+function comment_about_script(){
+cat <<EOF
+    If you want to process trajectory data with python,
+    you should load mdcrd(s) directly into pytraj.
+
+EOF
+}
+
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help

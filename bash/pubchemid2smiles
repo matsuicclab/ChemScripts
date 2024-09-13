@@ -8,6 +8,13 @@ function help(){
 	abstract_help "pubchemid2smiles" "<id>" "<smiles>" "PubChem ID" "SMILES"
 }
 
+function comment_about_script(){
+cat <<EOF
+    Data is obtained by scraping from PubChem database
+
+EOF
+}
+
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help

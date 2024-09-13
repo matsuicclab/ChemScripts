@@ -8,6 +8,14 @@ function help(){
 	abstract_help "pdb2xyz" "<pdb>" "<xyz>" "PDB: protein data bank file" "xyz file"
 }
 
+function comment_about_script(){
+cat <<EOF
+    If you want to process trajectory data with python,
+    you should load mdcrd(s) directly into pytraj.
+
+EOF
+}
+
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help
@@ -46,7 +54,7 @@ function process(){
 	#
 	local pdbFile
 	pdbFile="$1"
-	
+
 	cat "$pdbFile" |
 		grep ATOM |
 		sed -r 's/^.{12}(.{4}).{14}(.{8})(.{8})(.{8}).*$/\1 \2 \3 \4/' |
@@ -55,7 +63,7 @@ function process(){
 		sed -r 's/ /\n/1' |
 		sed -r '1~2s/[0-9]//g' |
 		sed -r '{N;s/\n/ /}'
-	
+
 	# HETATMの扱いを再考
 	# 元素記号がこのままでは使えないので修正すること
 }
