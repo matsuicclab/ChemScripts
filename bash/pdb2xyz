@@ -52,20 +52,29 @@ function get_default_conversion_patt(){
 function process(){
 	# $1: inpFile
 	#
-	local pdbFile
+	local pdbFile pdbData atomData
+	local prexyzData minNumChar elementList xyzData
+
 	pdbFile="$1"
+	pdbData=`cat "$pdbFile"`
+	atomData=`echo "$pdbData" | grep -e '^ATOM' -e '^HETATM'`
 
-	cat "$pdbFile" |
-		grep ATOM |
-		sed -r 's/^.{12}(.{4}).{14}(.{8})(.{8})(.{8}).*$/\1 \2 \3 \4/' |
-		sed -r 's/ +/ /g' |
-		sed -r 's/^ //' |
-		sed -r 's/ /\n/1' |
-		sed -r '1~2s/[0-9]//g' |
-		sed -r '{N;s/\n/ /}'
+	prexyzData=`echo "$pdbData" |
+					sed -r 's/^.{12}(.{4}).{14}(.{8})(.{8})(.{8}).*$/\1 \2 \3 \4/' |
+					sed -r 's/ +/ /g' |
+					sed -r 's/^ //'`
 
-	# HETATMの扱いを再考
-	# 元素記号がこのままでは使えないので修正すること
+	# get valid element symbol
+	minNumChar=`echo "$atomData" | awk '{print length($0)}' | sort -n | head -n 1`
+	if [ "$minNumChar" -ge 77 ]; then
+		elementList=`echo "$atomData" | sed -r 's/^.{76}(.{,2}).*/\1/'`
+		xyzData=`paste -d ' ' <(echo "$elementList") <(echo "$prexyzData" | sed -r 's/^[^ ]+//')`
+	else
+		xyzData="$prexyzData"
+	fi
+
+	# print
+	echo "$xyzData"
 }
 
 main "$@"
