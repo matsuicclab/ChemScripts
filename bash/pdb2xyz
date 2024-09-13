@@ -53,7 +53,8 @@ function process(){
 	# $1: inpFile
 	#
 	local pdbFile pdbData atomData
-	local prexyzData minNumChar elementList xyzData
+	local prexyzData minNumChar elementList
+	local xyzData numAtom title
 
 	pdbFile="$1"
 	pdbData=`cat "$pdbFile"`
@@ -73,7 +74,13 @@ function process(){
 		xyzData="$prexyzData"
 	fi
 
+	# set header
+	numAtom=`echo "$xyzData" | wc -l`
+	title=`pdb2xyz: from ${pdbFile}: `date``
+
 	# print
+	echo "$numAtom"
+	echo "$title"
 	echo "$xyzData"
 }
 
