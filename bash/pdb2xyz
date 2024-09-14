@@ -60,7 +60,7 @@ function process(){
 	pdbData=`cat "$pdbFile"`
 	atomData=`echo "$pdbData" | grep -e '^ATOM' -e '^HETATM'`
 
-	prexyzData=`echo "$pdbData" |
+	prexyzData=`echo "$atomData" |
 					sed -r 's/^.{12}(.{4}).{14}(.{8})(.{8})(.{8}).*$/\1 \2 \3 \4/' |
 					sed -r 's/ +/ /g' |
 					sed -r 's/^ //'`
@@ -69,7 +69,7 @@ function process(){
 	minNumChar=`echo "$atomData" | awk '{print length($0)}' | sort -n | head -n 1`
 	if [ "$minNumChar" -ge 77 ]; then
 		elementList=`echo "$atomData" | sed -r 's/^.{76}(.{,2}).*/\1/'`
-		xyzData=`paste -d ' ' <(echo "$elementList") <(echo "$prexyzData" | sed -r 's/^[^ ]+//')`
+		xyzData=`paste -d ' ' <(echo "$elementList") <(echo "$prexyzData" | cut -d ' ' -f 2-)`
 	else
 		xyzData="$prexyzData"
 	fi
