@@ -64,6 +64,15 @@ visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
 - mksolv
 - bkill-all -> bkill 0
 - jdel-all
+- sdf2mol
+- pdb2pdbs
+- pdb2xyz
+- xyz2gms
+- xyz2numbasis
+- gjf2xyz
+
+
+
 
 - error handling for chemblid2smiles, name2smiles, pdbid2pdb, pubchemid2smiles
 
