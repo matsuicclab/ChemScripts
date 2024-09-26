@@ -8,6 +8,14 @@ function help(){
 	abstract_help "xyz2pdb" "xyz" "pdb" "xyz file" "PDB: protein data bank"
 }
 
+function comment_about_script(){
+cat <<EOF
+    It can also be achieved with 'newzmat -ixyz -opdb' implemented in Gaussian utility.
+    In that case, you need to remove the header of the first two lines of the xyz file.
+
+EOF
+}
+
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help
