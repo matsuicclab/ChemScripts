@@ -8,6 +8,15 @@ function help(){
 	abstract_help "g16log2value" "g16log" "value" "gaussian log file" "arbitary value"
 }
 
+function comment_about_script(){
+cat <<EOF
+    Because the contents of Gaussian's log files are complex,
+    this script cannot guarantee that it will always work correctly.
+    Be sure to verify the execution results.
+
+EOF
+}
+
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help

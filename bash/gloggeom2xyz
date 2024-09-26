@@ -5,6 +5,7 @@ function help(){
 cat <<EOF
 gloggeom2xyz
     convert geometry data in gaussian log to xyz
+    Deprecated: Specifications may change in the future
 
 usage:
     + gloggeom2xyz [option] log
