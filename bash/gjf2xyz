@@ -1,0 +1,68 @@
+#!/bin/bash
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function help(){
+	abstract_help "gjf2xyz" "gjf" "xyz" "gaussian input file" "xyz file"
+}
+
+function comment_about_script(){
+cat <<EOF
+    NOT compatible with z-matrix.
+    You can also achieve by 'newzmat -icart -oxyz' implemented in Gaussian utility.
+
+EOF
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
+}
+
+function parse_option(){
+	# set default
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-O)
+			parse_O_option
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function get_default_conversion_patt(){
+	echo '{s/.gjf$//; s/$/.xyz/}'
+}
+
+function process(){
+	# $1: inpFile
+	#
+	local gjfData
+	gjfData=`cat "$1"`
+
+	# extract and print
+	echo "$gjfData" |
+		sed -r '1,/^$/d' | # delete link0 section and route section
+		sed -r '1,/^$/d' | # delete title section
+		sed -r '/^$/,$d'   # delete the part after the molecule specification section
+
+}
+
+main "$@"
+
