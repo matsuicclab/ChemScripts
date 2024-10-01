@@ -76,7 +76,7 @@ function process(){
 
 	# set header
 	numAtom=`echo "$xyzData" | wc -l`
-	title=`pdb2xyz: from ${pdbFile}: `date``
+	title="pdb2xyz: from ${pdbFile}: `date`"
 
 	# print
 	echo "$numAtom"
