@@ -1,0 +1,110 @@
+#!/bin/bash
+
+source "${SCRIPT_DIR}"/abstract/common
+
+function abstract_help(){
+	local cmd="$1"
+	local out="$2"
+	local outDetail="$3"
+
+	local comment=`comment_about_script`
+	local optionUsage=`option_help`
+
+cat <<EOF
+${cmd}
+    generate <${out}>
+    <${out}>: ${outDetail}
+    implementation of void2file
+${comment}${comment:+
+}
+usage:
+    + ${cmd}
+    +--- generate <${out}> file with an appropriate name automatically
+    |
+    + ${cmd} > <${out}>
+    +--- save to the <${out}> file
+    |
+    + ${cmd} | <COMMAND>
+    +--- input to the next command
+    |
+    + ${cmd} -O <${out}>
+    + ${cmd} -O -
+    +--- if you want to force the output destination, use the -O option
+
+option usage:
+${optionUsage}${optionUsage:+
+}
+EOF
+}
+
+# to override
+function comment_about_script(){
+	# print comment
+	:
+}
+
+# to override
+function option_help(){
+	# print option help
+	:
+}
+
+function parse_args(){
+	# Default value if -O is not set
+	forcedOutputDestType=unforced  # unforced, stdout, fixfile
+	forcedOutputDest=
+
+	# parse options of implemented script
+	parse_option
+
+	# set out
+	local output
+	if [ "$forcedOutputDestType" = unforced ]; then
+		if [ -t 1 ]; then
+			output=`get_default_output_path`
+		else
+			output="-"
+		fi
+	else
+		output="$forcedOutputDest"
+	fi
+
+	set_output "$output"
+}
+
+function parse_O_option(){
+	# parse -O option
+
+	local value="${args[2]}"
+	if [ "$value" = "-" ]; then
+		forcedOutputDestType=stdout
+		forcedOutputDest="-"
+	else
+		forcedOutputDestType=fixfile
+		forcedOutputDest="$value"
+	fi
+	shift_args 2
+
+}
+
+# to override
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
+# to override
+#function get_default_output_path(){
+#	echo 'void2file.out'
+#}
+
+# to override
+#function process(){
+#	# $1: none
+#}
+
+function main(){
+	set_args "$@"
+	parse_args
+
+	process
+}
