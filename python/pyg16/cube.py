@@ -47,11 +47,16 @@ class Cube:
         # 3行目からfloatの配列に変換
         titleData = data[0:2]
         numData = data[2:]
-        numData = [re.split(' +', s) for s in numData]
+        numData = [s for s in numData if s != '']      # 空行は除去
+        numData = [re.split(' +', s) for s in numData] # 数の二重リストに変形する
         numData = [[float(s) for s in l] for l in numData]
 
         # 結合
         data = titleData + numData
+
+        # ヘッダー行が存在するか(2回目)
+        if len(numData[0]) != 6:
+            raise IOError('Cube file, {} may not contain header'.format(filePath))
 
         # 単位
         self.__unit = 'Bohr'
