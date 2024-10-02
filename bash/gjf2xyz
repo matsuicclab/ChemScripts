@@ -53,15 +53,22 @@ function get_default_conversion_patt(){
 function process(){
 	# $1: inpFile
 	#
-	local gjfData
+	local gjfData molData numAtom title
 	gjfData=`cat "$1"`
 
-	# extract and print
-	echo "$gjfData" |
-		sed -r '1,/^$/d' | # delete link0 section and route section
-		sed -r '1,/^$/d' | # delete title section
-		sed -r '/^$/,$d'   # delete the part after the molecule specification section
+	# extract
+	molData=`echo "$gjfData" |
+				sed -r '1,/^$/d' | # delete link0 section and route section
+				sed -r '1,/^$/d' | # delete title section
+				sed -r '1d' |      # delete charge and multiplicity
+				sed -r '/^$/,$d'`  # delete the part after the molecule specification section
+	numAtom=`echo "$molData" | wc -l`
+	title="gjf2xyz: from ${gjfFile}: `date`"
 
+	# print
+	echo "$numAtom"
+	echo "$title"
+	echo "$molData"
 }
 
 main "$@"
