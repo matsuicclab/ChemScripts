@@ -60,20 +60,19 @@ visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
 - csvsmiles2xyz
 - name2xyz (For complexes that are difficult to express in SMILES notation)
 - glog2prep (extend of mkresp)
-- smiles2prep
+- xyz2prep
 - mksolv
 - bkill-all -> bkill 0
 - jdel-all
 - sdf2mol
 - pdb2pdbs
-- pdb2xyz
 - xyz2gms
 - xyz2numbasis
-- gjf2xyz
+- mkmdin
+- mdcrd2crd (ambpdb)
 
 
 
-
-- error handling for chemblid2smiles, name2smiles, pdbid2pdb, pubchemid2smiles
-
+- error handling for pdbid2pdb, name2sdf
+- Cube class (generate cube with node data of original cube)
 
