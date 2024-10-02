@@ -99,7 +99,7 @@ function translate_molData(){
 	# The results is stored in molData
 	local neworiginCoord x0 y0 z0
 
-	neworiginCoord=`echo "$molData" |
+	newOriginCoord=`echo "$molData" |
 						sed -r 's/ +/ /g' |
 						sed -r 's/^ //' |
 						if [ "$neworigin" = geometric ]; then
