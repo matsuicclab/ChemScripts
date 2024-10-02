@@ -44,12 +44,15 @@ function parse_option(){
 			;;
 	    --eliminate-header)
 	    	eliminateHeader=true
+	    	shift_args 1
 	    	;;
 	    --translate-geometric-center)
 	    	neworigin=geometric
+	    	shift_args 1
 	    	;;
 	    --translate-mass-center)
 	    	neworigin=mass
+	    	shift_args 1
 	    	;;
 		-*)
 			error "unknown option: '${args[1]}'"
