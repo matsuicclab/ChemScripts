@@ -53,8 +53,9 @@ function get_default_conversion_patt(){
 function process(){
 	# $1: inpFile
 	#
-	local gjfData molData numAtom title
-	gjfData=`cat "$1"`
+	local gjfFile gjfData molData numAtom title
+	gjfFile="$1"
+	gjfData=`cat "$gjfFile"`
 
 	# extract
 	molData=`echo "$gjfData" |
