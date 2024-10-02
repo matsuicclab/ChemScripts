@@ -72,7 +72,7 @@ function get_default_conversion_patt(){
 function check_xyzData_has_header(){
 	# $1: xyzData
 	local firstLine
-	firstLine=`head -n 1 "$xyzData" | sed -r 's/^ *//' | sed -r 's/ *$//'`
+	firstLine=`echo "$xyzData" | head -n 1 | sed -r 's/^ *//' | sed -r 's/ *$//'`
 	if [[ "$firstLine" =~ ^[0-9]+$ ]]; then
 		echo true
 	else
