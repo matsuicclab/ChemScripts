@@ -11,12 +11,17 @@ function help(){
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help
+    -d, --default <value> | default value if not obtained
+                          | default: ''
+    -f, --force           | force normal termination even if not obtained
 
 EOF
 }
 
 function parse_option(){
 	# set default
+	defaultValue=
+	force=false
 
 	while [ "${#args[@]}" -gt 1 ]
 	do
@@ -26,6 +31,14 @@ function parse_option(){
 			exit
 			# shift_args 1
 			;;
+		-d | --default)
+			defaultValue="${args[2]}"
+			shift_args 2
+			;;
+		-f | --force)
+			force=true
+			shift_args 1
+			;;
 		-*)
 			error "unknown option: '${args[1]}'"
 			;;
@@ -34,6 +47,16 @@ function parse_option(){
 			;;
 		esac
 	done
+}
+
+function errorhandling(){
+	exitstatus="$?"
+	echo "$defaultValue"
+	if "$force"; then
+		exit 0
+	else
+		exit "$exitstatus"
+	fi
 }
 
 function process(){
@@ -46,11 +69,11 @@ function process(){
 		id="CHEMBL${id}"
 	fi
 	if [[ ! "$id" =~ ^CHEMBL[0-9]+$ ]]; then
-		error "ChEMBL ID is invalid: ${id}"
+		error "ChEMBL ID is invalid: ${id}" || errorhandling
 	fi
 
 	# reference: https://www.ebi.ac.uk/chembl/api/data/docs
-	xmldata=$(wget -qO- "https://www.ebi.ac.uk/chembl/api/data/molecule/${id}")
+	xmldata=$(wget -qO- "https://www.ebi.ac.uk/chembl/api/data/molecule/${id}") || errorhandling
 	smiles=`echo "$xmldata" |
 				tr '\n' ' ' |
 				sed -r 's/^.+(canonical_smiles.+canonical_smiles).+$/\1/' |
