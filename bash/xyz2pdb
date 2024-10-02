@@ -20,12 +20,17 @@ EOF
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help
-    -r, --residue | set residue name
+    -r, --residue   | set residue name
+    -n, --no-header | if the input xyz data has no header
 
 EOF
 }
 
 function parse_option(){
+	# set default
+	residueName=MOL
+	noHeader=false
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -38,7 +43,11 @@ function parse_option(){
 			parse_O_option
 			;;
 		-r | --residue)
-			residueName=`printf '%3s' "${args[1]}"`
+			residueName=`printf '%3s' "${args[2]}"`
+			shift_args 2
+			;;
+		-n | --no-header)
+			noHeader=true
 			shift_args 1
 			;;
 		-*)
@@ -49,6 +58,14 @@ function parse_option(){
 			;;
 		esac
 	done
+
+	# set headerHandling
+	if "$noHeader"; then
+		headerHandling="cat -"
+	else
+		headerHandling="sed -r '1,2d'"
+	fi
+
 }
 
 function get_default_conversion_patt(){
@@ -58,12 +75,14 @@ function get_default_conversion_patt(){
 function process(){
 	# $1: inpFile
 	#
-	local xyzFile="$1"
-	local xyzContents=`cat "$xyzFile"`
+	local xyzFile xyzData
+
+	xyzFile="$1"
+	xyzData=`cat "$xyzFile"`
 
 	# convert and print
-	echo "$xyzContents" |
-			sed -r '1,2d' | # delete the header
+	echo "$xyzData" |
+			eval "$headerHandling" | # process header (eliminate)
 			nl | # set serial number of atoms
 			xargs printf "ATOM  %5d %-4s ${residueName}     1    %8.3f%8.3f%8.3f\n" # print
 
