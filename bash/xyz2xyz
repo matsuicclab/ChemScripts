@@ -131,11 +131,15 @@ function process(){
 		translate_molData
 	fi
 
-	# print
-	if [ "$headerData" ]; then
+	# print header
+	if "$eliminateHeader"; then
+		# if eliminate
+		:
+	elif [ "$headerData" ]; then
 		# print if header is not empty
 		echo "$headerData"
 	fi
+	# print mol data
 	echo "$molData"
 
 }
