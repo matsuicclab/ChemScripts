@@ -55,7 +55,7 @@ class Cube:
         data = titleData + numData
 
         # ヘッダー行が存在するか(2回目)
-        if len(numData[0]) != 6:
+        if len(numData[0]) == 6:
             raise IOError('Cube file, {} may not contain header'.format(filePath))
 
         # 単位
