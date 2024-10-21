@@ -1,0 +1,129 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+
+function help(){
+	abstract_help "symb2numbasis" "symb" "num" "element symbol" "num of basis function"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -b, --basis <name> | set basis function (case insensitive)
+                       | available:
+                       |     STO-3G,
+                       |     3-21G,
+                       |     6-31G, 6-31G(d), 6-31G(d,p), 6-31G(d'), 6-31G(d',p'), 6-31G(3df,3pd), 6-31G(df,pd),
+                       |     6-31+G, 6-31+G(d), 6-31+G(d,p), 6-31++G, 6-31++G(d), 6-31++G(d,p), 6-31G*, 6-31G**,
+                       |     6-311G,
+                       |     CC-pVDZ, CC-pVTZ, CC-pVQZ, CC-pV5Z, CC-pV6Z,
+                       |     Aug-CC-pVDZ, Aug-CC-pVTZ, Aug-CC-pVQZ, Aug-CC-pV5Z, Aug-CC-pV6Z,
+                       |     LANL2DZ, SDD
+                       | default: STO-3G
+    --dtype <type>  | set d function type: 5D / 6D
+                    | default: 5D
+    --ftype <type>  | set f function type: 7F / 10F (currently valid only on 7F)
+                    | default: 7F
+    --num-of <type> | Which type of basis functions to count: basis / primitive-basis / cartesian-basis
+                    | default: basis
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --field <num>           | set target column number
+                                | default: 1
+    -s, --skip <num>            | set the title section
+                                | default: 0
+EOF
+}
+
+function parse_option(){
+	# set default
+	delimiter=' '
+	targetColumnNum=1
+	headerEndLineNum=0
+	basisname="STO-3G"
+	dtype=5D
+	ftype=7F
+	basistype=basis
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-b | --basis)
+			basisname="${args[2]}"
+			shift_args 2
+			;;
+		--dtype)
+			dtype="${args[2]}"
+			shift_args 2
+			;;
+		--ftype)
+			ftype="${args[2]}"
+			shift_args 2
+			;;
+		--num-of)
+			basistype="${args[2]}"
+			shift_args 2
+			;;
+		-d | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-f | --field)
+			targetColumnNum="${args[2]}"
+			shift_args 2
+			;;
+		-s | --skip)
+			headerEndLineNum="${args[2]}"
+			shift_args 2
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function print_basis_database(){
+
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local inpStr
+	local symbList uniqSymbList database
+
+	inpStr="$1"
+
+	# data generation for basis.dat
+	# seq 118 | while read i ; do symb=`atomnum2symb "$i"` ; echo "$symb" ; xyzData=`echo -e "1\ntitle\n${symb} 0.0 0.0 0.0"` ; fmti=`printf '%03d' "$i"` ; echo "$xyzData" | xyz2gjf --link0 "%chk=${fmti}_${symb}.chk" --route '# p hf/sto-3g' --charge 0 > "${fmti}_${symb}.gjf" ; done
+	# ls *.gjf | sed -r 's/^/g16 /' | sed -r 's/$/\nrm core.*/' > exec.sh
+	# ls *.log | while read file ; do num=`g16log2value --num-basis "$file"` ; echo "$file $num" ; done
+
+	# extract content part
+	symbList=`echo "$inpStr" |
+				sed "1,${headerEndLineNum}d" |
+				cut -d "${delimiter}" -f "${targetColumnNum}"`
+
+	# obtain basis database
+	uniqSymbList=`echo "$symbList" | sort | uniq | awk '{printf "-e %s ", $0}'`
+	database=`print_basis_database |
+				grep -i " ${basisname} " |
+				grep -i " ${dtype} " |
+				grep -i " ${ftype} " |
+				grep ${uniqSymbList}`
+
+}
+
+main "$@"
+
