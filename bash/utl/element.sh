@@ -123,3 +123,57 @@ cat <<EOF
 118 Og
 EOF
 }
+
+function expand_symbol_list(){
+	# $1: str
+	# H-Ar,Ga-Kr,Fe,I
+	# -> H,He,Li,Be,B,C,N,O,F,Ne,Na,Mg,Al,Si,P,S,Cl,Ar,Ga,Ge,As,Se,Br,Kr,Fe,I
+	local str patt str2 numlist symblist
+
+	str=`echo "$1" | sed -r 's/,/ /g'`
+
+	patt=`echo "$str" | sed -r 's/[A-z]+/%s/g'`
+
+	str2=`echo "$str" |
+			sed -r 's/([- ])/\n\1\n/g' |
+			sed -r -n '/[A-z]/p' |
+			symb2atomnum`
+	str2=`echo "$str2" |
+			tr '\n' ' ' |
+			xargs printf "${patt}\n"`
+
+	numlist=`echo "$str2" |
+				sed -r 's/ /\n/g' |
+				sed -r '/-/!s/^(.+)$/\1-\1/; /^-/s/-/1-/; /-$/s/-/-118/; /-/s/-/ /1' |
+				xargs -L 1 seq`
+	symblist=`echo "$numlist" |
+		atomnum2symb |
+		tr '\n' ','`
+
+	echo "$symblist"
+}
+
+function append_to_genecp_dict(){
+	# $1: gen / ecp
+	# $2: 'symblist: basis'
+	# results are saved in gendict (or ecpdict)
+	local symblist basis expandedsymblist newdict
+
+	symblist=`echo "$2" | sed -r 's/:.*//' | sed -r 's/^ +//' | sed -r 's/ +$//'`
+	basis=`echo "$2" | sed -r 's/^[^:]*://' | sed -r 's/^ +//' | sed -r 's/ +$//'`
+	expandedsymblist=`expand_symbol_list "$symblist"`
+	newdict=`echo "${expandedsymblist}" | sed -r 's/,/\n/g' | sed -r 's/$/: '"${basis}"'/'`
+	if [ "$1" = 'gen' ]; then
+		gendict=$(
+			echo -e "${gendict-}${gendict+\n}${newdict}" # append to gendict. If gendict is undefined, assign newdict
+		)
+	elif [ "$1" = 'ecp' ]; then
+		ecpdict=$(
+			echo -e "${ecpdict-}${ecpdict+\n}${newdict}"
+		)
+	else
+		error "append_to_genecp_dict: unknown option: '$1'"
+	fi
+}
+
+
