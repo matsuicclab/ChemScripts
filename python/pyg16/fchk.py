@@ -6,7 +6,7 @@ from scipy.spatial.distance import squareform
 
 from pyg16.basisfunction import GTOBasis
 
-class FCHK:
+class Fchk:
     def __init__(self, filePath):
         """
         load fchk file
@@ -269,8 +269,8 @@ class FCHK:
 
         return mergedresult
 
-    def __mapShellTypeToNumBasis(shelltypes):
-        def __temp(x):
+    def __mapShellTypeToNumBasis(self,shelltypes):
+        def __temp(st):
             if st == 0:
                 return 1
             elif st == 1:
