@@ -24,6 +24,7 @@ function replace_tablecolumn_by_mappingdatabase(){
 			awk -v cn="$columnnum" \
 				-v dv="$defaultvalue" \
 				'BEGIN  {
+					print "{"
 					printf "switch($%s){\n", cn
 				}
 				{
@@ -47,10 +48,10 @@ function replace_tablecolumn_by_mappingdatabase(){
 					# set the default value
 					print "default:"
 					printf "$%s=\"%s\"\n", cn, dv
+					print "}" # end of switch
+					print "print $0"
 					print "}"
-				}' |
-			sed -r '1i {' |
-			sed -r '$a print $0\n}'
+				}'
 	)
 
 	echo "$sourcedata" |
@@ -59,5 +60,12 @@ function replace_tablecolumn_by_mappingdatabase(){
 				FS="["delimiter"]"; OFS=delimiter; # set delimiter
 			}'"$awkprocess" # perform replacement
 }
+
+
+# TODO atomnum2symbのUuoなどのように
+# 単一のデフォルト値では対応できないものや
+# デフォルトでは置換しないなどのバリエーションが欲しい
+
+
 
 
