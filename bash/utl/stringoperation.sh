@@ -7,7 +7,9 @@ function replace_tablecolumn_by_mappingdatabase(){
 	# $3: column number
 	# $4: map database string
 	# $5: delimiter for database
-	# $6: default value (if $6 == '--', not replace)
+	# $6: default value
+	#     if $6 == '-', do not replace
+	#     if you want to set the default to '-', you can do it by escaping it.
 	local sourcedata sourcedelimiter columnnum
 	local mapdata mapdelimiter defaultvalue
 
@@ -46,7 +48,7 @@ function replace_tablecolumn_by_mappingdatabase(){
 				END {
 					# set the default value
 					print "default:"
-					if(dv=="--"){
+					if(dv=="-"){
 						print "break"
 					}else{
 						printf "$%s=\"%s\"\n", cn, dv
