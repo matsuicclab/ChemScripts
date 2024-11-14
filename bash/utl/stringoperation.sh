@@ -7,7 +7,7 @@ function replace_tablecolumn_by_mappingdatabase(){
 	# $3: column number
 	# $4: map database string
 	# $5: delimiter for database
-	# $6: default value
+	# $6: default value (if $6 == '--', not replace)
 	local sourcedata sourcedelimiter columnnum
 	local mapdata mapdelimiter defaultvalue
 
@@ -46,7 +46,11 @@ function replace_tablecolumn_by_mappingdatabase(){
 				END {
 					# set the default value
 					print "default:"
-					printf "$%s=\"%s\"\n", cn, dv
+					if(dv=="--"){
+						print "break"
+					}else{
+						printf "$%s=\"%s\"\n", cn, dv
+					}
 					print "}"
 				}' |
 			sed -r '1i {' |
