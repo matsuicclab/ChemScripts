@@ -1,14 +1,6 @@
 #!/bin/bash
 
-function error(){
-	help >&2
-	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m" >&2 ; shift; done
-	exit 1
-}
-
-function warning(){
-	while [ "$#" -ge 1 ]; do echo -e "\e[31m$1\e[m" >&2 ; shift; done
-}
+source "${SCRIPT_DIR}"/utl/common.sh
 
 function set_args(){
 	args=("$0" "$@")
@@ -20,7 +12,7 @@ function shift_args(){
 }
 
 function initialize_output(){
-	exec {ChemScript_common_stdout_fd}>&1
+	exec {ChemScript_data2data_stdout_fd}>&1
 }
 # execute to initialize
 initialize_output
@@ -38,7 +30,7 @@ function set_output(){
 	fi
 
 	if [ "$output" = "-" ]; then
-		exec >&${ChemScript_common_stdout_fd}
+		exec >&${ChemScript_data2data_stdout_fd}
 	elif "$append" ; then
 		exec >> "$output"
 	else
