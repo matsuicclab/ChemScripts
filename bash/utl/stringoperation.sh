@@ -3,6 +3,7 @@
 
 function replace_tablecolumn_by_mappingdatabase(){
 	# $1: source table string
+	#     if $1 == '-', read from pipe input
 	# $2: delimiter for source
 	# $3: column number
 	# $4: map database string
@@ -19,6 +20,10 @@ function replace_tablecolumn_by_mappingdatabase(){
 	mapdata="$4"
 	mapdelimiter="$5"
 	defaultvalue="$6"
+	
+	if [ "$sourcedata" = - ]; then
+		sourcedata=`cat -`
+	fi
 
 	awkprocess=$(
 		echo "$mapdata" |
@@ -68,6 +73,7 @@ function replace_tablecolumn_by_mappingdatabase(){
 
 function replace_char_in_tablecolumn_with_char(){
 	# $1: source table string
+	#     if $1 == '-', read from pipe input
 	# $2: delimiter for source
 	# $3: column number
 	# $4: chars before conversion
@@ -81,7 +87,11 @@ function replace_char_in_tablecolumn_with_char(){
 	beforechars="$4"
 	afterchars="$5"
 
-	if [ "${#beforechars}" != "${#afterchars}" ]; then
+	if [ "$sourcedata" = - ]; then
+		sourcedata=`cat -`
+	fi
+
+	if [ ! "${#beforechars}" -eq "${#afterchars}" ]; then
 		error "number of characters before and after replacement does not match"
 	fi
 	
