@@ -66,4 +66,30 @@ function replace_tablecolumn_by_mappingdatabase(){
 			}'"$awkprocess" # perform replacement
 }
 
+function replace_char_in_tablecolumn_with_char(){
+	# $1: source table string
+	# $2: delimiter for source
+	# $3: column number
+	# $4: chars before conversion
+	# $5: chars after conversion
+	local sourcedata sourcedelimiter columnnum
+	local beforechars afterchars
+
+	sourcedata="$1"
+	sourcedelimiter="$2"
+	columnnum="$3"
+	beforechars="$4"
+	afterchars="$5"
+
+	if [ "${#beforechars}" != "${#afterchars}" ]; then
+		error "number of characters before and after replacement does not match"
+	fi
+	
+	echo "$sourcedata" |
+		sed -r "s/^(([^${sourcedelimiter}]*${sourcedelimiter}){${columnnum}})/\1\n/" |
+		sed -r "1~2s/([^${sourcedelimiter}]*${sourcedelimiter})$/\n\1/" |
+		sed -r "2~3y/${beforechars}/${afterchars}/" |
+		sed -r '{N;N;s/\n//g}'
+	
+}
 
