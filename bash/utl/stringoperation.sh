@@ -97,16 +97,15 @@ function replace_char_in_tablecolumn_with_char(){
 	fi
 
 	echo "$sourcedata" |
+		sed -r "s/$/${sourcedelimiter}/" |
 		sed -r "s/^(([^${sourcedelimiter}]*${sourcedelimiter}){${columnnum}})/\1\n/" |
 		sed -r "1~2s/([^${sourcedelimiter}]*${sourcedelimiter})$/\n\1/" |
 		sed -r "2~3y/${beforechars}/${afterchars}/" |
-		sed -r '{N;N;s/\n//g}'
+		sed -r '{N;N;s/\n//g}' |
+		sed -r "s/${sourcedelimiter}$//"
 
 }
 
-# TODO atomnum2symbのUuoなどのように
-# 単一のデフォルト値では対応できないものや
-# デフォルトでは置換しないなどのバリエーションが欲しい
 
 
 
