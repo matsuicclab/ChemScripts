@@ -74,13 +74,13 @@ function process(){
 	#-------------------------------------------------------
 	if "$reverse"; then
 		# valid characters to convert from
-		mapTable=`print_atomicnumber_elementsymbol_table`
+		mapTable=`print_elementsymbol_atomicnumber_table`
 		systematicPatt1="nubtqphsoeNUBTQPHSOE"
 		systematicPatt2="01234567890123456789"
 		
 	else
 		# valid characters to convert from
-		mapTable=`print_elementsymbol_atomicnumber_table`
+		mapTable=`print_atomicnumber_elementsymbol_table`
 		systematicPatt1="0123456789"
 		systematicPatt2="nubtqphsoe"
 		
