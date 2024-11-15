@@ -114,7 +114,7 @@ function process(){
 		replace_char_in_tablecolumn_with_char - "$delimiter" "$targetColumnNum" "$systematicPatt1" "$systematicPatt2" |
 		#
 		# convert the first letter of the alphabet to uppercase
-		toupper_first_char_in_tablecolumn - "$delimiter" "$targetColumnNum"
+		(if "$reverse"; then toupper_first_char_in_tablecolumn - "$delimiter" "$targetColumnNum"; else cat -; fi)
 
 }
 
