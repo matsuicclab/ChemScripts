@@ -106,7 +106,36 @@ function replace_char_in_tablecolumn_with_char(){
 
 }
 
+function toupper_first_char_in_tablecolumn(){
+	# $1: source table string
+	#     if $1 == '-', read from pipe input
+	# $2: delimiter for source
+	# $3: column number
+	local sourcedata sourcedelimiter columnnum
 
+	sourcedata="$1"
+	sourcedelimiter="$2"
+	columnnum="$3"
+
+	if [ "$sourcedata" = - ]; then
+		sourcedata=`cat -`
+	fi
+
+	echo "$sourcedata" |
+		awk -v delimiter="${sourcedelimiter}" \
+			-v cn="$columnnum" \
+			'function toupperfirst(s){
+				len = length(s)
+				return toupper(substr(s,1,1)) substr(s,2,len-1)
+			}
+			BEGIN{
+				FS="["delimiter"]"; OFS=delimiter; # set delimiter
+			}
+			{
+				$cn = toupperfirst($cn)
+				print $0
+			}'
+}
 
 
 
