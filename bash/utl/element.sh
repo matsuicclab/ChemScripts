@@ -124,6 +124,11 @@ cat <<EOF
 EOF
 }
 
+function print_element_atomicnumber_table(){
+	print_atomicnumber_element_table |
+		awk '{print $2, $1}'
+}
+
 function expand_symbol_list(){
 	# $1: str
 	# H-Ar,Ga-Kr,Fe,I
