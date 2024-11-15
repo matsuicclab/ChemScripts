@@ -57,7 +57,8 @@ function replace_tablecolumn_by_mappingdatabase(){
 					if(dv=="-"){
 						print "break"
 					}else{
-					printf "$%s=\"%s\"\n", cn, dv
+						printf "$%s=\"%s\"\n", cn, dv
+					}
 					print "}" # end of switch
 					print "print $0"
 					print "}"
@@ -94,13 +95,13 @@ function replace_char_in_tablecolumn_with_char(){
 	if [ ! "${#beforechars}" -eq "${#afterchars}" ]; then
 		error "number of characters before and after replacement does not match"
 	fi
-	
+
 	echo "$sourcedata" |
 		sed -r "s/^(([^${sourcedelimiter}]*${sourcedelimiter}){${columnnum}})/\1\n/" |
 		sed -r "1~2s/([^${sourcedelimiter}]*${sourcedelimiter})$/\n\1/" |
 		sed -r "2~3y/${beforechars}/${afterchars}/" |
 		sed -r '{N;N;s/\n//g}'
-	
+
 }
 
 # TODO atomnum2symbのUuoなどのように
