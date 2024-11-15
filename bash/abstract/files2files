@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${SCRIPT_DIR}"/abstract/common
+source "${SCRIPT_DIR}"/abstract/data2data
 
 #flowchart
 #check -O option

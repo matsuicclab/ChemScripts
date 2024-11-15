@@ -3,11 +3,14 @@
 
 function replace_tablecolumn_by_mappingdatabase(){
 	# $1: source table string
+	#     if $1 == '-', read from pipe input
 	# $2: delimiter for source
 	# $3: column number
 	# $4: map database string
 	# $5: delimiter for database
 	# $6: default value
+	#     if $6 == '-', do not replace
+	#     if you want to set the default to '-', you can do it by escaping it.
 	local sourcedata sourcedelimiter columnnum
 	local mapdata mapdelimiter defaultvalue
 
@@ -17,6 +20,10 @@ function replace_tablecolumn_by_mappingdatabase(){
 	mapdata="$4"
 	mapdelimiter="$5"
 	defaultvalue="$6"
+
+	if [ "$sourcedata" = - ]; then
+		sourcedata=`cat -`
+	fi
 
 	awkprocess=$(
 		echo "$mapdata" |
@@ -47,6 +54,9 @@ function replace_tablecolumn_by_mappingdatabase(){
 				END {
 					# set the default value
 					print "default:"
+					if(dv=="-"){
+						print "break"
+					}else{
 					printf "$%s=\"%s\"\n", cn, dv
 					print "}" # end of switch
 					print "print $0"
@@ -61,6 +71,37 @@ function replace_tablecolumn_by_mappingdatabase(){
 			}'"$awkprocess" # perform replacement
 }
 
+function replace_char_in_tablecolumn_with_char(){
+	# $1: source table string
+	#     if $1 == '-', read from pipe input
+	# $2: delimiter for source
+	# $3: column number
+	# $4: chars before conversion
+	# $5: chars after conversion
+	local sourcedata sourcedelimiter columnnum
+	local beforechars afterchars
+
+	sourcedata="$1"
+	sourcedelimiter="$2"
+	columnnum="$3"
+	beforechars="$4"
+	afterchars="$5"
+
+	if [ "$sourcedata" = - ]; then
+		sourcedata=`cat -`
+	fi
+
+	if [ ! "${#beforechars}" -eq "${#afterchars}" ]; then
+		error "number of characters before and after replacement does not match"
+	fi
+	
+	echo "$sourcedata" |
+		sed -r "s/^(([^${sourcedelimiter}]*${sourcedelimiter}){${columnnum}})/\1\n/" |
+		sed -r "1~2s/([^${sourcedelimiter}]*${sourcedelimiter})$/\n\1/" |
+		sed -r "2~3y/${beforechars}/${afterchars}/" |
+		sed -r '{N;N;s/\n//g}'
+	
+}
 
 # TODO atomnum2symbのUuoなどのように
 # 単一のデフォルト値では対応できないものや
