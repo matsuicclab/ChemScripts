@@ -3,6 +3,7 @@
 set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
 source "${SCRIPT_DIR}"/utl/element.sh
 
 function help(){
@@ -73,22 +74,16 @@ function process(){
 	#-------------------------------------------------------
 	if "$reverse"; then
 		# valid characters to convert from
-		legalCharPatt="[A-z]"
-		# prepare sed cmd
-		# s/^H,$/1,/; s/^He,$/2,/; s/^Li,$/3,/; ... (delimiter: ',')
-		sedcmd=`print_atomicnumber_element_table |
-					awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $2, d, $1, d }'`
-		sedcmd2='y/nubtqphsoe/0123456789/; y/NUBTQPHSOE/0123456789/'
-
+		mapTable=`print_atomicnumber_elementsymbol_table`
+		systematicPatt1="nubtqphsoeNUBTQPHSOE"
+		systematicPatt2="01234567890123456789"
+		
 	else
 		# valid characters to convert from
-		legalCharPatt="[0-9]"
-		# prepare sed cmd
-		# s/^1,$/H,/; s/^2,$/He,/; s/^3,$/Li,/; ... (delimiter: ',')
-		sedcmd=`print_atomicnumber_element_table |
-					awk -v d="$delimiter" '{printf "s/^%s%s$/%s%s/; ", $1, d, $2, d }'`
-		sedcmd2='s/^0/N/; s/^1/U/; s/^2/B/; s/^3/T/; s/^4/Q/; s/^5/P/; s/^6/H/; s/^7/S/; s/^8/O/; s/^9/E/; y/0123456789/nubtqphsoe/'
-
+		mapTable=`print_elementsymbol_atomicnumber_table`
+		systematicPatt1="0123456789"
+		systematicPatt2="nubtqphsoe"
+		
 	fi
 
 	#-------------------------------------------------------
@@ -104,68 +99,6 @@ function process(){
 	# extract content part
 	contentData=`echo "$inpStr" | sed -n "${contentStartLineNum},"'$p'`
 
-	#-------------------------------------------------------
-	# conversion outline:
-	# A, B, 2, C, D
-	# E, F, 10, G, H
-	# ...
-	# ->
-	# ,A, B, 2, C, D,
-	# ,E, F, 10, G, H,
-	# ...
-	# ->
-	# ,A, B,
-	# 2,
-	# C, D,
-	# ,E, F,
-	# 10,
-	# G, H,
-	# ...
-	# ->
-	# ,A, B,
-	# He,
-	# C, D,
-	# ,E, F,
-	# Ne,
-	# G, H,
-	# ...
-	# ->
-	# ,A, B, He, C, D,
-	# ,E, F, Ne, G, H,
-	# ...
-	contentData=`echo "$contentData" |
-			sed -r 's/$/'"${delimiter}"'/' | # add trailing and leading delimiters
-			sed -r 's/^/'"${delimiter}"'/' |
-			sed -r "s/${delimiter}/${delimiter}\n/${targetColumnNum}" | # split 1 line into 3 lines
-			sed -r "2~2s/${delimiter}/${delimiter}\n/1" |
-			sed -r '$s/$/\n /'`
-			# Since bash removes the trailing newline character when assigning to a variable,
-			# consider the case where the last line is an empty character
-			# and add a trailing space character
-
-	#-------------------------------------------------------
-	# check if it doesn't contain characters that can't be converted
-	targetData=`echo "$contentData" |
-			sed -r -n '2~3p' |
-			sed -r "s/${delimiter}"'$//'`
-	illegalContentLineNum=`echo "$targetData" |
-				sed -r "s/${legalCharPatt}//g" |
-				nl -b a | # print line number
-				sed -r '/^ +[0-9]+\t$/d' |
-					# remove lines that contained only normal characters
-					# this '[0-9]' represents the line number printed by nl, so it has nothing to do with legalCharPatt
-				sed -r -n 1p | # get line number
-				sed -r 's/ //g' |
-				sed -r 's/\t.+//'`
-	if [ ! -z "$illegalContentLineNum" ] && [ "$illegalContentLineNum" -gt 0 ]; then
-		# if $illegalContentLineNum is not empty and is greater than 0
-		illegalString=`echo "$targetData" |
-						sed -n "${illegalContentLineNum}p"`
-		illegalLineNum=$(($illegalContentLineNum + $headerEndLineNum))
-		error "illegal string: line ${illegalLineNum}: ${illegalString}"
-	fi
-
-	# ------------------------------------------------------------------
 	# convert and print
 	if [ ! -z "$headerData" ]; then
 		# if $headerData is not empty
@@ -173,11 +106,15 @@ function process(){
 	fi
 
 	echo "$contentData" |
-		sed -r "2~3{${sedcmd}; ${sedcmd2};}" | # convert num to symb
-		sed -r '{N;N;s/\n//g}' | # restore to original shape
-		sed -r 's/^'"${delimiter}"'//' |
-		sed -r 's/'"${delimiter}"'$//' |
-		sed -r '$d'
+		#
+		# replace according to mapTable
+		replace_tablecolumn_by_mappingdatabase - "$delimiter" "$targetColumnNum" "$mapTable" ' ' - | 
+		#
+		# replace data not in the periodic table according to systematic name rules
+		replace_char_in_tablecolumn_with_char - "$delimiter" "$targetColumnNum" "$systematicPatt1" "$systematicPatt2" |
+		#
+		# convert the first letter of the alphabet to uppercase
+		toupper_first_char_in_tablecolumn - "$delimiter" "$targetColumnNum"
 
 }
 

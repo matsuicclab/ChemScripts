@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-function print_atomicnumber_element_table(){
+function print_atomicnumber_elementsymbol_table(){
 cat <<EOF
 1 H
 2 He
@@ -124,8 +124,8 @@ cat <<EOF
 EOF
 }
 
-function print_element_atomicnumber_table(){
-	print_atomicnumber_element_table |
+function print_elementsymbol_atomicnumber_table(){
+	print_atomicnumber_elementsymbol_table |
 		awk '{print $2, $1}'
 }
 
