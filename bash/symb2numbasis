@@ -3,6 +3,7 @@
 set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
+source "${SCRIPT_DIR}"/utl/element.sh
 
 function help(){
 	abstract_help "symb2numbasis" "symb" "num" "element symbol" "num of basis function"
@@ -22,6 +23,10 @@ cat <<EOF
                        |     Aug-CC-pVDZ, Aug-CC-pVTZ, Aug-CC-pVQZ, Aug-CC-pV5Z, Aug-CC-pV6Z,
                        |     LANL2DZ, SDD
                        | default: STO-3G
+    -g, --gen <record> | set basis functions for each element
+                       | If this option is specified last among options, 
+                       | '--' MUST be added to terminate parsing of this option
+                       | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
     --dtype <type>  | set d function type: 5D / 6D
                     | default: 5D
     --ftype <type>  | set f function type: 7F / 10F (currently valid only on 7F)
@@ -34,6 +39,7 @@ cat <<EOF
                                 | default: 1
     -s, --skip <num>            | set the title section
                                 | default: 0
+    -t, --total | calculate the number of total basis functions and print only
 EOF
 }
 
@@ -42,10 +48,27 @@ function parse_option(){
 	delimiter=' '
 	targetColumnNum=1
 	headerEndLineNum=0
-	basisname="STO-3G"
 	dtype=5D
 	ftype=7F
 	basistype=basis
+	isTotal=false
+	
+	# initialize
+	gendist=
+	append_to_genecp_dict gen "H-Og: STO-3G"
+	
+	local optionlist=(
+		-h -help --help
+		-b --basis
+		-g --gen
+		--dtype
+		--ftype
+		--num-of
+		-d --delimiter
+		-f --field
+		-s --skip
+		-t --total
+	)
 
 	while [ "${#args[@]}" -gt 1 ]
 	do
@@ -56,8 +79,21 @@ function parse_option(){
 			# shift_args 1
 			;;
 		-b | --basis)
-			basisname="${args[2]}"
+			gendict= # re-initialize
+			append_to_genecp_dict gen "H-Og: ${args[2]}"
 			shift_args 2
+			;;
+		-g | --gen)
+			shift_args 1
+			gendict= # re-initialize
+			while [ ! "${args[1]}" = -- ] && ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}"
+			do
+				append_to_genecp_dict gen "${args[1]}"
+				shift_args 1
+			done
+			if [ "${args[1]}" = -- ]; then
+				shift_args 1 # for '--'
+			fi
 			;;
 		--dtype)
 			dtype="${args[2]}"
@@ -83,6 +119,10 @@ function parse_option(){
 			headerEndLineNum="${args[2]}"
 			shift_args 2
 			;;
+		-t | --total)
+			isTotal=true
+			shift_args 1
+			;;
 		-*)
 			error "unknown option: '${args[1]}'"
 			;;
@@ -91,17 +131,36 @@ function parse_option(){
 			;;
 		esac
 	done
+	
+	database=`print_database`
 }
 
-function print_basis_database(){
+function print_database(){
+	local columnnumBasisType
+	local symbbasis_genarg symbbasis_num_all symb_num_genarg
 
+	columnnumBasisType=5
+
+	symbbasis_genarg=`echo "$gendict" | sed -r 's/ /-/1'`
+	symbbasis_num_all=`print_elementsymbol_numbasis_table |
+						grep -i " ${dtype} " |
+						grep -i " ${ftype} " |
+						cut -d ' ' -f 1,2,"${columnnumBasisType}" |
+						sed -r 's/^ +//' |
+						sed -r 's/ /-/1'`
+	symb_num_genarg=`echo "$symbbasis_num_all" |
+							grep $(echo "$symbbasis_genarg" | awk '{printf "-e %s ", $0}') |
+							sed -r 's/-/ /1' |
+							cut -d ' ' -f 1,3`
+
+	echo "$symb_num_genarg"
 }
 
 function process(){
 	# $1: inpStr
 	#
 	local inpStr
-	local symbList uniqSymbList database
+	local symbList numList
 
 	inpStr="$1"
 
@@ -115,13 +174,20 @@ function process(){
 				sed "1,${headerEndLineNum}d" |
 				cut -d "${delimiter}" -f "${targetColumnNum}"`
 
-	# obtain basis database
-	uniqSymbList=`echo "$symbList" | sort | uniq | awk '{printf "-e %s ", $0}'`
-	database=`print_basis_database |
-				grep -i " ${basisname} " |
-				grep -i " ${dtype} " |
-				grep -i " ${ftype} " |
-				grep ${uniqSymbList}`
+	# replace symbol with num of basis
+	numList=`replace_tablecolumn_by_mappingdatabase "$symbList" ' ' 1 "$database" ' ' 'none'`
+	
+	if "$isTotal"; then
+		_s=`echo "$numList" | tr -d '\n'`
+		if [[ "$_s" =~ [^0-9] ]]; then
+			# If it contains anything other than numbers
+			echo 0
+		else
+			echo "$numList" | awk '{s+=$0}END{print s}'
+		fi
+	else
+		echo "$numList"
+	fi
 
 }
 

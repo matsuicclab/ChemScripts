@@ -135,15 +135,17 @@ function expand_symbol_list(){
 	# -> H,He,Li,Be,B,C,N,O,F,Ne,Na,Mg,Al,Si,P,S,Cl,Ar,Ga,Ge,As,Se,Br,Kr,Fe,I
 	local str patt str2 numlist symblist
 
+	# -> 'H-Ar Ga-Kr Fe I'
 	str=`echo "$1" | sed -r 's/,/ /g'`
 
+	# -> '%s-%s %s-%s %s %s'
 	patt=`echo "$str" | sed -r 's/[A-z]+/%s/g'`
 
+	# -> '1-18 31-36 26 53'
 	str2=`echo "$str" |
 			sed -r 's/([- ])/\n\1\n/g' |
 			sed -r -n '/[A-z]/p' |
-			symb2atomnum`
-	str2=`echo "$str2" |
+			symb2atomnum |
 			tr '\n' ' ' |
 			xargs printf "${patt}\n"`
 
@@ -152,8 +154,8 @@ function expand_symbol_list(){
 				sed -r '/-/!s/^(.+)$/\1-\1/; /^-/s/-/1-/; /-$/s/-/-118/; /-/s/-/ /1' |
 				xargs -L 1 seq`
 	symblist=`echo "$numlist" |
-		atomnum2symb |
-		tr '\n' ','`
+				atomnum2symb |
+				tr '\n' ','`
 
 	echo "$symblist"
 }
@@ -162,12 +164,13 @@ function append_to_genecp_dict(){
 	# $1: gen / ecp
 	# $2: 'symblist: basis'
 	# results are saved in gendict (or ecpdict)
+	# result (e.g.): 'H STO-3G\nHe STO-3G\n...'
 	local symblist basis expandedsymblist newdict
 
 	symblist=`echo "$2" | sed -r 's/:.*//' | sed -r 's/^ +//' | sed -r 's/ +$//'`
 	basis=`echo "$2" | sed -r 's/^[^:]*://' | sed -r 's/^ +//' | sed -r 's/ +$//'`
 	expandedsymblist=`expand_symbol_list "$symblist"`
-	newdict=`echo "${expandedsymblist}" | sed -r 's/,/\n/g' | sed -r 's/$/: '"${basis}"'/'`
+	newdict=`echo "${expandedsymblist}" | sed -r 's/,/\n/g' | sed -r 's/$/ '"${basis}"'/'`
 	if [ "$1" = 'gen' ]; then
 		gendict=$(
 			echo -e "${gendict-}${gendict+\n}${newdict}" # append to gendict. If gendict is undefined, assign newdict

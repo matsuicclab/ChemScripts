@@ -19,7 +19,8 @@ cat <<EOF
              | --multi 1 / --multi 2 / ...
              | --multi low / --multi high / --multi high2 / ... (determined from the number of electrons)
     --gen    | set basis function when gen is specified in route
-             | if this option is last, -- is required to indicate the end of the option
+             | If this option is specified last among options, 
+             | '--' MUST be added to terminate parsing of this option
              | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
     --ecp    | set effective core potential
              | same specification as --gen
@@ -138,15 +139,13 @@ function generate_genecp_section(){
 	fi
 
 	echo "$2" |
-		sort |
-		uniq |
-		while read element
+		awk '!a[$0]++{print}' | # equals to sort | uniq
+		awk '{print $0 " " $0}' |
+		replace_tablecolumn_by_mappingdatabase - ' ' 2 "$dict" ' ' 'none' | # replace a element symbol in second column with basis function
+		while read symb basis
 		do
-			basis=`echo "$dict" |
-					sed -r -n "/^[^:]*${element}[^:]*:/p" |
-					head -n 1 |
-					sed -r 's/^[^:]*: *//'`
 			if [ "$basis" ]; then
+				# print
 				echo "${element} 0"
 				echo "${basis}"
 				echo "****"
