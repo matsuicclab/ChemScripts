@@ -4,6 +4,7 @@ set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
 source "${SCRIPT_DIR}"/utl/element.sh
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
 
 function help(){
 	abstract_help "symb2numbasis" "symb" "num" "element symbol" "num of basis function"

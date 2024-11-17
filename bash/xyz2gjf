@@ -3,6 +3,7 @@ set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 source "${SCRIPT_DIR}"/utl/element.sh
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
 
 function help(){
 	abstract_help "xyz2gjf" "xyz" "gjf" "xyz file" "gaussian input file"
@@ -146,7 +147,7 @@ function generate_genecp_section(){
 		do
 			if [ "$basis" ]; then
 				# print
-				echo "${element} 0"
+				echo "${symb} 0"
 				echo "${basis}"
 				echo "****"
 			else
