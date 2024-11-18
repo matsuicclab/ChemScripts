@@ -26,7 +26,7 @@ cat <<EOF
                        | default: STO-3G
     -g, --gen <record> | set basis functions for each element
                        | If this option is specified last among options,
-                       | '--' MUST be added to terminate parsing of this option
+                       | '--' has the ability to force termination of input for this option
                        | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
     --dtype <type>  | set d function type: 5D / 6D
                     | default: 5D
@@ -87,14 +87,20 @@ function parse_option(){
 		-g | --gen)
 			shift_args 1
 			gendict= # re-initialize
-			while [ ! "${args[1]}" = -- ] && ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}"
+			while true
 			do
-				append_to_genecp_dict gen "${args[1]}"
-				shift_args 1
+				if [ "${#args[@]}" -eq 1 ]; then
+					break
+				elif [ "${args[1]}" = -- ]; then
+					shift_args 1 # for '--'
+					break
+				elif ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}" && [[ "${args[1]}" =~ : ]]; then
+					append_to_genecp_dict gen "${args[1]}"
+					shift_args 1
+				else
+					break
+				fi
 			done
-			if [ "${args[1]}" = -- ]; then
-				shift_args 1 # for '--'
-			fi
 			;;
 		--dtype)
 			dtype="${args[2]}"
