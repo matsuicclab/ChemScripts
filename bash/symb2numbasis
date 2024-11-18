@@ -25,7 +25,7 @@ cat <<EOF
                        |     LANL2DZ, SDD
                        | default: STO-3G
     -g, --gen <record> | set basis functions for each element
-                       | If this option is specified last among options, 
+                       | If this option is specified last among options,
                        | '--' MUST be added to terminate parsing of this option
                        | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
     --dtype <type>  | set d function type: 5D / 6D
@@ -53,11 +53,11 @@ function parse_option(){
 	ftype=7F
 	basistype=basis
 	isTotal=false
-	
+
 	# initialize
 	gendist=
 	append_to_genecp_dict gen "H-Og: STO-3G"
-	
+
 	local optionlist=(
 		-h -help --help
 		-b --basis
@@ -132,21 +132,34 @@ function parse_option(){
 			;;
 		esac
 	done
-	
+
 	database=`print_database`
 }
 
 function print_database(){
-	local columnnumBasisType
+	local columnNo
 	local symbbasis_genarg symbbasis_num_all symb_num_genarg
 
-	columnnumBasisType=5
+	case "${basistype}" in
+	basis)
+		columnNo=5
+		;;
+	primitive-basis)
+		columnNo=6
+		;;
+	cartesian-basis)
+		columnNo=7
+		;;
+	*)
+		error "unknown --num-of option: '${basistype}'"
+		;;
+	esac
 
 	symbbasis_genarg=`echo "$gendict" | sed -r 's/ /-/1'`
 	symbbasis_num_all=`print_elementsymbol_numbasis_table |
 						grep -i " ${dtype} " |
 						grep -i " ${ftype} " |
-						cut -d ' ' -f 1,2,"${columnnumBasisType}" |
+						cut -d ' ' -f 1,2,"${columnNo}" |
 						sed -r 's/^ +//' |
 						sed -r 's/ /-/1'`
 	symb_num_genarg=`echo "$symbbasis_num_all" |
@@ -177,7 +190,7 @@ function process(){
 
 	# replace symbol with num of basis
 	numList=`replace_tablecolumn_by_mappingdatabase "$symbList" ' ' 1 "$database" ' ' 'none'`
-	
+
 	if "$isTotal"; then
 		_s=`echo "$numList" | tr -d '\n'`
 		if [[ "$_s" =~ [^0-9] ]]; then
