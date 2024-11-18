@@ -44,7 +44,7 @@ function parse_option(){
 	local optionlist=(
 		-O
 		-h -help --help
-		--link0 --route --title --charge --multi --gen --ecp
+		--link0 --route --title --charge --multi --gen --ecp --resp
 	)
 
 	while [ "${#args[@]}" -gt 1 ]
