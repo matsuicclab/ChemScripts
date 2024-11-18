@@ -19,14 +19,14 @@ cat <<EOF
     --multi  | set multiplicity      (default: low)
              | --multi 1 / --multi 2 / ...
              | --multi low / --multi high / --multi high2 / ... (determined from the number of electrons)
-    --gen    | set basis function when gen is specified in route
-             | If this option is specified last among options,
-             | '--' has the ability to force termination of input for this option
-             | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
-    --ecp    | set effective core potential
-             | same specification as --gen
-             | --ecp 'Fe,I,Ce: Lanl2dz'
-
+    --gen <record> | set basis function when gen is specified in route
+                   | If this option is specified last among options,
+                   | '--' has the ability to force termination of input for this option
+                   | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
+    --ecp <record> | set effective core potential
+                   | same specification as --gen
+                   | --ecp 'Fe,I,Ce: Lanl2dz'
+    --resp | set resp flag (add iop to the route section)
 EOF
 }
 
@@ -40,6 +40,7 @@ function parse_option(){
 	fixedmultiplicity= # initialize for unbound variable
 	gendict=
 	ecpdict=
+	isresp=false
 	local optionlist=(
 		-O
 		-h -help --help
@@ -124,7 +125,10 @@ function parse_option(){
 					break
 				fi
 			done
-
+			;;
+		--resp)
+			isresp=true
+			shift_args 1
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
@@ -134,6 +138,10 @@ function parse_option(){
 			;;
 		esac
 	done
+
+	if "$isresp"; then
+		routesection="${routesection} iop(6/33=2,6/41=10,6/42=17) pop=(mk,readradii)"
+	fi
 
 }
 
