@@ -170,14 +170,14 @@ function append_to_genecp_dict(){
 	symblist=`echo "$2" | sed -r 's/:.*//' | sed -r 's/^ +//' | sed -r 's/ +$//'`
 	basis=`echo "$2" | sed -r 's/^[^:]*://' | sed -r 's/^ +//' | sed -r 's/ +$//'`
 	expandedsymblist=`expand_symbol_list "$symblist"`
-	newdict=`echo "${expandedsymblist}" | sed -r 's/,/\n/g' | sed -r 's/$/ '"${basis}"'/'`
+	newdict=`echo "${expandedsymblist}" | sed -r 's/,/\n/g' | sed -r '/^$/d' | sed -r 's/$/ '"${basis}"'/'`
 	if [ "$1" = 'gen' ]; then
 		gendict=$(
-			echo -e "${gendict-}${gendict+\n}${newdict}" # append to gendict. If gendict is undefined, assign newdict
+			echo -e "${gendict-}\n${newdict}" | sed -r '/^$/d' # append to gendict. If gendict is undefined, assign newdict
 		)
 	elif [ "$1" = 'ecp' ]; then
 		ecpdict=$(
-			echo -e "${ecpdict-}${ecpdict+\n}${newdict}"
+			echo -e "${ecpdict-}\n${newdict}" | sed -r '/^$/d'
 		)
 	else
 		error "append_to_genecp_dict: unknown option: '$1'"

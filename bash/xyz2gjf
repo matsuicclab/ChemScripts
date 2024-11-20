@@ -19,14 +19,14 @@ cat <<EOF
     --multi  | set multiplicity      (default: low)
              | --multi 1 / --multi 2 / ...
              | --multi low / --multi high / --multi high2 / ... (determined from the number of electrons)
-    --gen    | set basis function when gen is specified in route
-             | If this option is specified last among options, 
-             | '--' MUST be added to terminate parsing of this option
-             | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
-    --ecp    | set effective core potential
-             | same specification as --gen
-             | --ecp 'Fe,I,Ce: Lanl2dz'
-
+    --gen <record> | set basis function when gen is specified in route
+                   | If this option is specified last among options,
+                   | '--' has the ability to force termination of input for this option
+                   | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
+    --ecp <record> | set effective core potential
+                   | same specification as --gen
+                   | --ecp 'Fe,I,Ce: Lanl2dz'
+    --resp | set resp flag (add iop to the route section)
 EOF
 }
 
@@ -40,6 +40,7 @@ function parse_option(){
 	fixedmultiplicity= # initialize for unbound variable
 	gendict=
 	ecpdict=
+	isresp=false
 	local optionlist=(
 		-O
 		-h -help --help
@@ -92,26 +93,42 @@ function parse_option(){
 		--gen)
 			shift_args 1
 			gendict= # re-initialize
-			while [ ! "${args[1]}" = -- ] && ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}"
+			while true
 			do
-				append_to_genecp_dict gen "${args[1]}"
-				shift_args 1
+				if [ "${#args[@]}" -eq 1 ]; then
+					break
+				elif [ "${args[1]}" = -- ]; then
+					shift_args 1 # for '--'
+					break
+				elif ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}" && [[ "${args[1]}" =~ : ]]; then
+					append_to_genecp_dict gen "${args[1]}"
+					shift_args 1
+				else
+					break
+				fi
 			done
-			if [ "${args[1]}" = -- ]; then
-				shift_args 1 # for '--'
-			fi
 			;;
 		--ecp)
 			shift_args 1
 			ecpdict= # re-initialize
-			while [ ! "${args[1]}" = -- ] && ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}"
+			while true
 			do
-				append_to_genecp_dict ecp "${args[1]}"
-				shift_args 1
+				if [ "${#args[@]}" -eq 1 ]; then
+					break
+				elif [ "${args[1]}" = -- ]; then
+					shift_args 1 # for '--'
+					break
+				elif ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}" && [[ "${args[1]}" =~ : ]]; then
+					append_to_genecp_dict ecp "${args[1]}"
+					shift_args 1
+				else
+					break
+				fi
 			done
-			if [ "${args[1]}" = -- ]; then
-				shift_args 1 # for '--'
-			fi
+			;;
+		--resp)
+			isresp=true
+			shift_args 1
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
@@ -121,6 +138,10 @@ function parse_option(){
 			;;
 		esac
 	done
+
+	if "$isresp"; then
+		routesection="${routesection} iop(6/33=2,6/41=10,6/42=17) pop=(mk,readradii)"
+	fi
 
 }
 
@@ -145,13 +166,13 @@ function generate_genecp_section(){
 		replace_tablecolumn_by_mappingdatabase - ' ' 2 "$dict" ' ' 'none' | # replace a element symbol in second column with basis function
 		while read symb basis
 		do
-			if [ "$basis" ]; then
+			if [ ! "$basis" = 'none' ]; then
 				# print
 				echo "${symb} 0"
 				echo "${basis}"
 				echo "****"
 			else
-				error "No basis functions specified: ${element}"
+				error "No basis functions specified: ${symb}"
 			fi
 		done
 }
