@@ -14,6 +14,8 @@ cat <<EOF
     That approach has the advantage of restoring connecting information with no multiplicity.
     In that case, you need to remove the header of the first two lines of the xyz file.
 
+    You can also create by rdkit 2022.09--, please check MolFromXYZFile, DetermineBonds, and MolToPDBFile.
+
 EOF
 }
 
