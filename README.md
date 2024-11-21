@@ -21,16 +21,16 @@ source <DIR>/bashrc # replace the text <DIR> to this directory according to your
 ```
 # generate smiles and structure
 $ name='ethanol'
-$ name2smiles "$name" | smiles2xyz -o test.xyz
+$ name2smiles "$name" | smiles2xyz -O test.xyz
 
 # calc energy with Gaussian
-$ xyz2gjf -o test_0.gjf --link0 '%chk=test_0.chk' --route '# opt b3lyp/6-31G(d)' --charge 0 test.xyz
+$ xyz2gjf -O test_0.gjf --link0 '%chk=test_0.chk' --route '# opt b3lyp/6-31G(d)' --charge 0 test.xyz
 $ g16 test_0.gjf
 $ g16log2value --SCF-energy test_0.log
 -155.033799257
 
 # calc energy of cation with Gaussian
-$ xyz2gjf -o test_1.gjf --link0 '%chk=test_1.chk' --route '# opt b3lyp/6-31G(d)' --charge 1 test.xyz
+$ xyz2gjf -O test_1.gjf --link0 '%chk=test_1.chk' --route '# opt b3lyp/6-31G(d)' --charge 1 test.xyz
 $ g16 test_1.gjf
 $ g16log2value --SCF-energy test_1.log
 -154.664421473
@@ -67,10 +67,9 @@ visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
 - sdf2mol
 - pdb2pdbs
 - xyz2gms
-- xyz2numbasis
 - mkmdin
 - mdcrd2crd (ambpdb)
-
+- xyz2xyz (consideration on isotope)
 
 
 - error handling for pdbid2pdb, name2sdf
