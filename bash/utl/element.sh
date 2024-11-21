@@ -129,6 +129,7094 @@ function print_elementsymbol_atomicnumber_table(){
 		awk '{print $2, $1}'
 }
 
+function print_elementsymbol_numbasis_table(){
+# symbol basisname dtype ftype numbasis numprimitivebasis numcartbasis
+cat <<EOF
+ H 3-21G 5D 7F  2  3  2
+He 3-21G 5D 7F  2  3  2
+Li 3-21G 5D 7F  9 15  9
+Be 3-21G 5D 7F  9 15  9
+ B 3-21G 5D 7F  9 15  9
+ C 3-21G 5D 7F  9 15  9
+ N 3-21G 5D 7F  9 15  9
+ O 3-21G 5D 7F  9 15  9
+ F 3-21G 5D 7F  9 15  9
+Ne 3-21G 5D 7F  9 15  9
+Na 3-21G 5D 7F 13 27 13
+Mg 3-21G 5D 7F 13 27 13
+Al 3-21G 5D 7F 13 27 13
+Si 3-21G 5D 7F 13 27 13
+ P 3-21G 5D 7F 13 27 13
+ S 3-21G 5D 7F 13 27 13
+Cl 3-21G 5D 7F 13 27 13
+Ar 3-21G 5D 7F 13 27 13
+ K 3-21G 5D 7F 17 39 17
+Ca 3-21G 5D 7F 17 39 17
+Sc 3-21G 5D 7F 27 57 29
+Ti 3-21G 5D 7F 27 57 29
+ V 3-21G 5D 7F 27 57 29
+Cr 3-21G 5D 7F 27 57 29
+Mn 3-21G 5D 7F 27 57 29
+Fe 3-21G 5D 7F 27 57 29
+Co 3-21G 5D 7F 27 57 29
+Ni 3-21G 5D 7F 27 57 29
+Cu 3-21G 5D 7F 27 57 29
+Zn 3-21G 5D 7F 27 57 29
+Ga 3-21G 5D 7F 22 57 23
+Ge 3-21G 5D 7F 22 57 23
+As 3-21G 5D 7F 22 57 23
+Se 3-21G 5D 7F 22 57 23
+Br 3-21G 5D 7F 22 57 23
+Kr 3-21G 5D 7F 22 57 23
+Rb 3-21G 5D 7F 26 69 27
+Sr 3-21G 5D 7F 26 69 27
+ Y 3-21G 5D 7F 36 87 39
+Zr 3-21G 5D 7F 36 87 39
+Nb 3-21G 5D 7F 36 87 39
+Mo 3-21G 5D 7F 36 87 39
+Tc 3-21G 5D 7F 36 87 39
+Ru 3-21G 5D 7F 36 87 39
+Rh 3-21G 5D 7F 36 87 39
+Pd 3-21G 5D 7F 36 87 39
+Ag 3-21G 5D 7F 36 87 39
+Cd 3-21G 5D 7F 36 87 39
+In 3-21G 5D 7F 31 87 33
+Sn 3-21G 5D 7F 31 87 33
+Sb 3-21G 5D 7F 31 87 33
+Te 3-21G 5D 7F 31 87 33
+ I 3-21G 5D 7F 31 87 33
+Xe 3-21G 5D 7F 31 87 33
+Cs 3-21G 5D 7F nan nan nan
+Ba 3-21G 5D 7F nan nan nan
+La 3-21G 5D 7F nan nan nan
+Ce 3-21G 5D 7F nan nan nan
+Pr 3-21G 5D 7F nan nan nan
+Nd 3-21G 5D 7F nan nan nan
+Pm 3-21G 5D 7F nan nan nan
+Sm 3-21G 5D 7F nan nan nan
+Eu 3-21G 5D 7F nan nan nan
+Gd 3-21G 5D 7F nan nan nan
+Tb 3-21G 5D 7F nan nan nan
+Dy 3-21G 5D 7F nan nan nan
+Ho 3-21G 5D 7F nan nan nan
+Er 3-21G 5D 7F nan nan nan
+Tm 3-21G 5D 7F nan nan nan
+Yb 3-21G 5D 7F nan nan nan
+Lu 3-21G 5D 7F nan nan nan
+Hf 3-21G 5D 7F nan nan nan
+Ta 3-21G 5D 7F nan nan nan
+ W 3-21G 5D 7F nan nan nan
+Re 3-21G 5D 7F nan nan nan
+Os 3-21G 5D 7F nan nan nan
+Ir 3-21G 5D 7F nan nan nan
+Pt 3-21G 5D 7F nan nan nan
+Au 3-21G 5D 7F nan nan nan
+Hg 3-21G 5D 7F nan nan nan
+Tl 3-21G 5D 7F nan nan nan
+Pb 3-21G 5D 7F nan nan nan
+Bi 3-21G 5D 7F nan nan nan
+Po 3-21G 5D 7F nan nan nan
+At 3-21G 5D 7F nan nan nan
+Rn 3-21G 5D 7F nan nan nan
+Fr 3-21G 5D 7F nan nan nan
+Ra 3-21G 5D 7F nan nan nan
+Ac 3-21G 5D 7F nan nan nan
+Th 3-21G 5D 7F nan nan nan
+Pa 3-21G 5D 7F nan nan nan
+ U 3-21G 5D 7F nan nan nan
+Np 3-21G 5D 7F nan nan nan
+Pu 3-21G 5D 7F nan nan nan
+Am 3-21G 5D 7F nan nan nan
+Cm 3-21G 5D 7F nan nan nan
+Bk 3-21G 5D 7F nan nan nan
+Cf 3-21G 5D 7F nan nan nan
+Es 3-21G 5D 7F nan nan nan
+Fm 3-21G 5D 7F nan nan nan
+Md 3-21G 5D 7F nan nan nan
+No 3-21G 5D 7F nan nan nan
+Lr 3-21G 5D 7F nan nan nan
+Rf 3-21G 5D 7F nan nan nan
+Db 3-21G 5D 7F nan nan nan
+Sg 3-21G 5D 7F nan nan nan
+Bh 3-21G 5D 7F nan nan nan
+Hs 3-21G 5D 7F nan nan nan
+Mt 3-21G 5D 7F nan nan nan
+Ds 3-21G 5D 7F nan nan nan
+Rg 3-21G 5D 7F nan nan nan
+Cn 3-21G 5D 7F nan nan nan
+Nh 3-21G 5D 7F nan nan nan
+Fl 3-21G 5D 7F nan nan nan
+Mc 3-21G 5D 7F nan nan nan
+Lv 3-21G 5D 7F nan nan nan
+Ts 3-21G 5D 7F nan nan nan
+Og 3-21G 5D 7F nan nan nan
+ H 6-31++G 5D 7F  3  5  3
+He 6-31++G 5D 7F  3  5  3
+Li 6-31++G 5D 7F 13 26 13
+Be 6-31++G 5D 7F 13 26 13
+ B 6-31++G 5D 7F 13 26 13
+ C 6-31++G 5D 7F 13 26 13
+ N 6-31++G 5D 7F 13 26 13
+ O 6-31++G 5D 7F 13 26 13
+ F 6-31++G 5D 7F 13 26 13
+Ne 6-31++G 5D 7F 13 26 13
+Na 6-31++G 5D 7F 17 50 17
+Mg 6-31++G 5D 7F 17 50 17
+Al 6-31++G 5D 7F 17 50 17
+Si 6-31++G 5D 7F 17 50 17
+ P 6-31++G 5D 7F 17 50 17
+ S 6-31++G 5D 7F 17 50 17
+Cl 6-31++G 5D 7F 17 50 17
+Ar 6-31++G 5D 7F 17 50 17
+ K 6-31++G 5D 7F 21 74 21
+Ca 6-31++G 5D 7F 21 74 21
+Sc 6-31++G 5D 7F 39 107 42
+Ti 6-31++G 5D 7F 39 107 42
+ V 6-31++G 5D 7F 39 107 42
+Cr 6-31++G 5D 7F 39 107 42
+Mn 6-31++G 5D 7F 39 107 42
+Fe 6-31++G 5D 7F 39 107 42
+Co 6-31++G 5D 7F 39 107 42
+Ni 6-31++G 5D 7F 39 107 42
+Cu 6-31++G 5D 7F 39 107 42
+Zn 6-31++G 5D 7F 39 107 42
+Ga 6-31++G 5D 7F 27 81 28
+Ge 6-31++G 5D 7F 27 81 28
+As 6-31++G 5D 7F 27 81 28
+Se 6-31++G 5D 7F 27 81 28
+Br 6-31++G 5D 7F 27 81 28
+Kr 6-31++G 5D 7F 27 81 28
+Rb 6-31++G 5D 7F nan nan nan
+Sr 6-31++G 5D 7F nan nan nan
+ Y 6-31++G 5D 7F nan nan nan
+Zr 6-31++G 5D 7F nan nan nan
+Nb 6-31++G 5D 7F nan nan nan
+Mo 6-31++G 5D 7F nan nan nan
+Tc 6-31++G 5D 7F nan nan nan
+Ru 6-31++G 5D 7F nan nan nan
+Rh 6-31++G 5D 7F nan nan nan
+Pd 6-31++G 5D 7F nan nan nan
+Ag 6-31++G 5D 7F nan nan nan
+Cd 6-31++G 5D 7F nan nan nan
+In 6-31++G 5D 7F nan nan nan
+Sn 6-31++G 5D 7F nan nan nan
+Sb 6-31++G 5D 7F nan nan nan
+Te 6-31++G 5D 7F nan nan nan
+ I 6-31++G 5D 7F nan nan nan
+Xe 6-31++G 5D 7F nan nan nan
+Cs 6-31++G 5D 7F nan nan nan
+Ba 6-31++G 5D 7F nan nan nan
+La 6-31++G 5D 7F nan nan nan
+Ce 6-31++G 5D 7F nan nan nan
+Pr 6-31++G 5D 7F nan nan nan
+Nd 6-31++G 5D 7F nan nan nan
+Pm 6-31++G 5D 7F nan nan nan
+Sm 6-31++G 5D 7F nan nan nan
+Eu 6-31++G 5D 7F nan nan nan
+Gd 6-31++G 5D 7F nan nan nan
+Tb 6-31++G 5D 7F nan nan nan
+Dy 6-31++G 5D 7F nan nan nan
+Ho 6-31++G 5D 7F nan nan nan
+Er 6-31++G 5D 7F nan nan nan
+Tm 6-31++G 5D 7F nan nan nan
+Yb 6-31++G 5D 7F nan nan nan
+Lu 6-31++G 5D 7F nan nan nan
+Hf 6-31++G 5D 7F nan nan nan
+Ta 6-31++G 5D 7F nan nan nan
+ W 6-31++G 5D 7F nan nan nan
+Re 6-31++G 5D 7F nan nan nan
+Os 6-31++G 5D 7F nan nan nan
+Ir 6-31++G 5D 7F nan nan nan
+Pt 6-31++G 5D 7F nan nan nan
+Au 6-31++G 5D 7F nan nan nan
+Hg 6-31++G 5D 7F nan nan nan
+Tl 6-31++G 5D 7F nan nan nan
+Pb 6-31++G 5D 7F nan nan nan
+Bi 6-31++G 5D 7F nan nan nan
+Po 6-31++G 5D 7F nan nan nan
+At 6-31++G 5D 7F nan nan nan
+Rn 6-31++G 5D 7F nan nan nan
+Fr 6-31++G 5D 7F nan nan nan
+Ra 6-31++G 5D 7F nan nan nan
+Ac 6-31++G 5D 7F nan nan nan
+Th 6-31++G 5D 7F nan nan nan
+Pa 6-31++G 5D 7F nan nan nan
+ U 6-31++G 5D 7F nan nan nan
+Np 6-31++G 5D 7F nan nan nan
+Pu 6-31++G 5D 7F nan nan nan
+Am 6-31++G 5D 7F nan nan nan
+Cm 6-31++G 5D 7F nan nan nan
+Bk 6-31++G 5D 7F nan nan nan
+Cf 6-31++G 5D 7F nan nan nan
+Es 6-31++G 5D 7F nan nan nan
+Fm 6-31++G 5D 7F nan nan nan
+Md 6-31++G 5D 7F nan nan nan
+No 6-31++G 5D 7F nan nan nan
+Lr 6-31++G 5D 7F nan nan nan
+Rf 6-31++G 5D 7F nan nan nan
+Db 6-31++G 5D 7F nan nan nan
+Sg 6-31++G 5D 7F nan nan nan
+Bh 6-31++G 5D 7F nan nan nan
+Hs 6-31++G 5D 7F nan nan nan
+Mt 6-31++G 5D 7F nan nan nan
+Ds 6-31++G 5D 7F nan nan nan
+Rg 6-31++G 5D 7F nan nan nan
+Cn 6-31++G 5D 7F nan nan nan
+Nh 6-31++G 5D 7F nan nan nan
+Fl 6-31++G 5D 7F nan nan nan
+Mc 6-31++G 5D 7F nan nan nan
+Lv 6-31++G 5D 7F nan nan nan
+Ts 6-31++G 5D 7F nan nan nan
+Og 6-31++G 5D 7F nan nan nan
+ H 6-31++G(d) 5D 7F  3  5  3
+He 6-31++G(d) 5D 7F  3  5  3
+Li 6-31++G(d) 5D 7F 18 32 19
+Be 6-31++G(d) 5D 7F 18 32 19
+ B 6-31++G(d) 5D 7F 18 32 19
+ C 6-31++G(d) 5D 7F 18 32 19
+ N 6-31++G(d) 5D 7F 18 32 19
+ O 6-31++G(d) 5D 7F 18 32 19
+ F 6-31++G(d) 5D 7F 18 32 19
+Ne 6-31++G(d) 5D 7F 18 32 19
+Na 6-31++G(d) 5D 7F 22 56 23
+Mg 6-31++G(d) 5D 7F 22 56 23
+Al 6-31++G(d) 5D 7F 22 56 23
+Si 6-31++G(d) 5D 7F 22 56 23
+ P 6-31++G(d) 5D 7F 22 56 23
+ S 6-31++G(d) 5D 7F 22 56 23
+Cl 6-31++G(d) 5D 7F 22 56 23
+Ar 6-31++G(d) 5D 7F 22 56 23
+ K 6-31++G(d) 5D 7F 26 80 27
+Ca 6-31++G(d) 5D 7F 26 80 27
+Sc 6-31++G(d) 5D 7F 46 117 52
+Ti 6-31++G(d) 5D 7F 46 117 52
+ V 6-31++G(d) 5D 7F 46 117 52
+Cr 6-31++G(d) 5D 7F 46 117 52
+Mn 6-31++G(d) 5D 7F 46 117 52
+Fe 6-31++G(d) 5D 7F 46 117 52
+Co 6-31++G(d) 5D 7F 46 117 52
+Ni 6-31++G(d) 5D 7F 46 117 52
+Cu 6-31++G(d) 5D 7F 46 117 52
+Zn 6-31++G(d) 5D 7F 46 117 52
+Ga 6-31++G(d) 5D 7F 32 87 34
+Ge 6-31++G(d) 5D 7F 32 87 34
+As 6-31++G(d) 5D 7F 32 87 34
+Se 6-31++G(d) 5D 7F 32 87 34
+Br 6-31++G(d) 5D 7F 32 87 34
+Kr 6-31++G(d) 5D 7F 32 87 34
+Rb 6-31++G(d) 5D 7F nan nan nan
+Sr 6-31++G(d) 5D 7F nan nan nan
+ Y 6-31++G(d) 5D 7F nan nan nan
+Zr 6-31++G(d) 5D 7F nan nan nan
+Nb 6-31++G(d) 5D 7F nan nan nan
+Mo 6-31++G(d) 5D 7F nan nan nan
+Tc 6-31++G(d) 5D 7F nan nan nan
+Ru 6-31++G(d) 5D 7F nan nan nan
+Rh 6-31++G(d) 5D 7F nan nan nan
+Pd 6-31++G(d) 5D 7F nan nan nan
+Ag 6-31++G(d) 5D 7F nan nan nan
+Cd 6-31++G(d) 5D 7F nan nan nan
+In 6-31++G(d) 5D 7F nan nan nan
+Sn 6-31++G(d) 5D 7F nan nan nan
+Sb 6-31++G(d) 5D 7F nan nan nan
+Te 6-31++G(d) 5D 7F nan nan nan
+ I 6-31++G(d) 5D 7F nan nan nan
+Xe 6-31++G(d) 5D 7F nan nan nan
+Cs 6-31++G(d) 5D 7F nan nan nan
+Ba 6-31++G(d) 5D 7F nan nan nan
+La 6-31++G(d) 5D 7F nan nan nan
+Ce 6-31++G(d) 5D 7F nan nan nan
+Pr 6-31++G(d) 5D 7F nan nan nan
+Nd 6-31++G(d) 5D 7F nan nan nan
+Pm 6-31++G(d) 5D 7F nan nan nan
+Sm 6-31++G(d) 5D 7F nan nan nan
+Eu 6-31++G(d) 5D 7F nan nan nan
+Gd 6-31++G(d) 5D 7F nan nan nan
+Tb 6-31++G(d) 5D 7F nan nan nan
+Dy 6-31++G(d) 5D 7F nan nan nan
+Ho 6-31++G(d) 5D 7F nan nan nan
+Er 6-31++G(d) 5D 7F nan nan nan
+Tm 6-31++G(d) 5D 7F nan nan nan
+Yb 6-31++G(d) 5D 7F nan nan nan
+Lu 6-31++G(d) 5D 7F nan nan nan
+Hf 6-31++G(d) 5D 7F nan nan nan
+Ta 6-31++G(d) 5D 7F nan nan nan
+ W 6-31++G(d) 5D 7F nan nan nan
+Re 6-31++G(d) 5D 7F nan nan nan
+Os 6-31++G(d) 5D 7F nan nan nan
+Ir 6-31++G(d) 5D 7F nan nan nan
+Pt 6-31++G(d) 5D 7F nan nan nan
+Au 6-31++G(d) 5D 7F nan nan nan
+Hg 6-31++G(d) 5D 7F nan nan nan
+Tl 6-31++G(d) 5D 7F nan nan nan
+Pb 6-31++G(d) 5D 7F nan nan nan
+Bi 6-31++G(d) 5D 7F nan nan nan
+Po 6-31++G(d) 5D 7F nan nan nan
+At 6-31++G(d) 5D 7F nan nan nan
+Rn 6-31++G(d) 5D 7F nan nan nan
+Fr 6-31++G(d) 5D 7F nan nan nan
+Ra 6-31++G(d) 5D 7F nan nan nan
+Ac 6-31++G(d) 5D 7F nan nan nan
+Th 6-31++G(d) 5D 7F nan nan nan
+Pa 6-31++G(d) 5D 7F nan nan nan
+ U 6-31++G(d) 5D 7F nan nan nan
+Np 6-31++G(d) 5D 7F nan nan nan
+Pu 6-31++G(d) 5D 7F nan nan nan
+Am 6-31++G(d) 5D 7F nan nan nan
+Cm 6-31++G(d) 5D 7F nan nan nan
+Bk 6-31++G(d) 5D 7F nan nan nan
+Cf 6-31++G(d) 5D 7F nan nan nan
+Es 6-31++G(d) 5D 7F nan nan nan
+Fm 6-31++G(d) 5D 7F nan nan nan
+Md 6-31++G(d) 5D 7F nan nan nan
+No 6-31++G(d) 5D 7F nan nan nan
+Lr 6-31++G(d) 5D 7F nan nan nan
+Rf 6-31++G(d) 5D 7F nan nan nan
+Db 6-31++G(d) 5D 7F nan nan nan
+Sg 6-31++G(d) 5D 7F nan nan nan
+Bh 6-31++G(d) 5D 7F nan nan nan
+Hs 6-31++G(d) 5D 7F nan nan nan
+Mt 6-31++G(d) 5D 7F nan nan nan
+Ds 6-31++G(d) 5D 7F nan nan nan
+Rg 6-31++G(d) 5D 7F nan nan nan
+Cn 6-31++G(d) 5D 7F nan nan nan
+Nh 6-31++G(d) 5D 7F nan nan nan
+Fl 6-31++G(d) 5D 7F nan nan nan
+Mc 6-31++G(d) 5D 7F nan nan nan
+Lv 6-31++G(d) 5D 7F nan nan nan
+Ts 6-31++G(d) 5D 7F nan nan nan
+Og 6-31++G(d) 5D 7F nan nan nan
+ H 6-31++G(d,p) 5D 7F  6  8  6
+He 6-31++G(d,p) 5D 7F  6  8  6
+Li 6-31++G(d,p) 5D 7F 18 32 19
+Be 6-31++G(d,p) 5D 7F 18 32 19
+ B 6-31++G(d,p) 5D 7F 18 32 19
+ C 6-31++G(d,p) 5D 7F 18 32 19
+ N 6-31++G(d,p) 5D 7F 18 32 19
+ O 6-31++G(d,p) 5D 7F 18 32 19
+ F 6-31++G(d,p) 5D 7F 18 32 19
+Ne 6-31++G(d,p) 5D 7F 18 32 19
+Na 6-31++G(d,p) 5D 7F 22 56 23
+Mg 6-31++G(d,p) 5D 7F 22 56 23
+Al 6-31++G(d,p) 5D 7F 22 56 23
+Si 6-31++G(d,p) 5D 7F 22 56 23
+ P 6-31++G(d,p) 5D 7F 22 56 23
+ S 6-31++G(d,p) 5D 7F 22 56 23
+Cl 6-31++G(d,p) 5D 7F 22 56 23
+Ar 6-31++G(d,p) 5D 7F 22 56 23
+ K 6-31++G(d,p) 5D 7F 26 80 27
+Ca 6-31++G(d,p) 5D 7F 26 80 27
+Sc 6-31++G(d,p) 5D 7F 46 117 52
+Ti 6-31++G(d,p) 5D 7F 46 117 52
+ V 6-31++G(d,p) 5D 7F 46 117 52
+Cr 6-31++G(d,p) 5D 7F 46 117 52
+Mn 6-31++G(d,p) 5D 7F 46 117 52
+Fe 6-31++G(d,p) 5D 7F 46 117 52
+Co 6-31++G(d,p) 5D 7F 46 117 52
+Ni 6-31++G(d,p) 5D 7F 46 117 52
+Cu 6-31++G(d,p) 5D 7F 46 117 52
+Zn 6-31++G(d,p) 5D 7F 46 117 52
+Ga 6-31++G(d,p) 5D 7F 32 87 34
+Ge 6-31++G(d,p) 5D 7F 32 87 34
+As 6-31++G(d,p) 5D 7F 32 87 34
+Se 6-31++G(d,p) 5D 7F 32 87 34
+Br 6-31++G(d,p) 5D 7F 32 87 34
+Kr 6-31++G(d,p) 5D 7F 32 87 34
+Rb 6-31++G(d,p) 5D 7F nan nan nan
+Sr 6-31++G(d,p) 5D 7F nan nan nan
+ Y 6-31++G(d,p) 5D 7F nan nan nan
+Zr 6-31++G(d,p) 5D 7F nan nan nan
+Nb 6-31++G(d,p) 5D 7F nan nan nan
+Mo 6-31++G(d,p) 5D 7F nan nan nan
+Tc 6-31++G(d,p) 5D 7F nan nan nan
+Ru 6-31++G(d,p) 5D 7F nan nan nan
+Rh 6-31++G(d,p) 5D 7F nan nan nan
+Pd 6-31++G(d,p) 5D 7F nan nan nan
+Ag 6-31++G(d,p) 5D 7F nan nan nan
+Cd 6-31++G(d,p) 5D 7F nan nan nan
+In 6-31++G(d,p) 5D 7F nan nan nan
+Sn 6-31++G(d,p) 5D 7F nan nan nan
+Sb 6-31++G(d,p) 5D 7F nan nan nan
+Te 6-31++G(d,p) 5D 7F nan nan nan
+ I 6-31++G(d,p) 5D 7F nan nan nan
+Xe 6-31++G(d,p) 5D 7F nan nan nan
+Cs 6-31++G(d,p) 5D 7F nan nan nan
+Ba 6-31++G(d,p) 5D 7F nan nan nan
+La 6-31++G(d,p) 5D 7F nan nan nan
+Ce 6-31++G(d,p) 5D 7F nan nan nan
+Pr 6-31++G(d,p) 5D 7F nan nan nan
+Nd 6-31++G(d,p) 5D 7F nan nan nan
+Pm 6-31++G(d,p) 5D 7F nan nan nan
+Sm 6-31++G(d,p) 5D 7F nan nan nan
+Eu 6-31++G(d,p) 5D 7F nan nan nan
+Gd 6-31++G(d,p) 5D 7F nan nan nan
+Tb 6-31++G(d,p) 5D 7F nan nan nan
+Dy 6-31++G(d,p) 5D 7F nan nan nan
+Ho 6-31++G(d,p) 5D 7F nan nan nan
+Er 6-31++G(d,p) 5D 7F nan nan nan
+Tm 6-31++G(d,p) 5D 7F nan nan nan
+Yb 6-31++G(d,p) 5D 7F nan nan nan
+Lu 6-31++G(d,p) 5D 7F nan nan nan
+Hf 6-31++G(d,p) 5D 7F nan nan nan
+Ta 6-31++G(d,p) 5D 7F nan nan nan
+ W 6-31++G(d,p) 5D 7F nan nan nan
+Re 6-31++G(d,p) 5D 7F nan nan nan
+Os 6-31++G(d,p) 5D 7F nan nan nan
+Ir 6-31++G(d,p) 5D 7F nan nan nan
+Pt 6-31++G(d,p) 5D 7F nan nan nan
+Au 6-31++G(d,p) 5D 7F nan nan nan
+Hg 6-31++G(d,p) 5D 7F nan nan nan
+Tl 6-31++G(d,p) 5D 7F nan nan nan
+Pb 6-31++G(d,p) 5D 7F nan nan nan
+Bi 6-31++G(d,p) 5D 7F nan nan nan
+Po 6-31++G(d,p) 5D 7F nan nan nan
+At 6-31++G(d,p) 5D 7F nan nan nan
+Rn 6-31++G(d,p) 5D 7F nan nan nan
+Fr 6-31++G(d,p) 5D 7F nan nan nan
+Ra 6-31++G(d,p) 5D 7F nan nan nan
+Ac 6-31++G(d,p) 5D 7F nan nan nan
+Th 6-31++G(d,p) 5D 7F nan nan nan
+Pa 6-31++G(d,p) 5D 7F nan nan nan
+ U 6-31++G(d,p) 5D 7F nan nan nan
+Np 6-31++G(d,p) 5D 7F nan nan nan
+Pu 6-31++G(d,p) 5D 7F nan nan nan
+Am 6-31++G(d,p) 5D 7F nan nan nan
+Cm 6-31++G(d,p) 5D 7F nan nan nan
+Bk 6-31++G(d,p) 5D 7F nan nan nan
+Cf 6-31++G(d,p) 5D 7F nan nan nan
+Es 6-31++G(d,p) 5D 7F nan nan nan
+Fm 6-31++G(d,p) 5D 7F nan nan nan
+Md 6-31++G(d,p) 5D 7F nan nan nan
+No 6-31++G(d,p) 5D 7F nan nan nan
+Lr 6-31++G(d,p) 5D 7F nan nan nan
+Rf 6-31++G(d,p) 5D 7F nan nan nan
+Db 6-31++G(d,p) 5D 7F nan nan nan
+Sg 6-31++G(d,p) 5D 7F nan nan nan
+Bh 6-31++G(d,p) 5D 7F nan nan nan
+Hs 6-31++G(d,p) 5D 7F nan nan nan
+Mt 6-31++G(d,p) 5D 7F nan nan nan
+Ds 6-31++G(d,p) 5D 7F nan nan nan
+Rg 6-31++G(d,p) 5D 7F nan nan nan
+Cn 6-31++G(d,p) 5D 7F nan nan nan
+Nh 6-31++G(d,p) 5D 7F nan nan nan
+Fl 6-31++G(d,p) 5D 7F nan nan nan
+Mc 6-31++G(d,p) 5D 7F nan nan nan
+Lv 6-31++G(d,p) 5D 7F nan nan nan
+Ts 6-31++G(d,p) 5D 7F nan nan nan
+Og 6-31++G(d,p) 5D 7F nan nan nan
+ H 6-31+G 5D 7F  2  4  2
+He 6-31+G 5D 7F  2  4  2
+Li 6-31+G 5D 7F 13 26 13
+Be 6-31+G 5D 7F 13 26 13
+ B 6-31+G 5D 7F 13 26 13
+ C 6-31+G 5D 7F 13 26 13
+ N 6-31+G 5D 7F 13 26 13
+ O 6-31+G 5D 7F 13 26 13
+ F 6-31+G 5D 7F 13 26 13
+Ne 6-31+G 5D 7F 13 26 13
+Na 6-31+G 5D 7F 17 50 17
+Mg 6-31+G 5D 7F 17 50 17
+Al 6-31+G 5D 7F 17 50 17
+Si 6-31+G 5D 7F 17 50 17
+ P 6-31+G 5D 7F 17 50 17
+ S 6-31+G 5D 7F 17 50 17
+Cl 6-31+G 5D 7F 17 50 17
+Ar 6-31+G 5D 7F 17 50 17
+ K 6-31+G 5D 7F 21 74 21
+Ca 6-31+G 5D 7F 21 74 21
+Sc 6-31+G 5D 7F 39 107 42
+Ti 6-31+G 5D 7F 39 107 42
+ V 6-31+G 5D 7F 39 107 42
+Cr 6-31+G 5D 7F 39 107 42
+Mn 6-31+G 5D 7F 39 107 42
+Fe 6-31+G 5D 7F 39 107 42
+Co 6-31+G 5D 7F 39 107 42
+Ni 6-31+G 5D 7F 39 107 42
+Cu 6-31+G 5D 7F 39 107 42
+Zn 6-31+G 5D 7F 39 107 42
+Ga 6-31+G 5D 7F 27 81 28
+Ge 6-31+G 5D 7F 27 81 28
+As 6-31+G 5D 7F 27 81 28
+Se 6-31+G 5D 7F 27 81 28
+Br 6-31+G 5D 7F 27 81 28
+Kr 6-31+G 5D 7F 27 81 28
+Rb 6-31+G 5D 7F nan nan nan
+Sr 6-31+G 5D 7F nan nan nan
+ Y 6-31+G 5D 7F nan nan nan
+Zr 6-31+G 5D 7F nan nan nan
+Nb 6-31+G 5D 7F nan nan nan
+Mo 6-31+G 5D 7F nan nan nan
+Tc 6-31+G 5D 7F nan nan nan
+Ru 6-31+G 5D 7F nan nan nan
+Rh 6-31+G 5D 7F nan nan nan
+Pd 6-31+G 5D 7F nan nan nan
+Ag 6-31+G 5D 7F nan nan nan
+Cd 6-31+G 5D 7F nan nan nan
+In 6-31+G 5D 7F nan nan nan
+Sn 6-31+G 5D 7F nan nan nan
+Sb 6-31+G 5D 7F nan nan nan
+Te 6-31+G 5D 7F nan nan nan
+ I 6-31+G 5D 7F nan nan nan
+Xe 6-31+G 5D 7F nan nan nan
+Cs 6-31+G 5D 7F nan nan nan
+Ba 6-31+G 5D 7F nan nan nan
+La 6-31+G 5D 7F nan nan nan
+Ce 6-31+G 5D 7F nan nan nan
+Pr 6-31+G 5D 7F nan nan nan
+Nd 6-31+G 5D 7F nan nan nan
+Pm 6-31+G 5D 7F nan nan nan
+Sm 6-31+G 5D 7F nan nan nan
+Eu 6-31+G 5D 7F nan nan nan
+Gd 6-31+G 5D 7F nan nan nan
+Tb 6-31+G 5D 7F nan nan nan
+Dy 6-31+G 5D 7F nan nan nan
+Ho 6-31+G 5D 7F nan nan nan
+Er 6-31+G 5D 7F nan nan nan
+Tm 6-31+G 5D 7F nan nan nan
+Yb 6-31+G 5D 7F nan nan nan
+Lu 6-31+G 5D 7F nan nan nan
+Hf 6-31+G 5D 7F nan nan nan
+Ta 6-31+G 5D 7F nan nan nan
+ W 6-31+G 5D 7F nan nan nan
+Re 6-31+G 5D 7F nan nan nan
+Os 6-31+G 5D 7F nan nan nan
+Ir 6-31+G 5D 7F nan nan nan
+Pt 6-31+G 5D 7F nan nan nan
+Au 6-31+G 5D 7F nan nan nan
+Hg 6-31+G 5D 7F nan nan nan
+Tl 6-31+G 5D 7F nan nan nan
+Pb 6-31+G 5D 7F nan nan nan
+Bi 6-31+G 5D 7F nan nan nan
+Po 6-31+G 5D 7F nan nan nan
+At 6-31+G 5D 7F nan nan nan
+Rn 6-31+G 5D 7F nan nan nan
+Fr 6-31+G 5D 7F nan nan nan
+Ra 6-31+G 5D 7F nan nan nan
+Ac 6-31+G 5D 7F nan nan nan
+Th 6-31+G 5D 7F nan nan nan
+Pa 6-31+G 5D 7F nan nan nan
+ U 6-31+G 5D 7F nan nan nan
+Np 6-31+G 5D 7F nan nan nan
+Pu 6-31+G 5D 7F nan nan nan
+Am 6-31+G 5D 7F nan nan nan
+Cm 6-31+G 5D 7F nan nan nan
+Bk 6-31+G 5D 7F nan nan nan
+Cf 6-31+G 5D 7F nan nan nan
+Es 6-31+G 5D 7F nan nan nan
+Fm 6-31+G 5D 7F nan nan nan
+Md 6-31+G 5D 7F nan nan nan
+No 6-31+G 5D 7F nan nan nan
+Lr 6-31+G 5D 7F nan nan nan
+Rf 6-31+G 5D 7F nan nan nan
+Db 6-31+G 5D 7F nan nan nan
+Sg 6-31+G 5D 7F nan nan nan
+Bh 6-31+G 5D 7F nan nan nan
+Hs 6-31+G 5D 7F nan nan nan
+Mt 6-31+G 5D 7F nan nan nan
+Ds 6-31+G 5D 7F nan nan nan
+Rg 6-31+G 5D 7F nan nan nan
+Cn 6-31+G 5D 7F nan nan nan
+Nh 6-31+G 5D 7F nan nan nan
+Fl 6-31+G 5D 7F nan nan nan
+Mc 6-31+G 5D 7F nan nan nan
+Lv 6-31+G 5D 7F nan nan nan
+Ts 6-31+G 5D 7F nan nan nan
+Og 6-31+G 5D 7F nan nan nan
+ H 6-31+G(d) 5D 7F  2  4  2
+He 6-31+G(d) 5D 7F  2  4  2
+Li 6-31+G(d) 5D 7F 18 32 19
+Be 6-31+G(d) 5D 7F 18 32 19
+ B 6-31+G(d) 5D 7F 18 32 19
+ C 6-31+G(d) 5D 7F 18 32 19
+ N 6-31+G(d) 5D 7F 18 32 19
+ O 6-31+G(d) 5D 7F 18 32 19
+ F 6-31+G(d) 5D 7F 18 32 19
+Ne 6-31+G(d) 5D 7F 18 32 19
+Na 6-31+G(d) 5D 7F 22 56 23
+Mg 6-31+G(d) 5D 7F 22 56 23
+Al 6-31+G(d) 5D 7F 22 56 23
+Si 6-31+G(d) 5D 7F 22 56 23
+ P 6-31+G(d) 5D 7F 22 56 23
+ S 6-31+G(d) 5D 7F 22 56 23
+Cl 6-31+G(d) 5D 7F 22 56 23
+Ar 6-31+G(d) 5D 7F 22 56 23
+ K 6-31+G(d) 5D 7F 26 80 27
+Ca 6-31+G(d) 5D 7F 26 80 27
+Sc 6-31+G(d) 5D 7F 46 117 52
+Ti 6-31+G(d) 5D 7F 46 117 52
+ V 6-31+G(d) 5D 7F 46 117 52
+Cr 6-31+G(d) 5D 7F 46 117 52
+Mn 6-31+G(d) 5D 7F 46 117 52
+Fe 6-31+G(d) 5D 7F 46 117 52
+Co 6-31+G(d) 5D 7F 46 117 52
+Ni 6-31+G(d) 5D 7F 46 117 52
+Cu 6-31+G(d) 5D 7F 46 117 52
+Zn 6-31+G(d) 5D 7F 46 117 52
+Ga 6-31+G(d) 5D 7F 32 87 34
+Ge 6-31+G(d) 5D 7F 32 87 34
+As 6-31+G(d) 5D 7F 32 87 34
+Se 6-31+G(d) 5D 7F 32 87 34
+Br 6-31+G(d) 5D 7F 32 87 34
+Kr 6-31+G(d) 5D 7F 32 87 34
+Rb 6-31+G(d) 5D 7F nan nan nan
+Sr 6-31+G(d) 5D 7F nan nan nan
+ Y 6-31+G(d) 5D 7F nan nan nan
+Zr 6-31+G(d) 5D 7F nan nan nan
+Nb 6-31+G(d) 5D 7F nan nan nan
+Mo 6-31+G(d) 5D 7F nan nan nan
+Tc 6-31+G(d) 5D 7F nan nan nan
+Ru 6-31+G(d) 5D 7F nan nan nan
+Rh 6-31+G(d) 5D 7F nan nan nan
+Pd 6-31+G(d) 5D 7F nan nan nan
+Ag 6-31+G(d) 5D 7F nan nan nan
+Cd 6-31+G(d) 5D 7F nan nan nan
+In 6-31+G(d) 5D 7F nan nan nan
+Sn 6-31+G(d) 5D 7F nan nan nan
+Sb 6-31+G(d) 5D 7F nan nan nan
+Te 6-31+G(d) 5D 7F nan nan nan
+ I 6-31+G(d) 5D 7F nan nan nan
+Xe 6-31+G(d) 5D 7F nan nan nan
+Cs 6-31+G(d) 5D 7F nan nan nan
+Ba 6-31+G(d) 5D 7F nan nan nan
+La 6-31+G(d) 5D 7F nan nan nan
+Ce 6-31+G(d) 5D 7F nan nan nan
+Pr 6-31+G(d) 5D 7F nan nan nan
+Nd 6-31+G(d) 5D 7F nan nan nan
+Pm 6-31+G(d) 5D 7F nan nan nan
+Sm 6-31+G(d) 5D 7F nan nan nan
+Eu 6-31+G(d) 5D 7F nan nan nan
+Gd 6-31+G(d) 5D 7F nan nan nan
+Tb 6-31+G(d) 5D 7F nan nan nan
+Dy 6-31+G(d) 5D 7F nan nan nan
+Ho 6-31+G(d) 5D 7F nan nan nan
+Er 6-31+G(d) 5D 7F nan nan nan
+Tm 6-31+G(d) 5D 7F nan nan nan
+Yb 6-31+G(d) 5D 7F nan nan nan
+Lu 6-31+G(d) 5D 7F nan nan nan
+Hf 6-31+G(d) 5D 7F nan nan nan
+Ta 6-31+G(d) 5D 7F nan nan nan
+ W 6-31+G(d) 5D 7F nan nan nan
+Re 6-31+G(d) 5D 7F nan nan nan
+Os 6-31+G(d) 5D 7F nan nan nan
+Ir 6-31+G(d) 5D 7F nan nan nan
+Pt 6-31+G(d) 5D 7F nan nan nan
+Au 6-31+G(d) 5D 7F nan nan nan
+Hg 6-31+G(d) 5D 7F nan nan nan
+Tl 6-31+G(d) 5D 7F nan nan nan
+Pb 6-31+G(d) 5D 7F nan nan nan
+Bi 6-31+G(d) 5D 7F nan nan nan
+Po 6-31+G(d) 5D 7F nan nan nan
+At 6-31+G(d) 5D 7F nan nan nan
+Rn 6-31+G(d) 5D 7F nan nan nan
+Fr 6-31+G(d) 5D 7F nan nan nan
+Ra 6-31+G(d) 5D 7F nan nan nan
+Ac 6-31+G(d) 5D 7F nan nan nan
+Th 6-31+G(d) 5D 7F nan nan nan
+Pa 6-31+G(d) 5D 7F nan nan nan
+ U 6-31+G(d) 5D 7F nan nan nan
+Np 6-31+G(d) 5D 7F nan nan nan
+Pu 6-31+G(d) 5D 7F nan nan nan
+Am 6-31+G(d) 5D 7F nan nan nan
+Cm 6-31+G(d) 5D 7F nan nan nan
+Bk 6-31+G(d) 5D 7F nan nan nan
+Cf 6-31+G(d) 5D 7F nan nan nan
+Es 6-31+G(d) 5D 7F nan nan nan
+Fm 6-31+G(d) 5D 7F nan nan nan
+Md 6-31+G(d) 5D 7F nan nan nan
+No 6-31+G(d) 5D 7F nan nan nan
+Lr 6-31+G(d) 5D 7F nan nan nan
+Rf 6-31+G(d) 5D 7F nan nan nan
+Db 6-31+G(d) 5D 7F nan nan nan
+Sg 6-31+G(d) 5D 7F nan nan nan
+Bh 6-31+G(d) 5D 7F nan nan nan
+Hs 6-31+G(d) 5D 7F nan nan nan
+Mt 6-31+G(d) 5D 7F nan nan nan
+Ds 6-31+G(d) 5D 7F nan nan nan
+Rg 6-31+G(d) 5D 7F nan nan nan
+Cn 6-31+G(d) 5D 7F nan nan nan
+Nh 6-31+G(d) 5D 7F nan nan nan
+Fl 6-31+G(d) 5D 7F nan nan nan
+Mc 6-31+G(d) 5D 7F nan nan nan
+Lv 6-31+G(d) 5D 7F nan nan nan
+Ts 6-31+G(d) 5D 7F nan nan nan
+Og 6-31+G(d) 5D 7F nan nan nan
+ H 6-31+G(d,p) 5D 7F  5  7  5
+He 6-31+G(d,p) 5D 7F  5  7  5
+Li 6-31+G(d,p) 5D 7F 18 32 19
+Be 6-31+G(d,p) 5D 7F 18 32 19
+ B 6-31+G(d,p) 5D 7F 18 32 19
+ C 6-31+G(d,p) 5D 7F 18 32 19
+ N 6-31+G(d,p) 5D 7F 18 32 19
+ O 6-31+G(d,p) 5D 7F 18 32 19
+ F 6-31+G(d,p) 5D 7F 18 32 19
+Ne 6-31+G(d,p) 5D 7F 18 32 19
+Na 6-31+G(d,p) 5D 7F 22 56 23
+Mg 6-31+G(d,p) 5D 7F 22 56 23
+Al 6-31+G(d,p) 5D 7F 22 56 23
+Si 6-31+G(d,p) 5D 7F 22 56 23
+ P 6-31+G(d,p) 5D 7F 22 56 23
+ S 6-31+G(d,p) 5D 7F 22 56 23
+Cl 6-31+G(d,p) 5D 7F 22 56 23
+Ar 6-31+G(d,p) 5D 7F 22 56 23
+ K 6-31+G(d,p) 5D 7F 26 80 27
+Ca 6-31+G(d,p) 5D 7F 26 80 27
+Sc 6-31+G(d,p) 5D 7F 46 117 52
+Ti 6-31+G(d,p) 5D 7F 46 117 52
+ V 6-31+G(d,p) 5D 7F 46 117 52
+Cr 6-31+G(d,p) 5D 7F 46 117 52
+Mn 6-31+G(d,p) 5D 7F 46 117 52
+Fe 6-31+G(d,p) 5D 7F 46 117 52
+Co 6-31+G(d,p) 5D 7F 46 117 52
+Ni 6-31+G(d,p) 5D 7F 46 117 52
+Cu 6-31+G(d,p) 5D 7F 46 117 52
+Zn 6-31+G(d,p) 5D 7F 46 117 52
+Ga 6-31+G(d,p) 5D 7F 32 87 34
+Ge 6-31+G(d,p) 5D 7F 32 87 34
+As 6-31+G(d,p) 5D 7F 32 87 34
+Se 6-31+G(d,p) 5D 7F 32 87 34
+Br 6-31+G(d,p) 5D 7F 32 87 34
+Kr 6-31+G(d,p) 5D 7F 32 87 34
+Rb 6-31+G(d,p) 5D 7F nan nan nan
+Sr 6-31+G(d,p) 5D 7F nan nan nan
+ Y 6-31+G(d,p) 5D 7F nan nan nan
+Zr 6-31+G(d,p) 5D 7F nan nan nan
+Nb 6-31+G(d,p) 5D 7F nan nan nan
+Mo 6-31+G(d,p) 5D 7F nan nan nan
+Tc 6-31+G(d,p) 5D 7F nan nan nan
+Ru 6-31+G(d,p) 5D 7F nan nan nan
+Rh 6-31+G(d,p) 5D 7F nan nan nan
+Pd 6-31+G(d,p) 5D 7F nan nan nan
+Ag 6-31+G(d,p) 5D 7F nan nan nan
+Cd 6-31+G(d,p) 5D 7F nan nan nan
+In 6-31+G(d,p) 5D 7F nan nan nan
+Sn 6-31+G(d,p) 5D 7F nan nan nan
+Sb 6-31+G(d,p) 5D 7F nan nan nan
+Te 6-31+G(d,p) 5D 7F nan nan nan
+ I 6-31+G(d,p) 5D 7F nan nan nan
+Xe 6-31+G(d,p) 5D 7F nan nan nan
+Cs 6-31+G(d,p) 5D 7F nan nan nan
+Ba 6-31+G(d,p) 5D 7F nan nan nan
+La 6-31+G(d,p) 5D 7F nan nan nan
+Ce 6-31+G(d,p) 5D 7F nan nan nan
+Pr 6-31+G(d,p) 5D 7F nan nan nan
+Nd 6-31+G(d,p) 5D 7F nan nan nan
+Pm 6-31+G(d,p) 5D 7F nan nan nan
+Sm 6-31+G(d,p) 5D 7F nan nan nan
+Eu 6-31+G(d,p) 5D 7F nan nan nan
+Gd 6-31+G(d,p) 5D 7F nan nan nan
+Tb 6-31+G(d,p) 5D 7F nan nan nan
+Dy 6-31+G(d,p) 5D 7F nan nan nan
+Ho 6-31+G(d,p) 5D 7F nan nan nan
+Er 6-31+G(d,p) 5D 7F nan nan nan
+Tm 6-31+G(d,p) 5D 7F nan nan nan
+Yb 6-31+G(d,p) 5D 7F nan nan nan
+Lu 6-31+G(d,p) 5D 7F nan nan nan
+Hf 6-31+G(d,p) 5D 7F nan nan nan
+Ta 6-31+G(d,p) 5D 7F nan nan nan
+ W 6-31+G(d,p) 5D 7F nan nan nan
+Re 6-31+G(d,p) 5D 7F nan nan nan
+Os 6-31+G(d,p) 5D 7F nan nan nan
+Ir 6-31+G(d,p) 5D 7F nan nan nan
+Pt 6-31+G(d,p) 5D 7F nan nan nan
+Au 6-31+G(d,p) 5D 7F nan nan nan
+Hg 6-31+G(d,p) 5D 7F nan nan nan
+Tl 6-31+G(d,p) 5D 7F nan nan nan
+Pb 6-31+G(d,p) 5D 7F nan nan nan
+Bi 6-31+G(d,p) 5D 7F nan nan nan
+Po 6-31+G(d,p) 5D 7F nan nan nan
+At 6-31+G(d,p) 5D 7F nan nan nan
+Rn 6-31+G(d,p) 5D 7F nan nan nan
+Fr 6-31+G(d,p) 5D 7F nan nan nan
+Ra 6-31+G(d,p) 5D 7F nan nan nan
+Ac 6-31+G(d,p) 5D 7F nan nan nan
+Th 6-31+G(d,p) 5D 7F nan nan nan
+Pa 6-31+G(d,p) 5D 7F nan nan nan
+ U 6-31+G(d,p) 5D 7F nan nan nan
+Np 6-31+G(d,p) 5D 7F nan nan nan
+Pu 6-31+G(d,p) 5D 7F nan nan nan
+Am 6-31+G(d,p) 5D 7F nan nan nan
+Cm 6-31+G(d,p) 5D 7F nan nan nan
+Bk 6-31+G(d,p) 5D 7F nan nan nan
+Cf 6-31+G(d,p) 5D 7F nan nan nan
+Es 6-31+G(d,p) 5D 7F nan nan nan
+Fm 6-31+G(d,p) 5D 7F nan nan nan
+Md 6-31+G(d,p) 5D 7F nan nan nan
+No 6-31+G(d,p) 5D 7F nan nan nan
+Lr 6-31+G(d,p) 5D 7F nan nan nan
+Rf 6-31+G(d,p) 5D 7F nan nan nan
+Db 6-31+G(d,p) 5D 7F nan nan nan
+Sg 6-31+G(d,p) 5D 7F nan nan nan
+Bh 6-31+G(d,p) 5D 7F nan nan nan
+Hs 6-31+G(d,p) 5D 7F nan nan nan
+Mt 6-31+G(d,p) 5D 7F nan nan nan
+Ds 6-31+G(d,p) 5D 7F nan nan nan
+Rg 6-31+G(d,p) 5D 7F nan nan nan
+Cn 6-31+G(d,p) 5D 7F nan nan nan
+Nh 6-31+G(d,p) 5D 7F nan nan nan
+Fl 6-31+G(d,p) 5D 7F nan nan nan
+Mc 6-31+G(d,p) 5D 7F nan nan nan
+Lv 6-31+G(d,p) 5D 7F nan nan nan
+Ts 6-31+G(d,p) 5D 7F nan nan nan
+Og 6-31+G(d,p) 5D 7F nan nan nan
+ H 6-311G 5D 7F  3  5  3
+He 6-311G 5D 7F  3  5  3
+Li 6-311G 5D 7F 13 26 13
+Be 6-311G 5D 7F 13 26 13
+ B 6-311G 5D 7F 13 26 13
+ C 6-311G 5D 7F 13 26 13
+ N 6-311G 5D 7F 13 26 13
+ O 6-311G 5D 7F 13 26 13
+ F 6-311G 5D 7F 13 26 13
+Ne 6-311G 5D 7F 13 26 13
+Na 6-311G 5D 7F 21 40 21
+Mg 6-311G 5D 7F 21 40 21
+Al 6-311G 5D 7F 21 40 21
+Si 6-311G 5D 7F 21 40 21
+ P 6-311G 5D 7F 21 40 21
+ S 6-311G 5D 7F 21 40 21
+Cl 6-311G 5D 7F 21 43 21
+Ar 6-311G 5D 7F 21 43 21
+ K 6-311G 5D 7F 34 65 35
+Ca 6-311G 5D 7F 34 65 35
+Sc 6-311G 5D 7F 39 71 42
+Ti 6-311G 5D 7F 39 71 42
+ V 6-311G 5D 7F 39 71 42
+Cr 6-311G 5D 7F 39 71 42
+Mn 6-311G 5D 7F 39 71 42
+Fe 6-311G 5D 7F 39 71 42
+Co 6-311G 5D 7F 39 71 42
+Ni 6-311G 5D 7F 39 71 42
+Cu 6-311G 5D 7F 39 71 42
+Zn 6-311G 5D 7F 39 71 42
+Ga 6-311G 5D 7F 39 84 41
+Ge 6-311G 5D 7F 39 84 41
+As 6-311G 5D 7F 39 84 41
+Se 6-311G 5D 7F 39 84 41
+Br 6-311G 5D 7F 39 84 41
+Kr 6-311G 5D 7F 39 84 41
+Rb 6-311G 5D 7F nan nan nan
+Sr 6-311G 5D 7F nan nan nan
+ Y 6-311G 5D 7F nan nan nan
+Zr 6-311G 5D 7F nan nan nan
+Nb 6-311G 5D 7F nan nan nan
+Mo 6-311G 5D 7F nan nan nan
+Tc 6-311G 5D 7F nan nan nan
+Ru 6-311G 5D 7F nan nan nan
+Rh 6-311G 5D 7F nan nan nan
+Pd 6-311G 5D 7F nan nan nan
+Ag 6-311G 5D 7F nan nan nan
+Cd 6-311G 5D 7F nan nan nan
+In 6-311G 5D 7F nan nan nan
+Sn 6-311G 5D 7F nan nan nan
+Sb 6-311G 5D 7F nan nan nan
+Te 6-311G 5D 7F nan nan nan
+ I 6-311G 5D 7F nan nan nan
+Xe 6-311G 5D 7F nan nan nan
+Cs 6-311G 5D 7F nan nan nan
+Ba 6-311G 5D 7F nan nan nan
+La 6-311G 5D 7F nan nan nan
+Ce 6-311G 5D 7F nan nan nan
+Pr 6-311G 5D 7F nan nan nan
+Nd 6-311G 5D 7F nan nan nan
+Pm 6-311G 5D 7F nan nan nan
+Sm 6-311G 5D 7F nan nan nan
+Eu 6-311G 5D 7F nan nan nan
+Gd 6-311G 5D 7F nan nan nan
+Tb 6-311G 5D 7F nan nan nan
+Dy 6-311G 5D 7F nan nan nan
+Ho 6-311G 5D 7F nan nan nan
+Er 6-311G 5D 7F nan nan nan
+Tm 6-311G 5D 7F nan nan nan
+Yb 6-311G 5D 7F nan nan nan
+Lu 6-311G 5D 7F nan nan nan
+Hf 6-311G 5D 7F nan nan nan
+Ta 6-311G 5D 7F nan nan nan
+ W 6-311G 5D 7F nan nan nan
+Re 6-311G 5D 7F nan nan nan
+Os 6-311G 5D 7F nan nan nan
+Ir 6-311G 5D 7F nan nan nan
+Pt 6-311G 5D 7F nan nan nan
+Au 6-311G 5D 7F nan nan nan
+Hg 6-311G 5D 7F nan nan nan
+Tl 6-311G 5D 7F nan nan nan
+Pb 6-311G 5D 7F nan nan nan
+Bi 6-311G 5D 7F nan nan nan
+Po 6-311G 5D 7F nan nan nan
+At 6-311G 5D 7F nan nan nan
+Rn 6-311G 5D 7F nan nan nan
+Fr 6-311G 5D 7F nan nan nan
+Ra 6-311G 5D 7F nan nan nan
+Ac 6-311G 5D 7F nan nan nan
+Th 6-311G 5D 7F nan nan nan
+Pa 6-311G 5D 7F nan nan nan
+ U 6-311G 5D 7F nan nan nan
+Np 6-311G 5D 7F nan nan nan
+Pu 6-311G 5D 7F nan nan nan
+Am 6-311G 5D 7F nan nan nan
+Cm 6-311G 5D 7F nan nan nan
+Bk 6-311G 5D 7F nan nan nan
+Cf 6-311G 5D 7F nan nan nan
+Es 6-311G 5D 7F nan nan nan
+Fm 6-311G 5D 7F nan nan nan
+Md 6-311G 5D 7F nan nan nan
+No 6-311G 5D 7F nan nan nan
+Lr 6-311G 5D 7F nan nan nan
+Rf 6-311G 5D 7F nan nan nan
+Db 6-311G 5D 7F nan nan nan
+Sg 6-311G 5D 7F nan nan nan
+Bh 6-311G 5D 7F nan nan nan
+Hs 6-311G 5D 7F nan nan nan
+Mt 6-311G 5D 7F nan nan nan
+Ds 6-311G 5D 7F nan nan nan
+Rg 6-311G 5D 7F nan nan nan
+Cn 6-311G 5D 7F nan nan nan
+Nh 6-311G 5D 7F nan nan nan
+Fl 6-311G 5D 7F nan nan nan
+Mc 6-311G 5D 7F nan nan nan
+Lv 6-311G 5D 7F nan nan nan
+Ts 6-311G 5D 7F nan nan nan
+Og 6-311G 5D 7F nan nan nan
+ H 6-31G 5D 7F  2  4  2
+He 6-31G 5D 7F  2  4  2
+Li 6-31G 5D 7F  9 22  9
+Be 6-31G 5D 7F  9 22  9
+ B 6-31G 5D 7F  9 22  9
+ C 6-31G 5D 7F  9 22  9
+ N 6-31G 5D 7F  9 22  9
+ O 6-31G 5D 7F  9 22  9
+ F 6-31G 5D 7F  9 22  9
+Ne 6-31G 5D 7F  9 22  9
+Na 6-31G 5D 7F 13 46 13
+Mg 6-31G 5D 7F 13 46 13
+Al 6-31G 5D 7F 13 46 13
+Si 6-31G 5D 7F 13 46 13
+ P 6-31G 5D 7F 13 46 13
+ S 6-31G 5D 7F 13 46 13
+Cl 6-31G 5D 7F 13 46 13
+Ar 6-31G 5D 7F 13 46 13
+ K 6-31G 5D 7F 17 70 17
+Ca 6-31G 5D 7F 17 70 17
+Sc 6-31G 5D 7F 27 94 29
+Ti 6-31G 5D 7F 27 94 29
+ V 6-31G 5D 7F 27 94 29
+Cr 6-31G 5D 7F 27 94 29
+Mn 6-31G 5D 7F 27 94 29
+Fe 6-31G 5D 7F 27 94 29
+Co 6-31G 5D 7F 27 94 29
+Ni 6-31G 5D 7F 27 94 29
+Cu 6-31G 5D 7F 27 94 29
+Zn 6-31G 5D 7F 27 94 29
+Ga 6-31G 5D 7F 23 77 24
+Ge 6-31G 5D 7F 23 77 24
+As 6-31G 5D 7F 23 77 24
+Se 6-31G 5D 7F 23 77 24
+Br 6-31G 5D 7F 23 77 24
+Kr 6-31G 5D 7F 23 77 24
+Rb 6-31G 5D 7F nan nan nan
+Sr 6-31G 5D 7F nan nan nan
+ Y 6-31G 5D 7F nan nan nan
+Zr 6-31G 5D 7F nan nan nan
+Nb 6-31G 5D 7F nan nan nan
+Mo 6-31G 5D 7F nan nan nan
+Tc 6-31G 5D 7F nan nan nan
+Ru 6-31G 5D 7F nan nan nan
+Rh 6-31G 5D 7F nan nan nan
+Pd 6-31G 5D 7F nan nan nan
+Ag 6-31G 5D 7F nan nan nan
+Cd 6-31G 5D 7F nan nan nan
+In 6-31G 5D 7F nan nan nan
+Sn 6-31G 5D 7F nan nan nan
+Sb 6-31G 5D 7F nan nan nan
+Te 6-31G 5D 7F nan nan nan
+ I 6-31G 5D 7F nan nan nan
+Xe 6-31G 5D 7F nan nan nan
+Cs 6-31G 5D 7F nan nan nan
+Ba 6-31G 5D 7F nan nan nan
+La 6-31G 5D 7F nan nan nan
+Ce 6-31G 5D 7F nan nan nan
+Pr 6-31G 5D 7F nan nan nan
+Nd 6-31G 5D 7F nan nan nan
+Pm 6-31G 5D 7F nan nan nan
+Sm 6-31G 5D 7F nan nan nan
+Eu 6-31G 5D 7F nan nan nan
+Gd 6-31G 5D 7F nan nan nan
+Tb 6-31G 5D 7F nan nan nan
+Dy 6-31G 5D 7F nan nan nan
+Ho 6-31G 5D 7F nan nan nan
+Er 6-31G 5D 7F nan nan nan
+Tm 6-31G 5D 7F nan nan nan
+Yb 6-31G 5D 7F nan nan nan
+Lu 6-31G 5D 7F nan nan nan
+Hf 6-31G 5D 7F nan nan nan
+Ta 6-31G 5D 7F nan nan nan
+ W 6-31G 5D 7F nan nan nan
+Re 6-31G 5D 7F nan nan nan
+Os 6-31G 5D 7F nan nan nan
+Ir 6-31G 5D 7F nan nan nan
+Pt 6-31G 5D 7F nan nan nan
+Au 6-31G 5D 7F nan nan nan
+Hg 6-31G 5D 7F nan nan nan
+Tl 6-31G 5D 7F nan nan nan
+Pb 6-31G 5D 7F nan nan nan
+Bi 6-31G 5D 7F nan nan nan
+Po 6-31G 5D 7F nan nan nan
+At 6-31G 5D 7F nan nan nan
+Rn 6-31G 5D 7F nan nan nan
+Fr 6-31G 5D 7F nan nan nan
+Ra 6-31G 5D 7F nan nan nan
+Ac 6-31G 5D 7F nan nan nan
+Th 6-31G 5D 7F nan nan nan
+Pa 6-31G 5D 7F nan nan nan
+ U 6-31G 5D 7F nan nan nan
+Np 6-31G 5D 7F nan nan nan
+Pu 6-31G 5D 7F nan nan nan
+Am 6-31G 5D 7F nan nan nan
+Cm 6-31G 5D 7F nan nan nan
+Bk 6-31G 5D 7F nan nan nan
+Cf 6-31G 5D 7F nan nan nan
+Es 6-31G 5D 7F nan nan nan
+Fm 6-31G 5D 7F nan nan nan
+Md 6-31G 5D 7F nan nan nan
+No 6-31G 5D 7F nan nan nan
+Lr 6-31G 5D 7F nan nan nan
+Rf 6-31G 5D 7F nan nan nan
+Db 6-31G 5D 7F nan nan nan
+Sg 6-31G 5D 7F nan nan nan
+Bh 6-31G 5D 7F nan nan nan
+Hs 6-31G 5D 7F nan nan nan
+Mt 6-31G 5D 7F nan nan nan
+Ds 6-31G 5D 7F nan nan nan
+Rg 6-31G 5D 7F nan nan nan
+Cn 6-31G 5D 7F nan nan nan
+Nh 6-31G 5D 7F nan nan nan
+Fl 6-31G 5D 7F nan nan nan
+Mc 6-31G 5D 7F nan nan nan
+Lv 6-31G 5D 7F nan nan nan
+Ts 6-31G 5D 7F nan nan nan
+Og 6-31G 5D 7F nan nan nan
+ H 6-31G(3df,3pd) 5D 7F 16 19 17
+He 6-31G(3df,3pd) 5D 7F 16 19 17
+Li 6-31G(3df,3pd) 5D 7F 31 50 37
+Be 6-31G(3df,3pd) 5D 7F 31 50 37
+ B 6-31G(3df,3pd) 5D 7F 31 50 37
+ C 6-31G(3df,3pd) 5D 7F 31 50 37
+ N 6-31G(3df,3pd) 5D 7F 31 50 37
+ O 6-31G(3df,3pd) 5D 7F 31 50 37
+ F 6-31G(3df,3pd) 5D 7F 31 50 37
+Ne 6-31G(3df,3pd) 5D 7F 31 50 37
+Na 6-31G(3df,3pd) 5D 7F 35 74 41
+Mg 6-31G(3df,3pd) 5D 7F 35 74 41
+Al 6-31G(3df,3pd) 5D 7F 35 74 41
+Si 6-31G(3df,3pd) 5D 7F 35 74 41
+ P 6-31G(3df,3pd) 5D 7F 35 74 41
+ S 6-31G(3df,3pd) 5D 7F 35 74 41
+Cl 6-31G(3df,3pd) 5D 7F 35 74 41
+Ar 6-31G(3df,3pd) 5D 7F 35 74 41
+ K 6-31G(3df,3pd) 5D 7F 39 98 45
+Ca 6-31G(3df,3pd) 5D 7F 39 98 45
+Sc 6-31G(3df,3pd) 5D 7F 57 139 74
+Ti 6-31G(3df,3pd) 5D 7F 57 139 74
+ V 6-31G(3df,3pd) 5D 7F 57 139 74
+Cr 6-31G(3df,3pd) 5D 7F 57 139 74
+Mn 6-31G(3df,3pd) 5D 7F 57 139 74
+Fe 6-31G(3df,3pd) 5D 7F 57 139 74
+Co 6-31G(3df,3pd) 5D 7F 57 139 74
+Ni 6-31G(3df,3pd) 5D 7F 57 139 74
+Cu 6-31G(3df,3pd) 5D 7F 57 139 74
+Zn 6-31G(3df,3pd) 5D 7F 57 139 74
+Ga 6-31G(3df,3pd) 5D 7F 45 105 52
+Ge 6-31G(3df,3pd) 5D 7F 45 105 52
+As 6-31G(3df,3pd) 5D 7F 45 105 52
+Se 6-31G(3df,3pd) 5D 7F 45 105 52
+Br 6-31G(3df,3pd) 5D 7F 45 105 52
+Kr 6-31G(3df,3pd) 5D 7F 45 105 52
+Rb 6-31G(3df,3pd) 5D 7F nan nan nan
+Sr 6-31G(3df,3pd) 5D 7F nan nan nan
+ Y 6-31G(3df,3pd) 5D 7F nan nan nan
+Zr 6-31G(3df,3pd) 5D 7F nan nan nan
+Nb 6-31G(3df,3pd) 5D 7F nan nan nan
+Mo 6-31G(3df,3pd) 5D 7F nan nan nan
+Tc 6-31G(3df,3pd) 5D 7F nan nan nan
+Ru 6-31G(3df,3pd) 5D 7F nan nan nan
+Rh 6-31G(3df,3pd) 5D 7F nan nan nan
+Pd 6-31G(3df,3pd) 5D 7F nan nan nan
+Ag 6-31G(3df,3pd) 5D 7F nan nan nan
+Cd 6-31G(3df,3pd) 5D 7F nan nan nan
+In 6-31G(3df,3pd) 5D 7F nan nan nan
+Sn 6-31G(3df,3pd) 5D 7F nan nan nan
+Sb 6-31G(3df,3pd) 5D 7F nan nan nan
+Te 6-31G(3df,3pd) 5D 7F nan nan nan
+ I 6-31G(3df,3pd) 5D 7F nan nan nan
+Xe 6-31G(3df,3pd) 5D 7F nan nan nan
+Cs 6-31G(3df,3pd) 5D 7F nan nan nan
+Ba 6-31G(3df,3pd) 5D 7F nan nan nan
+La 6-31G(3df,3pd) 5D 7F nan nan nan
+Ce 6-31G(3df,3pd) 5D 7F nan nan nan
+Pr 6-31G(3df,3pd) 5D 7F nan nan nan
+Nd 6-31G(3df,3pd) 5D 7F nan nan nan
+Pm 6-31G(3df,3pd) 5D 7F nan nan nan
+Sm 6-31G(3df,3pd) 5D 7F nan nan nan
+Eu 6-31G(3df,3pd) 5D 7F nan nan nan
+Gd 6-31G(3df,3pd) 5D 7F nan nan nan
+Tb 6-31G(3df,3pd) 5D 7F nan nan nan
+Dy 6-31G(3df,3pd) 5D 7F nan nan nan
+Ho 6-31G(3df,3pd) 5D 7F nan nan nan
+Er 6-31G(3df,3pd) 5D 7F nan nan nan
+Tm 6-31G(3df,3pd) 5D 7F nan nan nan
+Yb 6-31G(3df,3pd) 5D 7F nan nan nan
+Lu 6-31G(3df,3pd) 5D 7F nan nan nan
+Hf 6-31G(3df,3pd) 5D 7F nan nan nan
+Ta 6-31G(3df,3pd) 5D 7F nan nan nan
+ W 6-31G(3df,3pd) 5D 7F nan nan nan
+Re 6-31G(3df,3pd) 5D 7F nan nan nan
+Os 6-31G(3df,3pd) 5D 7F nan nan nan
+Ir 6-31G(3df,3pd) 5D 7F nan nan nan
+Pt 6-31G(3df,3pd) 5D 7F nan nan nan
+Au 6-31G(3df,3pd) 5D 7F nan nan nan
+Hg 6-31G(3df,3pd) 5D 7F nan nan nan
+Tl 6-31G(3df,3pd) 5D 7F nan nan nan
+Pb 6-31G(3df,3pd) 5D 7F nan nan nan
+Bi 6-31G(3df,3pd) 5D 7F nan nan nan
+Po 6-31G(3df,3pd) 5D 7F nan nan nan
+At 6-31G(3df,3pd) 5D 7F nan nan nan
+Rn 6-31G(3df,3pd) 5D 7F nan nan nan
+Fr 6-31G(3df,3pd) 5D 7F nan nan nan
+Ra 6-31G(3df,3pd) 5D 7F nan nan nan
+Ac 6-31G(3df,3pd) 5D 7F nan nan nan
+Th 6-31G(3df,3pd) 5D 7F nan nan nan
+Pa 6-31G(3df,3pd) 5D 7F nan nan nan
+ U 6-31G(3df,3pd) 5D 7F nan nan nan
+Np 6-31G(3df,3pd) 5D 7F nan nan nan
+Pu 6-31G(3df,3pd) 5D 7F nan nan nan
+Am 6-31G(3df,3pd) 5D 7F nan nan nan
+Cm 6-31G(3df,3pd) 5D 7F nan nan nan
+Bk 6-31G(3df,3pd) 5D 7F nan nan nan
+Cf 6-31G(3df,3pd) 5D 7F nan nan nan
+Es 6-31G(3df,3pd) 5D 7F nan nan nan
+Fm 6-31G(3df,3pd) 5D 7F nan nan nan
+Md 6-31G(3df,3pd) 5D 7F nan nan nan
+No 6-31G(3df,3pd) 5D 7F nan nan nan
+Lr 6-31G(3df,3pd) 5D 7F nan nan nan
+Rf 6-31G(3df,3pd) 5D 7F nan nan nan
+Db 6-31G(3df,3pd) 5D 7F nan nan nan
+Sg 6-31G(3df,3pd) 5D 7F nan nan nan
+Bh 6-31G(3df,3pd) 5D 7F nan nan nan
+Hs 6-31G(3df,3pd) 5D 7F nan nan nan
+Mt 6-31G(3df,3pd) 5D 7F nan nan nan
+Ds 6-31G(3df,3pd) 5D 7F nan nan nan
+Rg 6-31G(3df,3pd) 5D 7F nan nan nan
+Cn 6-31G(3df,3pd) 5D 7F nan nan nan
+Nh 6-31G(3df,3pd) 5D 7F nan nan nan
+Fl 6-31G(3df,3pd) 5D 7F nan nan nan
+Mc 6-31G(3df,3pd) 5D 7F nan nan nan
+Lv 6-31G(3df,3pd) 5D 7F nan nan nan
+Ts 6-31G(3df,3pd) 5D 7F nan nan nan
+Og 6-31G(3df,3pd) 5D 7F nan nan nan
+ H 6-31G(d') 5D 7F  2  4  2
+He 6-31G(d') 5D 7F  2  4  2
+Li 6-31G(d') 5D 7F 14 28 15
+Be 6-31G(d') 5D 7F 14 28 15
+ B 6-31G(d') 5D 7F 14 28 15
+ C 6-31G(d') 5D 7F 14 28 15
+ N 6-31G(d') 5D 7F 14 28 15
+ O 6-31G(d') 5D 7F 14 28 15
+ F 6-31G(d') 5D 7F 14 28 15
+Ne 6-31G(d') 5D 7F 14 28 15
+Na 6-31G(d') 5D 7F 18 52 19
+Mg 6-31G(d') 5D 7F 18 52 19
+Al 6-31G(d') 5D 7F 18 52 19
+Si 6-31G(d') 5D 7F 18 52 19
+ P 6-31G(d') 5D 7F 18 52 19
+ S 6-31G(d') 5D 7F 18 52 19
+Cl 6-31G(d') 5D 7F 18 52 19
+Ar 6-31G(d') 5D 7F 18 52 19
+ K 6-31G(d') 5D 7F 22 76 23
+Ca 6-31G(d') 5D 7F 22 76 23
+Sc 6-31G(d') 5D 7F 34 104 39
+Ti 6-31G(d') 5D 7F 34 104 39
+ V 6-31G(d') 5D 7F 34 104 39
+Cr 6-31G(d') 5D 7F 34 104 39
+Mn 6-31G(d') 5D 7F 34 104 39
+Fe 6-31G(d') 5D 7F 34 104 39
+Co 6-31G(d') 5D 7F 34 104 39
+Ni 6-31G(d') 5D 7F 34 104 39
+Cu 6-31G(d') 5D 7F 34 104 39
+Zn 6-31G(d') 5D 7F 34 104 39
+Ga 6-31G(d') 5D 7F 28 83 30
+Ge 6-31G(d') 5D 7F 28 83 30
+As 6-31G(d') 5D 7F 28 83 30
+Se 6-31G(d') 5D 7F 28 83 30
+Br 6-31G(d') 5D 7F 28 83 30
+Kr 6-31G(d') 5D 7F 28 83 30
+Rb 6-31G(d') 5D 7F nan nan nan
+Sr 6-31G(d') 5D 7F nan nan nan
+ Y 6-31G(d') 5D 7F nan nan nan
+Zr 6-31G(d') 5D 7F nan nan nan
+Nb 6-31G(d') 5D 7F nan nan nan
+Mo 6-31G(d') 5D 7F nan nan nan
+Tc 6-31G(d') 5D 7F nan nan nan
+Ru 6-31G(d') 5D 7F nan nan nan
+Rh 6-31G(d') 5D 7F nan nan nan
+Pd 6-31G(d') 5D 7F nan nan nan
+Ag 6-31G(d') 5D 7F nan nan nan
+Cd 6-31G(d') 5D 7F nan nan nan
+In 6-31G(d') 5D 7F nan nan nan
+Sn 6-31G(d') 5D 7F nan nan nan
+Sb 6-31G(d') 5D 7F nan nan nan
+Te 6-31G(d') 5D 7F nan nan nan
+ I 6-31G(d') 5D 7F nan nan nan
+Xe 6-31G(d') 5D 7F nan nan nan
+Cs 6-31G(d') 5D 7F nan nan nan
+Ba 6-31G(d') 5D 7F nan nan nan
+La 6-31G(d') 5D 7F nan nan nan
+Ce 6-31G(d') 5D 7F nan nan nan
+Pr 6-31G(d') 5D 7F nan nan nan
+Nd 6-31G(d') 5D 7F nan nan nan
+Pm 6-31G(d') 5D 7F nan nan nan
+Sm 6-31G(d') 5D 7F nan nan nan
+Eu 6-31G(d') 5D 7F nan nan nan
+Gd 6-31G(d') 5D 7F nan nan nan
+Tb 6-31G(d') 5D 7F nan nan nan
+Dy 6-31G(d') 5D 7F nan nan nan
+Ho 6-31G(d') 5D 7F nan nan nan
+Er 6-31G(d') 5D 7F nan nan nan
+Tm 6-31G(d') 5D 7F nan nan nan
+Yb 6-31G(d') 5D 7F nan nan nan
+Lu 6-31G(d') 5D 7F nan nan nan
+Hf 6-31G(d') 5D 7F nan nan nan
+Ta 6-31G(d') 5D 7F nan nan nan
+ W 6-31G(d') 5D 7F nan nan nan
+Re 6-31G(d') 5D 7F nan nan nan
+Os 6-31G(d') 5D 7F nan nan nan
+Ir 6-31G(d') 5D 7F nan nan nan
+Pt 6-31G(d') 5D 7F nan nan nan
+Au 6-31G(d') 5D 7F nan nan nan
+Hg 6-31G(d') 5D 7F nan nan nan
+Tl 6-31G(d') 5D 7F nan nan nan
+Pb 6-31G(d') 5D 7F nan nan nan
+Bi 6-31G(d') 5D 7F nan nan nan
+Po 6-31G(d') 5D 7F nan nan nan
+At 6-31G(d') 5D 7F nan nan nan
+Rn 6-31G(d') 5D 7F nan nan nan
+Fr 6-31G(d') 5D 7F nan nan nan
+Ra 6-31G(d') 5D 7F nan nan nan
+Ac 6-31G(d') 5D 7F nan nan nan
+Th 6-31G(d') 5D 7F nan nan nan
+Pa 6-31G(d') 5D 7F nan nan nan
+ U 6-31G(d') 5D 7F nan nan nan
+Np 6-31G(d') 5D 7F nan nan nan
+Pu 6-31G(d') 5D 7F nan nan nan
+Am 6-31G(d') 5D 7F nan nan nan
+Cm 6-31G(d') 5D 7F nan nan nan
+Bk 6-31G(d') 5D 7F nan nan nan
+Cf 6-31G(d') 5D 7F nan nan nan
+Es 6-31G(d') 5D 7F nan nan nan
+Fm 6-31G(d') 5D 7F nan nan nan
+Md 6-31G(d') 5D 7F nan nan nan
+No 6-31G(d') 5D 7F nan nan nan
+Lr 6-31G(d') 5D 7F nan nan nan
+Rf 6-31G(d') 5D 7F nan nan nan
+Db 6-31G(d') 5D 7F nan nan nan
+Sg 6-31G(d') 5D 7F nan nan nan
+Bh 6-31G(d') 5D 7F nan nan nan
+Hs 6-31G(d') 5D 7F nan nan nan
+Mt 6-31G(d') 5D 7F nan nan nan
+Ds 6-31G(d') 5D 7F nan nan nan
+Rg 6-31G(d') 5D 7F nan nan nan
+Cn 6-31G(d') 5D 7F nan nan nan
+Nh 6-31G(d') 5D 7F nan nan nan
+Fl 6-31G(d') 5D 7F nan nan nan
+Mc 6-31G(d') 5D 7F nan nan nan
+Lv 6-31G(d') 5D 7F nan nan nan
+Ts 6-31G(d') 5D 7F nan nan nan
+Og 6-31G(d') 5D 7F nan nan nan
+ H 6-31G(d',p') 5D 7F  5  7  5
+He 6-31G(d',p') 5D 7F  5  7  5
+Li 6-31G(d',p') 5D 7F 14 28 15
+Be 6-31G(d',p') 5D 7F 14 28 15
+ B 6-31G(d',p') 5D 7F 14 28 15
+ C 6-31G(d',p') 5D 7F 14 28 15
+ N 6-31G(d',p') 5D 7F 14 28 15
+ O 6-31G(d',p') 5D 7F 14 28 15
+ F 6-31G(d',p') 5D 7F 14 28 15
+Ne 6-31G(d',p') 5D 7F 14 28 15
+Na 6-31G(d',p') 5D 7F 18 52 19
+Mg 6-31G(d',p') 5D 7F 18 52 19
+Al 6-31G(d',p') 5D 7F 18 52 19
+Si 6-31G(d',p') 5D 7F 18 52 19
+ P 6-31G(d',p') 5D 7F 18 52 19
+ S 6-31G(d',p') 5D 7F 18 52 19
+Cl 6-31G(d',p') 5D 7F 18 52 19
+Ar 6-31G(d',p') 5D 7F 18 52 19
+ K 6-31G(d',p') 5D 7F 22 76 23
+Ca 6-31G(d',p') 5D 7F 22 76 23
+Sc 6-31G(d',p') 5D 7F 34 104 39
+Ti 6-31G(d',p') 5D 7F 34 104 39
+ V 6-31G(d',p') 5D 7F 34 104 39
+Cr 6-31G(d',p') 5D 7F 34 104 39
+Mn 6-31G(d',p') 5D 7F 34 104 39
+Fe 6-31G(d',p') 5D 7F 34 104 39
+Co 6-31G(d',p') 5D 7F 34 104 39
+Ni 6-31G(d',p') 5D 7F 34 104 39
+Cu 6-31G(d',p') 5D 7F 34 104 39
+Zn 6-31G(d',p') 5D 7F 34 104 39
+Ga 6-31G(d',p') 5D 7F 28 83 30
+Ge 6-31G(d',p') 5D 7F 28 83 30
+As 6-31G(d',p') 5D 7F 28 83 30
+Se 6-31G(d',p') 5D 7F 28 83 30
+Br 6-31G(d',p') 5D 7F 28 83 30
+Kr 6-31G(d',p') 5D 7F 28 83 30
+Rb 6-31G(d',p') 5D 7F nan nan nan
+Sr 6-31G(d',p') 5D 7F nan nan nan
+ Y 6-31G(d',p') 5D 7F nan nan nan
+Zr 6-31G(d',p') 5D 7F nan nan nan
+Nb 6-31G(d',p') 5D 7F nan nan nan
+Mo 6-31G(d',p') 5D 7F nan nan nan
+Tc 6-31G(d',p') 5D 7F nan nan nan
+Ru 6-31G(d',p') 5D 7F nan nan nan
+Rh 6-31G(d',p') 5D 7F nan nan nan
+Pd 6-31G(d',p') 5D 7F nan nan nan
+Ag 6-31G(d',p') 5D 7F nan nan nan
+Cd 6-31G(d',p') 5D 7F nan nan nan
+In 6-31G(d',p') 5D 7F nan nan nan
+Sn 6-31G(d',p') 5D 7F nan nan nan
+Sb 6-31G(d',p') 5D 7F nan nan nan
+Te 6-31G(d',p') 5D 7F nan nan nan
+ I 6-31G(d',p') 5D 7F nan nan nan
+Xe 6-31G(d',p') 5D 7F nan nan nan
+Cs 6-31G(d',p') 5D 7F nan nan nan
+Ba 6-31G(d',p') 5D 7F nan nan nan
+La 6-31G(d',p') 5D 7F nan nan nan
+Ce 6-31G(d',p') 5D 7F nan nan nan
+Pr 6-31G(d',p') 5D 7F nan nan nan
+Nd 6-31G(d',p') 5D 7F nan nan nan
+Pm 6-31G(d',p') 5D 7F nan nan nan
+Sm 6-31G(d',p') 5D 7F nan nan nan
+Eu 6-31G(d',p') 5D 7F nan nan nan
+Gd 6-31G(d',p') 5D 7F nan nan nan
+Tb 6-31G(d',p') 5D 7F nan nan nan
+Dy 6-31G(d',p') 5D 7F nan nan nan
+Ho 6-31G(d',p') 5D 7F nan nan nan
+Er 6-31G(d',p') 5D 7F nan nan nan
+Tm 6-31G(d',p') 5D 7F nan nan nan
+Yb 6-31G(d',p') 5D 7F nan nan nan
+Lu 6-31G(d',p') 5D 7F nan nan nan
+Hf 6-31G(d',p') 5D 7F nan nan nan
+Ta 6-31G(d',p') 5D 7F nan nan nan
+ W 6-31G(d',p') 5D 7F nan nan nan
+Re 6-31G(d',p') 5D 7F nan nan nan
+Os 6-31G(d',p') 5D 7F nan nan nan
+Ir 6-31G(d',p') 5D 7F nan nan nan
+Pt 6-31G(d',p') 5D 7F nan nan nan
+Au 6-31G(d',p') 5D 7F nan nan nan
+Hg 6-31G(d',p') 5D 7F nan nan nan
+Tl 6-31G(d',p') 5D 7F nan nan nan
+Pb 6-31G(d',p') 5D 7F nan nan nan
+Bi 6-31G(d',p') 5D 7F nan nan nan
+Po 6-31G(d',p') 5D 7F nan nan nan
+At 6-31G(d',p') 5D 7F nan nan nan
+Rn 6-31G(d',p') 5D 7F nan nan nan
+Fr 6-31G(d',p') 5D 7F nan nan nan
+Ra 6-31G(d',p') 5D 7F nan nan nan
+Ac 6-31G(d',p') 5D 7F nan nan nan
+Th 6-31G(d',p') 5D 7F nan nan nan
+Pa 6-31G(d',p') 5D 7F nan nan nan
+ U 6-31G(d',p') 5D 7F nan nan nan
+Np 6-31G(d',p') 5D 7F nan nan nan
+Pu 6-31G(d',p') 5D 7F nan nan nan
+Am 6-31G(d',p') 5D 7F nan nan nan
+Cm 6-31G(d',p') 5D 7F nan nan nan
+Bk 6-31G(d',p') 5D 7F nan nan nan
+Cf 6-31G(d',p') 5D 7F nan nan nan
+Es 6-31G(d',p') 5D 7F nan nan nan
+Fm 6-31G(d',p') 5D 7F nan nan nan
+Md 6-31G(d',p') 5D 7F nan nan nan
+No 6-31G(d',p') 5D 7F nan nan nan
+Lr 6-31G(d',p') 5D 7F nan nan nan
+Rf 6-31G(d',p') 5D 7F nan nan nan
+Db 6-31G(d',p') 5D 7F nan nan nan
+Sg 6-31G(d',p') 5D 7F nan nan nan
+Bh 6-31G(d',p') 5D 7F nan nan nan
+Hs 6-31G(d',p') 5D 7F nan nan nan
+Mt 6-31G(d',p') 5D 7F nan nan nan
+Ds 6-31G(d',p') 5D 7F nan nan nan
+Rg 6-31G(d',p') 5D 7F nan nan nan
+Cn 6-31G(d',p') 5D 7F nan nan nan
+Nh 6-31G(d',p') 5D 7F nan nan nan
+Fl 6-31G(d',p') 5D 7F nan nan nan
+Mc 6-31G(d',p') 5D 7F nan nan nan
+Lv 6-31G(d',p') 5D 7F nan nan nan
+Ts 6-31G(d',p') 5D 7F nan nan nan
+Og 6-31G(d',p') 5D 7F nan nan nan
+ H 6-31G* 5D 7F  2  4  2
+He 6-31G* 5D 7F  2  4  2
+Li 6-31G* 5D 7F 14 28 15
+Be 6-31G* 5D 7F 14 28 15
+ B 6-31G* 5D 7F 14 28 15
+ C 6-31G* 5D 7F 14 28 15
+ N 6-31G* 5D 7F 14 28 15
+ O 6-31G* 5D 7F 14 28 15
+ F 6-31G* 5D 7F 14 28 15
+Ne 6-31G* 5D 7F 14 28 15
+Na 6-31G* 5D 7F 18 52 19
+Mg 6-31G* 5D 7F 18 52 19
+Al 6-31G* 5D 7F 18 52 19
+Si 6-31G* 5D 7F 18 52 19
+ P 6-31G* 5D 7F 18 52 19
+ S 6-31G* 5D 7F 18 52 19
+Cl 6-31G* 5D 7F 18 52 19
+Ar 6-31G* 5D 7F 18 52 19
+ K 6-31G* 5D 7F 22 76 23
+Ca 6-31G* 5D 7F 22 76 23
+Sc 6-31G* 5D 7F 34 104 39
+Ti 6-31G* 5D 7F 34 104 39
+ V 6-31G* 5D 7F 34 104 39
+Cr 6-31G* 5D 7F 34 104 39
+Mn 6-31G* 5D 7F 34 104 39
+Fe 6-31G* 5D 7F 34 104 39
+Co 6-31G* 5D 7F 34 104 39
+Ni 6-31G* 5D 7F 34 104 39
+Cu 6-31G* 5D 7F 34 104 39
+Zn 6-31G* 5D 7F 34 104 39
+Ga 6-31G* 5D 7F 28 83 30
+Ge 6-31G* 5D 7F 28 83 30
+As 6-31G* 5D 7F 28 83 30
+Se 6-31G* 5D 7F 28 83 30
+Br 6-31G* 5D 7F 28 83 30
+Kr 6-31G* 5D 7F 28 83 30
+Rb 6-31G* 5D 7F nan nan nan
+Sr 6-31G* 5D 7F nan nan nan
+ Y 6-31G* 5D 7F nan nan nan
+Zr 6-31G* 5D 7F nan nan nan
+Nb 6-31G* 5D 7F nan nan nan
+Mo 6-31G* 5D 7F nan nan nan
+Tc 6-31G* 5D 7F nan nan nan
+Ru 6-31G* 5D 7F nan nan nan
+Rh 6-31G* 5D 7F nan nan nan
+Pd 6-31G* 5D 7F nan nan nan
+Ag 6-31G* 5D 7F nan nan nan
+Cd 6-31G* 5D 7F nan nan nan
+In 6-31G* 5D 7F nan nan nan
+Sn 6-31G* 5D 7F nan nan nan
+Sb 6-31G* 5D 7F nan nan nan
+Te 6-31G* 5D 7F nan nan nan
+ I 6-31G* 5D 7F nan nan nan
+Xe 6-31G* 5D 7F nan nan nan
+Cs 6-31G* 5D 7F nan nan nan
+Ba 6-31G* 5D 7F nan nan nan
+La 6-31G* 5D 7F nan nan nan
+Ce 6-31G* 5D 7F nan nan nan
+Pr 6-31G* 5D 7F nan nan nan
+Nd 6-31G* 5D 7F nan nan nan
+Pm 6-31G* 5D 7F nan nan nan
+Sm 6-31G* 5D 7F nan nan nan
+Eu 6-31G* 5D 7F nan nan nan
+Gd 6-31G* 5D 7F nan nan nan
+Tb 6-31G* 5D 7F nan nan nan
+Dy 6-31G* 5D 7F nan nan nan
+Ho 6-31G* 5D 7F nan nan nan
+Er 6-31G* 5D 7F nan nan nan
+Tm 6-31G* 5D 7F nan nan nan
+Yb 6-31G* 5D 7F nan nan nan
+Lu 6-31G* 5D 7F nan nan nan
+Hf 6-31G* 5D 7F nan nan nan
+Ta 6-31G* 5D 7F nan nan nan
+ W 6-31G* 5D 7F nan nan nan
+Re 6-31G* 5D 7F nan nan nan
+Os 6-31G* 5D 7F nan nan nan
+Ir 6-31G* 5D 7F nan nan nan
+Pt 6-31G* 5D 7F nan nan nan
+Au 6-31G* 5D 7F nan nan nan
+Hg 6-31G* 5D 7F nan nan nan
+Tl 6-31G* 5D 7F nan nan nan
+Pb 6-31G* 5D 7F nan nan nan
+Bi 6-31G* 5D 7F nan nan nan
+Po 6-31G* 5D 7F nan nan nan
+At 6-31G* 5D 7F nan nan nan
+Rn 6-31G* 5D 7F nan nan nan
+Fr 6-31G* 5D 7F nan nan nan
+Ra 6-31G* 5D 7F nan nan nan
+Ac 6-31G* 5D 7F nan nan nan
+Th 6-31G* 5D 7F nan nan nan
+Pa 6-31G* 5D 7F nan nan nan
+ U 6-31G* 5D 7F nan nan nan
+Np 6-31G* 5D 7F nan nan nan
+Pu 6-31G* 5D 7F nan nan nan
+Am 6-31G* 5D 7F nan nan nan
+Cm 6-31G* 5D 7F nan nan nan
+Bk 6-31G* 5D 7F nan nan nan
+Cf 6-31G* 5D 7F nan nan nan
+Es 6-31G* 5D 7F nan nan nan
+Fm 6-31G* 5D 7F nan nan nan
+Md 6-31G* 5D 7F nan nan nan
+No 6-31G* 5D 7F nan nan nan
+Lr 6-31G* 5D 7F nan nan nan
+Rf 6-31G* 5D 7F nan nan nan
+Db 6-31G* 5D 7F nan nan nan
+Sg 6-31G* 5D 7F nan nan nan
+Bh 6-31G* 5D 7F nan nan nan
+Hs 6-31G* 5D 7F nan nan nan
+Mt 6-31G* 5D 7F nan nan nan
+Ds 6-31G* 5D 7F nan nan nan
+Rg 6-31G* 5D 7F nan nan nan
+Cn 6-31G* 5D 7F nan nan nan
+Nh 6-31G* 5D 7F nan nan nan
+Fl 6-31G* 5D 7F nan nan nan
+Mc 6-31G* 5D 7F nan nan nan
+Lv 6-31G* 5D 7F nan nan nan
+Ts 6-31G* 5D 7F nan nan nan
+Og 6-31G* 5D 7F nan nan nan
+ H 6-31G** 5D 7F  5  7  5
+He 6-31G** 5D 7F  5  7  5
+Li 6-31G** 5D 7F 14 28 15
+Be 6-31G** 5D 7F 14 28 15
+ B 6-31G** 5D 7F 14 28 15
+ C 6-31G** 5D 7F 14 28 15
+ N 6-31G** 5D 7F 14 28 15
+ O 6-31G** 5D 7F 14 28 15
+ F 6-31G** 5D 7F 14 28 15
+Ne 6-31G** 5D 7F 14 28 15
+Na 6-31G** 5D 7F 18 52 19
+Mg 6-31G** 5D 7F 18 52 19
+Al 6-31G** 5D 7F 18 52 19
+Si 6-31G** 5D 7F 18 52 19
+ P 6-31G** 5D 7F 18 52 19
+ S 6-31G** 5D 7F 18 52 19
+Cl 6-31G** 5D 7F 18 52 19
+Ar 6-31G** 5D 7F 18 52 19
+ K 6-31G** 5D 7F 22 76 23
+Ca 6-31G** 5D 7F 22 76 23
+Sc 6-31G** 5D 7F 34 104 39
+Ti 6-31G** 5D 7F 34 104 39
+ V 6-31G** 5D 7F 34 104 39
+Cr 6-31G** 5D 7F 34 104 39
+Mn 6-31G** 5D 7F 34 104 39
+Fe 6-31G** 5D 7F 34 104 39
+Co 6-31G** 5D 7F 34 104 39
+Ni 6-31G** 5D 7F 34 104 39
+Cu 6-31G** 5D 7F 34 104 39
+Zn 6-31G** 5D 7F 34 104 39
+Ga 6-31G** 5D 7F 28 83 30
+Ge 6-31G** 5D 7F 28 83 30
+As 6-31G** 5D 7F 28 83 30
+Se 6-31G** 5D 7F 28 83 30
+Br 6-31G** 5D 7F 28 83 30
+Kr 6-31G** 5D 7F 28 83 30
+Rb 6-31G** 5D 7F nan nan nan
+Sr 6-31G** 5D 7F nan nan nan
+ Y 6-31G** 5D 7F nan nan nan
+Zr 6-31G** 5D 7F nan nan nan
+Nb 6-31G** 5D 7F nan nan nan
+Mo 6-31G** 5D 7F nan nan nan
+Tc 6-31G** 5D 7F nan nan nan
+Ru 6-31G** 5D 7F nan nan nan
+Rh 6-31G** 5D 7F nan nan nan
+Pd 6-31G** 5D 7F nan nan nan
+Ag 6-31G** 5D 7F nan nan nan
+Cd 6-31G** 5D 7F nan nan nan
+In 6-31G** 5D 7F nan nan nan
+Sn 6-31G** 5D 7F nan nan nan
+Sb 6-31G** 5D 7F nan nan nan
+Te 6-31G** 5D 7F nan nan nan
+ I 6-31G** 5D 7F nan nan nan
+Xe 6-31G** 5D 7F nan nan nan
+Cs 6-31G** 5D 7F nan nan nan
+Ba 6-31G** 5D 7F nan nan nan
+La 6-31G** 5D 7F nan nan nan
+Ce 6-31G** 5D 7F nan nan nan
+Pr 6-31G** 5D 7F nan nan nan
+Nd 6-31G** 5D 7F nan nan nan
+Pm 6-31G** 5D 7F nan nan nan
+Sm 6-31G** 5D 7F nan nan nan
+Eu 6-31G** 5D 7F nan nan nan
+Gd 6-31G** 5D 7F nan nan nan
+Tb 6-31G** 5D 7F nan nan nan
+Dy 6-31G** 5D 7F nan nan nan
+Ho 6-31G** 5D 7F nan nan nan
+Er 6-31G** 5D 7F nan nan nan
+Tm 6-31G** 5D 7F nan nan nan
+Yb 6-31G** 5D 7F nan nan nan
+Lu 6-31G** 5D 7F nan nan nan
+Hf 6-31G** 5D 7F nan nan nan
+Ta 6-31G** 5D 7F nan nan nan
+ W 6-31G** 5D 7F nan nan nan
+Re 6-31G** 5D 7F nan nan nan
+Os 6-31G** 5D 7F nan nan nan
+Ir 6-31G** 5D 7F nan nan nan
+Pt 6-31G** 5D 7F nan nan nan
+Au 6-31G** 5D 7F nan nan nan
+Hg 6-31G** 5D 7F nan nan nan
+Tl 6-31G** 5D 7F nan nan nan
+Pb 6-31G** 5D 7F nan nan nan
+Bi 6-31G** 5D 7F nan nan nan
+Po 6-31G** 5D 7F nan nan nan
+At 6-31G** 5D 7F nan nan nan
+Rn 6-31G** 5D 7F nan nan nan
+Fr 6-31G** 5D 7F nan nan nan
+Ra 6-31G** 5D 7F nan nan nan
+Ac 6-31G** 5D 7F nan nan nan
+Th 6-31G** 5D 7F nan nan nan
+Pa 6-31G** 5D 7F nan nan nan
+ U 6-31G** 5D 7F nan nan nan
+Np 6-31G** 5D 7F nan nan nan
+Pu 6-31G** 5D 7F nan nan nan
+Am 6-31G** 5D 7F nan nan nan
+Cm 6-31G** 5D 7F nan nan nan
+Bk 6-31G** 5D 7F nan nan nan
+Cf 6-31G** 5D 7F nan nan nan
+Es 6-31G** 5D 7F nan nan nan
+Fm 6-31G** 5D 7F nan nan nan
+Md 6-31G** 5D 7F nan nan nan
+No 6-31G** 5D 7F nan nan nan
+Lr 6-31G** 5D 7F nan nan nan
+Rf 6-31G** 5D 7F nan nan nan
+Db 6-31G** 5D 7F nan nan nan
+Sg 6-31G** 5D 7F nan nan nan
+Bh 6-31G** 5D 7F nan nan nan
+Hs 6-31G** 5D 7F nan nan nan
+Mt 6-31G** 5D 7F nan nan nan
+Ds 6-31G** 5D 7F nan nan nan
+Rg 6-31G** 5D 7F nan nan nan
+Cn 6-31G** 5D 7F nan nan nan
+Nh 6-31G** 5D 7F nan nan nan
+Fl 6-31G** 5D 7F nan nan nan
+Mc 6-31G** 5D 7F nan nan nan
+Lv 6-31G** 5D 7F nan nan nan
+Ts 6-31G** 5D 7F nan nan nan
+Og 6-31G** 5D 7F nan nan nan
+ H 6-31G(d) 5D 7F  2  4  2
+He 6-31G(d) 5D 7F  2  4  2
+Li 6-31G(d) 5D 7F 14 28 15
+Be 6-31G(d) 5D 7F 14 28 15
+ B 6-31G(d) 5D 7F 14 28 15
+ C 6-31G(d) 5D 7F 14 28 15
+ N 6-31G(d) 5D 7F 14 28 15
+ O 6-31G(d) 5D 7F 14 28 15
+ F 6-31G(d) 5D 7F 14 28 15
+Ne 6-31G(d) 5D 7F 14 28 15
+Na 6-31G(d) 5D 7F 18 52 19
+Mg 6-31G(d) 5D 7F 18 52 19
+Al 6-31G(d) 5D 7F 18 52 19
+Si 6-31G(d) 5D 7F 18 52 19
+ P 6-31G(d) 5D 7F 18 52 19
+ S 6-31G(d) 5D 7F 18 52 19
+Cl 6-31G(d) 5D 7F 18 52 19
+Ar 6-31G(d) 5D 7F 18 52 19
+ K 6-31G(d) 5D 7F 22 76 23
+Ca 6-31G(d) 5D 7F 22 76 23
+Sc 6-31G(d) 5D 7F 34 104 39
+Ti 6-31G(d) 5D 7F 34 104 39
+ V 6-31G(d) 5D 7F 34 104 39
+Cr 6-31G(d) 5D 7F 34 104 39
+Mn 6-31G(d) 5D 7F 34 104 39
+Fe 6-31G(d) 5D 7F 34 104 39
+Co 6-31G(d) 5D 7F 34 104 39
+Ni 6-31G(d) 5D 7F 34 104 39
+Cu 6-31G(d) 5D 7F 34 104 39
+Zn 6-31G(d) 5D 7F 34 104 39
+Ga 6-31G(d) 5D 7F 28 83 30
+Ge 6-31G(d) 5D 7F 28 83 30
+As 6-31G(d) 5D 7F 28 83 30
+Se 6-31G(d) 5D 7F 28 83 30
+Br 6-31G(d) 5D 7F 28 83 30
+Kr 6-31G(d) 5D 7F 28 83 30
+Rb 6-31G(d) 5D 7F nan nan nan
+Sr 6-31G(d) 5D 7F nan nan nan
+ Y 6-31G(d) 5D 7F nan nan nan
+Zr 6-31G(d) 5D 7F nan nan nan
+Nb 6-31G(d) 5D 7F nan nan nan
+Mo 6-31G(d) 5D 7F nan nan nan
+Tc 6-31G(d) 5D 7F nan nan nan
+Ru 6-31G(d) 5D 7F nan nan nan
+Rh 6-31G(d) 5D 7F nan nan nan
+Pd 6-31G(d) 5D 7F nan nan nan
+Ag 6-31G(d) 5D 7F nan nan nan
+Cd 6-31G(d) 5D 7F nan nan nan
+In 6-31G(d) 5D 7F nan nan nan
+Sn 6-31G(d) 5D 7F nan nan nan
+Sb 6-31G(d) 5D 7F nan nan nan
+Te 6-31G(d) 5D 7F nan nan nan
+ I 6-31G(d) 5D 7F nan nan nan
+Xe 6-31G(d) 5D 7F nan nan nan
+Cs 6-31G(d) 5D 7F nan nan nan
+Ba 6-31G(d) 5D 7F nan nan nan
+La 6-31G(d) 5D 7F nan nan nan
+Ce 6-31G(d) 5D 7F nan nan nan
+Pr 6-31G(d) 5D 7F nan nan nan
+Nd 6-31G(d) 5D 7F nan nan nan
+Pm 6-31G(d) 5D 7F nan nan nan
+Sm 6-31G(d) 5D 7F nan nan nan
+Eu 6-31G(d) 5D 7F nan nan nan
+Gd 6-31G(d) 5D 7F nan nan nan
+Tb 6-31G(d) 5D 7F nan nan nan
+Dy 6-31G(d) 5D 7F nan nan nan
+Ho 6-31G(d) 5D 7F nan nan nan
+Er 6-31G(d) 5D 7F nan nan nan
+Tm 6-31G(d) 5D 7F nan nan nan
+Yb 6-31G(d) 5D 7F nan nan nan
+Lu 6-31G(d) 5D 7F nan nan nan
+Hf 6-31G(d) 5D 7F nan nan nan
+Ta 6-31G(d) 5D 7F nan nan nan
+ W 6-31G(d) 5D 7F nan nan nan
+Re 6-31G(d) 5D 7F nan nan nan
+Os 6-31G(d) 5D 7F nan nan nan
+Ir 6-31G(d) 5D 7F nan nan nan
+Pt 6-31G(d) 5D 7F nan nan nan
+Au 6-31G(d) 5D 7F nan nan nan
+Hg 6-31G(d) 5D 7F nan nan nan
+Tl 6-31G(d) 5D 7F nan nan nan
+Pb 6-31G(d) 5D 7F nan nan nan
+Bi 6-31G(d) 5D 7F nan nan nan
+Po 6-31G(d) 5D 7F nan nan nan
+At 6-31G(d) 5D 7F nan nan nan
+Rn 6-31G(d) 5D 7F nan nan nan
+Fr 6-31G(d) 5D 7F nan nan nan
+Ra 6-31G(d) 5D 7F nan nan nan
+Ac 6-31G(d) 5D 7F nan nan nan
+Th 6-31G(d) 5D 7F nan nan nan
+Pa 6-31G(d) 5D 7F nan nan nan
+ U 6-31G(d) 5D 7F nan nan nan
+Np 6-31G(d) 5D 7F nan nan nan
+Pu 6-31G(d) 5D 7F nan nan nan
+Am 6-31G(d) 5D 7F nan nan nan
+Cm 6-31G(d) 5D 7F nan nan nan
+Bk 6-31G(d) 5D 7F nan nan nan
+Cf 6-31G(d) 5D 7F nan nan nan
+Es 6-31G(d) 5D 7F nan nan nan
+Fm 6-31G(d) 5D 7F nan nan nan
+Md 6-31G(d) 5D 7F nan nan nan
+No 6-31G(d) 5D 7F nan nan nan
+Lr 6-31G(d) 5D 7F nan nan nan
+Rf 6-31G(d) 5D 7F nan nan nan
+Db 6-31G(d) 5D 7F nan nan nan
+Sg 6-31G(d) 5D 7F nan nan nan
+Bh 6-31G(d) 5D 7F nan nan nan
+Hs 6-31G(d) 5D 7F nan nan nan
+Mt 6-31G(d) 5D 7F nan nan nan
+Ds 6-31G(d) 5D 7F nan nan nan
+Rg 6-31G(d) 5D 7F nan nan nan
+Cn 6-31G(d) 5D 7F nan nan nan
+Nh 6-31G(d) 5D 7F nan nan nan
+Fl 6-31G(d) 5D 7F nan nan nan
+Mc 6-31G(d) 5D 7F nan nan nan
+Lv 6-31G(d) 5D 7F nan nan nan
+Ts 6-31G(d) 5D 7F nan nan nan
+Og 6-31G(d) 5D 7F nan nan nan
+ H 6-31G(df,pd) 5D 7F 10 13 11
+He 6-31G(df,pd) 5D 7F 10 13 11
+Li 6-31G(df,pd) 5D 7F 21 38 25
+Be 6-31G(df,pd) 5D 7F 21 38 25
+ B 6-31G(df,pd) 5D 7F 21 38 25
+ C 6-31G(df,pd) 5D 7F 21 38 25
+ N 6-31G(df,pd) 5D 7F 21 38 25
+ O 6-31G(df,pd) 5D 7F 21 38 25
+ F 6-31G(df,pd) 5D 7F 21 38 25
+Ne 6-31G(df,pd) 5D 7F 21 38 25
+Na 6-31G(df,pd) 5D 7F 25 62 29
+Mg 6-31G(df,pd) 5D 7F 25 62 29
+Al 6-31G(df,pd) 5D 7F 25 62 29
+Si 6-31G(df,pd) 5D 7F 25 62 29
+ P 6-31G(df,pd) 5D 7F 25 62 29
+ S 6-31G(df,pd) 5D 7F 25 62 29
+Cl 6-31G(df,pd) 5D 7F 25 62 29
+Ar 6-31G(df,pd) 5D 7F 25 62 29
+ K 6-31G(df,pd) 5D 7F 29 86 33
+Ca 6-31G(df,pd) 5D 7F 29 86 33
+Sc 6-31G(df,pd) 5D 7F 43 119 54
+Ti 6-31G(df,pd) 5D 7F 43 119 54
+ V 6-31G(df,pd) 5D 7F 43 119 54
+Cr 6-31G(df,pd) 5D 7F 43 119 54
+Mn 6-31G(df,pd) 5D 7F 43 119 54
+Fe 6-31G(df,pd) 5D 7F 43 119 54
+Co 6-31G(df,pd) 5D 7F 43 119 54
+Ni 6-31G(df,pd) 5D 7F 43 119 54
+Cu 6-31G(df,pd) 5D 7F 43 119 54
+Zn 6-31G(df,pd) 5D 7F 43 119 54
+Ga 6-31G(df,pd) 5D 7F 35 93 40
+Ge 6-31G(df,pd) 5D 7F 35 93 40
+As 6-31G(df,pd) 5D 7F 35 93 40
+Se 6-31G(df,pd) 5D 7F 35 93 40
+Br 6-31G(df,pd) 5D 7F 35 93 40
+Kr 6-31G(df,pd) 5D 7F 35 93 40
+Rb 6-31G(df,pd) 5D 7F nan nan nan
+Sr 6-31G(df,pd) 5D 7F nan nan nan
+ Y 6-31G(df,pd) 5D 7F nan nan nan
+Zr 6-31G(df,pd) 5D 7F nan nan nan
+Nb 6-31G(df,pd) 5D 7F nan nan nan
+Mo 6-31G(df,pd) 5D 7F nan nan nan
+Tc 6-31G(df,pd) 5D 7F nan nan nan
+Ru 6-31G(df,pd) 5D 7F nan nan nan
+Rh 6-31G(df,pd) 5D 7F nan nan nan
+Pd 6-31G(df,pd) 5D 7F nan nan nan
+Ag 6-31G(df,pd) 5D 7F nan nan nan
+Cd 6-31G(df,pd) 5D 7F nan nan nan
+In 6-31G(df,pd) 5D 7F nan nan nan
+Sn 6-31G(df,pd) 5D 7F nan nan nan
+Sb 6-31G(df,pd) 5D 7F nan nan nan
+Te 6-31G(df,pd) 5D 7F nan nan nan
+ I 6-31G(df,pd) 5D 7F nan nan nan
+Xe 6-31G(df,pd) 5D 7F nan nan nan
+Cs 6-31G(df,pd) 5D 7F nan nan nan
+Ba 6-31G(df,pd) 5D 7F nan nan nan
+La 6-31G(df,pd) 5D 7F nan nan nan
+Ce 6-31G(df,pd) 5D 7F nan nan nan
+Pr 6-31G(df,pd) 5D 7F nan nan nan
+Nd 6-31G(df,pd) 5D 7F nan nan nan
+Pm 6-31G(df,pd) 5D 7F nan nan nan
+Sm 6-31G(df,pd) 5D 7F nan nan nan
+Eu 6-31G(df,pd) 5D 7F nan nan nan
+Gd 6-31G(df,pd) 5D 7F nan nan nan
+Tb 6-31G(df,pd) 5D 7F nan nan nan
+Dy 6-31G(df,pd) 5D 7F nan nan nan
+Ho 6-31G(df,pd) 5D 7F nan nan nan
+Er 6-31G(df,pd) 5D 7F nan nan nan
+Tm 6-31G(df,pd) 5D 7F nan nan nan
+Yb 6-31G(df,pd) 5D 7F nan nan nan
+Lu 6-31G(df,pd) 5D 7F nan nan nan
+Hf 6-31G(df,pd) 5D 7F nan nan nan
+Ta 6-31G(df,pd) 5D 7F nan nan nan
+ W 6-31G(df,pd) 5D 7F nan nan nan
+Re 6-31G(df,pd) 5D 7F nan nan nan
+Os 6-31G(df,pd) 5D 7F nan nan nan
+Ir 6-31G(df,pd) 5D 7F nan nan nan
+Pt 6-31G(df,pd) 5D 7F nan nan nan
+Au 6-31G(df,pd) 5D 7F nan nan nan
+Hg 6-31G(df,pd) 5D 7F nan nan nan
+Tl 6-31G(df,pd) 5D 7F nan nan nan
+Pb 6-31G(df,pd) 5D 7F nan nan nan
+Bi 6-31G(df,pd) 5D 7F nan nan nan
+Po 6-31G(df,pd) 5D 7F nan nan nan
+At 6-31G(df,pd) 5D 7F nan nan nan
+Rn 6-31G(df,pd) 5D 7F nan nan nan
+Fr 6-31G(df,pd) 5D 7F nan nan nan
+Ra 6-31G(df,pd) 5D 7F nan nan nan
+Ac 6-31G(df,pd) 5D 7F nan nan nan
+Th 6-31G(df,pd) 5D 7F nan nan nan
+Pa 6-31G(df,pd) 5D 7F nan nan nan
+ U 6-31G(df,pd) 5D 7F nan nan nan
+Np 6-31G(df,pd) 5D 7F nan nan nan
+Pu 6-31G(df,pd) 5D 7F nan nan nan
+Am 6-31G(df,pd) 5D 7F nan nan nan
+Cm 6-31G(df,pd) 5D 7F nan nan nan
+Bk 6-31G(df,pd) 5D 7F nan nan nan
+Cf 6-31G(df,pd) 5D 7F nan nan nan
+Es 6-31G(df,pd) 5D 7F nan nan nan
+Fm 6-31G(df,pd) 5D 7F nan nan nan
+Md 6-31G(df,pd) 5D 7F nan nan nan
+No 6-31G(df,pd) 5D 7F nan nan nan
+Lr 6-31G(df,pd) 5D 7F nan nan nan
+Rf 6-31G(df,pd) 5D 7F nan nan nan
+Db 6-31G(df,pd) 5D 7F nan nan nan
+Sg 6-31G(df,pd) 5D 7F nan nan nan
+Bh 6-31G(df,pd) 5D 7F nan nan nan
+Hs 6-31G(df,pd) 5D 7F nan nan nan
+Mt 6-31G(df,pd) 5D 7F nan nan nan
+Ds 6-31G(df,pd) 5D 7F nan nan nan
+Rg 6-31G(df,pd) 5D 7F nan nan nan
+Cn 6-31G(df,pd) 5D 7F nan nan nan
+Nh 6-31G(df,pd) 5D 7F nan nan nan
+Fl 6-31G(df,pd) 5D 7F nan nan nan
+Mc 6-31G(df,pd) 5D 7F nan nan nan
+Lv 6-31G(df,pd) 5D 7F nan nan nan
+Ts 6-31G(df,pd) 5D 7F nan nan nan
+Og 6-31G(df,pd) 5D 7F nan nan nan
+ H 6-31G(d,p) 5D 7F  5  7  5
+He 6-31G(d,p) 5D 7F  5  7  5
+Li 6-31G(d,p) 5D 7F 14 28 15
+Be 6-31G(d,p) 5D 7F 14 28 15
+ B 6-31G(d,p) 5D 7F 14 28 15
+ C 6-31G(d,p) 5D 7F 14 28 15
+ N 6-31G(d,p) 5D 7F 14 28 15
+ O 6-31G(d,p) 5D 7F 14 28 15
+ F 6-31G(d,p) 5D 7F 14 28 15
+Ne 6-31G(d,p) 5D 7F 14 28 15
+Na 6-31G(d,p) 5D 7F 18 52 19
+Mg 6-31G(d,p) 5D 7F 18 52 19
+Al 6-31G(d,p) 5D 7F 18 52 19
+Si 6-31G(d,p) 5D 7F 18 52 19
+ P 6-31G(d,p) 5D 7F 18 52 19
+ S 6-31G(d,p) 5D 7F 18 52 19
+Cl 6-31G(d,p) 5D 7F 18 52 19
+Ar 6-31G(d,p) 5D 7F 18 52 19
+ K 6-31G(d,p) 5D 7F 22 76 23
+Ca 6-31G(d,p) 5D 7F 22 76 23
+Sc 6-31G(d,p) 5D 7F 34 104 39
+Ti 6-31G(d,p) 5D 7F 34 104 39
+ V 6-31G(d,p) 5D 7F 34 104 39
+Cr 6-31G(d,p) 5D 7F 34 104 39
+Mn 6-31G(d,p) 5D 7F 34 104 39
+Fe 6-31G(d,p) 5D 7F 34 104 39
+Co 6-31G(d,p) 5D 7F 34 104 39
+Ni 6-31G(d,p) 5D 7F 34 104 39
+Cu 6-31G(d,p) 5D 7F 34 104 39
+Zn 6-31G(d,p) 5D 7F 34 104 39
+Ga 6-31G(d,p) 5D 7F 28 83 30
+Ge 6-31G(d,p) 5D 7F 28 83 30
+As 6-31G(d,p) 5D 7F 28 83 30
+Se 6-31G(d,p) 5D 7F 28 83 30
+Br 6-31G(d,p) 5D 7F 28 83 30
+Kr 6-31G(d,p) 5D 7F 28 83 30
+Rb 6-31G(d,p) 5D 7F nan nan nan
+Sr 6-31G(d,p) 5D 7F nan nan nan
+ Y 6-31G(d,p) 5D 7F nan nan nan
+Zr 6-31G(d,p) 5D 7F nan nan nan
+Nb 6-31G(d,p) 5D 7F nan nan nan
+Mo 6-31G(d,p) 5D 7F nan nan nan
+Tc 6-31G(d,p) 5D 7F nan nan nan
+Ru 6-31G(d,p) 5D 7F nan nan nan
+Rh 6-31G(d,p) 5D 7F nan nan nan
+Pd 6-31G(d,p) 5D 7F nan nan nan
+Ag 6-31G(d,p) 5D 7F nan nan nan
+Cd 6-31G(d,p) 5D 7F nan nan nan
+In 6-31G(d,p) 5D 7F nan nan nan
+Sn 6-31G(d,p) 5D 7F nan nan nan
+Sb 6-31G(d,p) 5D 7F nan nan nan
+Te 6-31G(d,p) 5D 7F nan nan nan
+ I 6-31G(d,p) 5D 7F nan nan nan
+Xe 6-31G(d,p) 5D 7F nan nan nan
+Cs 6-31G(d,p) 5D 7F nan nan nan
+Ba 6-31G(d,p) 5D 7F nan nan nan
+La 6-31G(d,p) 5D 7F nan nan nan
+Ce 6-31G(d,p) 5D 7F nan nan nan
+Pr 6-31G(d,p) 5D 7F nan nan nan
+Nd 6-31G(d,p) 5D 7F nan nan nan
+Pm 6-31G(d,p) 5D 7F nan nan nan
+Sm 6-31G(d,p) 5D 7F nan nan nan
+Eu 6-31G(d,p) 5D 7F nan nan nan
+Gd 6-31G(d,p) 5D 7F nan nan nan
+Tb 6-31G(d,p) 5D 7F nan nan nan
+Dy 6-31G(d,p) 5D 7F nan nan nan
+Ho 6-31G(d,p) 5D 7F nan nan nan
+Er 6-31G(d,p) 5D 7F nan nan nan
+Tm 6-31G(d,p) 5D 7F nan nan nan
+Yb 6-31G(d,p) 5D 7F nan nan nan
+Lu 6-31G(d,p) 5D 7F nan nan nan
+Hf 6-31G(d,p) 5D 7F nan nan nan
+Ta 6-31G(d,p) 5D 7F nan nan nan
+ W 6-31G(d,p) 5D 7F nan nan nan
+Re 6-31G(d,p) 5D 7F nan nan nan
+Os 6-31G(d,p) 5D 7F nan nan nan
+Ir 6-31G(d,p) 5D 7F nan nan nan
+Pt 6-31G(d,p) 5D 7F nan nan nan
+Au 6-31G(d,p) 5D 7F nan nan nan
+Hg 6-31G(d,p) 5D 7F nan nan nan
+Tl 6-31G(d,p) 5D 7F nan nan nan
+Pb 6-31G(d,p) 5D 7F nan nan nan
+Bi 6-31G(d,p) 5D 7F nan nan nan
+Po 6-31G(d,p) 5D 7F nan nan nan
+At 6-31G(d,p) 5D 7F nan nan nan
+Rn 6-31G(d,p) 5D 7F nan nan nan
+Fr 6-31G(d,p) 5D 7F nan nan nan
+Ra 6-31G(d,p) 5D 7F nan nan nan
+Ac 6-31G(d,p) 5D 7F nan nan nan
+Th 6-31G(d,p) 5D 7F nan nan nan
+Pa 6-31G(d,p) 5D 7F nan nan nan
+ U 6-31G(d,p) 5D 7F nan nan nan
+Np 6-31G(d,p) 5D 7F nan nan nan
+Pu 6-31G(d,p) 5D 7F nan nan nan
+Am 6-31G(d,p) 5D 7F nan nan nan
+Cm 6-31G(d,p) 5D 7F nan nan nan
+Bk 6-31G(d,p) 5D 7F nan nan nan
+Cf 6-31G(d,p) 5D 7F nan nan nan
+Es 6-31G(d,p) 5D 7F nan nan nan
+Fm 6-31G(d,p) 5D 7F nan nan nan
+Md 6-31G(d,p) 5D 7F nan nan nan
+No 6-31G(d,p) 5D 7F nan nan nan
+Lr 6-31G(d,p) 5D 7F nan nan nan
+Rf 6-31G(d,p) 5D 7F nan nan nan
+Db 6-31G(d,p) 5D 7F nan nan nan
+Sg 6-31G(d,p) 5D 7F nan nan nan
+Bh 6-31G(d,p) 5D 7F nan nan nan
+Hs 6-31G(d,p) 5D 7F nan nan nan
+Mt 6-31G(d,p) 5D 7F nan nan nan
+Ds 6-31G(d,p) 5D 7F nan nan nan
+Rg 6-31G(d,p) 5D 7F nan nan nan
+Cn 6-31G(d,p) 5D 7F nan nan nan
+Nh 6-31G(d,p) 5D 7F nan nan nan
+Fl 6-31G(d,p) 5D 7F nan nan nan
+Mc 6-31G(d,p) 5D 7F nan nan nan
+Lv 6-31G(d,p) 5D 7F nan nan nan
+Ts 6-31G(d,p) 5D 7F nan nan nan
+Og 6-31G(d,p) 5D 7F nan nan nan
+ H LANL2DZ 5D 7F  2  4  2
+He LANL2DZ 5D 7F nan nan nan
+Li LANL2DZ 5D 7F  9 22  9
+Be LANL2DZ 5D 7F  9 25  9
+ B LANL2DZ 5D 7F  9 25  9
+ C LANL2DZ 5D 7F  9 25  9
+ N LANL2DZ 5D 7F  9 25  9
+ O LANL2DZ 5D 7F  9 25  9
+ F LANL2DZ 5D 7F  9 25  9
+Ne LANL2DZ 5D 7F  9 25  9
+Na LANL2DZ 5D 7F  8 12  8
+Mg LANL2DZ 5D 7F  8 12  8
+Al LANL2DZ 5D 7F  8 12  8
+Si LANL2DZ 5D 7F  8 12  8
+ P LANL2DZ 5D 7F  8 12  8
+ S LANL2DZ 5D 7F  8 12  8
+Cl LANL2DZ 5D 7F  8 12  8
+Ar LANL2DZ 5D 7F  8 12  8
+ K LANL2DZ 5D 7F 12 22 12
+Ca LANL2DZ 5D 7F 12 22 12
+Sc LANL2DZ 5D 7F 22 52 24
+Ti LANL2DZ 5D 7F 22 52 24
+ V LANL2DZ 5D 7F 22 52 24
+Cr LANL2DZ 5D 7F 22 52 24
+Mn LANL2DZ 5D 7F 22 52 24
+Fe LANL2DZ 5D 7F 22 52 24
+Co LANL2DZ 5D 7F 22 52 24
+Ni LANL2DZ 5D 7F 22 52 24
+Cu LANL2DZ 5D 7F 22 52 24
+Zn LANL2DZ 5D 7F 18 39 20
+Ga LANL2DZ 5D 7F  8 12  8
+Ge LANL2DZ 5D 7F  8 12  8
+As LANL2DZ 5D 7F  8 12  8
+Se LANL2DZ 5D 7F  8 12  8
+Br LANL2DZ 5D 7F  8 12  8
+Kr LANL2DZ 5D 7F  8 12  8
+Rb LANL2DZ 5D 7F 12 25 12
+Sr LANL2DZ 5D 7F 12 25 12
+ Y LANL2DZ 5D 7F 22 49 24
+Zr LANL2DZ 5D 7F 22 49 24
+Nb LANL2DZ 5D 7F 22 49 24
+Mo LANL2DZ 5D 7F 22 49 24
+Tc LANL2DZ 5D 7F 22 49 24
+Ru LANL2DZ 5D 7F 22 49 24
+Rh LANL2DZ 5D 7F 22 49 24
+Pd LANL2DZ 5D 7F 22 49 24
+Ag LANL2DZ 5D 7F 22 49 24
+Cd LANL2DZ 5D 7F 18 36 20
+In LANL2DZ 5D 7F  8 12  8
+Sn LANL2DZ 5D 7F  8 12  8
+Sb LANL2DZ 5D 7F  8 12  8
+Te LANL2DZ 5D 7F  8 12  8
+ I LANL2DZ 5D 7F  8 12  8
+Xe LANL2DZ 5D 7F  8 12  8
+Cs LANL2DZ 5D 7F 12 25 12
+Ba LANL2DZ 5D 7F 12 25 12
+La LANL2DZ 5D 7F 22 43 24
+Ce LANL2DZ 5D 7F nan nan nan
+Pr LANL2DZ 5D 7F nan nan nan
+Nd LANL2DZ 5D 7F nan nan nan
+Pm LANL2DZ 5D 7F nan nan nan
+Sm LANL2DZ 5D 7F nan nan nan
+Eu LANL2DZ 5D 7F nan nan nan
+Gd LANL2DZ 5D 7F nan nan nan
+Tb LANL2DZ 5D 7F nan nan nan
+Dy LANL2DZ 5D 7F nan nan nan
+Ho LANL2DZ 5D 7F nan nan nan
+Er LANL2DZ 5D 7F nan nan nan
+Tm LANL2DZ 5D 7F nan nan nan
+Yb LANL2DZ 5D 7F nan nan nan
+Lu LANL2DZ 5D 7F nan nan nan
+Hf LANL2DZ 5D 7F 22 43 24
+Ta LANL2DZ 5D 7F 22 43 24
+ W LANL2DZ 5D 7F 22 43 24
+Re LANL2DZ 5D 7F 22 43 24
+Os LANL2DZ 5D 7F 22 43 24
+Ir LANL2DZ 5D 7F 22 43 24
+Pt LANL2DZ 5D 7F 22 43 24
+Au LANL2DZ 5D 7F 22 43 24
+Hg LANL2DZ 5D 7F 18 30 20
+Tl LANL2DZ 5D 7F 18 30 20
+Pb LANL2DZ 5D 7F  8 12  8
+Bi LANL2DZ 5D 7F  8 12  8
+Po LANL2DZ 5D 7F nan nan nan
+At LANL2DZ 5D 7F nan nan nan
+Rn LANL2DZ 5D 7F nan nan nan
+Fr LANL2DZ 5D 7F nan nan nan
+Ra LANL2DZ 5D 7F nan nan nan
+Ac LANL2DZ 5D 7F nan nan nan
+Th LANL2DZ 5D 7F nan nan nan
+Pa LANL2DZ 5D 7F nan nan nan
+ U LANL2DZ 5D 7F nan nan nan
+Np LANL2DZ 5D 7F nan nan nan
+Pu LANL2DZ 5D 7F nan nan nan
+Am LANL2DZ 5D 7F nan nan nan
+Cm LANL2DZ 5D 7F nan nan nan
+Bk LANL2DZ 5D 7F nan nan nan
+Cf LANL2DZ 5D 7F nan nan nan
+Es LANL2DZ 5D 7F nan nan nan
+Fm LANL2DZ 5D 7F nan nan nan
+Md LANL2DZ 5D 7F nan nan nan
+No LANL2DZ 5D 7F nan nan nan
+Lr LANL2DZ 5D 7F nan nan nan
+Rf LANL2DZ 5D 7F nan nan nan
+Db LANL2DZ 5D 7F nan nan nan
+Sg LANL2DZ 5D 7F nan nan nan
+Bh LANL2DZ 5D 7F nan nan nan
+Hs LANL2DZ 5D 7F nan nan nan
+Mt LANL2DZ 5D 7F nan nan nan
+Ds LANL2DZ 5D 7F nan nan nan
+Rg LANL2DZ 5D 7F nan nan nan
+Cn LANL2DZ 5D 7F nan nan nan
+Nh LANL2DZ 5D 7F nan nan nan
+Fl LANL2DZ 5D 7F nan nan nan
+Mc LANL2DZ 5D 7F nan nan nan
+Lv LANL2DZ 5D 7F nan nan nan
+Ts LANL2DZ 5D 7F nan nan nan
+Og LANL2DZ 5D 7F nan nan nan
+ H SDD 5D 7F  2  4  2
+He SDD 5D 7F  2  4  2
+Li SDD 5D 7F 10 21 10
+Be SDD 5D 7F 10 24 10
+ B SDD 5D 7F 10 24 10
+ C SDD 5D 7F 10 24 10
+ N SDD 5D 7F 10 24 10
+ O SDD 5D 7F 10 24 10
+ F SDD 5D 7F 10 24 10
+Ne SDD 5D 7F 10 24 10
+Na SDD 5D 7F 12 45 12
+Mg SDD 5D 7F 12 45 12
+Al SDD 5D 7F 18 36 18
+Si SDD 5D 7F 18 36 18
+ P SDD 5D 7F 18 36 18
+ S SDD 5D 7F 18 36 18
+Cl SDD 5D 7F 18 36 18
+Ar SDD 5D 7F 12 45 12
+ K SDD 5D 7F 17 25 17
+Ca SDD 5D 7F 26 54 28
+Sc SDD 5D 7F 43 75 49
+Ti SDD 5D 7F 43 75 49
+ V SDD 5D 7F 43 75 49
+Cr SDD 5D 7F 43 75 49
+Mn SDD 5D 7F 43 75 49
+Fe SDD 5D 7F 43 75 49
+Co SDD 5D 7F 43 75 49
+Ni SDD 5D 7F 43 75 49
+Cu SDD 5D 7F 36 65 39
+Zn SDD 5D 7F 36 65 39
+Ga SDD 5D 7F  8 16  8
+Ge SDD 5D 7F  8 16  8
+As SDD 5D 7F  8 16  8
+Se SDD 5D 7F 11 19 11
+Br SDD 5D 7F 11 19 11
+Kr SDD 5D 7F 38 52 44
+Rb SDD 5D 7F 17 25 17
+Sr SDD 5D 7F 26 54 28
+ Y SDD 5D 7F 36 65 39
+Zr SDD 5D 7F 36 65 39
+Nb SDD 5D 7F 36 65 39
+Mo SDD 5D 7F 36 65 39
+Tc SDD 5D 7F 36 65 39
+Ru SDD 5D 7F 36 65 39
+Rh SDD 5D 7F 36 65 39
+Pd SDD 5D 7F 36 65 39
+Ag SDD 5D 7F 36 65 39
+Cd SDD 5D 7F 36 65 39
+In SDD 5D 7F  8 16  8
+Sn SDD 5D 7F  8 16  8
+Sb SDD 5D 7F  8 16  8
+Te SDD 5D 7F 11 19 11
+ I SDD 5D 7F 11 19 11
+Xe SDD 5D 7F 38 52 44
+Cs SDD 5D 7F 17 25 17
+Ba SDD 5D 7F 33 64 38
+La SDD 5D 7F 114 283 149
+Ce SDD 5D 7F 114 283 149
+Pr SDD 5D 7F 114 283 149
+Nd SDD 5D 7F 114 283 149
+Pm SDD 5D 7F 114 283 149
+Sm SDD 5D 7F 114 283 149
+Eu SDD 5D 7F 114 283 149
+Gd SDD 5D 7F 114 283 149
+Tb SDD 5D 7F 114 283 149
+Dy SDD 5D 7F 114 283 149
+Ho SDD 5D 7F 114 283 149
+Er SDD 5D 7F 114 283 149
+Tm SDD 5D 7F 114 283 149
+Yb SDD 5D 7F 114 283 149
+Lu SDD 5D 7F 114 283 149
+Hf SDD 5D 7F 36 65 39
+Ta SDD 5D 7F 36 65 39
+ W SDD 5D 7F 36 65 39
+Re SDD 5D 7F 36 65 39
+Os SDD 5D 7F 36 65 39
+Ir SDD 5D 7F 36 65 39
+Pt SDD 5D 7F 36 65 39
+Au SDD 5D 7F 36 65 39
+Hg SDD 5D 7F 36 65 39
+Tl SDD 5D 7F 13 22 14
+Pb SDD 5D 7F 13 22 14
+Bi SDD 5D 7F 13 22 14
+Po SDD 5D 7F 16 25 17
+At SDD 5D 7F 16 25 17
+Rn SDD 5D 7F 13 22 14
+Fr SDD 5D 7F 131 186 169
+Ra SDD 5D 7F 135 190 173
+Ac SDD 5D 7F 117 283 152
+Th SDD 5D 7F 117 283 152
+Pa SDD 5D 7F 117 283 152
+ U SDD 5D 7F 117 283 152
+Np SDD 5D 7F 117 283 152
+Pu SDD 5D 7F 117 283 152
+Am SDD 5D 7F 117 283 152
+Cm SDD 5D 7F 117 283 152
+Bk SDD 5D 7F 117 283 152
+Cf SDD 5D 7F 117 283 152
+Es SDD 5D 7F 117 283 152
+Fm SDD 5D 7F 117 283 152
+Md SDD 5D 7F 117 283 152
+No SDD 5D 7F 117 283 152
+Lr SDD 5D 7F 117 283 152
+Rf SDD 5D 7F nan nan nan
+Db SDD 5D 7F 64 100 80
+Sg SDD 5D 7F nan nan nan
+Bh SDD 5D 7F nan nan nan
+Hs SDD 5D 7F nan nan nan
+Mt SDD 5D 7F nan nan nan
+Ds SDD 5D 7F nan nan nan
+Rg SDD 5D 7F nan nan nan
+Cn SDD 5D 7F nan nan nan
+Nh SDD 5D 7F nan nan nan
+Fl SDD 5D 7F nan nan nan
+Mc SDD 5D 7F nan nan nan
+Lv SDD 5D 7F nan nan nan
+Ts SDD 5D 7F nan nan nan
+Og SDD 5D 7F nan nan nan
+ H STO-3G 5D 7F  1  3  1
+He STO-3G 5D 7F  1  3  1
+Li STO-3G 5D 7F  5 15  5
+Be STO-3G 5D 7F  5 15  5
+ B STO-3G 5D 7F  5 15  5
+ C STO-3G 5D 7F  5 15  5
+ N STO-3G 5D 7F  5 15  5
+ O STO-3G 5D 7F  5 15  5
+ F STO-3G 5D 7F  5 15  5
+Ne STO-3G 5D 7F  5 15  5
+Na STO-3G 5D 7F  9 27  9
+Mg STO-3G 5D 7F  9 27  9
+Al STO-3G 5D 7F  9 27  9
+Si STO-3G 5D 7F  9 27  9
+ P STO-3G 5D 7F  9 27  9
+ S STO-3G 5D 7F  9 27  9
+Cl STO-3G 5D 7F  9 27  9
+Ar STO-3G 5D 7F  9 27  9
+ K STO-3G 5D 7F 13 39 13
+Ca STO-3G 5D 7F 13 39 13
+Sc STO-3G 5D 7F 18 57 19
+Ti STO-3G 5D 7F 18 57 19
+ V STO-3G 5D 7F 18 57 19
+Cr STO-3G 5D 7F 18 57 19
+Mn STO-3G 5D 7F 18 57 19
+Fe STO-3G 5D 7F 18 57 19
+Co STO-3G 5D 7F 18 57 19
+Ni STO-3G 5D 7F 18 57 19
+Cu STO-3G 5D 7F 18 57 19
+Zn STO-3G 5D 7F 18 57 19
+Ga STO-3G 5D 7F 18 57 19
+Ge STO-3G 5D 7F 18 57 19
+As STO-3G 5D 7F 18 57 19
+Se STO-3G 5D 7F 18 57 19
+Br STO-3G 5D 7F 18 57 19
+Kr STO-3G 5D 7F 18 57 19
+Rb STO-3G 5D 7F 22 69 23
+Sr STO-3G 5D 7F 22 69 23
+ Y STO-3G 5D 7F 27 87 29
+Zr STO-3G 5D 7F 27 87 29
+Nb STO-3G 5D 7F 27 87 29
+Mo STO-3G 5D 7F 27 87 29
+Tc STO-3G 5D 7F 27 87 29
+Ru STO-3G 5D 7F 27 87 29
+Rh STO-3G 5D 7F 27 87 29
+Pd STO-3G 5D 7F 27 87 29
+Ag STO-3G 5D 7F 27 87 29
+Cd STO-3G 5D 7F 27 87 29
+In STO-3G 5D 7F 27 87 29
+Sn STO-3G 5D 7F 27 87 29
+Sb STO-3G 5D 7F 27 87 29
+Te STO-3G 5D 7F 27 87 29
+ I STO-3G 5D 7F 27 87 29
+Xe STO-3G 5D 7F 27 87 29
+Cs STO-3G 5D 7F nan nan nan
+Ba STO-3G 5D 7F nan nan nan
+La STO-3G 5D 7F nan nan nan
+Ce STO-3G 5D 7F nan nan nan
+Pr STO-3G 5D 7F nan nan nan
+Nd STO-3G 5D 7F nan nan nan
+Pm STO-3G 5D 7F nan nan nan
+Sm STO-3G 5D 7F nan nan nan
+Eu STO-3G 5D 7F nan nan nan
+Gd STO-3G 5D 7F nan nan nan
+Tb STO-3G 5D 7F nan nan nan
+Dy STO-3G 5D 7F nan nan nan
+Ho STO-3G 5D 7F nan nan nan
+Er STO-3G 5D 7F nan nan nan
+Tm STO-3G 5D 7F nan nan nan
+Yb STO-3G 5D 7F nan nan nan
+Lu STO-3G 5D 7F nan nan nan
+Hf STO-3G 5D 7F nan nan nan
+Ta STO-3G 5D 7F nan nan nan
+ W STO-3G 5D 7F nan nan nan
+Re STO-3G 5D 7F nan nan nan
+Os STO-3G 5D 7F nan nan nan
+Ir STO-3G 5D 7F nan nan nan
+Pt STO-3G 5D 7F nan nan nan
+Au STO-3G 5D 7F nan nan nan
+Hg STO-3G 5D 7F nan nan nan
+Tl STO-3G 5D 7F nan nan nan
+Pb STO-3G 5D 7F nan nan nan
+Bi STO-3G 5D 7F nan nan nan
+Po STO-3G 5D 7F nan nan nan
+At STO-3G 5D 7F nan nan nan
+Rn STO-3G 5D 7F nan nan nan
+Fr STO-3G 5D 7F nan nan nan
+Ra STO-3G 5D 7F nan nan nan
+Ac STO-3G 5D 7F nan nan nan
+Th STO-3G 5D 7F nan nan nan
+Pa STO-3G 5D 7F nan nan nan
+ U STO-3G 5D 7F nan nan nan
+Np STO-3G 5D 7F nan nan nan
+Pu STO-3G 5D 7F nan nan nan
+Am STO-3G 5D 7F nan nan nan
+Cm STO-3G 5D 7F nan nan nan
+Bk STO-3G 5D 7F nan nan nan
+Cf STO-3G 5D 7F nan nan nan
+Es STO-3G 5D 7F nan nan nan
+Fm STO-3G 5D 7F nan nan nan
+Md STO-3G 5D 7F nan nan nan
+No STO-3G 5D 7F nan nan nan
+Lr STO-3G 5D 7F nan nan nan
+Rf STO-3G 5D 7F nan nan nan
+Db STO-3G 5D 7F nan nan nan
+Sg STO-3G 5D 7F nan nan nan
+Bh STO-3G 5D 7F nan nan nan
+Hs STO-3G 5D 7F nan nan nan
+Mt STO-3G 5D 7F nan nan nan
+Ds STO-3G 5D 7F nan nan nan
+Rg STO-3G 5D 7F nan nan nan
+Cn STO-3G 5D 7F nan nan nan
+Nh STO-3G 5D 7F nan nan nan
+Fl STO-3G 5D 7F nan nan nan
+Mc STO-3G 5D 7F nan nan nan
+Lv STO-3G 5D 7F nan nan nan
+Ts STO-3G 5D 7F nan nan nan
+Og STO-3G 5D 7F nan nan nan
+ H Aug-CC-pV5Z 5D 7F 80 108 105
+He Aug-CC-pV5Z 5D 7F 80 108 105
+Li Aug-CC-pV5Z 5D 7F 127 200 182
+Be Aug-CC-pV5Z 5D 7F 127 205 182
+ B Aug-CC-pV5Z 5D 7F 127 205 182
+ C Aug-CC-pV5Z 5D 7F 127 205 182
+ N Aug-CC-pV5Z 5D 7F 127 205 182
+ O Aug-CC-pV5Z 5D 7F 127 205 182
+ F Aug-CC-pV5Z 5D 7F 127 205 182
+Ne Aug-CC-pV5Z 5D 7F 127 205 182
+Na Aug-CC-pV5Z 5D 7F 131 251 186
+Mg Aug-CC-pV5Z 5D 7F nan nan nan
+Al Aug-CC-pV5Z 5D 7F 131 248 186
+Si Aug-CC-pV5Z 5D 7F 131 248 186
+ P Aug-CC-pV5Z 5D 7F 131 248 186
+ S Aug-CC-pV5Z 5D 7F 131 248 186
+Cl Aug-CC-pV5Z 5D 7F 131 248 186
+Ar Aug-CC-pV5Z 5D 7F 131 248 186
+ K Aug-CC-pV5Z 5D 7F nan nan nan
+Ca Aug-CC-pV5Z 5D 7F nan nan nan
+Sc Aug-CC-pV5Z 5D 7F 202 778 308
+Ti Aug-CC-pV5Z 5D 7F 202 785 308
+ V Aug-CC-pV5Z 5D 7F 202 777 308
+Cr Aug-CC-pV5Z 5D 7F 202 772 308
+Mn Aug-CC-pV5Z 5D 7F 202 760 308
+Fe Aug-CC-pV5Z 5D 7F 202 759 308
+Co Aug-CC-pV5Z 5D 7F 202 779 308
+Ni Aug-CC-pV5Z 5D 7F 202 775 308
+Cu Aug-CC-pV5Z 5D 7F 202 791 308
+Zn Aug-CC-pV5Z 5D 7F 202 772 308
+Ga Aug-CC-pV5Z 5D 7F 140 372 196
+Ge Aug-CC-pV5Z 5D 7F 140 373 196
+As Aug-CC-pV5Z 5D 7F 140 364 196
+Se Aug-CC-pV5Z 5D 7F 140 368 196
+Br Aug-CC-pV5Z 5D 7F 140 371 196
+Kr Aug-CC-pV5Z 5D 7F 140 370 196
+Rb Aug-CC-pV5Z 5D 7F nan nan nan
+Sr Aug-CC-pV5Z 5D 7F nan nan nan
+ Y Aug-CC-pV5Z 5D 7F nan nan nan
+Zr Aug-CC-pV5Z 5D 7F nan nan nan
+Nb Aug-CC-pV5Z 5D 7F nan nan nan
+Mo Aug-CC-pV5Z 5D 7F nan nan nan
+Tc Aug-CC-pV5Z 5D 7F nan nan nan
+Ru Aug-CC-pV5Z 5D 7F nan nan nan
+Rh Aug-CC-pV5Z 5D 7F nan nan nan
+Pd Aug-CC-pV5Z 5D 7F nan nan nan
+Ag Aug-CC-pV5Z 5D 7F nan nan nan
+Cd Aug-CC-pV5Z 5D 7F nan nan nan
+In Aug-CC-pV5Z 5D 7F nan nan nan
+Sn Aug-CC-pV5Z 5D 7F nan nan nan
+Sb Aug-CC-pV5Z 5D 7F nan nan nan
+Te Aug-CC-pV5Z 5D 7F nan nan nan
+ I Aug-CC-pV5Z 5D 7F nan nan nan
+Xe Aug-CC-pV5Z 5D 7F nan nan nan
+Cs Aug-CC-pV5Z 5D 7F nan nan nan
+Ba Aug-CC-pV5Z 5D 7F nan nan nan
+La Aug-CC-pV5Z 5D 7F nan nan nan
+Ce Aug-CC-pV5Z 5D 7F nan nan nan
+Pr Aug-CC-pV5Z 5D 7F nan nan nan
+Nd Aug-CC-pV5Z 5D 7F nan nan nan
+Pm Aug-CC-pV5Z 5D 7F nan nan nan
+Sm Aug-CC-pV5Z 5D 7F nan nan nan
+Eu Aug-CC-pV5Z 5D 7F nan nan nan
+Gd Aug-CC-pV5Z 5D 7F nan nan nan
+Tb Aug-CC-pV5Z 5D 7F nan nan nan
+Dy Aug-CC-pV5Z 5D 7F nan nan nan
+Ho Aug-CC-pV5Z 5D 7F nan nan nan
+Er Aug-CC-pV5Z 5D 7F nan nan nan
+Tm Aug-CC-pV5Z 5D 7F nan nan nan
+Yb Aug-CC-pV5Z 5D 7F nan nan nan
+Lu Aug-CC-pV5Z 5D 7F nan nan nan
+Hf Aug-CC-pV5Z 5D 7F nan nan nan
+Ta Aug-CC-pV5Z 5D 7F nan nan nan
+ W Aug-CC-pV5Z 5D 7F nan nan nan
+Re Aug-CC-pV5Z 5D 7F nan nan nan
+Os Aug-CC-pV5Z 5D 7F nan nan nan
+Ir Aug-CC-pV5Z 5D 7F nan nan nan
+Pt Aug-CC-pV5Z 5D 7F nan nan nan
+Au Aug-CC-pV5Z 5D 7F nan nan nan
+Hg Aug-CC-pV5Z 5D 7F nan nan nan
+Tl Aug-CC-pV5Z 5D 7F nan nan nan
+Pb Aug-CC-pV5Z 5D 7F nan nan nan
+Bi Aug-CC-pV5Z 5D 7F nan nan nan
+Po Aug-CC-pV5Z 5D 7F nan nan nan
+At Aug-CC-pV5Z 5D 7F nan nan nan
+Rn Aug-CC-pV5Z 5D 7F nan nan nan
+Fr Aug-CC-pV5Z 5D 7F nan nan nan
+Ra Aug-CC-pV5Z 5D 7F nan nan nan
+Ac Aug-CC-pV5Z 5D 7F nan nan nan
+Th Aug-CC-pV5Z 5D 7F nan nan nan
+Pa Aug-CC-pV5Z 5D 7F nan nan nan
+ U Aug-CC-pV5Z 5D 7F nan nan nan
+Np Aug-CC-pV5Z 5D 7F nan nan nan
+Pu Aug-CC-pV5Z 5D 7F nan nan nan
+Am Aug-CC-pV5Z 5D 7F nan nan nan
+Cm Aug-CC-pV5Z 5D 7F nan nan nan
+Bk Aug-CC-pV5Z 5D 7F nan nan nan
+Cf Aug-CC-pV5Z 5D 7F nan nan nan
+Es Aug-CC-pV5Z 5D 7F nan nan nan
+Fm Aug-CC-pV5Z 5D 7F nan nan nan
+Md Aug-CC-pV5Z 5D 7F nan nan nan
+No Aug-CC-pV5Z 5D 7F nan nan nan
+Lr Aug-CC-pV5Z 5D 7F nan nan nan
+Rf Aug-CC-pV5Z 5D 7F nan nan nan
+Db Aug-CC-pV5Z 5D 7F nan nan nan
+Sg Aug-CC-pV5Z 5D 7F nan nan nan
+Bh Aug-CC-pV5Z 5D 7F nan nan nan
+Hs Aug-CC-pV5Z 5D 7F nan nan nan
+Mt Aug-CC-pV5Z 5D 7F nan nan nan
+Ds Aug-CC-pV5Z 5D 7F nan nan nan
+Rg Aug-CC-pV5Z 5D 7F nan nan nan
+Cn Aug-CC-pV5Z 5D 7F nan nan nan
+Nh Aug-CC-pV5Z 5D 7F nan nan nan
+Fl Aug-CC-pV5Z 5D 7F nan nan nan
+Mc Aug-CC-pV5Z 5D 7F nan nan nan
+Lv Aug-CC-pV5Z 5D 7F nan nan nan
+Ts Aug-CC-pV5Z 5D 7F nan nan nan
+Og Aug-CC-pV5Z 5D 7F nan nan nan
+ H Aug-CC-pV6Z 5D 7F 127 186 182
+He Aug-CC-pV6Z 5D 7F nan nan nan
+Li Aug-CC-pV6Z 5D 7F nan nan nan
+Be Aug-CC-pV6Z 5D 7F nan nan nan
+ B Aug-CC-pV6Z 5D 7F 189 321 294
+ C Aug-CC-pV6Z 5D 7F 189 320 294
+ N Aug-CC-pV6Z 5D 7F 189 321 294
+ O Aug-CC-pV6Z 5D 7F 189 321 294
+ F Aug-CC-pV6Z 5D 7F nan nan nan
+Ne Aug-CC-pV6Z 5D 7F nan nan nan
+Na Aug-CC-pV6Z 5D 7F nan nan nan
+Mg Aug-CC-pV6Z 5D 7F nan nan nan
+Al Aug-CC-pV6Z 5D 7F nan nan nan
+Si Aug-CC-pV6Z 5D 7F nan nan nan
+ P Aug-CC-pV6Z 5D 7F nan nan nan
+ S Aug-CC-pV6Z 5D 7F nan nan nan
+Cl Aug-CC-pV6Z 5D 7F nan nan nan
+Ar Aug-CC-pV6Z 5D 7F nan nan nan
+ K Aug-CC-pV6Z 5D 7F nan nan nan
+Ca Aug-CC-pV6Z 5D 7F nan nan nan
+Sc Aug-CC-pV6Z 5D 7F nan nan nan
+Ti Aug-CC-pV6Z 5D 7F nan nan nan
+ V Aug-CC-pV6Z 5D 7F nan nan nan
+Cr Aug-CC-pV6Z 5D 7F nan nan nan
+Mn Aug-CC-pV6Z 5D 7F nan nan nan
+Fe Aug-CC-pV6Z 5D 7F nan nan nan
+Co Aug-CC-pV6Z 5D 7F nan nan nan
+Ni Aug-CC-pV6Z 5D 7F nan nan nan
+Cu Aug-CC-pV6Z 5D 7F nan nan nan
+Zn Aug-CC-pV6Z 5D 7F nan nan nan
+Ga Aug-CC-pV6Z 5D 7F nan nan nan
+Ge Aug-CC-pV6Z 5D 7F nan nan nan
+As Aug-CC-pV6Z 5D 7F nan nan nan
+Se Aug-CC-pV6Z 5D 7F nan nan nan
+Br Aug-CC-pV6Z 5D 7F nan nan nan
+Kr Aug-CC-pV6Z 5D 7F nan nan nan
+Rb Aug-CC-pV6Z 5D 7F nan nan nan
+Sr Aug-CC-pV6Z 5D 7F nan nan nan
+ Y Aug-CC-pV6Z 5D 7F nan nan nan
+Zr Aug-CC-pV6Z 5D 7F nan nan nan
+Nb Aug-CC-pV6Z 5D 7F nan nan nan
+Mo Aug-CC-pV6Z 5D 7F nan nan nan
+Tc Aug-CC-pV6Z 5D 7F nan nan nan
+Ru Aug-CC-pV6Z 5D 7F nan nan nan
+Rh Aug-CC-pV6Z 5D 7F nan nan nan
+Pd Aug-CC-pV6Z 5D 7F nan nan nan
+Ag Aug-CC-pV6Z 5D 7F nan nan nan
+Cd Aug-CC-pV6Z 5D 7F nan nan nan
+In Aug-CC-pV6Z 5D 7F nan nan nan
+Sn Aug-CC-pV6Z 5D 7F nan nan nan
+Sb Aug-CC-pV6Z 5D 7F nan nan nan
+Te Aug-CC-pV6Z 5D 7F nan nan nan
+ I Aug-CC-pV6Z 5D 7F nan nan nan
+Xe Aug-CC-pV6Z 5D 7F nan nan nan
+Cs Aug-CC-pV6Z 5D 7F nan nan nan
+Ba Aug-CC-pV6Z 5D 7F nan nan nan
+La Aug-CC-pV6Z 5D 7F nan nan nan
+Ce Aug-CC-pV6Z 5D 7F nan nan nan
+Pr Aug-CC-pV6Z 5D 7F nan nan nan
+Nd Aug-CC-pV6Z 5D 7F nan nan nan
+Pm Aug-CC-pV6Z 5D 7F nan nan nan
+Sm Aug-CC-pV6Z 5D 7F nan nan nan
+Eu Aug-CC-pV6Z 5D 7F nan nan nan
+Gd Aug-CC-pV6Z 5D 7F nan nan nan
+Tb Aug-CC-pV6Z 5D 7F nan nan nan
+Dy Aug-CC-pV6Z 5D 7F nan nan nan
+Ho Aug-CC-pV6Z 5D 7F nan nan nan
+Er Aug-CC-pV6Z 5D 7F nan nan nan
+Tm Aug-CC-pV6Z 5D 7F nan nan nan
+Yb Aug-CC-pV6Z 5D 7F nan nan nan
+Lu Aug-CC-pV6Z 5D 7F nan nan nan
+Hf Aug-CC-pV6Z 5D 7F nan nan nan
+Ta Aug-CC-pV6Z 5D 7F nan nan nan
+ W Aug-CC-pV6Z 5D 7F nan nan nan
+Re Aug-CC-pV6Z 5D 7F nan nan nan
+Os Aug-CC-pV6Z 5D 7F nan nan nan
+Ir Aug-CC-pV6Z 5D 7F nan nan nan
+Pt Aug-CC-pV6Z 5D 7F nan nan nan
+Au Aug-CC-pV6Z 5D 7F nan nan nan
+Hg Aug-CC-pV6Z 5D 7F nan nan nan
+Tl Aug-CC-pV6Z 5D 7F nan nan nan
+Pb Aug-CC-pV6Z 5D 7F nan nan nan
+Bi Aug-CC-pV6Z 5D 7F nan nan nan
+Po Aug-CC-pV6Z 5D 7F nan nan nan
+At Aug-CC-pV6Z 5D 7F nan nan nan
+Rn Aug-CC-pV6Z 5D 7F nan nan nan
+Fr Aug-CC-pV6Z 5D 7F nan nan nan
+Ra Aug-CC-pV6Z 5D 7F nan nan nan
+Ac Aug-CC-pV6Z 5D 7F nan nan nan
+Th Aug-CC-pV6Z 5D 7F nan nan nan
+Pa Aug-CC-pV6Z 5D 7F nan nan nan
+ U Aug-CC-pV6Z 5D 7F nan nan nan
+Np Aug-CC-pV6Z 5D 7F nan nan nan
+Pu Aug-CC-pV6Z 5D 7F nan nan nan
+Am Aug-CC-pV6Z 5D 7F nan nan nan
+Cm Aug-CC-pV6Z 5D 7F nan nan nan
+Bk Aug-CC-pV6Z 5D 7F nan nan nan
+Cf Aug-CC-pV6Z 5D 7F nan nan nan
+Es Aug-CC-pV6Z 5D 7F nan nan nan
+Fm Aug-CC-pV6Z 5D 7F nan nan nan
+Md Aug-CC-pV6Z 5D 7F nan nan nan
+No Aug-CC-pV6Z 5D 7F nan nan nan
+Lr Aug-CC-pV6Z 5D 7F nan nan nan
+Rf Aug-CC-pV6Z 5D 7F nan nan nan
+Db Aug-CC-pV6Z 5D 7F nan nan nan
+Sg Aug-CC-pV6Z 5D 7F nan nan nan
+Bh Aug-CC-pV6Z 5D 7F nan nan nan
+Hs Aug-CC-pV6Z 5D 7F nan nan nan
+Mt Aug-CC-pV6Z 5D 7F nan nan nan
+Ds Aug-CC-pV6Z 5D 7F nan nan nan
+Rg Aug-CC-pV6Z 5D 7F nan nan nan
+Cn Aug-CC-pV6Z 5D 7F nan nan nan
+Nh Aug-CC-pV6Z 5D 7F nan nan nan
+Fl Aug-CC-pV6Z 5D 7F nan nan nan
+Mc Aug-CC-pV6Z 5D 7F nan nan nan
+Lv Aug-CC-pV6Z 5D 7F nan nan nan
+Ts Aug-CC-pV6Z 5D 7F nan nan nan
+Og Aug-CC-pV6Z 5D 7F nan nan nan
+ H Aug-CC-pVDZ 5D 7F  9 11  9
+He Aug-CC-pVDZ 5D 7F  9 11  9
+Li Aug-CC-pVDZ 5D 7F 23 42 25
+Be Aug-CC-pVDZ 5D 7F 23 43 25
+ B Aug-CC-pVDZ 5D 7F 23 43 25
+ C Aug-CC-pVDZ 5D 7F 23 43 25
+ N Aug-CC-pVDZ 5D 7F 23 43 25
+ O Aug-CC-pVDZ 5D 7F 23 43 25
+ F Aug-CC-pVDZ 5D 7F 23 43 25
+Ne Aug-CC-pVDZ 5D 7F 23 43 25
+Na Aug-CC-pVDZ 5D 7F 27 81 29
+Mg Aug-CC-pVDZ 5D 7F 27 81 29
+Al Aug-CC-pVDZ 5D 7F 27 80 29
+Si Aug-CC-pVDZ 5D 7F 27 81 29
+ P Aug-CC-pVDZ 5D 7F 27 81 29
+ S Aug-CC-pVDZ 5D 7F 27 81 29
+Cl Aug-CC-pVDZ 5D 7F 27 81 29
+Ar Aug-CC-pVDZ 5D 7F 27 81 29
+ K Aug-CC-pVDZ 5D 7F nan nan nan
+Ca Aug-CC-pVDZ 5D 7F nan nan nan
+Sc Aug-CC-pVDZ 5D 7F 59 314 69
+Ti Aug-CC-pVDZ 5D 7F 59 311 69
+ V Aug-CC-pVDZ 5D 7F 59 314 69
+Cr Aug-CC-pVDZ 5D 7F 59 312 69
+Mn Aug-CC-pVDZ 5D 7F 59 308 69
+Fe Aug-CC-pVDZ 5D 7F 59 314 69
+Co Aug-CC-pVDZ 5D 7F 59 314 69
+Ni Aug-CC-pVDZ 5D 7F 59 308 69
+Cu Aug-CC-pVDZ 5D 7F 59 314 69
+Zn Aug-CC-pVDZ 5D 7F 59 308 69
+Ga Aug-CC-pVDZ 5D 7F 36 157 39
+Ge Aug-CC-pVDZ 5D 7F 36 158 39
+As Aug-CC-pVDZ 5D 7F 36 156 39
+Se Aug-CC-pVDZ 5D 7F 36 157 39
+Br Aug-CC-pVDZ 5D 7F 36 157 39
+Kr Aug-CC-pVDZ 5D 7F 36 157 39
+Rb Aug-CC-pVDZ 5D 7F nan nan nan
+Sr Aug-CC-pVDZ 5D 7F nan nan nan
+ Y Aug-CC-pVDZ 5D 7F nan nan nan
+Zr Aug-CC-pVDZ 5D 7F nan nan nan
+Nb Aug-CC-pVDZ 5D 7F nan nan nan
+Mo Aug-CC-pVDZ 5D 7F nan nan nan
+Tc Aug-CC-pVDZ 5D 7F nan nan nan
+Ru Aug-CC-pVDZ 5D 7F nan nan nan
+Rh Aug-CC-pVDZ 5D 7F nan nan nan
+Pd Aug-CC-pVDZ 5D 7F nan nan nan
+Ag Aug-CC-pVDZ 5D 7F nan nan nan
+Cd Aug-CC-pVDZ 5D 7F nan nan nan
+In Aug-CC-pVDZ 5D 7F nan nan nan
+Sn Aug-CC-pVDZ 5D 7F nan nan nan
+Sb Aug-CC-pVDZ 5D 7F nan nan nan
+Te Aug-CC-pVDZ 5D 7F nan nan nan
+ I Aug-CC-pVDZ 5D 7F nan nan nan
+Xe Aug-CC-pVDZ 5D 7F nan nan nan
+Cs Aug-CC-pVDZ 5D 7F nan nan nan
+Ba Aug-CC-pVDZ 5D 7F nan nan nan
+La Aug-CC-pVDZ 5D 7F nan nan nan
+Ce Aug-CC-pVDZ 5D 7F nan nan nan
+Pr Aug-CC-pVDZ 5D 7F nan nan nan
+Nd Aug-CC-pVDZ 5D 7F nan nan nan
+Pm Aug-CC-pVDZ 5D 7F nan nan nan
+Sm Aug-CC-pVDZ 5D 7F nan nan nan
+Eu Aug-CC-pVDZ 5D 7F nan nan nan
+Gd Aug-CC-pVDZ 5D 7F nan nan nan
+Tb Aug-CC-pVDZ 5D 7F nan nan nan
+Dy Aug-CC-pVDZ 5D 7F nan nan nan
+Ho Aug-CC-pVDZ 5D 7F nan nan nan
+Er Aug-CC-pVDZ 5D 7F nan nan nan
+Tm Aug-CC-pVDZ 5D 7F nan nan nan
+Yb Aug-CC-pVDZ 5D 7F nan nan nan
+Lu Aug-CC-pVDZ 5D 7F nan nan nan
+Hf Aug-CC-pVDZ 5D 7F nan nan nan
+Ta Aug-CC-pVDZ 5D 7F nan nan nan
+ W Aug-CC-pVDZ 5D 7F nan nan nan
+Re Aug-CC-pVDZ 5D 7F nan nan nan
+Os Aug-CC-pVDZ 5D 7F nan nan nan
+Ir Aug-CC-pVDZ 5D 7F nan nan nan
+Pt Aug-CC-pVDZ 5D 7F nan nan nan
+Au Aug-CC-pVDZ 5D 7F nan nan nan
+Hg Aug-CC-pVDZ 5D 7F nan nan nan
+Tl Aug-CC-pVDZ 5D 7F nan nan nan
+Pb Aug-CC-pVDZ 5D 7F nan nan nan
+Bi Aug-CC-pVDZ 5D 7F nan nan nan
+Po Aug-CC-pVDZ 5D 7F nan nan nan
+At Aug-CC-pVDZ 5D 7F nan nan nan
+Rn Aug-CC-pVDZ 5D 7F nan nan nan
+Fr Aug-CC-pVDZ 5D 7F nan nan nan
+Ra Aug-CC-pVDZ 5D 7F nan nan nan
+Ac Aug-CC-pVDZ 5D 7F nan nan nan
+Th Aug-CC-pVDZ 5D 7F nan nan nan
+Pa Aug-CC-pVDZ 5D 7F nan nan nan
+ U Aug-CC-pVDZ 5D 7F nan nan nan
+Np Aug-CC-pVDZ 5D 7F nan nan nan
+Pu Aug-CC-pVDZ 5D 7F nan nan nan
+Am Aug-CC-pVDZ 5D 7F nan nan nan
+Cm Aug-CC-pVDZ 5D 7F nan nan nan
+Bk Aug-CC-pVDZ 5D 7F nan nan nan
+Cf Aug-CC-pVDZ 5D 7F nan nan nan
+Es Aug-CC-pVDZ 5D 7F nan nan nan
+Fm Aug-CC-pVDZ 5D 7F nan nan nan
+Md Aug-CC-pVDZ 5D 7F nan nan nan
+No Aug-CC-pVDZ 5D 7F nan nan nan
+Lr Aug-CC-pVDZ 5D 7F nan nan nan
+Rf Aug-CC-pVDZ 5D 7F nan nan nan
+Db Aug-CC-pVDZ 5D 7F nan nan nan
+Sg Aug-CC-pVDZ 5D 7F nan nan nan
+Bh Aug-CC-pVDZ 5D 7F nan nan nan
+Hs Aug-CC-pVDZ 5D 7F nan nan nan
+Mt Aug-CC-pVDZ 5D 7F nan nan nan
+Ds Aug-CC-pVDZ 5D 7F nan nan nan
+Rg Aug-CC-pVDZ 5D 7F nan nan nan
+Cn Aug-CC-pVDZ 5D 7F nan nan nan
+Nh Aug-CC-pVDZ 5D 7F nan nan nan
+Fl Aug-CC-pVDZ 5D 7F nan nan nan
+Mc Aug-CC-pVDZ 5D 7F nan nan nan
+Lv Aug-CC-pVDZ 5D 7F nan nan nan
+Ts Aug-CC-pVDZ 5D 7F nan nan nan
+Og Aug-CC-pVDZ 5D 7F nan nan nan
+ H Aug-CC-pVQZ 5D 7F 46 57 55
+He Aug-CC-pVQZ 5D 7F 46 58 55
+Li Aug-CC-pVQZ 5D 7F 80 123 105
+Be Aug-CC-pVQZ 5D 7F 80 123 105
+ B Aug-CC-pVQZ 5D 7F 80 123 105
+ C Aug-CC-pVQZ 5D 7F 80 124 105
+ N Aug-CC-pVQZ 5D 7F 80 124 105
+ O Aug-CC-pVQZ 5D 7F 80 124 105
+ F Aug-CC-pVQZ 5D 7F 80 124 105
+Ne Aug-CC-pVQZ 5D 7F 80 124 105
+Na Aug-CC-pVQZ 5D 7F 84 177 109
+Mg Aug-CC-pVQZ 5D 7F 84 171 109
+Al Aug-CC-pVQZ 5D 7F 84 165 109
+Si Aug-CC-pVQZ 5D 7F 84 168 109
+ P Aug-CC-pVQZ 5D 7F 84 169 109
+ S Aug-CC-pVQZ 5D 7F 84 169 109
+Cl Aug-CC-pVQZ 5D 7F 84 166 109
+Ar Aug-CC-pVQZ 5D 7F 84 166 109
+ K Aug-CC-pVQZ 5D 7F nan nan nan
+Ca Aug-CC-pVQZ 5D 7F nan nan nan
+Sc Aug-CC-pVQZ 5D 7F 140 578 196
+Ti Aug-CC-pVQZ 5D 7F 140 567 196
+ V Aug-CC-pVQZ 5D 7F 140 567 196
+Cr Aug-CC-pVQZ 5D 7F 140 571 196
+Mn Aug-CC-pVQZ 5D 7F 140 562 196
+Fe Aug-CC-pVQZ 5D 7F 140 575 196
+Co Aug-CC-pVQZ 5D 7F 140 580 196
+Ni Aug-CC-pVQZ 5D 7F 140 562 196
+Cu Aug-CC-pVQZ 5D 7F 140 555 196
+Zn Aug-CC-pVQZ 5D 7F 140 570 196
+Ga Aug-CC-pVQZ 5D 7F 93 288 119
+Ge Aug-CC-pVQZ 5D 7F 93 288 119
+As Aug-CC-pVQZ 5D 7F 93 287 119
+Se Aug-CC-pVQZ 5D 7F 93 285 119
+Br Aug-CC-pVQZ 5D 7F 93 279 119
+Kr Aug-CC-pVQZ 5D 7F 93 285 119
+Rb Aug-CC-pVQZ 5D 7F nan nan nan
+Sr Aug-CC-pVQZ 5D 7F nan nan nan
+ Y Aug-CC-pVQZ 5D 7F nan nan nan
+Zr Aug-CC-pVQZ 5D 7F nan nan nan
+Nb Aug-CC-pVQZ 5D 7F nan nan nan
+Mo Aug-CC-pVQZ 5D 7F nan nan nan
+Tc Aug-CC-pVQZ 5D 7F nan nan nan
+Ru Aug-CC-pVQZ 5D 7F nan nan nan
+Rh Aug-CC-pVQZ 5D 7F nan nan nan
+Pd Aug-CC-pVQZ 5D 7F nan nan nan
+Ag Aug-CC-pVQZ 5D 7F nan nan nan
+Cd Aug-CC-pVQZ 5D 7F nan nan nan
+In Aug-CC-pVQZ 5D 7F nan nan nan
+Sn Aug-CC-pVQZ 5D 7F nan nan nan
+Sb Aug-CC-pVQZ 5D 7F nan nan nan
+Te Aug-CC-pVQZ 5D 7F nan nan nan
+ I Aug-CC-pVQZ 5D 7F nan nan nan
+Xe Aug-CC-pVQZ 5D 7F nan nan nan
+Cs Aug-CC-pVQZ 5D 7F nan nan nan
+Ba Aug-CC-pVQZ 5D 7F nan nan nan
+La Aug-CC-pVQZ 5D 7F nan nan nan
+Ce Aug-CC-pVQZ 5D 7F nan nan nan
+Pr Aug-CC-pVQZ 5D 7F nan nan nan
+Nd Aug-CC-pVQZ 5D 7F nan nan nan
+Pm Aug-CC-pVQZ 5D 7F nan nan nan
+Sm Aug-CC-pVQZ 5D 7F nan nan nan
+Eu Aug-CC-pVQZ 5D 7F nan nan nan
+Gd Aug-CC-pVQZ 5D 7F nan nan nan
+Tb Aug-CC-pVQZ 5D 7F nan nan nan
+Dy Aug-CC-pVQZ 5D 7F nan nan nan
+Ho Aug-CC-pVQZ 5D 7F nan nan nan
+Er Aug-CC-pVQZ 5D 7F nan nan nan
+Tm Aug-CC-pVQZ 5D 7F nan nan nan
+Yb Aug-CC-pVQZ 5D 7F nan nan nan
+Lu Aug-CC-pVQZ 5D 7F nan nan nan
+Hf Aug-CC-pVQZ 5D 7F nan nan nan
+Ta Aug-CC-pVQZ 5D 7F nan nan nan
+ W Aug-CC-pVQZ 5D 7F nan nan nan
+Re Aug-CC-pVQZ 5D 7F nan nan nan
+Os Aug-CC-pVQZ 5D 7F nan nan nan
+Ir Aug-CC-pVQZ 5D 7F nan nan nan
+Pt Aug-CC-pVQZ 5D 7F nan nan nan
+Au Aug-CC-pVQZ 5D 7F nan nan nan
+Hg Aug-CC-pVQZ 5D 7F nan nan nan
+Tl Aug-CC-pVQZ 5D 7F nan nan nan
+Pb Aug-CC-pVQZ 5D 7F nan nan nan
+Bi Aug-CC-pVQZ 5D 7F nan nan nan
+Po Aug-CC-pVQZ 5D 7F nan nan nan
+At Aug-CC-pVQZ 5D 7F nan nan nan
+Rn Aug-CC-pVQZ 5D 7F nan nan nan
+Fr Aug-CC-pVQZ 5D 7F nan nan nan
+Ra Aug-CC-pVQZ 5D 7F nan nan nan
+Ac Aug-CC-pVQZ 5D 7F nan nan nan
+Th Aug-CC-pVQZ 5D 7F nan nan nan
+Pa Aug-CC-pVQZ 5D 7F nan nan nan
+ U Aug-CC-pVQZ 5D 7F nan nan nan
+Np Aug-CC-pVQZ 5D 7F nan nan nan
+Pu Aug-CC-pVQZ 5D 7F nan nan nan
+Am Aug-CC-pVQZ 5D 7F nan nan nan
+Cm Aug-CC-pVQZ 5D 7F nan nan nan
+Bk Aug-CC-pVQZ 5D 7F nan nan nan
+Cf Aug-CC-pVQZ 5D 7F nan nan nan
+Es Aug-CC-pVQZ 5D 7F nan nan nan
+Fm Aug-CC-pVQZ 5D 7F nan nan nan
+Md Aug-CC-pVQZ 5D 7F nan nan nan
+No Aug-CC-pVQZ 5D 7F nan nan nan
+Lr Aug-CC-pVQZ 5D 7F nan nan nan
+Rf Aug-CC-pVQZ 5D 7F nan nan nan
+Db Aug-CC-pVQZ 5D 7F nan nan nan
+Sg Aug-CC-pVQZ 5D 7F nan nan nan
+Bh Aug-CC-pVQZ 5D 7F nan nan nan
+Hs Aug-CC-pVQZ 5D 7F nan nan nan
+Mt Aug-CC-pVQZ 5D 7F nan nan nan
+Ds Aug-CC-pVQZ 5D 7F nan nan nan
+Rg Aug-CC-pVQZ 5D 7F nan nan nan
+Cn Aug-CC-pVQZ 5D 7F nan nan nan
+Nh Aug-CC-pVQZ 5D 7F nan nan nan
+Fl Aug-CC-pVQZ 5D 7F nan nan nan
+Mc Aug-CC-pVQZ 5D 7F nan nan nan
+Lv Aug-CC-pVQZ 5D 7F nan nan nan
+Ts Aug-CC-pVQZ 5D 7F nan nan nan
+Og Aug-CC-pVQZ 5D 7F nan nan nan
+ H Aug-CC-pVTZ 5D 7F 23 27 25
+He Aug-CC-pVTZ 5D 7F 23 28 25
+Li Aug-CC-pVTZ 5D 7F 46 74 55
+Be Aug-CC-pVTZ 5D 7F 46 74 55
+ B Aug-CC-pVTZ 5D 7F 46 72 55
+ C Aug-CC-pVTZ 5D 7F 46 72 55
+ N Aug-CC-pVTZ 5D 7F 46 72 55
+ O Aug-CC-pVTZ 5D 7F 46 72 55
+ F Aug-CC-pVTZ 5D 7F 46 72 55
+Ne Aug-CC-pVTZ 5D 7F 46 72 55
+Na Aug-CC-pVTZ 5D 7F 50 123 59
+Mg Aug-CC-pVTZ 5D 7F 50 117 59
+Al Aug-CC-pVTZ 5D 7F 50 115 59
+Si Aug-CC-pVTZ 5D 7F 50 115 59
+ P Aug-CC-pVTZ 5D 7F 50 115 59
+ S Aug-CC-pVTZ 5D 7F 50 114 59
+Cl Aug-CC-pVTZ 5D 7F 50 114 59
+Ar Aug-CC-pVTZ 5D 7F 50 113 59
+ K Aug-CC-pVTZ 5D 7F nan nan nan
+Ca Aug-CC-pVTZ 5D 7F nan nan nan
+Sc Aug-CC-pVTZ 5D 7F 93 386 119
+Ti Aug-CC-pVTZ 5D 7F 93 389 119
+ V Aug-CC-pVTZ 5D 7F 93 389 119
+Cr Aug-CC-pVTZ 5D 7F 93 382 119
+Mn Aug-CC-pVTZ 5D 7F 93 380 119
+Fe Aug-CC-pVTZ 5D 7F 93 386 119
+Co Aug-CC-pVTZ 5D 7F 93 385 119
+Ni Aug-CC-pVTZ 5D 7F 93 377 119
+Cu Aug-CC-pVTZ 5D 7F 93 387 119
+Zn Aug-CC-pVTZ 5D 7F 93 382 119
+Ga Aug-CC-pVTZ 5D 7F 59 216 69
+Ge Aug-CC-pVTZ 5D 7F 59 215 69
+As Aug-CC-pVTZ 5D 7F 59 216 69
+Se Aug-CC-pVTZ 5D 7F 59 216 69
+Br Aug-CC-pVTZ 5D 7F 59 217 69
+Kr Aug-CC-pVTZ 5D 7F 59 217 69
+Rb Aug-CC-pVTZ 5D 7F nan nan nan
+Sr Aug-CC-pVTZ 5D 7F nan nan nan
+ Y Aug-CC-pVTZ 5D 7F nan nan nan
+Zr Aug-CC-pVTZ 5D 7F nan nan nan
+Nb Aug-CC-pVTZ 5D 7F nan nan nan
+Mo Aug-CC-pVTZ 5D 7F nan nan nan
+Tc Aug-CC-pVTZ 5D 7F nan nan nan
+Ru Aug-CC-pVTZ 5D 7F nan nan nan
+Rh Aug-CC-pVTZ 5D 7F nan nan nan
+Pd Aug-CC-pVTZ 5D 7F nan nan nan
+Ag Aug-CC-pVTZ 5D 7F nan nan nan
+Cd Aug-CC-pVTZ 5D 7F nan nan nan
+In Aug-CC-pVTZ 5D 7F nan nan nan
+Sn Aug-CC-pVTZ 5D 7F nan nan nan
+Sb Aug-CC-pVTZ 5D 7F nan nan nan
+Te Aug-CC-pVTZ 5D 7F nan nan nan
+ I Aug-CC-pVTZ 5D 7F nan nan nan
+Xe Aug-CC-pVTZ 5D 7F nan nan nan
+Cs Aug-CC-pVTZ 5D 7F nan nan nan
+Ba Aug-CC-pVTZ 5D 7F nan nan nan
+La Aug-CC-pVTZ 5D 7F nan nan nan
+Ce Aug-CC-pVTZ 5D 7F nan nan nan
+Pr Aug-CC-pVTZ 5D 7F nan nan nan
+Nd Aug-CC-pVTZ 5D 7F nan nan nan
+Pm Aug-CC-pVTZ 5D 7F nan nan nan
+Sm Aug-CC-pVTZ 5D 7F nan nan nan
+Eu Aug-CC-pVTZ 5D 7F nan nan nan
+Gd Aug-CC-pVTZ 5D 7F nan nan nan
+Tb Aug-CC-pVTZ 5D 7F nan nan nan
+Dy Aug-CC-pVTZ 5D 7F nan nan nan
+Ho Aug-CC-pVTZ 5D 7F nan nan nan
+Er Aug-CC-pVTZ 5D 7F nan nan nan
+Tm Aug-CC-pVTZ 5D 7F nan nan nan
+Yb Aug-CC-pVTZ 5D 7F nan nan nan
+Lu Aug-CC-pVTZ 5D 7F nan nan nan
+Hf Aug-CC-pVTZ 5D 7F nan nan nan
+Ta Aug-CC-pVTZ 5D 7F nan nan nan
+ W Aug-CC-pVTZ 5D 7F nan nan nan
+Re Aug-CC-pVTZ 5D 7F nan nan nan
+Os Aug-CC-pVTZ 5D 7F nan nan nan
+Ir Aug-CC-pVTZ 5D 7F nan nan nan
+Pt Aug-CC-pVTZ 5D 7F nan nan nan
+Au Aug-CC-pVTZ 5D 7F nan nan nan
+Hg Aug-CC-pVTZ 5D 7F nan nan nan
+Tl Aug-CC-pVTZ 5D 7F nan nan nan
+Pb Aug-CC-pVTZ 5D 7F nan nan nan
+Bi Aug-CC-pVTZ 5D 7F nan nan nan
+Po Aug-CC-pVTZ 5D 7F nan nan nan
+At Aug-CC-pVTZ 5D 7F nan nan nan
+Rn Aug-CC-pVTZ 5D 7F nan nan nan
+Fr Aug-CC-pVTZ 5D 7F nan nan nan
+Ra Aug-CC-pVTZ 5D 7F nan nan nan
+Ac Aug-CC-pVTZ 5D 7F nan nan nan
+Th Aug-CC-pVTZ 5D 7F nan nan nan
+Pa Aug-CC-pVTZ 5D 7F nan nan nan
+ U Aug-CC-pVTZ 5D 7F nan nan nan
+Np Aug-CC-pVTZ 5D 7F nan nan nan
+Pu Aug-CC-pVTZ 5D 7F nan nan nan
+Am Aug-CC-pVTZ 5D 7F nan nan nan
+Cm Aug-CC-pVTZ 5D 7F nan nan nan
+Bk Aug-CC-pVTZ 5D 7F nan nan nan
+Cf Aug-CC-pVTZ 5D 7F nan nan nan
+Es Aug-CC-pVTZ 5D 7F nan nan nan
+Fm Aug-CC-pVTZ 5D 7F nan nan nan
+Md Aug-CC-pVTZ 5D 7F nan nan nan
+No Aug-CC-pVTZ 5D 7F nan nan nan
+Lr Aug-CC-pVTZ 5D 7F nan nan nan
+Rf Aug-CC-pVTZ 5D 7F nan nan nan
+Db Aug-CC-pVTZ 5D 7F nan nan nan
+Sg Aug-CC-pVTZ 5D 7F nan nan nan
+Bh Aug-CC-pVTZ 5D 7F nan nan nan
+Hs Aug-CC-pVTZ 5D 7F nan nan nan
+Mt Aug-CC-pVTZ 5D 7F nan nan nan
+Ds Aug-CC-pVTZ 5D 7F nan nan nan
+Rg Aug-CC-pVTZ 5D 7F nan nan nan
+Cn Aug-CC-pVTZ 5D 7F nan nan nan
+Nh Aug-CC-pVTZ 5D 7F nan nan nan
+Fl Aug-CC-pVTZ 5D 7F nan nan nan
+Mc Aug-CC-pVTZ 5D 7F nan nan nan
+Lv Aug-CC-pVTZ 5D 7F nan nan nan
+Ts Aug-CC-pVTZ 5D 7F nan nan nan
+Og Aug-CC-pVTZ 5D 7F nan nan nan
+ H CC-pV5Z 5D 7F 55 73 70
+He CC-pV5Z 5D 7F 55 73 70
+Li CC-pV5Z 5D 7F 91 144 126
+Be CC-pV5Z 5D 7F 91 149 126
+ B CC-pV5Z 5D 7F 91 149 126
+ C CC-pV5Z 5D 7F 91 149 126
+ N CC-pV5Z 5D 7F 91 149 126
+ O CC-pV5Z 5D 7F 91 149 126
+ F CC-pV5Z 5D 7F 91 149 126
+Ne CC-pV5Z 5D 7F 91 149 126
+Na CC-pV5Z 5D 7F 95 195 130
+Mg CC-pV5Z 5D 7F 95 204 130
+Al CC-pV5Z 5D 7F 95 192 130
+Si CC-pV5Z 5D 7F 95 192 130
+ P CC-pV5Z 5D 7F 95 192 130
+ S CC-pV5Z 5D 7F 95 192 130
+Cl CC-pV5Z 5D 7F 95 192 130
+Ar CC-pV5Z 5D 7F 95 192 130
+ K CC-pV5Z 5D 7F nan nan nan
+Ca CC-pV5Z 5D 7F 104 277 140
+Sc CC-pV5Z 5D 7F 153 694 224
+Ti CC-pV5Z 5D 7F 153 701 224
+ V CC-pV5Z 5D 7F 153 693 224
+Cr CC-pV5Z 5D 7F 153 688 224
+Mn CC-pV5Z 5D 7F 153 676 224
+Fe CC-pV5Z 5D 7F 153 675 224
+Co CC-pV5Z 5D 7F 153 695 224
+Ni CC-pV5Z 5D 7F 153 691 224
+Cu CC-pV5Z 5D 7F 153 707 224
+Zn CC-pV5Z 5D 7F 153 688 224
+Ga CC-pV5Z 5D 7F 104 316 140
+Ge CC-pV5Z 5D 7F 104 317 140
+As CC-pV5Z 5D 7F 104 308 140
+Se CC-pV5Z 5D 7F 104 312 140
+Br CC-pV5Z 5D 7F 104 315 140
+Kr CC-pV5Z 5D 7F 104 314 140
+Rb CC-pV5Z 5D 7F nan nan nan
+Sr CC-pV5Z 5D 7F nan nan nan
+ Y CC-pV5Z 5D 7F nan nan nan
+Zr CC-pV5Z 5D 7F nan nan nan
+Nb CC-pV5Z 5D 7F nan nan nan
+Mo CC-pV5Z 5D 7F nan nan nan
+Tc CC-pV5Z 5D 7F nan nan nan
+Ru CC-pV5Z 5D 7F nan nan nan
+Rh CC-pV5Z 5D 7F nan nan nan
+Pd CC-pV5Z 5D 7F nan nan nan
+Ag CC-pV5Z 5D 7F nan nan nan
+Cd CC-pV5Z 5D 7F nan nan nan
+In CC-pV5Z 5D 7F nan nan nan
+Sn CC-pV5Z 5D 7F nan nan nan
+Sb CC-pV5Z 5D 7F nan nan nan
+Te CC-pV5Z 5D 7F nan nan nan
+ I CC-pV5Z 5D 7F nan nan nan
+Xe CC-pV5Z 5D 7F nan nan nan
+Cs CC-pV5Z 5D 7F nan nan nan
+Ba CC-pV5Z 5D 7F nan nan nan
+La CC-pV5Z 5D 7F nan nan nan
+Ce CC-pV5Z 5D 7F nan nan nan
+Pr CC-pV5Z 5D 7F nan nan nan
+Nd CC-pV5Z 5D 7F nan nan nan
+Pm CC-pV5Z 5D 7F nan nan nan
+Sm CC-pV5Z 5D 7F nan nan nan
+Eu CC-pV5Z 5D 7F nan nan nan
+Gd CC-pV5Z 5D 7F nan nan nan
+Tb CC-pV5Z 5D 7F nan nan nan
+Dy CC-pV5Z 5D 7F nan nan nan
+Ho CC-pV5Z 5D 7F nan nan nan
+Er CC-pV5Z 5D 7F nan nan nan
+Tm CC-pV5Z 5D 7F nan nan nan
+Yb CC-pV5Z 5D 7F nan nan nan
+Lu CC-pV5Z 5D 7F nan nan nan
+Hf CC-pV5Z 5D 7F nan nan nan
+Ta CC-pV5Z 5D 7F nan nan nan
+ W CC-pV5Z 5D 7F nan nan nan
+Re CC-pV5Z 5D 7F nan nan nan
+Os CC-pV5Z 5D 7F nan nan nan
+Ir CC-pV5Z 5D 7F nan nan nan
+Pt CC-pV5Z 5D 7F nan nan nan
+Au CC-pV5Z 5D 7F nan nan nan
+Hg CC-pV5Z 5D 7F nan nan nan
+Tl CC-pV5Z 5D 7F nan nan nan
+Pb CC-pV5Z 5D 7F nan nan nan
+Bi CC-pV5Z 5D 7F nan nan nan
+Po CC-pV5Z 5D 7F nan nan nan
+At CC-pV5Z 5D 7F nan nan nan
+Rn CC-pV5Z 5D 7F nan nan nan
+Fr CC-pV5Z 5D 7F nan nan nan
+Ra CC-pV5Z 5D 7F nan nan nan
+Ac CC-pV5Z 5D 7F nan nan nan
+Th CC-pV5Z 5D 7F nan nan nan
+Pa CC-pV5Z 5D 7F nan nan nan
+ U CC-pV5Z 5D 7F nan nan nan
+Np CC-pV5Z 5D 7F nan nan nan
+Pu CC-pV5Z 5D 7F nan nan nan
+Am CC-pV5Z 5D 7F nan nan nan
+Cm CC-pV5Z 5D 7F nan nan nan
+Bk CC-pV5Z 5D 7F nan nan nan
+Cf CC-pV5Z 5D 7F nan nan nan
+Es CC-pV5Z 5D 7F nan nan nan
+Fm CC-pV5Z 5D 7F nan nan nan
+Md CC-pV5Z 5D 7F nan nan nan
+No CC-pV5Z 5D 7F nan nan nan
+Lr CC-pV5Z 5D 7F nan nan nan
+Rf CC-pV5Z 5D 7F nan nan nan
+Db CC-pV5Z 5D 7F nan nan nan
+Sg CC-pV5Z 5D 7F nan nan nan
+Bh CC-pV5Z 5D 7F nan nan nan
+Hs CC-pV5Z 5D 7F nan nan nan
+Mt CC-pV5Z 5D 7F nan nan nan
+Ds CC-pV5Z 5D 7F nan nan nan
+Rg CC-pV5Z 5D 7F nan nan nan
+Cn CC-pV5Z 5D 7F nan nan nan
+Nh CC-pV5Z 5D 7F nan nan nan
+Fl CC-pV5Z 5D 7F nan nan nan
+Mc CC-pV5Z 5D 7F nan nan nan
+Lv CC-pV5Z 5D 7F nan nan nan
+Ts CC-pV5Z 5D 7F nan nan nan
+Og CC-pV5Z 5D 7F nan nan nan
+ H CC-pV6Z 5D 7F 91 130 126
+He CC-pV6Z 5D 7F nan nan nan
+Li CC-pV6Z 5D 7F nan nan nan
+Be CC-pV6Z 5D 7F nan nan nan
+ B CC-pV6Z 5D 7F 140 237 210
+ C CC-pV6Z 5D 7F 140 236 210
+ N CC-pV6Z 5D 7F 140 237 210
+ O CC-pV6Z 5D 7F 140 237 210
+ F CC-pV6Z 5D 7F 140 237 210
+Ne CC-pV6Z 5D 7F 140 237 210
+Na CC-pV6Z 5D 7F nan nan nan
+Mg CC-pV6Z 5D 7F nan nan nan
+Al CC-pV6Z 5D 7F nan nan nan
+Si CC-pV6Z 5D 7F nan nan nan
+ P CC-pV6Z 5D 7F nan nan nan
+ S CC-pV6Z 5D 7F nan nan nan
+Cl CC-pV6Z 5D 7F nan nan nan
+Ar CC-pV6Z 5D 7F nan nan nan
+ K CC-pV6Z 5D 7F nan nan nan
+Ca CC-pV6Z 5D 7F nan nan nan
+Sc CC-pV6Z 5D 7F nan nan nan
+Ti CC-pV6Z 5D 7F nan nan nan
+ V CC-pV6Z 5D 7F nan nan nan
+Cr CC-pV6Z 5D 7F nan nan nan
+Mn CC-pV6Z 5D 7F nan nan nan
+Fe CC-pV6Z 5D 7F nan nan nan
+Co CC-pV6Z 5D 7F nan nan nan
+Ni CC-pV6Z 5D 7F nan nan nan
+Cu CC-pV6Z 5D 7F nan nan nan
+Zn CC-pV6Z 5D 7F nan nan nan
+Ga CC-pV6Z 5D 7F nan nan nan
+Ge CC-pV6Z 5D 7F nan nan nan
+As CC-pV6Z 5D 7F nan nan nan
+Se CC-pV6Z 5D 7F nan nan nan
+Br CC-pV6Z 5D 7F nan nan nan
+Kr CC-pV6Z 5D 7F nan nan nan
+Rb CC-pV6Z 5D 7F nan nan nan
+Sr CC-pV6Z 5D 7F nan nan nan
+ Y CC-pV6Z 5D 7F nan nan nan
+Zr CC-pV6Z 5D 7F nan nan nan
+Nb CC-pV6Z 5D 7F nan nan nan
+Mo CC-pV6Z 5D 7F nan nan nan
+Tc CC-pV6Z 5D 7F nan nan nan
+Ru CC-pV6Z 5D 7F nan nan nan
+Rh CC-pV6Z 5D 7F nan nan nan
+Pd CC-pV6Z 5D 7F nan nan nan
+Ag CC-pV6Z 5D 7F nan nan nan
+Cd CC-pV6Z 5D 7F nan nan nan
+In CC-pV6Z 5D 7F nan nan nan
+Sn CC-pV6Z 5D 7F nan nan nan
+Sb CC-pV6Z 5D 7F nan nan nan
+Te CC-pV6Z 5D 7F nan nan nan
+ I CC-pV6Z 5D 7F nan nan nan
+Xe CC-pV6Z 5D 7F nan nan nan
+Cs CC-pV6Z 5D 7F nan nan nan
+Ba CC-pV6Z 5D 7F nan nan nan
+La CC-pV6Z 5D 7F nan nan nan
+Ce CC-pV6Z 5D 7F nan nan nan
+Pr CC-pV6Z 5D 7F nan nan nan
+Nd CC-pV6Z 5D 7F nan nan nan
+Pm CC-pV6Z 5D 7F nan nan nan
+Sm CC-pV6Z 5D 7F nan nan nan
+Eu CC-pV6Z 5D 7F nan nan nan
+Gd CC-pV6Z 5D 7F nan nan nan
+Tb CC-pV6Z 5D 7F nan nan nan
+Dy CC-pV6Z 5D 7F nan nan nan
+Ho CC-pV6Z 5D 7F nan nan nan
+Er CC-pV6Z 5D 7F nan nan nan
+Tm CC-pV6Z 5D 7F nan nan nan
+Yb CC-pV6Z 5D 7F nan nan nan
+Lu CC-pV6Z 5D 7F nan nan nan
+Hf CC-pV6Z 5D 7F nan nan nan
+Ta CC-pV6Z 5D 7F nan nan nan
+ W CC-pV6Z 5D 7F nan nan nan
+Re CC-pV6Z 5D 7F nan nan nan
+Os CC-pV6Z 5D 7F nan nan nan
+Ir CC-pV6Z 5D 7F nan nan nan
+Pt CC-pV6Z 5D 7F nan nan nan
+Au CC-pV6Z 5D 7F nan nan nan
+Hg CC-pV6Z 5D 7F nan nan nan
+Tl CC-pV6Z 5D 7F nan nan nan
+Pb CC-pV6Z 5D 7F nan nan nan
+Bi CC-pV6Z 5D 7F nan nan nan
+Po CC-pV6Z 5D 7F nan nan nan
+At CC-pV6Z 5D 7F nan nan nan
+Rn CC-pV6Z 5D 7F nan nan nan
+Fr CC-pV6Z 5D 7F nan nan nan
+Ra CC-pV6Z 5D 7F nan nan nan
+Ac CC-pV6Z 5D 7F nan nan nan
+Th CC-pV6Z 5D 7F nan nan nan
+Pa CC-pV6Z 5D 7F nan nan nan
+ U CC-pV6Z 5D 7F nan nan nan
+Np CC-pV6Z 5D 7F nan nan nan
+Pu CC-pV6Z 5D 7F nan nan nan
+Am CC-pV6Z 5D 7F nan nan nan
+Cm CC-pV6Z 5D 7F nan nan nan
+Bk CC-pV6Z 5D 7F nan nan nan
+Cf CC-pV6Z 5D 7F nan nan nan
+Es CC-pV6Z 5D 7F nan nan nan
+Fm CC-pV6Z 5D 7F nan nan nan
+Md CC-pV6Z 5D 7F nan nan nan
+No CC-pV6Z 5D 7F nan nan nan
+Lr CC-pV6Z 5D 7F nan nan nan
+Rf CC-pV6Z 5D 7F nan nan nan
+Db CC-pV6Z 5D 7F nan nan nan
+Sg CC-pV6Z 5D 7F nan nan nan
+Bh CC-pV6Z 5D 7F nan nan nan
+Hs CC-pV6Z 5D 7F nan nan nan
+Mt CC-pV6Z 5D 7F nan nan nan
+Ds CC-pV6Z 5D 7F nan nan nan
+Rg CC-pV6Z 5D 7F nan nan nan
+Cn CC-pV6Z 5D 7F nan nan nan
+Nh CC-pV6Z 5D 7F nan nan nan
+Fl CC-pV6Z 5D 7F nan nan nan
+Mc CC-pV6Z 5D 7F nan nan nan
+Lv CC-pV6Z 5D 7F nan nan nan
+Ts CC-pV6Z 5D 7F nan nan nan
+Og CC-pV6Z 5D 7F nan nan nan
+ H CC-pVDZ 5D 7F  5  7  5
+He CC-pVDZ 5D 7F  5  7  5
+Li CC-pVDZ 5D 7F 14 32 15
+Be CC-pVDZ 5D 7F 14 33 15
+ B CC-pVDZ 5D 7F 14 33 15
+ C CC-pVDZ 5D 7F 14 33 15
+ N CC-pVDZ 5D 7F 14 33 15
+ O CC-pVDZ 5D 7F 14 33 15
+ F CC-pVDZ 5D 7F 14 33 15
+Ne CC-pVDZ 5D 7F 14 33 15
+Na CC-pVDZ 5D 7F 18 71 19
+Mg CC-pVDZ 5D 7F 18 71 19
+Al CC-pVDZ 5D 7F 18 70 19
+Si CC-pVDZ 5D 7F 18 71 19
+ P CC-pVDZ 5D 7F 18 71 19
+ S CC-pVDZ 5D 7F 18 71 19
+Cl CC-pVDZ 5D 7F 18 71 19
+Ar CC-pVDZ 5D 7F 18 71 19
+ K CC-pVDZ 5D 7F nan nan nan
+Ca CC-pVDZ 5D 7F 27 141 29
+Sc CC-pVDZ 5D 7F 43 294 49
+Ti CC-pVDZ 5D 7F 43 291 49
+ V CC-pVDZ 5D 7F 43 294 49
+Cr CC-pVDZ 5D 7F 43 292 49
+Mn CC-pVDZ 5D 7F 43 288 49
+Fe CC-pVDZ 5D 7F 43 294 49
+Co CC-pVDZ 5D 7F 43 294 49
+Ni CC-pVDZ 5D 7F 43 288 49
+Cu CC-pVDZ 5D 7F 43 294 49
+Zn CC-pVDZ 5D 7F 43 288 49
+Ga CC-pVDZ 5D 7F 27 147 29
+Ge CC-pVDZ 5D 7F 27 148 29
+As CC-pVDZ 5D 7F 27 146 29
+Se CC-pVDZ 5D 7F 27 147 29
+Br CC-pVDZ 5D 7F 27 147 29
+Kr CC-pVDZ 5D 7F 27 147 29
+Rb CC-pVDZ 5D 7F nan nan nan
+Sr CC-pVDZ 5D 7F nan nan nan
+ Y CC-pVDZ 5D 7F nan nan nan
+Zr CC-pVDZ 5D 7F nan nan nan
+Nb CC-pVDZ 5D 7F nan nan nan
+Mo CC-pVDZ 5D 7F nan nan nan
+Tc CC-pVDZ 5D 7F nan nan nan
+Ru CC-pVDZ 5D 7F nan nan nan
+Rh CC-pVDZ 5D 7F nan nan nan
+Pd CC-pVDZ 5D 7F nan nan nan
+Ag CC-pVDZ 5D 7F nan nan nan
+Cd CC-pVDZ 5D 7F nan nan nan
+In CC-pVDZ 5D 7F nan nan nan
+Sn CC-pVDZ 5D 7F nan nan nan
+Sb CC-pVDZ 5D 7F nan nan nan
+Te CC-pVDZ 5D 7F nan nan nan
+ I CC-pVDZ 5D 7F nan nan nan
+Xe CC-pVDZ 5D 7F nan nan nan
+Cs CC-pVDZ 5D 7F nan nan nan
+Ba CC-pVDZ 5D 7F nan nan nan
+La CC-pVDZ 5D 7F nan nan nan
+Ce CC-pVDZ 5D 7F nan nan nan
+Pr CC-pVDZ 5D 7F nan nan nan
+Nd CC-pVDZ 5D 7F nan nan nan
+Pm CC-pVDZ 5D 7F nan nan nan
+Sm CC-pVDZ 5D 7F nan nan nan
+Eu CC-pVDZ 5D 7F nan nan nan
+Gd CC-pVDZ 5D 7F nan nan nan
+Tb CC-pVDZ 5D 7F nan nan nan
+Dy CC-pVDZ 5D 7F nan nan nan
+Ho CC-pVDZ 5D 7F nan nan nan
+Er CC-pVDZ 5D 7F nan nan nan
+Tm CC-pVDZ 5D 7F nan nan nan
+Yb CC-pVDZ 5D 7F nan nan nan
+Lu CC-pVDZ 5D 7F nan nan nan
+Hf CC-pVDZ 5D 7F nan nan nan
+Ta CC-pVDZ 5D 7F nan nan nan
+ W CC-pVDZ 5D 7F nan nan nan
+Re CC-pVDZ 5D 7F nan nan nan
+Os CC-pVDZ 5D 7F nan nan nan
+Ir CC-pVDZ 5D 7F nan nan nan
+Pt CC-pVDZ 5D 7F nan nan nan
+Au CC-pVDZ 5D 7F nan nan nan
+Hg CC-pVDZ 5D 7F nan nan nan
+Tl CC-pVDZ 5D 7F nan nan nan
+Pb CC-pVDZ 5D 7F nan nan nan
+Bi CC-pVDZ 5D 7F nan nan nan
+Po CC-pVDZ 5D 7F nan nan nan
+At CC-pVDZ 5D 7F nan nan nan
+Rn CC-pVDZ 5D 7F nan nan nan
+Fr CC-pVDZ 5D 7F nan nan nan
+Ra CC-pVDZ 5D 7F nan nan nan
+Ac CC-pVDZ 5D 7F nan nan nan
+Th CC-pVDZ 5D 7F nan nan nan
+Pa CC-pVDZ 5D 7F nan nan nan
+ U CC-pVDZ 5D 7F nan nan nan
+Np CC-pVDZ 5D 7F nan nan nan
+Pu CC-pVDZ 5D 7F nan nan nan
+Am CC-pVDZ 5D 7F nan nan nan
+Cm CC-pVDZ 5D 7F nan nan nan
+Bk CC-pVDZ 5D 7F nan nan nan
+Cf CC-pVDZ 5D 7F nan nan nan
+Es CC-pVDZ 5D 7F nan nan nan
+Fm CC-pVDZ 5D 7F nan nan nan
+Md CC-pVDZ 5D 7F nan nan nan
+No CC-pVDZ 5D 7F nan nan nan
+Lr CC-pVDZ 5D 7F nan nan nan
+Rf CC-pVDZ 5D 7F nan nan nan
+Db CC-pVDZ 5D 7F nan nan nan
+Sg CC-pVDZ 5D 7F nan nan nan
+Bh CC-pVDZ 5D 7F nan nan nan
+Hs CC-pVDZ 5D 7F nan nan nan
+Mt CC-pVDZ 5D 7F nan nan nan
+Ds CC-pVDZ 5D 7F nan nan nan
+Rg CC-pVDZ 5D 7F nan nan nan
+Cn CC-pVDZ 5D 7F nan nan nan
+Nh CC-pVDZ 5D 7F nan nan nan
+Fl CC-pVDZ 5D 7F nan nan nan
+Mc CC-pVDZ 5D 7F nan nan nan
+Lv CC-pVDZ 5D 7F nan nan nan
+Ts CC-pVDZ 5D 7F nan nan nan
+Og CC-pVDZ 5D 7F nan nan nan
+ H CC-pVQZ 5D 7F 30 37 35
+He CC-pVQZ 5D 7F 30 38 35
+Li CC-pVQZ 5D 7F 55 88 70
+Be CC-pVQZ 5D 7F 55 88 70
+ B CC-pVQZ 5D 7F 55 88 70
+ C CC-pVQZ 5D 7F 55 89 70
+ N CC-pVQZ 5D 7F 55 89 70
+ O CC-pVQZ 5D 7F 55 89 70
+ F CC-pVQZ 5D 7F 55 89 70
+Ne CC-pVQZ 5D 7F 55 89 70
+Na CC-pVQZ 5D 7F 59 142 74
+Mg CC-pVQZ 5D 7F 59 136 74
+Al CC-pVQZ 5D 7F 59 130 74
+Si CC-pVQZ 5D 7F 59 133 74
+ P CC-pVQZ 5D 7F 59 134 74
+ S CC-pVQZ 5D 7F 59 134 74
+Cl CC-pVQZ 5D 7F 59 131 74
+Ar CC-pVQZ 5D 7F 59 131 74
+ K CC-pVQZ 5D 7F nan nan nan
+Ca CC-pVQZ 5D 7F 68 226 84
+Sc CC-pVQZ 5D 7F 104 522 140
+Ti CC-pVQZ 5D 7F 104 511 140
+ V CC-pVQZ 5D 7F 104 511 140
+Cr CC-pVQZ 5D 7F 104 515 140
+Mn CC-pVQZ 5D 7F 104 506 140
+Fe CC-pVQZ 5D 7F 104 519 140
+Co CC-pVQZ 5D 7F 104 524 140
+Ni CC-pVQZ 5D 7F 104 506 140
+Cu CC-pVQZ 5D 7F 104 499 140
+Zn CC-pVQZ 5D 7F 104 514 140
+Ga CC-pVQZ 5D 7F 68 253 84
+Ge CC-pVQZ 5D 7F 68 253 84
+As CC-pVQZ 5D 7F 68 252 84
+Se CC-pVQZ 5D 7F 68 250 84
+Br CC-pVQZ 5D 7F 68 244 84
+Kr CC-pVQZ 5D 7F 68 250 84
+Rb CC-pVQZ 5D 7F nan nan nan
+Sr CC-pVQZ 5D 7F nan nan nan
+ Y CC-pVQZ 5D 7F nan nan nan
+Zr CC-pVQZ 5D 7F nan nan nan
+Nb CC-pVQZ 5D 7F nan nan nan
+Mo CC-pVQZ 5D 7F nan nan nan
+Tc CC-pVQZ 5D 7F nan nan nan
+Ru CC-pVQZ 5D 7F nan nan nan
+Rh CC-pVQZ 5D 7F nan nan nan
+Pd CC-pVQZ 5D 7F nan nan nan
+Ag CC-pVQZ 5D 7F nan nan nan
+Cd CC-pVQZ 5D 7F nan nan nan
+In CC-pVQZ 5D 7F nan nan nan
+Sn CC-pVQZ 5D 7F nan nan nan
+Sb CC-pVQZ 5D 7F nan nan nan
+Te CC-pVQZ 5D 7F nan nan nan
+ I CC-pVQZ 5D 7F nan nan nan
+Xe CC-pVQZ 5D 7F nan nan nan
+Cs CC-pVQZ 5D 7F nan nan nan
+Ba CC-pVQZ 5D 7F nan nan nan
+La CC-pVQZ 5D 7F nan nan nan
+Ce CC-pVQZ 5D 7F nan nan nan
+Pr CC-pVQZ 5D 7F nan nan nan
+Nd CC-pVQZ 5D 7F nan nan nan
+Pm CC-pVQZ 5D 7F nan nan nan
+Sm CC-pVQZ 5D 7F nan nan nan
+Eu CC-pVQZ 5D 7F nan nan nan
+Gd CC-pVQZ 5D 7F nan nan nan
+Tb CC-pVQZ 5D 7F nan nan nan
+Dy CC-pVQZ 5D 7F nan nan nan
+Ho CC-pVQZ 5D 7F nan nan nan
+Er CC-pVQZ 5D 7F nan nan nan
+Tm CC-pVQZ 5D 7F nan nan nan
+Yb CC-pVQZ 5D 7F nan nan nan
+Lu CC-pVQZ 5D 7F nan nan nan
+Hf CC-pVQZ 5D 7F nan nan nan
+Ta CC-pVQZ 5D 7F nan nan nan
+ W CC-pVQZ 5D 7F nan nan nan
+Re CC-pVQZ 5D 7F nan nan nan
+Os CC-pVQZ 5D 7F nan nan nan
+Ir CC-pVQZ 5D 7F nan nan nan
+Pt CC-pVQZ 5D 7F nan nan nan
+Au CC-pVQZ 5D 7F nan nan nan
+Hg CC-pVQZ 5D 7F nan nan nan
+Tl CC-pVQZ 5D 7F nan nan nan
+Pb CC-pVQZ 5D 7F nan nan nan
+Bi CC-pVQZ 5D 7F nan nan nan
+Po CC-pVQZ 5D 7F nan nan nan
+At CC-pVQZ 5D 7F nan nan nan
+Rn CC-pVQZ 5D 7F nan nan nan
+Fr CC-pVQZ 5D 7F nan nan nan
+Ra CC-pVQZ 5D 7F nan nan nan
+Ac CC-pVQZ 5D 7F nan nan nan
+Th CC-pVQZ 5D 7F nan nan nan
+Pa CC-pVQZ 5D 7F nan nan nan
+ U CC-pVQZ 5D 7F nan nan nan
+Np CC-pVQZ 5D 7F nan nan nan
+Pu CC-pVQZ 5D 7F nan nan nan
+Am CC-pVQZ 5D 7F nan nan nan
+Cm CC-pVQZ 5D 7F nan nan nan
+Bk CC-pVQZ 5D 7F nan nan nan
+Cf CC-pVQZ 5D 7F nan nan nan
+Es CC-pVQZ 5D 7F nan nan nan
+Fm CC-pVQZ 5D 7F nan nan nan
+Md CC-pVQZ 5D 7F nan nan nan
+No CC-pVQZ 5D 7F nan nan nan
+Lr CC-pVQZ 5D 7F nan nan nan
+Rf CC-pVQZ 5D 7F nan nan nan
+Db CC-pVQZ 5D 7F nan nan nan
+Sg CC-pVQZ 5D 7F nan nan nan
+Bh CC-pVQZ 5D 7F nan nan nan
+Hs CC-pVQZ 5D 7F nan nan nan
+Mt CC-pVQZ 5D 7F nan nan nan
+Ds CC-pVQZ 5D 7F nan nan nan
+Rg CC-pVQZ 5D 7F nan nan nan
+Cn CC-pVQZ 5D 7F nan nan nan
+Nh CC-pVQZ 5D 7F nan nan nan
+Fl CC-pVQZ 5D 7F nan nan nan
+Mc CC-pVQZ 5D 7F nan nan nan
+Lv CC-pVQZ 5D 7F nan nan nan
+Ts CC-pVQZ 5D 7F nan nan nan
+Og CC-pVQZ 5D 7F nan nan nan
+ H CC-pVTZ 5D 7F 14 17 15
+He CC-pVTZ 5D 7F 14 18 15
+Li CC-pVTZ 5D 7F 30 54 35
+Be CC-pVTZ 5D 7F 30 54 35
+ B CC-pVTZ 5D 7F 30 52 35
+ C CC-pVTZ 5D 7F 30 52 35
+ N CC-pVTZ 5D 7F 30 52 35
+ O CC-pVTZ 5D 7F 30 52 35
+ F CC-pVTZ 5D 7F 30 52 35
+Ne CC-pVTZ 5D 7F 30 52 35
+Na CC-pVTZ 5D 7F 34 103 39
+Mg CC-pVTZ 5D 7F 34 97 39
+Al CC-pVTZ 5D 7F 34 95 39
+Si CC-pVTZ 5D 7F 34 95 39
+ P CC-pVTZ 5D 7F 34 95 39
+ S CC-pVTZ 5D 7F 34 94 39
+Cl CC-pVTZ 5D 7F 34 94 39
+Ar CC-pVTZ 5D 7F 34 93 39
+ K CC-pVTZ 5D 7F nan nan nan
+Ca CC-pVTZ 5D 7F 43 185 49
+Sc CC-pVTZ 5D 7F 68 351 84
+Ti CC-pVTZ 5D 7F 68 354 84
+ V CC-pVTZ 5D 7F 68 354 84
+Cr CC-pVTZ 5D 7F 68 347 84
+Mn CC-pVTZ 5D 7F 68 345 84
+Fe CC-pVTZ 5D 7F 68 351 84
+Co CC-pVTZ 5D 7F 68 350 84
+Ni CC-pVTZ 5D 7F 68 342 84
+Cu CC-pVTZ 5D 7F 68 352 84
+Zn CC-pVTZ 5D 7F 68 347 84
+Ga CC-pVTZ 5D 7F 43 196 49
+Ge CC-pVTZ 5D 7F 43 195 49
+As CC-pVTZ 5D 7F 43 196 49
+Se CC-pVTZ 5D 7F 43 196 49
+Br CC-pVTZ 5D 7F 43 197 49
+Kr CC-pVTZ 5D 7F 43 197 49
+Rb CC-pVTZ 5D 7F nan nan nan
+Sr CC-pVTZ 5D 7F nan nan nan
+ Y CC-pVTZ 5D 7F nan nan nan
+Zr CC-pVTZ 5D 7F nan nan nan
+Nb CC-pVTZ 5D 7F nan nan nan
+Mo CC-pVTZ 5D 7F nan nan nan
+Tc CC-pVTZ 5D 7F nan nan nan
+Ru CC-pVTZ 5D 7F nan nan nan
+Rh CC-pVTZ 5D 7F nan nan nan
+Pd CC-pVTZ 5D 7F nan nan nan
+Ag CC-pVTZ 5D 7F nan nan nan
+Cd CC-pVTZ 5D 7F nan nan nan
+In CC-pVTZ 5D 7F nan nan nan
+Sn CC-pVTZ 5D 7F nan nan nan
+Sb CC-pVTZ 5D 7F nan nan nan
+Te CC-pVTZ 5D 7F nan nan nan
+ I CC-pVTZ 5D 7F nan nan nan
+Xe CC-pVTZ 5D 7F nan nan nan
+Cs CC-pVTZ 5D 7F nan nan nan
+Ba CC-pVTZ 5D 7F nan nan nan
+La CC-pVTZ 5D 7F nan nan nan
+Ce CC-pVTZ 5D 7F nan nan nan
+Pr CC-pVTZ 5D 7F nan nan nan
+Nd CC-pVTZ 5D 7F nan nan nan
+Pm CC-pVTZ 5D 7F nan nan nan
+Sm CC-pVTZ 5D 7F nan nan nan
+Eu CC-pVTZ 5D 7F nan nan nan
+Gd CC-pVTZ 5D 7F nan nan nan
+Tb CC-pVTZ 5D 7F nan nan nan
+Dy CC-pVTZ 5D 7F nan nan nan
+Ho CC-pVTZ 5D 7F nan nan nan
+Er CC-pVTZ 5D 7F nan nan nan
+Tm CC-pVTZ 5D 7F nan nan nan
+Yb CC-pVTZ 5D 7F nan nan nan
+Lu CC-pVTZ 5D 7F nan nan nan
+Hf CC-pVTZ 5D 7F nan nan nan
+Ta CC-pVTZ 5D 7F nan nan nan
+ W CC-pVTZ 5D 7F nan nan nan
+Re CC-pVTZ 5D 7F nan nan nan
+Os CC-pVTZ 5D 7F nan nan nan
+Ir CC-pVTZ 5D 7F nan nan nan
+Pt CC-pVTZ 5D 7F nan nan nan
+Au CC-pVTZ 5D 7F nan nan nan
+Hg CC-pVTZ 5D 7F nan nan nan
+Tl CC-pVTZ 5D 7F nan nan nan
+Pb CC-pVTZ 5D 7F nan nan nan
+Bi CC-pVTZ 5D 7F nan nan nan
+Po CC-pVTZ 5D 7F nan nan nan
+At CC-pVTZ 5D 7F nan nan nan
+Rn CC-pVTZ 5D 7F nan nan nan
+Fr CC-pVTZ 5D 7F nan nan nan
+Ra CC-pVTZ 5D 7F nan nan nan
+Ac CC-pVTZ 5D 7F nan nan nan
+Th CC-pVTZ 5D 7F nan nan nan
+Pa CC-pVTZ 5D 7F nan nan nan
+ U CC-pVTZ 5D 7F nan nan nan
+Np CC-pVTZ 5D 7F nan nan nan
+Pu CC-pVTZ 5D 7F nan nan nan
+Am CC-pVTZ 5D 7F nan nan nan
+Cm CC-pVTZ 5D 7F nan nan nan
+Bk CC-pVTZ 5D 7F nan nan nan
+Cf CC-pVTZ 5D 7F nan nan nan
+Es CC-pVTZ 5D 7F nan nan nan
+Fm CC-pVTZ 5D 7F nan nan nan
+Md CC-pVTZ 5D 7F nan nan nan
+No CC-pVTZ 5D 7F nan nan nan
+Lr CC-pVTZ 5D 7F nan nan nan
+Rf CC-pVTZ 5D 7F nan nan nan
+Db CC-pVTZ 5D 7F nan nan nan
+Sg CC-pVTZ 5D 7F nan nan nan
+Bh CC-pVTZ 5D 7F nan nan nan
+Hs CC-pVTZ 5D 7F nan nan nan
+Mt CC-pVTZ 5D 7F nan nan nan
+Ds CC-pVTZ 5D 7F nan nan nan
+Rg CC-pVTZ 5D 7F nan nan nan
+Cn CC-pVTZ 5D 7F nan nan nan
+Nh CC-pVTZ 5D 7F nan nan nan
+Fl CC-pVTZ 5D 7F nan nan nan
+Mc CC-pVTZ 5D 7F nan nan nan
+Lv CC-pVTZ 5D 7F nan nan nan
+Ts CC-pVTZ 5D 7F nan nan nan
+Og CC-pVTZ 5D 7F nan nan nan
+ H 3-21G 6D 7F  2  3  2
+He 3-21G 6D 7F  2  3  2
+Li 3-21G 6D 7F  9 15  9
+Be 3-21G 6D 7F  9 15  9
+ B 3-21G 6D 7F  9 15  9
+ C 3-21G 6D 7F  9 15  9
+ N 3-21G 6D 7F  9 15  9
+ O 3-21G 6D 7F  9 15  9
+ F 3-21G 6D 7F  9 15  9
+Ne 3-21G 6D 7F  9 15  9
+Na 3-21G 6D 7F 13 27 13
+Mg 3-21G 6D 7F 13 27 13
+Al 3-21G 6D 7F 13 27 13
+Si 3-21G 6D 7F 13 27 13
+ P 3-21G 6D 7F 13 27 13
+ S 3-21G 6D 7F 13 27 13
+Cl 3-21G 6D 7F 13 27 13
+Ar 3-21G 6D 7F 13 27 13
+ K 3-21G 6D 7F 17 39 17
+Ca 3-21G 6D 7F 17 39 17
+Sc 3-21G 6D 7F 29 57 29
+Ti 3-21G 6D 7F 29 57 29
+ V 3-21G 6D 7F 29 57 29
+Cr 3-21G 6D 7F 29 57 29
+Mn 3-21G 6D 7F 29 57 29
+Fe 3-21G 6D 7F 29 57 29
+Co 3-21G 6D 7F 29 57 29
+Ni 3-21G 6D 7F 29 57 29
+Cu 3-21G 6D 7F 29 57 29
+Zn 3-21G 6D 7F 29 57 29
+Ga 3-21G 6D 7F 23 57 23
+Ge 3-21G 6D 7F 23 57 23
+As 3-21G 6D 7F 23 57 23
+Se 3-21G 6D 7F 23 57 23
+Br 3-21G 6D 7F 23 57 23
+Kr 3-21G 6D 7F 23 57 23
+Rb 3-21G 6D 7F 27 69 27
+Sr 3-21G 6D 7F 27 69 27
+ Y 3-21G 6D 7F 39 87 39
+Zr 3-21G 6D 7F 39 87 39
+Nb 3-21G 6D 7F 39 87 39
+Mo 3-21G 6D 7F 39 87 39
+Tc 3-21G 6D 7F 39 87 39
+Ru 3-21G 6D 7F 39 87 39
+Rh 3-21G 6D 7F 39 87 39
+Pd 3-21G 6D 7F 39 87 39
+Ag 3-21G 6D 7F 39 87 39
+Cd 3-21G 6D 7F 39 87 39
+In 3-21G 6D 7F 33 87 33
+Sn 3-21G 6D 7F 33 87 33
+Sb 3-21G 6D 7F 33 87 33
+Te 3-21G 6D 7F 33 87 33
+ I 3-21G 6D 7F 33 87 33
+Xe 3-21G 6D 7F 33 87 33
+Cs 3-21G 6D 7F nan nan nan
+Ba 3-21G 6D 7F nan nan nan
+La 3-21G 6D 7F nan nan nan
+Ce 3-21G 6D 7F nan nan nan
+Pr 3-21G 6D 7F nan nan nan
+Nd 3-21G 6D 7F nan nan nan
+Pm 3-21G 6D 7F nan nan nan
+Sm 3-21G 6D 7F nan nan nan
+Eu 3-21G 6D 7F nan nan nan
+Gd 3-21G 6D 7F nan nan nan
+Tb 3-21G 6D 7F nan nan nan
+Dy 3-21G 6D 7F nan nan nan
+Ho 3-21G 6D 7F nan nan nan
+Er 3-21G 6D 7F nan nan nan
+Tm 3-21G 6D 7F nan nan nan
+Yb 3-21G 6D 7F nan nan nan
+Lu 3-21G 6D 7F nan nan nan
+Hf 3-21G 6D 7F nan nan nan
+Ta 3-21G 6D 7F nan nan nan
+ W 3-21G 6D 7F nan nan nan
+Re 3-21G 6D 7F nan nan nan
+Os 3-21G 6D 7F nan nan nan
+Ir 3-21G 6D 7F nan nan nan
+Pt 3-21G 6D 7F nan nan nan
+Au 3-21G 6D 7F nan nan nan
+Hg 3-21G 6D 7F nan nan nan
+Tl 3-21G 6D 7F nan nan nan
+Pb 3-21G 6D 7F nan nan nan
+Bi 3-21G 6D 7F nan nan nan
+Po 3-21G 6D 7F nan nan nan
+At 3-21G 6D 7F nan nan nan
+Rn 3-21G 6D 7F nan nan nan
+Fr 3-21G 6D 7F nan nan nan
+Ra 3-21G 6D 7F nan nan nan
+Ac 3-21G 6D 7F nan nan nan
+Th 3-21G 6D 7F nan nan nan
+Pa 3-21G 6D 7F nan nan nan
+ U 3-21G 6D 7F nan nan nan
+Np 3-21G 6D 7F nan nan nan
+Pu 3-21G 6D 7F nan nan nan
+Am 3-21G 6D 7F nan nan nan
+Cm 3-21G 6D 7F nan nan nan
+Bk 3-21G 6D 7F nan nan nan
+Cf 3-21G 6D 7F nan nan nan
+Es 3-21G 6D 7F nan nan nan
+Fm 3-21G 6D 7F nan nan nan
+Md 3-21G 6D 7F nan nan nan
+No 3-21G 6D 7F nan nan nan
+Lr 3-21G 6D 7F nan nan nan
+Rf 3-21G 6D 7F nan nan nan
+Db 3-21G 6D 7F nan nan nan
+Sg 3-21G 6D 7F nan nan nan
+Bh 3-21G 6D 7F nan nan nan
+Hs 3-21G 6D 7F nan nan nan
+Mt 3-21G 6D 7F nan nan nan
+Ds 3-21G 6D 7F nan nan nan
+Rg 3-21G 6D 7F nan nan nan
+Cn 3-21G 6D 7F nan nan nan
+Nh 3-21G 6D 7F nan nan nan
+Fl 3-21G 6D 7F nan nan nan
+Mc 3-21G 6D 7F nan nan nan
+Lv 3-21G 6D 7F nan nan nan
+Ts 3-21G 6D 7F nan nan nan
+Og 3-21G 6D 7F nan nan nan
+ H 6-31++G 6D 7F  3  5  3
+He 6-31++G 6D 7F  3  5  3
+Li 6-31++G 6D 7F 13 26 13
+Be 6-31++G 6D 7F 13 26 13
+ B 6-31++G 6D 7F 13 26 13
+ C 6-31++G 6D 7F 13 26 13
+ N 6-31++G 6D 7F 13 26 13
+ O 6-31++G 6D 7F 13 26 13
+ F 6-31++G 6D 7F 13 26 13
+Ne 6-31++G 6D 7F 13 26 13
+Na 6-31++G 6D 7F 17 50 17
+Mg 6-31++G 6D 7F 17 50 17
+Al 6-31++G 6D 7F 17 50 17
+Si 6-31++G 6D 7F 17 50 17
+ P 6-31++G 6D 7F 17 50 17
+ S 6-31++G 6D 7F 17 50 17
+Cl 6-31++G 6D 7F 17 50 17
+Ar 6-31++G 6D 7F 17 50 17
+ K 6-31++G 6D 7F 21 74 21
+Ca 6-31++G 6D 7F 21 74 21
+Sc 6-31++G 6D 7F 42 107 42
+Ti 6-31++G 6D 7F 42 107 42
+ V 6-31++G 6D 7F 42 107 42
+Cr 6-31++G 6D 7F 42 107 42
+Mn 6-31++G 6D 7F 42 107 42
+Fe 6-31++G 6D 7F 42 107 42
+Co 6-31++G 6D 7F 42 107 42
+Ni 6-31++G 6D 7F 42 107 42
+Cu 6-31++G 6D 7F 42 107 42
+Zn 6-31++G 6D 7F 42 107 42
+Ga 6-31++G 6D 7F 28 81 28
+Ge 6-31++G 6D 7F 28 81 28
+As 6-31++G 6D 7F 28 81 28
+Se 6-31++G 6D 7F 28 81 28
+Br 6-31++G 6D 7F 28 81 28
+Kr 6-31++G 6D 7F 28 81 28
+Rb 6-31++G 6D 7F nan nan nan
+Sr 6-31++G 6D 7F nan nan nan
+ Y 6-31++G 6D 7F nan nan nan
+Zr 6-31++G 6D 7F nan nan nan
+Nb 6-31++G 6D 7F nan nan nan
+Mo 6-31++G 6D 7F nan nan nan
+Tc 6-31++G 6D 7F nan nan nan
+Ru 6-31++G 6D 7F nan nan nan
+Rh 6-31++G 6D 7F nan nan nan
+Pd 6-31++G 6D 7F nan nan nan
+Ag 6-31++G 6D 7F nan nan nan
+Cd 6-31++G 6D 7F nan nan nan
+In 6-31++G 6D 7F nan nan nan
+Sn 6-31++G 6D 7F nan nan nan
+Sb 6-31++G 6D 7F nan nan nan
+Te 6-31++G 6D 7F nan nan nan
+ I 6-31++G 6D 7F nan nan nan
+Xe 6-31++G 6D 7F nan nan nan
+Cs 6-31++G 6D 7F nan nan nan
+Ba 6-31++G 6D 7F nan nan nan
+La 6-31++G 6D 7F nan nan nan
+Ce 6-31++G 6D 7F nan nan nan
+Pr 6-31++G 6D 7F nan nan nan
+Nd 6-31++G 6D 7F nan nan nan
+Pm 6-31++G 6D 7F nan nan nan
+Sm 6-31++G 6D 7F nan nan nan
+Eu 6-31++G 6D 7F nan nan nan
+Gd 6-31++G 6D 7F nan nan nan
+Tb 6-31++G 6D 7F nan nan nan
+Dy 6-31++G 6D 7F nan nan nan
+Ho 6-31++G 6D 7F nan nan nan
+Er 6-31++G 6D 7F nan nan nan
+Tm 6-31++G 6D 7F nan nan nan
+Yb 6-31++G 6D 7F nan nan nan
+Lu 6-31++G 6D 7F nan nan nan
+Hf 6-31++G 6D 7F nan nan nan
+Ta 6-31++G 6D 7F nan nan nan
+ W 6-31++G 6D 7F nan nan nan
+Re 6-31++G 6D 7F nan nan nan
+Os 6-31++G 6D 7F nan nan nan
+Ir 6-31++G 6D 7F nan nan nan
+Pt 6-31++G 6D 7F nan nan nan
+Au 6-31++G 6D 7F nan nan nan
+Hg 6-31++G 6D 7F nan nan nan
+Tl 6-31++G 6D 7F nan nan nan
+Pb 6-31++G 6D 7F nan nan nan
+Bi 6-31++G 6D 7F nan nan nan
+Po 6-31++G 6D 7F nan nan nan
+At 6-31++G 6D 7F nan nan nan
+Rn 6-31++G 6D 7F nan nan nan
+Fr 6-31++G 6D 7F nan nan nan
+Ra 6-31++G 6D 7F nan nan nan
+Ac 6-31++G 6D 7F nan nan nan
+Th 6-31++G 6D 7F nan nan nan
+Pa 6-31++G 6D 7F nan nan nan
+ U 6-31++G 6D 7F nan nan nan
+Np 6-31++G 6D 7F nan nan nan
+Pu 6-31++G 6D 7F nan nan nan
+Am 6-31++G 6D 7F nan nan nan
+Cm 6-31++G 6D 7F nan nan nan
+Bk 6-31++G 6D 7F nan nan nan
+Cf 6-31++G 6D 7F nan nan nan
+Es 6-31++G 6D 7F nan nan nan
+Fm 6-31++G 6D 7F nan nan nan
+Md 6-31++G 6D 7F nan nan nan
+No 6-31++G 6D 7F nan nan nan
+Lr 6-31++G 6D 7F nan nan nan
+Rf 6-31++G 6D 7F nan nan nan
+Db 6-31++G 6D 7F nan nan nan
+Sg 6-31++G 6D 7F nan nan nan
+Bh 6-31++G 6D 7F nan nan nan
+Hs 6-31++G 6D 7F nan nan nan
+Mt 6-31++G 6D 7F nan nan nan
+Ds 6-31++G 6D 7F nan nan nan
+Rg 6-31++G 6D 7F nan nan nan
+Cn 6-31++G 6D 7F nan nan nan
+Nh 6-31++G 6D 7F nan nan nan
+Fl 6-31++G 6D 7F nan nan nan
+Mc 6-31++G 6D 7F nan nan nan
+Lv 6-31++G 6D 7F nan nan nan
+Ts 6-31++G 6D 7F nan nan nan
+Og 6-31++G 6D 7F nan nan nan
+ H 6-31++G(d) 6D 7F  3  5  3
+He 6-31++G(d) 6D 7F  3  5  3
+Li 6-31++G(d) 6D 7F 19 32 19
+Be 6-31++G(d) 6D 7F 19 32 19
+ B 6-31++G(d) 6D 7F 19 32 19
+ C 6-31++G(d) 6D 7F 19 32 19
+ N 6-31++G(d) 6D 7F 19 32 19
+ O 6-31++G(d) 6D 7F 19 32 19
+ F 6-31++G(d) 6D 7F 19 32 19
+Ne 6-31++G(d) 6D 7F 19 32 19
+Na 6-31++G(d) 6D 7F 23 56 23
+Mg 6-31++G(d) 6D 7F 23 56 23
+Al 6-31++G(d) 6D 7F 23 56 23
+Si 6-31++G(d) 6D 7F 23 56 23
+ P 6-31++G(d) 6D 7F 23 56 23
+ S 6-31++G(d) 6D 7F 23 56 23
+Cl 6-31++G(d) 6D 7F 23 56 23
+Ar 6-31++G(d) 6D 7F 23 56 23
+ K 6-31++G(d) 6D 7F 27 80 27
+Ca 6-31++G(d) 6D 7F 27 80 27
+Sc 6-31++G(d) 6D 7F 49 117 52
+Ti 6-31++G(d) 6D 7F 49 117 52
+ V 6-31++G(d) 6D 7F 49 117 52
+Cr 6-31++G(d) 6D 7F 49 117 52
+Mn 6-31++G(d) 6D 7F 49 117 52
+Fe 6-31++G(d) 6D 7F 49 117 52
+Co 6-31++G(d) 6D 7F 49 117 52
+Ni 6-31++G(d) 6D 7F 49 117 52
+Cu 6-31++G(d) 6D 7F 49 117 52
+Zn 6-31++G(d) 6D 7F 49 117 52
+Ga 6-31++G(d) 6D 7F 34 87 34
+Ge 6-31++G(d) 6D 7F 34 87 34
+As 6-31++G(d) 6D 7F 34 87 34
+Se 6-31++G(d) 6D 7F 34 87 34
+Br 6-31++G(d) 6D 7F 34 87 34
+Kr 6-31++G(d) 6D 7F 34 87 34
+Rb 6-31++G(d) 6D 7F nan nan nan
+Sr 6-31++G(d) 6D 7F nan nan nan
+ Y 6-31++G(d) 6D 7F nan nan nan
+Zr 6-31++G(d) 6D 7F nan nan nan
+Nb 6-31++G(d) 6D 7F nan nan nan
+Mo 6-31++G(d) 6D 7F nan nan nan
+Tc 6-31++G(d) 6D 7F nan nan nan
+Ru 6-31++G(d) 6D 7F nan nan nan
+Rh 6-31++G(d) 6D 7F nan nan nan
+Pd 6-31++G(d) 6D 7F nan nan nan
+Ag 6-31++G(d) 6D 7F nan nan nan
+Cd 6-31++G(d) 6D 7F nan nan nan
+In 6-31++G(d) 6D 7F nan nan nan
+Sn 6-31++G(d) 6D 7F nan nan nan
+Sb 6-31++G(d) 6D 7F nan nan nan
+Te 6-31++G(d) 6D 7F nan nan nan
+ I 6-31++G(d) 6D 7F nan nan nan
+Xe 6-31++G(d) 6D 7F nan nan nan
+Cs 6-31++G(d) 6D 7F nan nan nan
+Ba 6-31++G(d) 6D 7F nan nan nan
+La 6-31++G(d) 6D 7F nan nan nan
+Ce 6-31++G(d) 6D 7F nan nan nan
+Pr 6-31++G(d) 6D 7F nan nan nan
+Nd 6-31++G(d) 6D 7F nan nan nan
+Pm 6-31++G(d) 6D 7F nan nan nan
+Sm 6-31++G(d) 6D 7F nan nan nan
+Eu 6-31++G(d) 6D 7F nan nan nan
+Gd  6D 7F nan nan nan
+Tb 6-31++G(d) 6D 7F nan nan nan
+Dy 6-31++G(d) 6D 7F nan nan nan
+Ho 6-31++G(d) 6D 7F nan nan nan
+Er 6-31++G(d) 6D 7F nan nan nan
+Tm 6-31++G(d) 6D 7F nan nan nan
+Yb 6-31++G(d) 6D 7F nan nan nan
+Lu 6-31++G(d) 6D 7F nan nan nan
+Hf 6-31++G(d) 6D 7F nan nan nan
+Ta 6-31++G(d) 6D 7F nan nan nan
+ W 6-31++G(d) 6D 7F nan nan nan
+Re 6-31++G(d) 6D 7F nan nan nan
+Os 6-31++G(d) 6D 7F nan nan nan
+Ir 6-31++G(d) 6D 7F nan nan nan
+Pt 6-31++G(d) 6D 7F nan nan nan
+Au 6-31++G(d) 6D 7F nan nan nan
+Hg 6-31++G(d) 6D 7F nan nan nan
+Tl 6-31++G(d) 6D 7F nan nan nan
+Pb 6-31++G(d) 6D 7F nan nan nan
+Bi 6-31++G(d) 6D 7F nan nan nan
+Po 6-31++G(d) 6D 7F nan nan nan
+At 6-31++G(d) 6D 7F nan nan nan
+Rn 6-31++G(d) 6D 7F nan nan nan
+Fr 6-31++G(d) 6D 7F nan nan nan
+Ra 6-31++G(d) 6D 7F nan nan nan
+Ac 6-31++G(d) 6D 7F nan nan nan
+Th 6-31++G(d) 6D 7F nan nan nan
+Pa 6-31++G(d) 6D 7F nan nan nan
+ U 6-31++G(d) 6D 7F nan nan nan
+Np 6-31++G(d) 6D 7F nan nan nan
+Pu 6-31++G(d) 6D 7F nan nan nan
+Am 6-31++G(d) 6D 7F nan nan nan
+Cm 6-31++G(d) 6D 7F nan nan nan
+Bk 6-31++G(d) 6D 7F nan nan nan
+Cf 6-31++G(d) 6D 7F nan nan nan
+Es 6-31++G(d) 6D 7F nan nan nan
+Fm 6-31++G(d) 6D 7F nan nan nan
+Md 6-31++G(d) 6D 7F nan nan nan
+No 6-31++G(d) 6D 7F nan nan nan
+Lr 6-31++G(d) 6D 7F nan nan nan
+Rf 6-31++G(d) 6D 7F nan nan nan
+Db 6-31++G(d) 6D 7F nan nan nan
+Sg 6-31++G(d) 6D 7F nan nan nan
+Bh 6-31++G(d) 6D 7F nan nan nan
+Hs 6-31++G(d) 6D 7F nan nan nan
+Mt 6-31++G(d) 6D 7F nan nan nan
+Ds 6-31++G(d) 6D 7F nan nan nan
+Rg 6-31++G(d) 6D 7F nan nan nan
+Cn 6-31++G(d) 6D 7F nan nan nan
+Nh 6-31++G(d) 6D 7F nan nan nan
+Fl 6-31++G(d) 6D 7F nan nan nan
+Mc 6-31++G(d) 6D 7F nan nan nan
+Lv 6-31++G(d) 6D 7F nan nan nan
+Ts 6-31++G(d) 6D 7F nan nan nan
+Og 6-31++G(d) 6D 7F nan nan nan
+ H 6-31++G(d,p) 6D 7F  6  8  6
+He 6-31++G(d,p) 6D 7F  6  8  6
+Li 6-31++G(d,p) 6D 7F 19 32 19
+Be 6-31++G(d,p) 6D 7F 19 32 19
+ B 6-31++G(d,p) 6D 7F 19 32 19
+ C 6-31++G(d,p) 6D 7F 19 32 19
+ N 6-31++G(d,p) 6D 7F 19 32 19
+ O 6-31++G(d,p) 6D 7F 19 32 19
+ F 6-31++G(d,p) 6D 7F 19 32 19
+Ne 6-31++G(d,p) 6D 7F 19 32 19
+Na 6-31++G(d,p) 6D 7F 23 56 23
+Mg 6-31++G(d,p) 6D 7F 23 56 23
+Al 6-31++G(d,p) 6D 7F 23 56 23
+Si 6-31++G(d,p) 6D 7F 23 56 23
+ P 6-31++G(d,p) 6D 7F 23 56 23
+ S 6-31++G(d,p) 6D 7F 23 56 23
+Cl 6-31++G(d,p) 6D 7F 23 56 23
+Ar 6-31++G(d,p) 6D 7F 23 56 23
+ K 6-31++G(d,p) 6D 7F 27 80 27
+Ca 6-31++G(d,p) 6D 7F 27 80 27
+Sc 6-31++G(d,p) 6D 7F 49 117 52
+Ti 6-31++G(d,p) 6D 7F 49 117 52
+ V 6-31++G(d,p) 6D 7F 49 117 52
+Cr 6-31++G(d,p) 6D 7F 49 117 52
+Mn 6-31++G(d,p) 6D 7F 49 117 52
+Fe 6-31++G(d,p) 6D 7F 49 117 52
+Co 6-31++G(d,p) 6D 7F 49 117 52
+Ni 6-31++G(d,p) 6D 7F 49 117 52
+Cu 6-31++G(d,p) 6D 7F 49 117 52
+Zn 6-31++G(d,p) 6D 7F 49 117 52
+Ga 6-31++G(d,p) 6D 7F 34 87 34
+Ge 6-31++G(d,p) 6D 7F 34 87 34
+As 6-31++G(d,p) 6D 7F 34 87 34
+Se 6-31++G(d,p) 6D 7F 34 87 34
+Br 6-31++G(d,p) 6D 7F 34 87 34
+Kr 6-31++G(d,p) 6D 7F 34 87 34
+Rb 6-31++G(d,p) 6D 7F nan nan nan
+Sr 6-31++G(d,p) 6D 7F nan nan nan
+ Y 6-31++G(d,p) 6D 7F nan nan nan
+Zr 6-31++G(d,p) 6D 7F nan nan nan
+Nb 6-31++G(d,p) 6D 7F nan nan nan
+Mo 6-31++G(d,p) 6D 7F nan nan nan
+Tc 6-31++G(d,p) 6D 7F nan nan nan
+Ru 6-31++G(d,p) 6D 7F nan nan nan
+Rh 6-31++G(d,p) 6D 7F nan nan nan
+Pd 6-31++G(d,p) 6D 7F nan nan nan
+Ag 6-31++G(d,p) 6D 7F nan nan nan
+Cd 6-31++G(d,p) 6D 7F nan nan nan
+In 6-31++G(d,p) 6D 7F nan nan nan
+Sn 6-31++G(d,p) 6D 7F nan nan nan
+Sb 6-31++G(d,p) 6D 7F nan nan nan
+Te 6-31++G(d,p) 6D 7F nan nan nan
+ I 6-31++G(d,p) 6D 7F nan nan nan
+Xe 6-31++G(d,p) 6D 7F nan nan nan
+Cs 6-31++G(d,p) 6D 7F nan nan nan
+Ba 6-31++G(d,p) 6D 7F nan nan nan
+La 6-31++G(d,p) 6D 7F nan nan nan
+Ce 6-31++G(d,p) 6D 7F nan nan nan
+Pr 6-31++G(d,p) 6D 7F nan nan nan
+Nd 6-31++G(d,p) 6D 7F nan nan nan
+Pm 6-31++G(d,p) 6D 7F nan nan nan
+Sm 6-31++G(d,p) 6D 7F nan nan nan
+Eu 6-31++G(d,p) 6D 7F nan nan nan
+Gd 6-31++G(d,p) 6D 7F nan nan nan
+Tb 6-31++G(d,p) 6D 7F nan nan nan
+Dy 6-31++G(d,p) 6D 7F nan nan nan
+Ho 6-31++G(d,p) 6D 7F nan nan nan
+Er 6-31++G(d,p) 6D 7F nan nan nan
+Tm 6-31++G(d,p) 6D 7F nan nan nan
+Yb 6-31++G(d,p) 6D 7F nan nan nan
+Lu 6-31++G(d,p) 6D 7F nan nan nan
+Hf 6-31++G(d,p) 6D 7F nan nan nan
+Ta 6-31++G(d,p) 6D 7F nan nan nan
+ W 6-31++G(d,p) 6D 7F nan nan nan
+Re 6-31++G(d,p) 6D 7F nan nan nan
+Os 6-31++G(d,p) 6D 7F nan nan nan
+Ir 6-31++G(d,p) 6D 7F nan nan nan
+Pt 6-31++G(d,p) 6D 7F nan nan nan
+Au 6-31++G(d,p) 6D 7F nan nan nan
+Hg 6-31++G(d,p) 6D 7F nan nan nan
+Tl 6-31++G(d,p) 6D 7F nan nan nan
+Pb 6-31++G(d,p) 6D 7F nan nan nan
+Bi 6-31++G(d,p) 6D 7F nan nan nan
+Po 6-31++G(d,p) 6D 7F nan nan nan
+At 6-31++G(d,p) 6D 7F nan nan nan
+Rn 6-31++G(d,p) 6D 7F nan nan nan
+Fr 6-31++G(d,p) 6D 7F nan nan nan
+Ra 6-31++G(d,p) 6D 7F nan nan nan
+Ac 6-31++G(d,p) 6D 7F nan nan nan
+Th 6-31++G(d,p) 6D 7F nan nan nan
+Pa 6-31++G(d,p) 6D 7F nan nan nan
+ U 6-31++G(d,p) 6D 7F nan nan nan
+Np 6-31++G(d,p) 6D 7F nan nan nan
+Pu 6-31++G(d,p) 6D 7F nan nan nan
+Am 6-31++G(d,p) 6D 7F nan nan nan
+Cm 6-31++G(d,p) 6D 7F nan nan nan
+Bk 6-31++G(d,p) 6D 7F nan nan nan
+Cf 6-31++G(d,p) 6D 7F nan nan nan
+Es 6-31++G(d,p) 6D 7F nan nan nan
+Fm 6-31++G(d,p) 6D 7F nan nan nan
+Md 6-31++G(d,p) 6D 7F nan nan nan
+No 6-31++G(d,p) 6D 7F nan nan nan
+Lr 6-31++G(d,p) 6D 7F nan nan nan
+Rf 6-31++G(d,p) 6D 7F nan nan nan
+Db 6-31++G(d,p) 6D 7F nan nan nan
+Sg 6-31++G(d,p) 6D 7F nan nan nan
+Bh 6-31++G(d,p) 6D 7F nan nan nan
+Hs 6-31++G(d,p) 6D 7F nan nan nan
+Mt 6-31++G(d,p) 6D 7F nan nan nan
+Ds 6-31++G(d,p) 6D 7F nan nan nan
+Rg 6-31++G(d,p) 6D 7F nan nan nan
+Cn 6-31++G(d,p) 6D 7F nan nan nan
+Nh 6-31++G(d,p) 6D 7F nan nan nan
+Fl 6-31++G(d,p) 6D 7F nan nan nan
+Mc 6-31++G(d,p) 6D 7F nan nan nan
+Lv 6-31++G(d,p) 6D 7F nan nan nan
+Ts 6-31++G(d,p) 6D 7F nan nan nan
+Og 6-31++G(d,p) 6D 7F nan nan nan
+ H 6-31+G 6D 7F  2  4  2
+He 6-31+G 6D 7F  2  4  2
+Li 6-31+G 6D 7F 13 26 13
+Be 6-31+G 6D 7F 13 26 13
+ B 6-31+G 6D 7F 13 26 13
+ C 6-31+G 6D 7F 13 26 13
+ N 6-31+G 6D 7F 13 26 13
+ O 6-31+G 6D 7F 13 26 13
+ F 6-31+G 6D 7F 13 26 13
+Ne 6-31+G 6D 7F 13 26 13
+Na 6-31+G 6D 7F 17 50 17
+Mg 6-31+G 6D 7F 17 50 17
+Al 6-31+G 6D 7F 17 50 17
+Si 6-31+G 6D 7F 17 50 17
+ P 6-31+G 6D 7F 17 50 17
+ S 6-31+G 6D 7F 17 50 17
+Cl 6-31+G 6D 7F 17 50 17
+Ar 6-31+G 6D 7F 17 50 17
+ K 6-31+G 6D 7F 21 74 21
+Ca 6-31+G 6D 7F 21 74 21
+Sc 6-31+G 6D 7F 42 107 42
+Ti 6-31+G 6D 7F 42 107 42
+ V 6-31+G 6D 7F 42 107 42
+Cr 6-31+G 6D 7F 42 107 42
+Mn 6-31+G 6D 7F 42 107 42
+Fe 6-31+G 6D 7F 42 107 42
+Co 6-31+G 6D 7F 42 107 42
+Ni 6-31+G 6D 7F 42 107 42
+Cu 6-31+G 6D 7F 42 107 42
+Zn 6-31+G 6D 7F 42 107 42
+Ga 6-31+G 6D 7F 28 81 28
+Ge 6-31+G 6D 7F 28 81 28
+As 6-31+G 6D 7F 28 81 28
+Se 6-31+G 6D 7F 28 81 28
+Br 6-31+G 6D 7F 28 81 28
+Kr 6-31+G 6D 7F 28 81 28
+Rb 6-31+G 6D 7F nan nan nan
+Sr 6-31+G 6D 7F nan nan nan
+ Y 6-31+G 6D 7F nan nan nan
+Zr 6-31+G 6D 7F nan nan nan
+Nb 6-31+G 6D 7F nan nan nan
+Mo 6-31+G 6D 7F nan nan nan
+Tc 6-31+G 6D 7F nan nan nan
+Ru 6-31+G 6D 7F nan nan nan
+Rh 6-31+G 6D 7F nan nan nan
+Pd 6-31+G 6D 7F nan nan nan
+Ag 6-31+G 6D 7F nan nan nan
+Cd 6-31+G 6D 7F nan nan nan
+In 6-31+G 6D 7F nan nan nan
+Sn 6-31+G 6D 7F nan nan nan
+Sb 6-31+G 6D 7F nan nan nan
+Te 6-31+G 6D 7F nan nan nan
+ I 6-31+G 6D 7F nan nan nan
+Xe 6-31+G 6D 7F nan nan nan
+Cs 6-31+G 6D 7F nan nan nan
+Ba 6-31+G 6D 7F nan nan nan
+La 6-31+G 6D 7F nan nan nan
+Ce 6-31+G 6D 7F nan nan nan
+Pr 6-31+G 6D 7F nan nan nan
+Nd 6-31+G 6D 7F nan nan nan
+Pm 6-31+G 6D 7F nan nan nan
+Sm 6-31+G 6D 7F nan nan nan
+Eu 6-31+G 6D 7F nan nan nan
+Gd 6-31+G 6D 7F nan nan nan
+Tb 6-31+G 6D 7F nan nan nan
+Dy 6-31+G 6D 7F nan nan nan
+Ho 6-31+G 6D 7F nan nan nan
+Er 6-31+G 6D 7F nan nan nan
+Tm 6-31+G 6D 7F nan nan nan
+Yb 6-31+G 6D 7F nan nan nan
+Lu 6-31+G 6D 7F nan nan nan
+Hf 6-31+G 6D 7F nan nan nan
+Ta 6-31+G 6D 7F nan nan nan
+ W 6-31+G 6D 7F nan nan nan
+Re 6-31+G 6D 7F nan nan nan
+Os 6-31+G 6D 7F nan nan nan
+Ir 6-31+G 6D 7F nan nan nan
+Pt 6-31+G 6D 7F nan nan nan
+Au 6-31+G 6D 7F nan nan nan
+Hg 6-31+G 6D 7F nan nan nan
+Tl 6-31+G 6D 7F nan nan nan
+Pb 6-31+G 6D 7F nan nan nan
+Bi 6-31+G 6D 7F nan nan nan
+Po 6-31+G 6D 7F nan nan nan
+At 6-31+G 6D 7F nan nan nan
+Rn 6-31+G 6D 7F nan nan nan
+Fr 6-31+G 6D 7F nan nan nan
+Ra 6-31+G 6D 7F nan nan nan
+Ac 6-31+G 6D 7F nan nan nan
+Th 6-31+G 6D 7F nan nan nan
+Pa 6-31+G 6D 7F nan nan nan
+ U 6-31+G 6D 7F nan nan nan
+Np 6-31+G 6D 7F nan nan nan
+Pu 6-31+G 6D 7F nan nan nan
+Am 6-31+G 6D 7F nan nan nan
+Cm 6-31+G 6D 7F nan nan nan
+Bk 6-31+G 6D 7F nan nan nan
+Cf 6-31+G 6D 7F nan nan nan
+Es 6-31+G 6D 7F nan nan nan
+Fm 6-31+G 6D 7F nan nan nan
+Md 6-31+G 6D 7F nan nan nan
+No 6-31+G 6D 7F nan nan nan
+Lr 6-31+G 6D 7F nan nan nan
+Rf 6-31+G 6D 7F nan nan nan
+Db 6-31+G 6D 7F nan nan nan
+Sg 6-31+G 6D 7F nan nan nan
+Bh 6-31+G 6D 7F nan nan nan
+Hs 6-31+G 6D 7F nan nan nan
+Mt 6-31+G 6D 7F nan nan nan
+Ds 6-31+G 6D 7F nan nan nan
+Rg 6-31+G 6D 7F nan nan nan
+Cn 6-31+G 6D 7F nan nan nan
+Nh 6-31+G 6D 7F nan nan nan
+Fl 6-31+G 6D 7F nan nan nan
+Mc 6-31+G 6D 7F nan nan nan
+Lv 6-31+G 6D 7F nan nan nan
+Ts 6-31+G 6D 7F nan nan nan
+Og 6-31+G 6D 7F nan nan nan
+ H 6-31+G(d) 6D 7F  2  4  2
+He 6-31+G(d) 6D 7F  2  4  2
+Li 6-31+G(d) 6D 7F 19 32 19
+Be 6-31+G(d) 6D 7F 19 32 19
+ B 6-31+G(d) 6D 7F 19 32 19
+ C 6-31+G(d) 6D 7F 19 32 19
+ N 6-31+G(d) 6D 7F 19 32 19
+ O 6-31+G(d) 6D 7F 19 32 19
+ F 6-31+G(d) 6D 7F 19 32 19
+Ne 6-31+G(d) 6D 7F 19 32 19
+Na 6-31+G(d) 6D 7F 23 56 23
+Mg 6-31+G(d) 6D 7F 23 56 23
+Al 6-31+G(d) 6D 7F 23 56 23
+Si 6-31+G(d) 6D 7F 23 56 23
+ P 6-31+G(d) 6D 7F 23 56 23
+ S 6-31+G(d) 6D 7F 23 56 23
+Cl 6-31+G(d) 6D 7F 23 56 23
+Ar 6-31+G(d) 6D 7F 23 56 23
+ K 6-31+G(d) 6D 7F 27 80 27
+Ca 6-31+G(d) 6D 7F 27 80 27
+Sc 6-31+G(d) 6D 7F 49 117 52
+Ti 6-31+G(d) 6D 7F 49 117 52
+ V 6-31+G(d) 6D 7F 49 117 52
+Cr 6-31+G(d) 6D 7F 49 117 52
+Mn 6-31+G(d) 6D 7F 49 117 52
+Fe 6-31+G(d) 6D 7F 49 117 52
+Co 6-31+G(d) 6D 7F 49 117 52
+Ni 6-31+G(d) 6D 7F 49 117 52
+Cu 6-31+G(d) 6D 7F 49 117 52
+Zn 6-31+G(d) 6D 7F 49 117 52
+Ga 6-31+G(d) 6D 7F 34 87 34
+Ge 6-31+G(d) 6D 7F 34 87 34
+As 6-31+G(d) 6D 7F 34 87 34
+Se 6-31+G(d) 6D 7F 34 87 34
+Br 6-31+G(d) 6D 7F 34 87 34
+Kr 6-31+G(d) 6D 7F 34 87 34
+Rb 6-31+G(d) 6D 7F nan nan nan
+Sr 6-31+G(d) 6D 7F nan nan nan
+ Y 6-31+G(d) 6D 7F nan nan nan
+Zr 6-31+G(d) 6D 7F nan nan nan
+Nb 6-31+G(d) 6D 7F nan nan nan
+Mo 6-31+G(d) 6D 7F nan nan nan
+Tc 6-31+G(d) 6D 7F nan nan nan
+Ru 6-31+G(d) 6D 7F nan nan nan
+Rh 6-31+G(d) 6D 7F nan nan nan
+Pd 6-31+G(d) 6D 7F nan nan nan
+Ag 6-31+G(d) 6D 7F nan nan nan
+Cd 6-31+G(d) 6D 7F nan nan nan
+In 6-31+G(d) 6D 7F nan nan nan
+Sn 6-31+G(d) 6D 7F nan nan nan
+Sb 6-31+G(d) 6D 7F nan nan nan
+Te 6-31+G(d) 6D 7F nan nan nan
+ I 6-31+G(d) 6D 7F nan nan nan
+Xe 6-31+G(d) 6D 7F nan nan nan
+Cs 6-31+G(d) 6D 7F nan nan nan
+Ba 6-31+G(d) 6D 7F nan nan nan
+La 6-31+G(d) 6D 7F nan nan nan
+Ce 6-31+G(d) 6D 7F nan nan nan
+Pr 6-31+G(d) 6D 7F nan nan nan
+Nd 6-31+G(d) 6D 7F nan nan nan
+Pm 6-31+G(d) 6D 7F nan nan nan
+Sm 6-31+G(d) 6D 7F nan nan nan
+Eu 6-31+G(d) 6D 7F nan nan nan
+Gd 6-31+G(d) 6D 7F nan nan nan
+Tb 6-31+G(d) 6D 7F nan nan nan
+Dy 6-31+G(d) 6D 7F nan nan nan
+Ho 6-31+G(d) 6D 7F nan nan nan
+Er 6-31+G(d) 6D 7F nan nan nan
+Tm 6-31+G(d) 6D 7F nan nan nan
+Yb 6-31+G(d) 6D 7F nan nan nan
+Lu 6-31+G(d) 6D 7F nan nan nan
+Hf 6-31+G(d) 6D 7F nan nan nan
+Ta 6-31+G(d) 6D 7F nan nan nan
+ W 6-31+G(d) 6D 7F nan nan nan
+Re 6-31+G(d) 6D 7F nan nan nan
+Os 6-31+G(d) 6D 7F nan nan nan
+Ir 6-31+G(d) 6D 7F nan nan nan
+Pt 6-31+G(d) 6D 7F nan nan nan
+Au 6-31+G(d) 6D 7F nan nan nan
+Hg 6-31+G(d) 6D 7F nan nan nan
+Tl 6-31+G(d) 6D 7F nan nan nan
+Pb 6-31+G(d) 6D 7F nan nan nan
+Bi 6-31+G(d) 6D 7F nan nan nan
+Po 6-31+G(d) 6D 7F nan nan nan
+At 6-31+G(d) 6D 7F nan nan nan
+Rn 6-31+G(d) 6D 7F nan nan nan
+Fr 6-31+G(d) 6D 7F nan nan nan
+Ra 6-31+G(d) 6D 7F nan nan nan
+Ac 6-31+G(d) 6D 7F nan nan nan
+Th 6-31+G(d) 6D 7F nan nan nan
+Pa 6-31+G(d) 6D 7F nan nan nan
+ U 6-31+G(d) 6D 7F nan nan nan
+Np 6-31+G(d) 6D 7F nan nan nan
+Pu 6-31+G(d) 6D 7F nan nan nan
+Am 6-31+G(d) 6D 7F nan nan nan
+Cm 6-31+G(d) 6D 7F nan nan nan
+Bk 6-31+G(d) 6D 7F nan nan nan
+Cf 6-31+G(d) 6D 7F nan nan nan
+Es 6-31+G(d) 6D 7F nan nan nan
+Fm 6-31+G(d) 6D 7F nan nan nan
+Md 6-31+G(d) 6D 7F nan nan nan
+No 6-31+G(d) 6D 7F nan nan nan
+Lr 6-31+G(d) 6D 7F nan nan nan
+Rf 6-31+G(d) 6D 7F nan nan nan
+Db 6-31+G(d) 6D 7F nan nan nan
+Sg 6-31+G(d) 6D 7F nan nan nan
+Bh 6-31+G(d) 6D 7F nan nan nan
+Hs 6-31+G(d) 6D 7F nan nan nan
+Mt 6-31+G(d) 6D 7F nan nan nan
+Ds 6-31+G(d) 6D 7F nan nan nan
+Rg 6-31+G(d) 6D 7F nan nan nan
+Cn 6-31+G(d) 6D 7F nan nan nan
+Nh 6-31+G(d) 6D 7F nan nan nan
+Fl 6-31+G(d) 6D 7F nan nan nan
+Mc 6-31+G(d) 6D 7F nan nan nan
+Lv 6-31+G(d) 6D 7F nan nan nan
+Ts 6-31+G(d) 6D 7F nan nan nan
+Og 6-31+G(d) 6D 7F nan nan nan
+ H 6-31+G(d,p) 6D 7F  5  7  5
+He 6-31+G(d,p) 6D 7F  5  7  5
+Li 6-31+G(d,p) 6D 7F 19 32 19
+Be 6-31+G(d,p) 6D 7F 19 32 19
+ B 6-31+G(d,p) 6D 7F 19 32 19
+ C 6-31+G(d,p) 6D 7F 19 32 19
+ N 6-31+G(d,p) 6D 7F 19 32 19
+ O 6-31+G(d,p) 6D 7F 19 32 19
+ F 6-31+G(d,p) 6D 7F 19 32 19
+Ne 6-31+G(d,p) 6D 7F 19 32 19
+Na 6-31+G(d,p) 6D 7F 23 56 23
+Mg 6-31+G(d,p) 6D 7F 23 56 23
+Al 6-31+G(d,p) 6D 7F 23 56 23
+Si 6-31+G(d,p) 6D 7F 23 56 23
+ P 6-31+G(d,p) 6D 7F 23 56 23
+ S 6-31+G(d,p) 6D 7F 23 56 23
+Cl 6-31+G(d,p) 6D 7F 23 56 23
+Ar 6-31+G(d,p) 6D 7F 23 56 23
+ K 6-31+G(d,p) 6D 7F 27 80 27
+Ca 6-31+G(d,p) 6D 7F 27 80 27
+Sc 6-31+G(d,p) 6D 7F 49 117 52
+Ti 6-31+G(d,p) 6D 7F 49 117 52
+ V 6-31+G(d,p) 6D 7F 49 117 52
+Cr 6-31+G(d,p) 6D 7F 49 117 52
+Mn 6-31+G(d,p) 6D 7F 49 117 52
+Fe 6-31+G(d,p) 6D 7F 49 117 52
+Co 6-31+G(d,p) 6D 7F 49 117 52
+Ni 6-31+G(d,p) 6D 7F 49 117 52
+Cu 6-31+G(d,p) 6D 7F 49 117 52
+Zn 6-31+G(d,p) 6D 7F 49 117 52
+Ga 6-31+G(d,p) 6D 7F 34 87 34
+Ge 6-31+G(d,p) 6D 7F 34 87 34
+As 6-31+G(d,p) 6D 7F 34 87 34
+Se 6-31+G(d,p) 6D 7F 34 87 34
+Br 6-31+G(d,p) 6D 7F 34 87 34
+Kr 6-31+G(d,p) 6D 7F 34 87 34
+Rb 6-31+G(d,p) 6D 7F nan nan nan
+Sr 6-31+G(d,p) 6D 7F nan nan nan
+ Y 6-31+G(d,p) 6D 7F nan nan nan
+Zr 6-31+G(d,p) 6D 7F nan nan nan
+Nb 6-31+G(d,p) 6D 7F nan nan nan
+Mo 6-31+G(d,p) 6D 7F nan nan nan
+Tc 6-31+G(d,p) 6D 7F nan nan nan
+Ru 6-31+G(d,p) 6D 7F nan nan nan
+Rh 6-31+G(d,p) 6D 7F nan nan nan
+Pd 6-31+G(d,p) 6D 7F nan nan nan
+Ag 6-31+G(d,p) 6D 7F nan nan nan
+Cd 6-31+G(d,p) 6D 7F nan nan nan
+In 6-31+G(d,p) 6D 7F nan nan nan
+Sn 6-31+G(d,p) 6D 7F nan nan nan
+Sb 6-31+G(d,p) 6D 7F nan nan nan
+Te 6-31+G(d,p) 6D 7F nan nan nan
+ I 6-31+G(d,p) 6D 7F nan nan nan
+Xe 6-31+G(d,p) 6D 7F nan nan nan
+Cs 6-31+G(d,p) 6D 7F nan nan nan
+Ba 6-31+G(d,p) 6D 7F nan nan nan
+La 6-31+G(d,p) 6D 7F nan nan nan
+Ce 6-31+G(d,p) 6D 7F nan nan nan
+Pr 6-31+G(d,p) 6D 7F nan nan nan
+Nd 6-31+G(d,p) 6D 7F nan nan nan
+Pm 6-31+G(d,p) 6D 7F nan nan nan
+Sm 6-31+G(d,p) 6D 7F nan nan nan
+Eu 6-31+G(d,p) 6D 7F nan nan nan
+Gd 6-31+G(d,p) 6D 7F nan nan nan
+Tb 6-31+G(d,p) 6D 7F nan nan nan
+Dy 6-31+G(d,p) 6D 7F nan nan nan
+Ho 6-31+G(d,p) 6D 7F nan nan nan
+Er 6-31+G(d,p) 6D 7F nan nan nan
+Tm 6-31+G(d,p) 6D 7F nan nan nan
+Yb 6-31+G(d,p) 6D 7F nan nan nan
+Lu 6-31+G(d,p) 6D 7F nan nan nan
+Hf 6-31+G(d,p) 6D 7F nan nan nan
+Ta 6-31+G(d,p) 6D 7F nan nan nan
+ W 6-31+G(d,p) 6D 7F nan nan nan
+Re 6-31+G(d,p) 6D 7F nan nan nan
+Os 6-31+G(d,p) 6D 7F nan nan nan
+Ir 6-31+G(d,p) 6D 7F nan nan nan
+Pt 6-31+G(d,p) 6D 7F nan nan nan
+Au 6-31+G(d,p) 6D 7F nan nan nan
+Hg 6-31+G(d,p) 6D 7F nan nan nan
+Tl 6-31+G(d,p) 6D 7F nan nan nan
+Pb 6-31+G(d,p) 6D 7F nan nan nan
+Bi 6-31+G(d,p) 6D 7F nan nan nan
+Po 6-31+G(d,p) 6D 7F nan nan nan
+At 6-31+G(d,p) 6D 7F nan nan nan
+Rn 6-31+G(d,p) 6D 7F nan nan nan
+Fr 6-31+G(d,p) 6D 7F nan nan nan
+Ra 6-31+G(d,p) 6D 7F nan nan nan
+Ac 6-31+G(d,p) 6D 7F nan nan nan
+Th 6-31+G(d,p) 6D 7F nan nan nan
+Pa 6-31+G(d,p) 6D 7F nan nan nan
+ U 6-31+G(d,p) 6D 7F nan nan nan
+Np 6-31+G(d,p) 6D 7F nan nan nan
+Pu 6-31+G(d,p) 6D 7F nan nan nan
+Am 6-31+G(d,p) 6D 7F nan nan nan
+Cm 6-31+G(d,p) 6D 7F nan nan nan
+Bk 6-31+G(d,p) 6D 7F nan nan nan
+Cf 6-31+G(d,p) 6D 7F nan nan nan
+Es 6-31+G(d,p) 6D 7F nan nan nan
+Fm 6-31+G(d,p) 6D 7F nan nan nan
+Md 6-31+G(d,p) 6D 7F nan nan nan
+No 6-31+G(d,p) 6D 7F nan nan nan
+Lr 6-31+G(d,p) 6D 7F nan nan nan
+Rf 6-31+G(d,p) 6D 7F nan nan nan
+Db 6-31+G(d,p) 6D 7F nan nan nan
+Sg 6-31+G(d,p) 6D 7F nan nan nan
+Bh 6-31+G(d,p) 6D 7F nan nan nan
+Hs 6-31+G(d,p) 6D 7F nan nan nan
+Mt 6-31+G(d,p) 6D 7F nan nan nan
+Ds 6-31+G(d,p) 6D 7F nan nan nan
+Rg 6-31+G(d,p) 6D 7F nan nan nan
+Cn 6-31+G(d,p) 6D 7F nan nan nan
+Nh 6-31+G(d,p) 6D 7F nan nan nan
+Fl 6-31+G(d,p) 6D 7F nan nan nan
+Mc 6-31+G(d,p) 6D 7F nan nan nan
+Lv 6-31+G(d,p) 6D 7F nan nan nan
+Ts 6-31+G(d,p) 6D 7F nan nan nan
+Og 6-31+G(d,p) 6D 7F nan nan nan
+ H 6-311G 6D 7F  3  5  3
+He 6-311G 6D 7F  3  5  3
+Li 6-311G 6D 7F 13 26 13
+Be 6-311G 6D 7F 13 26 13
+ B 6-311G 6D 7F 13 26 13
+ C 6-311G 6D 7F 13 26 13
+ N 6-311G 6D 7F 13 26 13
+ O 6-311G 6D 7F 13 26 13
+ F 6-311G 6D 7F 13 26 13
+Ne 6-311G 6D 7F 13 26 13
+Na 6-311G 6D 7F 21 40 21
+Mg 6-311G 6D 7F 21 40 21
+Al 6-311G 6D 7F 21 40 21
+Si 6-311G 6D 7F 21 40 21
+ P 6-311G 6D 7F 21 40 21
+ S 6-311G 6D 7F 21 40 21
+Cl 6-311G 6D 7F 21 43 21
+Ar 6-311G 6D 7F 21 43 21
+ K 6-311G 6D 7F 35 65 35
+Ca 6-311G 6D 7F 35 65 35
+Sc 6-311G 6D 7F 42 71 42
+Ti 6-311G 6D 7F 42 71 42
+ V 6-311G 6D 7F 42 71 42
+Cr 6-311G 6D 7F 42 71 42
+Mn 6-311G 6D 7F 42 71 42
+Fe 6-311G 6D 7F 42 71 42
+Co 6-311G 6D 7F 42 71 42
+Ni 6-311G 6D 7F 42 71 42
+Cu 6-311G 6D 7F 42 71 42
+Zn 6-311G 6D 7F 42 71 42
+Ga 6-311G 6D 7F 41 84 41
+Ge 6-311G 6D 7F 41 84 41
+As 6-311G 6D 7F 41 84 41
+Se 6-311G 6D 7F 41 84 41
+Br 6-311G 6D 7F 41 84 41
+Kr 6-311G 6D 7F 41 84 41
+Rb 6-311G 6D 7F nan nan nan
+Sr 6-311G 6D 7F nan nan nan
+ Y 6-311G 6D 7F nan nan nan
+Zr 6-311G 6D 7F nan nan nan
+Nb 6-311G 6D 7F nan nan nan
+Mo 6-311G 6D 7F nan nan nan
+Tc 6-311G 6D 7F nan nan nan
+Ru 6-311G 6D 7F nan nan nan
+Rh 6-311G 6D 7F nan nan nan
+Pd 6-311G 6D 7F nan nan nan
+Ag 6-311G 6D 7F nan nan nan
+Cd 6-311G 6D 7F nan nan nan
+In 6-311G 6D 7F nan nan nan
+Sn 6-311G 6D 7F nan nan nan
+Sb 6-311G 6D 7F nan nan nan
+Te 6-311G 6D 7F nan nan nan
+ I 6-311G 6D 7F nan nan nan
+Xe 6-311G 6D 7F nan nan nan
+Cs 6-311G 6D 7F nan nan nan
+Ba 6-311G 6D 7F nan nan nan
+La 6-311G 6D 7F nan nan nan
+Ce 6-311G 6D 7F nan nan nan
+Pr 6-311G 6D 7F nan nan nan
+Nd 6-311G 6D 7F nan nan nan
+Pm 6-311G 6D 7F nan nan nan
+Sm 6-311G 6D 7F nan nan nan
+Eu 6-311G 6D 7F nan nan nan
+Gd 6-311G 6D 7F nan nan nan
+Tb 6-311G 6D 7F nan nan nan
+Dy 6-311G 6D 7F nan nan nan
+Ho 6-311G 6D 7F nan nan nan
+Er 6-311G 6D 7F nan nan nan
+Tm 6-311G 6D 7F nan nan nan
+Yb 6-311G 6D 7F nan nan nan
+Lu 6-311G 6D 7F nan nan nan
+Hf 6-311G 6D 7F nan nan nan
+Ta 6-311G 6D 7F nan nan nan
+ W 6-311G 6D 7F nan nan nan
+Re 6-311G 6D 7F nan nan nan
+Os 6-311G 6D 7F nan nan nan
+Ir 6-311G 6D 7F nan nan nan
+Pt 6-311G 6D 7F nan nan nan
+Au 6-311G 6D 7F nan nan nan
+Hg 6-311G 6D 7F nan nan nan
+Tl 6-311G 6D 7F nan nan nan
+Pb 6-311G 6D 7F nan nan nan
+Bi 6-311G 6D 7F nan nan nan
+Po 6-311G 6D 7F nan nan nan
+At 6-311G 6D 7F nan nan nan
+Rn 6-311G 6D 7F nan nan nan
+Fr 6-311G 6D 7F nan nan nan
+Ra 6-311G 6D 7F nan nan nan
+Ac 6-311G 6D 7F nan nan nan
+Th 6-311G 6D 7F nan nan nan
+Pa 6-311G 6D 7F nan nan nan
+ U 6-311G 6D 7F nan nan nan
+Np 6-311G 6D 7F nan nan nan
+Pu 6-311G 6D 7F nan nan nan
+Am 6-311G 6D 7F nan nan nan
+Cm 6-311G 6D 7F nan nan nan
+Bk 6-311G 6D 7F nan nan nan
+Cf 6-311G 6D 7F nan nan nan
+Es 6-311G 6D 7F nan nan nan
+Fm 6-311G 6D 7F nan nan nan
+Md 6-311G 6D 7F nan nan nan
+No 6-311G 6D 7F nan nan nan
+Lr 6-311G 6D 7F nan nan nan
+Rf 6-311G 6D 7F nan nan nan
+Db 6-311G 6D 7F nan nan nan
+Sg 6-311G 6D 7F nan nan nan
+Bh 6-311G 6D 7F nan nan nan
+Hs 6-311G 6D 7F nan nan nan
+Mt 6-311G 6D 7F nan nan nan
+Ds 6-311G 6D 7F nan nan nan
+Rg 6-311G 6D 7F nan nan nan
+Cn 6-311G 6D 7F nan nan nan
+Nh 6-311G 6D 7F nan nan nan
+Fl 6-311G 6D 7F nan nan nan
+Mc 6-311G 6D 7F nan nan nan
+Lv 6-311G 6D 7F nan nan nan
+Ts 6-311G 6D 7F nan nan nan
+Og 6-311G 6D 7F nan nan nan
+ H 6-31G 6D 7F  2  4  2
+He 6-31G 6D 7F  2  4  2
+Li 6-31G 6D 7F  9 22  9
+Be 6-31G 6D 7F  9 22  9
+ B 6-31G 6D 7F  9 22  9
+ C 6-31G 6D 7F  9 22  9
+ N 6-31G 6D 7F  9 22  9
+ O 6-31G 6D 7F  9 22  9
+ F 6-31G 6D 7F  9 22  9
+Ne 6-31G 6D 7F  9 22  9
+Na 6-31G 6D 7F 13 46 13
+Mg 6-31G 6D 7F 13 46 13
+Al 6-31G 6D 7F 13 46 13
+Si 6-31G 6D 7F 13 46 13
+ P 6-31G 6D 7F 13 46 13
+ S 6-31G 6D 7F 13 46 13
+Cl 6-31G 6D 7F 13 46 13
+Ar 6-31G 6D 7F 13 46 13
+ K 6-31G 6D 7F 17 70 17
+Ca 6-31G 6D 7F 17 70 17
+Sc 6-31G 6D 7F 29 94 29
+Ti 6-31G 6D 7F 29 94 29
+ V 6-31G 6D 7F 29 94 29
+Cr 6-31G 6D 7F 29 94 29
+Mn 6-31G 6D 7F 29 94 29
+Fe 6-31G 6D 7F 29 94 29
+Co 6-31G 6D 7F 29 94 29
+Ni 6-31G 6D 7F 29 94 29
+Cu 6-31G 6D 7F 29 94 29
+Zn 6-31G 6D 7F 29 94 29
+Ga 6-31G 6D 7F 24 77 24
+Ge 6-31G 6D 7F 24 77 24
+As 6-31G 6D 7F 24 77 24
+Se 6-31G 6D 7F 24 77 24
+Br 6-31G 6D 7F 24 77 24
+Kr 6-31G 6D 7F 24 77 24
+Rb 6-31G 6D 7F nan nan nan
+Sr 6-31G 6D 7F nan nan nan
+ Y 6-31G 6D 7F nan nan nan
+Zr 6-31G 6D 7F nan nan nan
+Nb 6-31G 6D 7F nan nan nan
+Mo 6-31G 6D 7F nan nan nan
+Tc 6-31G 6D 7F nan nan nan
+Ru 6-31G 6D 7F nan nan nan
+Rh 6-31G 6D 7F nan nan nan
+Pd 6-31G 6D 7F nan nan nan
+Ag 6-31G 6D 7F nan nan nan
+Cd 6-31G 6D 7F nan nan nan
+In 6-31G 6D 7F nan nan nan
+Sn 6-31G 6D 7F nan nan nan
+Sb 6-31G 6D 7F nan nan nan
+Te 6-31G 6D 7F nan nan nan
+ I 6-31G 6D 7F nan nan nan
+Xe 6-31G 6D 7F nan nan nan
+Cs 6-31G 6D 7F nan nan nan
+Ba 6-31G 6D 7F nan nan nan
+La 6-31G 6D 7F nan nan nan
+Ce 6-31G 6D 7F nan nan nan
+Pr 6-31G 6D 7F nan nan nan
+Nd 6-31G 6D 7F nan nan nan
+Pm 6-31G 6D 7F nan nan nan
+Sm 6-31G 6D 7F nan nan nan
+Eu 6-31G 6D 7F nan nan nan
+Gd 6-31G 6D 7F nan nan nan
+Tb 6-31G 6D 7F nan nan nan
+Dy 6-31G 6D 7F nan nan nan
+Ho 6-31G 6D 7F nan nan nan
+Er 6-31G 6D 7F nan nan nan
+Tm 6-31G 6D 7F nan nan nan
+Yb 6-31G 6D 7F nan nan nan
+Lu 6-31G 6D 7F nan nan nan
+Hf 6-31G 6D 7F nan nan nan
+Ta 6-31G 6D 7F nan nan nan
+ W 6-31G 6D 7F nan nan nan
+Re 6-31G 6D 7F nan nan nan
+Os 6-31G 6D 7F nan nan nan
+Ir 6-31G 6D 7F nan nan nan
+Pt 6-31G 6D 7F nan nan nan
+Au 6-31G 6D 7F nan nan nan
+Hg 6-31G 6D 7F nan nan nan
+Tl 6-31G 6D 7F nan nan nan
+Pb 6-31G 6D 7F nan nan nan
+Bi 6-31G 6D 7F nan nan nan
+Po 6-31G 6D 7F nan nan nan
+At 6-31G 6D 7F nan nan nan
+Rn 6-31G 6D 7F nan nan nan
+Fr 6-31G 6D 7F nan nan nan
+Ra 6-31G 6D 7F nan nan nan
+Ac 6-31G 6D 7F nan nan nan
+Th 6-31G 6D 7F nan nan nan
+Pa 6-31G 6D 7F nan nan nan
+ U 6-31G 6D 7F nan nan nan
+Np 6-31G 6D 7F nan nan nan
+Pu 6-31G 6D 7F nan nan nan
+Am 6-31G 6D 7F nan nan nan
+Cm 6-31G 6D 7F nan nan nan
+Bk 6-31G 6D 7F nan nan nan
+Cf 6-31G 6D 7F nan nan nan
+Es 6-31G 6D 7F nan nan nan
+Fm 6-31G 6D 7F nan nan nan
+Md 6-31G 6D 7F nan nan nan
+No 6-31G 6D 7F nan nan nan
+Lr 6-31G 6D 7F nan nan nan
+Rf 6-31G 6D 7F nan nan nan
+Db 6-31G 6D 7F nan nan nan
+Sg 6-31G 6D 7F nan nan nan
+Bh 6-31G 6D 7F nan nan nan
+Hs 6-31G 6D 7F nan nan nan
+Mt 6-31G 6D 7F nan nan nan
+Ds 6-31G 6D 7F nan nan nan
+Rg 6-31G 6D 7F nan nan nan
+Cn 6-31G 6D 7F nan nan nan
+Nh 6-31G 6D 7F nan nan nan
+Fl 6-31G 6D 7F nan nan nan
+Mc 6-31G 6D 7F nan nan nan
+Lv 6-31G 6D 7F nan nan nan
+Ts 6-31G 6D 7F nan nan nan
+Og 6-31G 6D 7F nan nan nan
+ H 6-31G(3df,3pd) 6D 7F 17 19 17
+He 6-31G(3df,3pd) 6D 7F 17 19 17
+Li 6-31G(3df,3pd) 6D 7F 34 50 37
+Be 6-31G(3df,3pd) 6D 7F 34 50 37
+ B 6-31G(3df,3pd) 6D 7F 34 50 37
+ C 6-31G(3df,3pd) 6D 7F 34 50 37
+ N 6-31G(3df,3pd) 6D 7F 34 50 37
+ O 6-31G(3df,3pd) 6D 7F 34 50 37
+ F 6-31G(3df,3pd) 6D 7F 34 50 37
+Ne 6-31G(3df,3pd) 6D 7F 34 50 37
+Na 6-31G(3df,3pd) 6D 7F 38 74 41
+Mg 6-31G(3df,3pd) 6D 7F 38 74 41
+Al 6-31G(3df,3pd) 6D 7F 38 74 41
+Si 6-31G(3df,3pd) 6D 7F 38 74 41
+ P 6-31G(3df,3pd) 6D 7F 38 74 41
+ S 6-31G(3df,3pd) 6D 7F 38 74 41
+Cl 6-31G(3df,3pd) 6D 7F 38 74 41
+Ar 6-31G(3df,3pd) 6D 7F 38 74 41
+ K 6-31G(3df,3pd) 6D 7F 42 98 45
+Ca 6-31G(3df,3pd) 6D 7F 42 98 45
+Sc 6-31G(3df,3pd) 6D 7F 59 139 74
+Ti 6-31G(3df,3pd) 6D 7F 59 139 74
+ V 6-31G(3df,3pd) 6D 7F 59 139 74
+Cr 6-31G(3df,3pd) 6D 7F 59 139 74
+Mn 6-31G(3df,3pd) 6D 7F 59 139 74
+Fe 6-31G(3df,3pd) 6D 7F 59 139 74
+Co 6-31G(3df,3pd) 6D 7F 59 139 74
+Ni 6-31G(3df,3pd) 6D 7F 59 139 74
+Cu 6-31G(3df,3pd) 6D 7F 59 139 74
+Zn 6-31G(3df,3pd) 6D 7F 59 139 74
+Ga 6-31G(3df,3pd) 6D 7F 49 105 52
+Ge 6-31G(3df,3pd) 6D 7F 49 105 52
+As 6-31G(3df,3pd) 6D 7F 49 105 52
+Se 6-31G(3df,3pd) 6D 7F 49 105 52
+Br 6-31G(3df,3pd) 6D 7F 49 105 52
+Kr 6-31G(3df,3pd) 6D 7F 49 105 52
+Rb 6-31G(3df,3pd) 6D 7F nan nan nan
+Sr 6-31G(3df,3pd) 6D 7F nan nan nan
+ Y 6-31G(3df,3pd) 6D 7F nan nan nan
+Zr 6-31G(3df,3pd) 6D 7F nan nan nan
+Nb 6-31G(3df,3pd) 6D 7F nan nan nan
+Mo 6-31G(3df,3pd) 6D 7F nan nan nan
+Tc 6-31G(3df,3pd) 6D 7F nan nan nan
+Ru 6-31G(3df,3pd) 6D 7F nan nan nan
+Rh 6-31G(3df,3pd) 6D 7F nan nan nan
+Pd 6-31G(3df,3pd) 6D 7F nan nan nan
+Ag 6-31G(3df,3pd) 6D 7F nan nan nan
+Cd 6-31G(3df,3pd) 6D 7F nan nan nan
+In 6-31G(3df,3pd) 6D 7F nan nan nan
+Sn 6-31G(3df,3pd) 6D 7F nan nan nan
+Sb 6-31G(3df,3pd) 6D 7F nan nan nan
+Te 6-31G(3df,3pd) 6D 7F nan nan nan
+ I 6-31G(3df,3pd) 6D 7F nan nan nan
+Xe 6-31G(3df,3pd) 6D 7F nan nan nan
+Cs 6-31G(3df,3pd) 6D 7F nan nan nan
+Ba 6-31G(3df,3pd) 6D 7F nan nan nan
+La 6-31G(3df,3pd) 6D 7F nan nan nan
+Ce 6-31G(3df,3pd) 6D 7F nan nan nan
+Pr 6-31G(3df,3pd) 6D 7F nan nan nan
+Nd 6-31G(3df,3pd) 6D 7F nan nan nan
+Pm 6-31G(3df,3pd) 6D 7F nan nan nan
+Sm 6-31G(3df,3pd) 6D 7F nan nan nan
+Eu 6-31G(3df,3pd) 6D 7F nan nan nan
+Gd 6-31G(3df,3pd) 6D 7F nan nan nan
+Tb 6-31G(3df,3pd) 6D 7F nan nan nan
+Dy 6-31G(3df,3pd) 6D 7F nan nan nan
+Ho 6-31G(3df,3pd) 6D 7F nan nan nan
+Er 6-31G(3df,3pd) 6D 7F nan nan nan
+Tm 6-31G(3df,3pd) 6D 7F nan nan nan
+Yb 6-31G(3df,3pd) 6D 7F nan nan nan
+Lu 6-31G(3df,3pd) 6D 7F nan nan nan
+Hf 6-31G(3df,3pd) 6D 7F nan nan nan
+Ta 6-31G(3df,3pd) 6D 7F nan nan nan
+ W 6-31G(3df,3pd) 6D 7F nan nan nan
+Re 6-31G(3df,3pd) 6D 7F nan nan nan
+Os 6-31G(3df,3pd) 6D 7F nan nan nan
+Ir 6-31G(3df,3pd) 6D 7F nan nan nan
+Pt 6-31G(3df,3pd) 6D 7F nan nan nan
+Au 6-31G(3df,3pd) 6D 7F nan nan nan
+Hg 6-31G(3df,3pd) 6D 7F nan nan nan
+Tl 6-31G(3df,3pd) 6D 7F nan nan nan
+Pb 6-31G(3df,3pd) 6D 7F nan nan nan
+Bi 6-31G(3df,3pd) 6D 7F nan nan nan
+Po 6-31G(3df,3pd) 6D 7F nan nan nan
+At 6-31G(3df,3pd) 6D 7F nan nan nan
+Rn 6-31G(3df,3pd) 6D 7F nan nan nan
+Fr 6-31G(3df,3pd) 6D 7F nan nan nan
+Ra 6-31G(3df,3pd) 6D 7F nan nan nan
+Ac 6-31G(3df,3pd) 6D 7F nan nan nan
+Th 6-31G(3df,3pd) 6D 7F nan nan nan
+Pa 6-31G(3df,3pd) 6D 7F nan nan nan
+ U 6-31G(3df,3pd) 6D 7F nan nan nan
+Np 6-31G(3df,3pd) 6D 7F nan nan nan
+Pu 6-31G(3df,3pd) 6D 7F nan nan nan
+Am 6-31G(3df,3pd) 6D 7F nan nan nan
+Cm 6-31G(3df,3pd) 6D 7F nan nan nan
+Bk 6-31G(3df,3pd) 6D 7F nan nan nan
+Cf 6-31G(3df,3pd) 6D 7F nan nan nan
+Es 6-31G(3df,3pd) 6D 7F nan nan nan
+Fm 6-31G(3df,3pd) 6D 7F nan nan nan
+Md 6-31G(3df,3pd) 6D 7F nan nan nan
+No 6-31G(3df,3pd) 6D 7F nan nan nan
+Lr 6-31G(3df,3pd) 6D 7F nan nan nan
+Rf 6-31G(3df,3pd) 6D 7F nan nan nan
+Db 6-31G(3df,3pd) 6D 7F nan nan nan
+Sg 6-31G(3df,3pd) 6D 7F nan nan nan
+Bh 6-31G(3df,3pd) 6D 7F nan nan nan
+Hs 6-31G(3df,3pd) 6D 7F nan nan nan
+Mt 6-31G(3df,3pd) 6D 7F nan nan nan
+Ds 6-31G(3df,3pd) 6D 7F nan nan nan
+Rg 6-31G(3df,3pd) 6D 7F nan nan nan
+Cn 6-31G(3df,3pd) 6D 7F nan nan nan
+Nh 6-31G(3df,3pd) 6D 7F nan nan nan
+Fl 6-31G(3df,3pd) 6D 7F nan nan nan
+Mc 6-31G(3df,3pd) 6D 7F nan nan nan
+Lv 6-31G(3df,3pd) 6D 7F nan nan nan
+Ts 6-31G(3df,3pd) 6D 7F nan nan nan
+Og 6-31G(3df,3pd) 6D 7F nan nan nan
+ H 6-31G(d') 6D 7F  2  4  2
+He 6-31G(d') 6D 7F  2  4  2
+Li 6-31G(d') 6D 7F 15 28 15
+Be 6-31G(d') 6D 7F 15 28 15
+ B 6-31G(d') 6D 7F 15 28 15
+ C 6-31G(d') 6D 7F 15 28 15
+ N 6-31G(d') 6D 7F 15 28 15
+ O 6-31G(d') 6D 7F 15 28 15
+ F 6-31G(d') 6D 7F 15 28 15
+Ne 6-31G(d') 6D 7F 15 28 15
+Na 6-31G(d') 6D 7F 19 52 19
+Mg 6-31G(d') 6D 7F 19 52 19
+Al 6-31G(d') 6D 7F 19 52 19
+Si 6-31G(d') 6D 7F 19 52 19
+ P 6-31G(d') 6D 7F 19 52 19
+ S 6-31G(d') 6D 7F 19 52 19
+Cl 6-31G(d') 6D 7F 19 52 19
+Ar 6-31G(d') 6D 7F 19 52 19
+ K 6-31G(d') 6D 7F 23 76 23
+Ca 6-31G(d') 6D 7F 23 76 23
+Sc 6-31G(d') 6D 7F 36 104 39
+Ti 6-31G(d') 6D 7F 36 104 39
+ V 6-31G(d') 6D 7F 36 104 39
+Cr 6-31G(d') 6D 7F 36 104 39
+Mn 6-31G(d') 6D 7F 36 104 39
+Fe 6-31G(d') 6D 7F 36 104 39
+Co 6-31G(d') 6D 7F 36 104 39
+Ni 6-31G(d') 6D 7F 36 104 39
+Cu 6-31G(d') 6D 7F 36 104 39
+Zn 6-31G(d') 6D 7F 36 104 39
+Ga 6-31G(d') 6D 7F 30 83 30
+Ge 6-31G(d') 6D 7F 30 83 30
+As 6-31G(d') 6D 7F 30 83 30
+Se 6-31G(d') 6D 7F 30 83 30
+Br 6-31G(d') 6D 7F 30 83 30
+Kr 6-31G(d') 6D 7F 30 83 30
+Rb 6-31G(d') 6D 7F nan nan nan
+Sr 6-31G(d') 6D 7F nan nan nan
+ Y 6-31G(d') 6D 7F nan nan nan
+Zr 6-31G(d') 6D 7F nan nan nan
+Nb 6-31G(d') 6D 7F nan nan nan
+Mo 6-31G(d') 6D 7F nan nan nan
+Tc 6-31G(d') 6D 7F nan nan nan
+Ru 6-31G(d') 6D 7F nan nan nan
+Rh 6-31G(d') 6D 7F nan nan nan
+Pd 6-31G(d') 6D 7F nan nan nan
+Ag 6-31G(d') 6D 7F nan nan nan
+Cd 6-31G(d') 6D 7F nan nan nan
+In 6-31G(d') 6D 7F nan nan nan
+Sn 6-31G(d') 6D 7F nan nan nan
+Sb 6-31G(d') 6D 7F nan nan nan
+Te 6-31G(d') 6D 7F nan nan nan
+ I 6-31G(d') 6D 7F nan nan nan
+Xe 6-31G(d') 6D 7F nan nan nan
+Cs 6-31G(d') 6D 7F nan nan nan
+Ba 6-31G(d') 6D 7F nan nan nan
+La 6-31G(d') 6D 7F nan nan nan
+Ce 6-31G(d') 6D 7F nan nan nan
+Pr 6-31G(d') 6D 7F nan nan nan
+Nd 6-31G(d') 6D 7F nan nan nan
+Pm 6-31G(d') 6D 7F nan nan nan
+Sm 6-31G(d') 6D 7F nan nan nan
+Eu 6-31G(d') 6D 7F nan nan nan
+Gd 6-31G(d') 6D 7F nan nan nan
+Tb 6-31G(d') 6D 7F nan nan nan
+Dy 6-31G(d') 6D 7F nan nan nan
+Ho 6-31G(d') 6D 7F nan nan nan
+Er 6-31G(d') 6D 7F nan nan nan
+Tm 6-31G(d') 6D 7F nan nan nan
+Yb 6-31G(d') 6D 7F nan nan nan
+Lu 6-31G(d') 6D 7F nan nan nan
+Hf 6-31G(d') 6D 7F nan nan nan
+Ta 6-31G(d') 6D 7F nan nan nan
+ W 6-31G(d') 6D 7F nan nan nan
+Re 6-31G(d') 6D 7F nan nan nan
+Os 6-31G(d') 6D 7F nan nan nan
+Ir 6-31G(d') 6D 7F nan nan nan
+Pt 6-31G(d') 6D 7F nan nan nan
+Au 6-31G(d') 6D 7F nan nan nan
+Hg 6-31G(d') 6D 7F nan nan nan
+Tl 6-31G(d') 6D 7F nan nan nan
+Pb 6-31G(d') 6D 7F nan nan nan
+Bi 6-31G(d') 6D 7F nan nan nan
+Po 6-31G(d') 6D 7F nan nan nan
+At 6-31G(d') 6D 7F nan nan nan
+Rn 6-31G(d') 6D 7F nan nan nan
+Fr 6-31G(d') 6D 7F nan nan nan
+Ra 6-31G(d') 6D 7F nan nan nan
+Ac 6-31G(d') 6D 7F nan nan nan
+Th 6-31G(d') 6D 7F nan nan nan
+Pa 6-31G(d') 6D 7F nan nan nan
+ U 6-31G(d') 6D 7F nan nan nan
+Np 6-31G(d') 6D 7F nan nan nan
+Pu 6-31G(d') 6D 7F nan nan nan
+Am 6-31G(d') 6D 7F nan nan nan
+Cm 6-31G(d') 6D 7F nan nan nan
+Bk 6-31G(d') 6D 7F nan nan nan
+Cf 6-31G(d') 6D 7F nan nan nan
+Es 6-31G(d') 6D 7F nan nan nan
+Fm 6-31G(d') 6D 7F nan nan nan
+Md 6-31G(d') 6D 7F nan nan nan
+No 6-31G(d') 6D 7F nan nan nan
+Lr 6-31G(d') 6D 7F nan nan nan
+Rf 6-31G(d') 6D 7F nan nan nan
+Db 6-31G(d') 6D 7F nan nan nan
+Sg 6-31G(d') 6D 7F nan nan nan
+Bh 6-31G(d') 6D 7F nan nan nan
+Hs 6-31G(d') 6D 7F nan nan nan
+Mt 6-31G(d') 6D 7F nan nan nan
+Ds 6-31G(d') 6D 7F nan nan nan
+Rg 6-31G(d') 6D 7F nan nan nan
+Cn 6-31G(d') 6D 7F nan nan nan
+Nh 6-31G(d') 6D 7F nan nan nan
+Fl 6-31G(d') 6D 7F nan nan nan
+Mc 6-31G(d') 6D 7F nan nan nan
+Lv 6-31G(d') 6D 7F nan nan nan
+Ts 6-31G(d') 6D 7F nan nan nan
+Og 6-31G(d') 6D 7F nan nan nan
+ H 6-31G(d',p') 6D 7F  5  7  5
+He 6-31G(d',p') 6D 7F  5  7  5
+Li 6-31G(d',p') 6D 7F 15 28 15
+Be 6-31G(d',p') 6D 7F 15 28 15
+ B 6-31G(d',p') 6D 7F 15 28 15
+ C 6-31G(d',p') 6D 7F 15 28 15
+ N 6-31G(d',p') 6D 7F 15 28 15
+ O 6-31G(d',p') 6D 7F 15 28 15
+ F 6-31G(d',p') 6D 7F 15 28 15
+Ne 6-31G(d',p') 6D 7F 15 28 15
+Na 6-31G(d',p') 6D 7F 19 52 19
+Mg 6-31G(d',p') 6D 7F 19 52 19
+Al 6-31G(d',p') 6D 7F 19 52 19
+Si 6-31G(d',p') 6D 7F 19 52 19
+ P 6-31G(d',p') 6D 7F 19 52 19
+ S 6-31G(d',p') 6D 7F 19 52 19
+Cl 6-31G(d',p') 6D 7F 19 52 19
+Ar 6-31G(d',p') 6D 7F 19 52 19
+ K 6-31G(d',p') 6D 7F 23 76 23
+Ca 6-31G(d',p') 6D 7F 23 76 23
+Sc 6-31G(d',p') 6D 7F 36 104 39
+Ti 6-31G(d',p') 6D 7F 36 104 39
+ V 6-31G(d',p') 6D 7F 36 104 39
+Cr 6-31G(d',p') 6D 7F 36 104 39
+Mn 6-31G(d',p') 6D 7F 36 104 39
+Fe 6-31G(d',p') 6D 7F 36 104 39
+Co 6-31G(d',p') 6D 7F 36 104 39
+Ni 6-31G(d',p') 6D 7F 36 104 39
+Cu 6-31G(d',p') 6D 7F 36 104 39
+Zn 6-31G(d',p') 6D 7F 36 104 39
+Ga 6-31G(d',p') 6D 7F 30 83 30
+Ge 6-31G(d',p') 6D 7F 30 83 30
+As 6-31G(d',p') 6D 7F 30 83 30
+Se 6-31G(d',p') 6D 7F 30 83 30
+Br 6-31G(d',p') 6D 7F 30 83 30
+Kr 6-31G(d',p') 6D 7F 30 83 30
+Rb 6-31G(d',p') 6D 7F nan nan nan
+Sr 6-31G(d',p') 6D 7F nan nan nan
+ Y 6-31G(d',p') 6D 7F nan nan nan
+Zr 6-31G(d',p') 6D 7F nan nan nan
+Nb 6-31G(d',p') 6D 7F nan nan nan
+Mo 6-31G(d',p') 6D 7F nan nan nan
+Tc 6-31G(d',p') 6D 7F nan nan nan
+Ru 6-31G(d',p') 6D 7F nan nan nan
+Rh 6-31G(d',p') 6D 7F nan nan nan
+Pd 6-31G(d',p') 6D 7F nan nan nan
+Ag 6-31G(d',p') 6D 7F nan nan nan
+Cd 6-31G(d',p') 6D 7F nan nan nan
+In 6-31G(d',p') 6D 7F nan nan nan
+Sn 6-31G(d',p') 6D 7F nan nan nan
+Sb 6-31G(d',p') 6D 7F nan nan nan
+Te 6-31G(d',p') 6D 7F nan nan nan
+ I 6-31G(d',p') 6D 7F nan nan nan
+Xe 6-31G(d',p') 6D 7F nan nan nan
+Cs 6-31G(d',p') 6D 7F nan nan nan
+Ba 6-31G(d',p') 6D 7F nan nan nan
+La 6-31G(d',p') 6D 7F nan nan nan
+Ce 6-31G(d',p') 6D 7F nan nan nan
+Pr 6-31G(d',p') 6D 7F nan nan nan
+Nd 6-31G(d',p') 6D 7F nan nan nan
+Pm 6-31G(d',p') 6D 7F nan nan nan
+Sm 6-31G(d',p') 6D 7F nan nan nan
+Eu 6-31G(d',p') 6D 7F nan nan nan
+Gd 6-31G(d',p') 6D 7F nan nan nan
+Tb 6-31G(d',p') 6D 7F nan nan nan
+Dy 6-31G(d',p') 6D 7F nan nan nan
+Ho 6-31G(d',p') 6D 7F nan nan nan
+Er 6-31G(d',p') 6D 7F nan nan nan
+Tm 6-31G(d',p') 6D 7F nan nan nan
+Yb 6-31G(d',p') 6D 7F nan nan nan
+Lu 6-31G(d',p') 6D 7F nan nan nan
+Hf 6-31G(d',p') 6D 7F nan nan nan
+Ta 6-31G(d',p') 6D 7F nan nan nan
+ W 6-31G(d',p') 6D 7F nan nan nan
+Re 6-31G(d',p') 6D 7F nan nan nan
+Os 6-31G(d',p') 6D 7F nan nan nan
+Ir 6-31G(d',p') 6D 7F nan nan nan
+Pt 6-31G(d',p') 6D 7F nan nan nan
+Au 6-31G(d',p') 6D 7F nan nan nan
+Hg 6-31G(d',p') 6D 7F nan nan nan
+Tl 6-31G(d',p') 6D 7F nan nan nan
+Pb 6-31G(d',p') 6D 7F nan nan nan
+Bi 6-31G(d',p') 6D 7F nan nan nan
+Po 6-31G(d',p') 6D 7F nan nan nan
+At 6-31G(d',p') 6D 7F nan nan nan
+Rn 6-31G(d',p') 6D 7F nan nan nan
+Fr 6-31G(d',p') 6D 7F nan nan nan
+Ra 6-31G(d',p') 6D 7F nan nan nan
+Ac 6-31G(d',p') 6D 7F nan nan nan
+Th 6-31G(d',p') 6D 7F nan nan nan
+Pa 6-31G(d',p') 6D 7F nan nan nan
+ U 6-31G(d',p') 6D 7F nan nan nan
+Np 6-31G(d',p') 6D 7F nan nan nan
+Pu 6-31G(d',p') 6D 7F nan nan nan
+Am 6-31G(d',p') 6D 7F nan nan nan
+Cm 6-31G(d',p') 6D 7F nan nan nan
+Bk 6-31G(d',p') 6D 7F nan nan nan
+Cf 6-31G(d',p') 6D 7F nan nan nan
+Es 6-31G(d',p') 6D 7F nan nan nan
+Fm 6-31G(d',p') 6D 7F nan nan nan
+Md 6-31G(d',p') 6D 7F nan nan nan
+No 6-31G(d',p') 6D 7F nan nan nan
+Lr 6-31G(d',p') 6D 7F nan nan nan
+Rf 6-31G(d',p') 6D 7F nan nan nan
+Db 6-31G(d',p') 6D 7F nan nan nan
+Sg 6-31G(d',p') 6D 7F nan nan nan
+Bh 6-31G(d',p') 6D 7F nan nan nan
+Hs 6-31G(d',p') 6D 7F nan nan nan
+Mt 6-31G(d',p') 6D 7F nan nan nan
+Ds 6-31G(d',p') 6D 7F nan nan nan
+Rg 6-31G(d',p') 6D 7F nan nan nan
+Cn 6-31G(d',p') 6D 7F nan nan nan
+Nh 6-31G(d',p') 6D 7F nan nan nan
+Fl 6-31G(d',p') 6D 7F nan nan nan
+Mc 6-31G(d',p') 6D 7F nan nan nan
+Lv 6-31G(d',p') 6D 7F nan nan nan
+Ts 6-31G(d',p') 6D 7F nan nan nan
+Og 6-31G(d',p') 6D 7F nan nan nan
+ H 6-31G* 6D 7F  2  4  2
+He 6-31G* 6D 7F  2  4  2
+Li 6-31G* 6D 7F 15 28 15
+Be 6-31G* 6D 7F 15 28 15
+ B 6-31G* 6D 7F 15 28 15
+ C 6-31G* 6D 7F 15 28 15
+ N 6-31G* 6D 7F 15 28 15
+ O 6-31G* 6D 7F 15 28 15
+ F 6-31G* 6D 7F 15 28 15
+Ne 6-31G* 6D 7F 15 28 15
+Na 6-31G* 6D 7F 19 52 19
+Mg 6-31G* 6D 7F 19 52 19
+Al 6-31G* 6D 7F 19 52 19
+Si 6-31G* 6D 7F 19 52 19
+ P 6-31G* 6D 7F 19 52 19
+ S 6-31G* 6D 7F 19 52 19
+Cl 6-31G* 6D 7F 19 52 19
+Ar 6-31G* 6D 7F 19 52 19
+ K 6-31G* 6D 7F 23 76 23
+Ca 6-31G* 6D 7F 23 76 23
+Sc 6-31G* 6D 7F 36 104 39
+Ti 6-31G* 6D 7F 36 104 39
+ V 6-31G* 6D 7F 36 104 39
+Cr 6-31G* 6D 7F 36 104 39
+Mn 6-31G* 6D 7F 36 104 39
+Fe 6-31G* 6D 7F 36 104 39
+Co 6-31G* 6D 7F 36 104 39
+Ni 6-31G* 6D 7F 36 104 39
+Cu 6-31G* 6D 7F 36 104 39
+Zn 6-31G* 6D 7F 36 104 39
+Ga 6-31G* 6D 7F 30 83 30
+Ge 6-31G* 6D 7F 30 83 30
+As 6-31G* 6D 7F 30 83 30
+Se 6-31G* 6D 7F 30 83 30
+Br 6-31G* 6D 7F 30 83 30
+Kr 6-31G* 6D 7F 30 83 30
+Rb 6-31G* 6D 7F nan nan nan
+Sr 6-31G* 6D 7F nan nan nan
+ Y 6-31G* 6D 7F nan nan nan
+Zr 6-31G* 6D 7F nan nan nan
+Nb 6-31G* 6D 7F nan nan nan
+Mo 6-31G* 6D 7F nan nan nan
+Tc 6-31G* 6D 7F nan nan nan
+Ru 6-31G* 6D 7F nan nan nan
+Rh 6-31G* 6D 7F nan nan nan
+Pd 6-31G* 6D 7F nan nan nan
+Ag 6-31G* 6D 7F nan nan nan
+Cd 6-31G* 6D 7F nan nan nan
+In 6-31G* 6D 7F nan nan nan
+Sn 6-31G* 6D 7F nan nan nan
+Sb 6-31G* 6D 7F nan nan nan
+Te 6-31G* 6D 7F nan nan nan
+ I 6-31G* 6D 7F nan nan nan
+Xe 6-31G* 6D 7F nan nan nan
+Cs 6-31G* 6D 7F nan nan nan
+Ba 6-31G* 6D 7F nan nan nan
+La 6-31G* 6D 7F nan nan nan
+Ce 6-31G* 6D 7F nan nan nan
+Pr 6-31G* 6D 7F nan nan nan
+Nd 6-31G* 6D 7F nan nan nan
+Pm 6-31G* 6D 7F nan nan nan
+Sm 6-31G* 6D 7F nan nan nan
+Eu 6-31G* 6D 7F nan nan nan
+Gd 6-31G* 6D 7F nan nan nan
+Tb 6-31G* 6D 7F nan nan nan
+Dy 6-31G* 6D 7F nan nan nan
+Ho 6-31G* 6D 7F nan nan nan
+Er 6-31G* 6D 7F nan nan nan
+Tm 6-31G* 6D 7F nan nan nan
+Yb 6-31G* 6D 7F nan nan nan
+Lu 6-31G* 6D 7F nan nan nan
+Hf 6-31G* 6D 7F nan nan nan
+Ta 6-31G* 6D 7F nan nan nan
+ W 6-31G* 6D 7F nan nan nan
+Re 6-31G* 6D 7F nan nan nan
+Os 6-31G* 6D 7F nan nan nan
+Ir 6-31G* 6D 7F nan nan nan
+Pt 6-31G* 6D 7F nan nan nan
+Au 6-31G* 6D 7F nan nan nan
+Hg 6-31G* 6D 7F nan nan nan
+Tl 6-31G* 6D 7F nan nan nan
+Pb 6-31G* 6D 7F nan nan nan
+Bi 6-31G* 6D 7F nan nan nan
+Po 6-31G* 6D 7F nan nan nan
+At 6-31G* 6D 7F nan nan nan
+Rn 6-31G* 6D 7F nan nan nan
+Fr 6-31G* 6D 7F nan nan nan
+Ra 6-31G* 6D 7F nan nan nan
+Ac 6-31G* 6D 7F nan nan nan
+Th 6-31G* 6D 7F nan nan nan
+Pa 6-31G* 6D 7F nan nan nan
+ U 6-31G* 6D 7F nan nan nan
+Np 6-31G* 6D 7F nan nan nan
+Pu 6-31G* 6D 7F nan nan nan
+Am 6-31G* 6D 7F nan nan nan
+Cm 6-31G* 6D 7F nan nan nan
+Bk 6-31G* 6D 7F nan nan nan
+Cf 6-31G* 6D 7F nan nan nan
+Es 6-31G* 6D 7F nan nan nan
+Fm 6-31G* 6D 7F nan nan nan
+Md 6-31G* 6D 7F nan nan nan
+No 6-31G* 6D 7F nan nan nan
+Lr 6-31G* 6D 7F nan nan nan
+Rf 6-31G* 6D 7F nan nan nan
+Db 6-31G* 6D 7F nan nan nan
+Sg 6-31G* 6D 7F nan nan nan
+Bh 6-31G* 6D 7F nan nan nan
+Hs 6-31G* 6D 7F nan nan nan
+Mt 6-31G* 6D 7F nan nan nan
+Ds 6-31G* 6D 7F nan nan nan
+Rg 6-31G* 6D 7F nan nan nan
+Cn 6-31G* 6D 7F nan nan nan
+Nh 6-31G* 6D 7F nan nan nan
+Fl 6-31G* 6D 7F nan nan nan
+Mc 6-31G* 6D 7F nan nan nan
+Lv 6-31G* 6D 7F nan nan nan
+Ts 6-31G* 6D 7F nan nan nan
+Og 6-31G* 6D 7F nan nan nan
+ H 6-31G** 6D 7F  5  7  5
+He 6-31G** 6D 7F  5  7  5
+Li 6-31G** 6D 7F 15 28 15
+Be 6-31G** 6D 7F 15 28 15
+ B 6-31G** 6D 7F 15 28 15
+ C 6-31G** 6D 7F 15 28 15
+ N 6-31G** 6D 7F 15 28 15
+ O 6-31G** 6D 7F 15 28 15
+ F 6-31G** 6D 7F 15 28 15
+Ne 6-31G** 6D 7F 15 28 15
+Na 6-31G** 6D 7F 19 52 19
+Mg 6-31G** 6D 7F 19 52 19
+Al 6-31G** 6D 7F 19 52 19
+Si 6-31G** 6D 7F 19 52 19
+ P 6-31G** 6D 7F 19 52 19
+ S 6-31G** 6D 7F 19 52 19
+Cl 6-31G** 6D 7F 19 52 19
+Ar 6-31G** 6D 7F 19 52 19
+ K 6-31G** 6D 7F 23 76 23
+Ca 6-31G** 6D 7F 23 76 23
+Sc 6-31G** 6D 7F 36 104 39
+Ti 6-31G** 6D 7F 36 104 39
+ V 6-31G** 6D 7F 36 104 39
+Cr 6-31G** 6D 7F 36 104 39
+Mn 6-31G** 6D 7F 36 104 39
+Fe 6-31G** 6D 7F 36 104 39
+Co 6-31G** 6D 7F 36 104 39
+Ni 6-31G** 6D 7F 36 104 39
+Cu 6-31G** 6D 7F 36 104 39
+Zn 6-31G** 6D 7F 36 104 39
+Ga 6-31G** 6D 7F 30 83 30
+Ge 6-31G** 6D 7F 30 83 30
+As 6-31G** 6D 7F 30 83 30
+Se 6-31G** 6D 7F 30 83 30
+Br 6-31G** 6D 7F 30 83 30
+Kr 6-31G** 6D 7F 30 83 30
+Rb 6-31G** 6D 7F nan nan nan
+Sr 6-31G** 6D 7F nan nan nan
+ Y 6-31G** 6D 7F nan nan nan
+Zr 6-31G** 6D 7F nan nan nan
+Nb 6-31G** 6D 7F nan nan nan
+Mo 6-31G** 6D 7F nan nan nan
+Tc 6-31G** 6D 7F nan nan nan
+Ru 6-31G** 6D 7F nan nan nan
+Rh 6-31G** 6D 7F nan nan nan
+Pd 6-31G** 6D 7F nan nan nan
+Ag 6-31G** 6D 7F nan nan nan
+Cd 6-31G** 6D 7F nan nan nan
+In 6-31G** 6D 7F nan nan nan
+Sn 6-31G** 6D 7F nan nan nan
+Sb 6-31G** 6D 7F nan nan nan
+Te 6-31G** 6D 7F nan nan nan
+ I 6-31G** 6D 7F nan nan nan
+Xe 6-31G** 6D 7F nan nan nan
+Cs 6-31G** 6D 7F nan nan nan
+Ba 6-31G** 6D 7F nan nan nan
+La 6-31G** 6D 7F nan nan nan
+Ce 6-31G** 6D 7F nan nan nan
+Pr 6-31G** 6D 7F nan nan nan
+Nd 6-31G** 6D 7F nan nan nan
+Pm 6-31G** 6D 7F nan nan nan
+Sm 6-31G** 6D 7F nan nan nan
+Eu 6-31G** 6D 7F nan nan nan
+Gd 6-31G** 6D 7F nan nan nan
+Tb 6-31G** 6D 7F nan nan nan
+Dy 6-31G** 6D 7F nan nan nan
+Ho 6-31G** 6D 7F nan nan nan
+Er 6-31G** 6D 7F nan nan nan
+Tm 6-31G** 6D 7F nan nan nan
+Yb 6-31G** 6D 7F nan nan nan
+Lu 6-31G** 6D 7F nan nan nan
+Hf 6-31G** 6D 7F nan nan nan
+Ta 6-31G** 6D 7F nan nan nan
+ W 6-31G** 6D 7F nan nan nan
+Re 6-31G** 6D 7F nan nan nan
+Os 6-31G** 6D 7F nan nan nan
+Ir 6-31G** 6D 7F nan nan nan
+Pt 6-31G** 6D 7F nan nan nan
+Au 6-31G** 6D 7F nan nan nan
+Hg 6-31G** 6D 7F nan nan nan
+Tl 6-31G** 6D 7F nan nan nan
+Pb 6-31G** 6D 7F nan nan nan
+Bi 6-31G** 6D 7F nan nan nan
+Po 6-31G** 6D 7F nan nan nan
+At 6-31G** 6D 7F nan nan nan
+Rn 6-31G** 6D 7F nan nan nan
+Fr 6-31G** 6D 7F nan nan nan
+Ra 6-31G** 6D 7F nan nan nan
+Ac 6-31G** 6D 7F nan nan nan
+Th 6-31G** 6D 7F nan nan nan
+Pa 6-31G** 6D 7F nan nan nan
+ U 6-31G** 6D 7F nan nan nan
+Np 6-31G** 6D 7F nan nan nan
+Pu 6-31G** 6D 7F nan nan nan
+Am 6-31G** 6D 7F nan nan nan
+Cm 6-31G** 6D 7F nan nan nan
+Bk 6-31G** 6D 7F nan nan nan
+Cf 6-31G** 6D 7F nan nan nan
+Es 6-31G** 6D 7F nan nan nan
+Fm 6-31G** 6D 7F nan nan nan
+Md 6-31G** 6D 7F nan nan nan
+No 6-31G** 6D 7F nan nan nan
+Lr 6-31G** 6D 7F nan nan nan
+Rf 6-31G** 6D 7F nan nan nan
+Db 6-31G** 6D 7F nan nan nan
+Sg 6-31G** 6D 7F nan nan nan
+Bh 6-31G** 6D 7F nan nan nan
+Hs 6-31G** 6D 7F nan nan nan
+Mt 6-31G** 6D 7F nan nan nan
+Ds 6-31G** 6D 7F nan nan nan
+Rg 6-31G** 6D 7F nan nan nan
+Cn 6-31G** 6D 7F nan nan nan
+Nh 6-31G** 6D 7F nan nan nan
+Fl 6-31G** 6D 7F nan nan nan
+Mc 6-31G** 6D 7F nan nan nan
+Lv 6-31G** 6D 7F nan nan nan
+Ts 6-31G** 6D 7F nan nan nan
+Og 6-31G** 6D 7F nan nan nan
+ H 6-31G(d) 6D 7F  2  4  2
+He 6-31G(d) 6D 7F  2  4  2
+Li 6-31G(d) 6D 7F 15 28 15
+Be 6-31G(d) 6D 7F 15 28 15
+ B 6-31G(d) 6D 7F 15 28 15
+ C 6-31G(d) 6D 7F 15 28 15
+ N 6-31G(d) 6D 7F 15 28 15
+ O 6-31G(d) 6D 7F 15 28 15
+ F 6-31G(d) 6D 7F 15 28 15
+Ne 6-31G(d) 6D 7F 15 28 15
+Na 6-31G(d) 6D 7F 19 52 19
+Mg 6-31G(d) 6D 7F 19 52 19
+Al 6-31G(d) 6D 7F 19 52 19
+Si 6-31G(d) 6D 7F 19 52 19
+ P 6-31G(d) 6D 7F 19 52 19
+ S 6-31G(d) 6D 7F 19 52 19
+Cl 6-31G(d) 6D 7F 19 52 19
+Ar 6-31G(d) 6D 7F 19 52 19
+ K 6-31G(d) 6D 7F 23 76 23
+Ca 6-31G(d) 6D 7F 23 76 23
+Sc 6-31G(d) 6D 7F 36 104 39
+Ti 6-31G(d) 6D 7F 36 104 39
+ V 6-31G(d) 6D 7F 36 104 39
+Cr 6-31G(d) 6D 7F 36 104 39
+Mn 6-31G(d) 6D 7F 36 104 39
+Fe 6-31G(d) 6D 7F 36 104 39
+Co 6-31G(d) 6D 7F 36 104 39
+Ni 6-31G(d) 6D 7F 36 104 39
+Cu 6-31G(d) 6D 7F 36 104 39
+Zn 6-31G(d) 6D 7F 36 104 39
+Ga 6-31G(d) 6D 7F 30 83 30
+Ge 6-31G(d) 6D 7F 30 83 30
+As 6-31G(d) 6D 7F 30 83 30
+Se 6-31G(d) 6D 7F 30 83 30
+Br 6-31G(d) 6D 7F 30 83 30
+Kr 6-31G(d) 6D 7F 30 83 30
+Rb 6-31G(d) 6D 7F nan nan nan
+Sr 6-31G(d) 6D 7F nan nan nan
+ Y 6-31G(d) 6D 7F nan nan nan
+Zr 6-31G(d) 6D 7F nan nan nan
+Nb 6-31G(d) 6D 7F nan nan nan
+Mo 6-31G(d) 6D 7F nan nan nan
+Tc 6-31G(d) 6D 7F nan nan nan
+Ru 6-31G(d) 6D 7F nan nan nan
+Rh 6-31G(d) 6D 7F nan nan nan
+Pd 6-31G(d) 6D 7F nan nan nan
+Ag 6-31G(d) 6D 7F nan nan nan
+Cd 6-31G(d) 6D 7F nan nan nan
+In 6-31G(d) 6D 7F nan nan nan
+Sn 6-31G(d) 6D 7F nan nan nan
+Sb 6-31G(d) 6D 7F nan nan nan
+Te 6-31G(d) 6D 7F nan nan nan
+ I 6-31G(d) 6D 7F nan nan nan
+Xe 6-31G(d) 6D 7F nan nan nan
+Cs 6-31G(d) 6D 7F nan nan nan
+Ba 6-31G(d) 6D 7F nan nan nan
+La 6-31G(d) 6D 7F nan nan nan
+Ce 6-31G(d) 6D 7F nan nan nan
+Pr 6-31G(d) 6D 7F nan nan nan
+Nd 6-31G(d) 6D 7F nan nan nan
+Pm 6-31G(d) 6D 7F nan nan nan
+Sm 6-31G(d) 6D 7F nan nan nan
+Eu 6-31G(d) 6D 7F nan nan nan
+Gd 6-31G(d) 6D 7F nan nan nan
+Tb 6-31G(d) 6D 7F nan nan nan
+Dy 6-31G(d) 6D 7F nan nan nan
+Ho 6-31G(d) 6D 7F nan nan nan
+Er 6-31G(d) 6D 7F nan nan nan
+Tm 6-31G(d) 6D 7F nan nan nan
+Yb 6-31G(d) 6D 7F nan nan nan
+Lu 6-31G(d) 6D 7F nan nan nan
+Hf 6-31G(d) 6D 7F nan nan nan
+Ta 6-31G(d) 6D 7F nan nan nan
+ W 6-31G(d) 6D 7F nan nan nan
+Re 6-31G(d) 6D 7F nan nan nan
+Os 6-31G(d) 6D 7F nan nan nan
+Ir 6-31G(d) 6D 7F nan nan nan
+Pt 6-31G(d) 6D 7F nan nan nan
+Au 6-31G(d) 6D 7F nan nan nan
+Hg 6-31G(d) 6D 7F nan nan nan
+Tl 6-31G(d) 6D 7F nan nan nan
+Pb 6-31G(d) 6D 7F nan nan nan
+Bi 6-31G(d) 6D 7F nan nan nan
+Po 6-31G(d) 6D 7F nan nan nan
+At 6-31G(d) 6D 7F nan nan nan
+Rn 6-31G(d) 6D 7F nan nan nan
+Fr 6-31G(d) 6D 7F nan nan nan
+Ra 6-31G(d) 6D 7F nan nan nan
+Ac 6-31G(d) 6D 7F nan nan nan
+Th 6-31G(d) 6D 7F nan nan nan
+Pa 6-31G(d) 6D 7F nan nan nan
+ U 6-31G(d) 6D 7F nan nan nan
+Np 6-31G(d) 6D 7F nan nan nan
+Pu 6-31G(d) 6D 7F nan nan nan
+Am 6-31G(d) 6D 7F nan nan nan
+Cm 6-31G(d) 6D 7F nan nan nan
+Bk 6-31G(d) 6D 7F nan nan nan
+Cf 6-31G(d) 6D 7F nan nan nan
+Es 6-31G(d) 6D 7F nan nan nan
+Fm 6-31G(d) 6D 7F nan nan nan
+Md 6-31G(d) 6D 7F nan nan nan
+No 6-31G(d) 6D 7F nan nan nan
+Lr 6-31G(d) 6D 7F nan nan nan
+Rf 6-31G(d) 6D 7F nan nan nan
+Db 6-31G(d) 6D 7F nan nan nan
+Sg 6-31G(d) 6D 7F nan nan nan
+Bh 6-31G(d) 6D 7F nan nan nan
+Hs 6-31G(d) 6D 7F nan nan nan
+Mt 6-31G(d) 6D 7F nan nan nan
+Ds 6-31G(d) 6D 7F nan nan nan
+Rg 6-31G(d) 6D 7F nan nan nan
+Cn 6-31G(d) 6D 7F nan nan nan
+Nh 6-31G(d) 6D 7F nan nan nan
+Fl 6-31G(d) 6D 7F nan nan nan
+Mc 6-31G(d) 6D 7F nan nan nan
+Lv 6-31G(d) 6D 7F nan nan nan
+Ts 6-31G(d) 6D 7F nan nan nan
+Og 6-31G(d) 6D 7F nan nan nan
+ H 6-31G(df,pd) 6D 7F 11 13 11
+He 6-31G(df,pd) 6D 7F 11 13 11
+Li 6-31G(df,pd) 6D 7F 22 38 25
+Be 6-31G(df,pd) 6D 7F 22 38 25
+ B 6-31G(df,pd) 6D 7F 22 38 25
+ C 6-31G(df,pd) 6D 7F 22 38 25
+ N 6-31G(df,pd) 6D 7F 22 38 25
+ O 6-31G(df,pd) 6D 7F 22 38 25
+ F 6-31G(df,pd) 6D 7F 22 38 25
+Ne 6-31G(df,pd) 6D 7F 22 38 25
+Na 6-31G(df,pd) 6D 7F 26 62 29
+Mg 6-31G(df,pd) 6D 7F 26 62 29
+Al 6-31G(df,pd) 6D 7F 26 62 29
+Si 6-31G(df,pd) 6D 7F 26 62 29
+ P 6-31G(df,pd) 6D 7F 26 62 29
+ S 6-31G(df,pd) 6D 7F 26 62 29
+Cl 6-31G(df,pd) 6D 7F 26 62 29
+Ar 6-31G(df,pd) 6D 7F 26 62 29
+ K 6-31G(df,pd) 6D 7F 30 86 33
+Ca 6-31G(df,pd) 6D 7F 30 86 33
+Sc 6-31G(df,pd) 6D 7F 45 119 54
+Ti 6-31G(df,pd) 6D 7F 45 119 54
+ V 6-31G(df,pd) 6D 7F 45 119 54
+Cr 6-31G(df,pd) 6D 7F 45 119 54
+Mn 6-31G(df,pd) 6D 7F 45 119 54
+Fe 6-31G(df,pd) 6D 7F 45 119 54
+Co 6-31G(df,pd) 6D 7F 45 119 54
+Ni 6-31G(df,pd) 6D 7F 45 119 54
+Cu 6-31G(df,pd) 6D 7F 45 119 54
+Zn 6-31G(df,pd) 6D 7F 45 119 54
+Ga 6-31G(df,pd) 6D 7F 37 93 40
+Ge 6-31G(df,pd) 6D 7F 37 93 40
+As 6-31G(df,pd) 6D 7F 37 93 40
+Se 6-31G(df,pd) 6D 7F 37 93 40
+Br 6-31G(df,pd) 6D 7F 37 93 40
+Kr 6-31G(df,pd) 6D 7F 37 93 40
+Rb 6-31G(df,pd) 6D 7F nan nan nan
+Sr 6-31G(df,pd) 6D 7F nan nan nan
+ Y 6-31G(df,pd) 6D 7F nan nan nan
+Zr 6-31G(df,pd) 6D 7F nan nan nan
+Nb 6-31G(df,pd) 6D 7F nan nan nan
+Mo 6-31G(df,pd) 6D 7F nan nan nan
+Tc 6-31G(df,pd) 6D 7F nan nan nan
+Ru 6-31G(df,pd) 6D 7F nan nan nan
+Rh 6-31G(df,pd) 6D 7F nan nan nan
+Pd 6-31G(df,pd) 6D 7F nan nan nan
+Ag 6-31G(df,pd) 6D 7F nan nan nan
+Cd 6-31G(df,pd) 6D 7F nan nan nan
+In 6-31G(df,pd) 6D 7F nan nan nan
+Sn 6-31G(df,pd) 6D 7F nan nan nan
+Sb 6-31G(df,pd) 6D 7F nan nan nan
+Te 6-31G(df,pd) 6D 7F nan nan nan
+ I 6-31G(df,pd) 6D 7F nan nan nan
+Xe 6-31G(df,pd) 6D 7F nan nan nan
+Cs 6-31G(df,pd) 6D 7F nan nan nan
+Ba 6-31G(df,pd) 6D 7F nan nan nan
+La 6-31G(df,pd) 6D 7F nan nan nan
+Ce 6-31G(df,pd) 6D 7F nan nan nan
+Pr 6-31G(df,pd) 6D 7F nan nan nan
+Nd 6-31G(df,pd) 6D 7F nan nan nan
+Pm 6-31G(df,pd) 6D 7F nan nan nan
+Sm 6-31G(df,pd) 6D 7F nan nan nan
+Eu 6-31G(df,pd) 6D 7F nan nan nan
+Gd 6-31G(df,pd) 6D 7F nan nan nan
+Tb 6-31G(df,pd) 6D 7F nan nan nan
+Dy 6-31G(df,pd) 6D 7F nan nan nan
+Ho 6-31G(df,pd) 6D 7F nan nan nan
+Er 6-31G(df,pd) 6D 7F nan nan nan
+Tm 6-31G(df,pd) 6D 7F nan nan nan
+Yb 6-31G(df,pd) 6D 7F nan nan nan
+Lu 6-31G(df,pd) 6D 7F nan nan nan
+Hf 6-31G(df,pd) 6D 7F nan nan nan
+Ta 6-31G(df,pd) 6D 7F nan nan nan
+ W 6-31G(df,pd) 6D 7F nan nan nan
+Re 6-31G(df,pd) 6D 7F nan nan nan
+Os 6-31G(df,pd) 6D 7F nan nan nan
+Ir 6-31G(df,pd) 6D 7F nan nan nan
+Pt 6-31G(df,pd) 6D 7F nan nan nan
+Au 6-31G(df,pd) 6D 7F nan nan nan
+Hg 6-31G(df,pd) 6D 7F nan nan nan
+Tl 6-31G(df,pd) 6D 7F nan nan nan
+Pb 6-31G(df,pd) 6D 7F nan nan nan
+Bi 6-31G(df,pd) 6D 7F nan nan nan
+Po 6-31G(df,pd) 6D 7F nan nan nan
+At 6-31G(df,pd) 6D 7F nan nan nan
+Rn 6-31G(df,pd) 6D 7F nan nan nan
+Fr 6-31G(df,pd) 6D 7F nan nan nan
+Ra 6-31G(df,pd) 6D 7F nan nan nan
+Ac 6-31G(df,pd) 6D 7F nan nan nan
+Th 6-31G(df,pd) 6D 7F nan nan nan
+Pa 6-31G(df,pd) 6D 7F nan nan nan
+ U 6-31G(df,pd) 6D 7F nan nan nan
+Np 6-31G(df,pd) 6D 7F nan nan nan
+Pu 6-31G(df,pd) 6D 7F nan nan nan
+Am 6-31G(df,pd) 6D 7F nan nan nan
+Cm 6-31G(df,pd) 6D 7F nan nan nan
+Bk 6-31G(df,pd) 6D 7F nan nan nan
+Cf 6-31G(df,pd) 6D 7F nan nan nan
+Es 6-31G(df,pd) 6D 7F nan nan nan
+Fm 6-31G(df,pd) 6D 7F nan nan nan
+Md 6-31G(df,pd) 6D 7F nan nan nan
+No 6-31G(df,pd) 6D 7F nan nan nan
+Lr 6-31G(df,pd) 6D 7F nan nan nan
+Rf 6-31G(df,pd) 6D 7F nan nan nan
+Db 6-31G(df,pd) 6D 7F nan nan nan
+Sg 6-31G(df,pd) 6D 7F nan nan nan
+Bh 6-31G(df,pd) 6D 7F nan nan nan
+Hs 6-31G(df,pd) 6D 7F nan nan nan
+Mt 6-31G(df,pd) 6D 7F nan nan nan
+Ds 6-31G(df,pd) 6D 7F nan nan nan
+Rg 6-31G(df,pd) 6D 7F nan nan nan
+Cn 6-31G(df,pd) 6D 7F nan nan nan
+Nh 6-31G(df,pd) 6D 7F nan nan nan
+Fl 6-31G(df,pd) 6D 7F nan nan nan
+Mc 6-31G(df,pd) 6D 7F nan nan nan
+Lv 6-31G(df,pd) 6D 7F nan nan nan
+Ts 6-31G(df,pd) 6D 7F nan nan nan
+Og 6-31G(df,pd) 6D 7F nan nan nan
+ H 6-31G(d,p) 6D 7F  5  7  5
+He 6-31G(d,p) 6D 7F  5  7  5
+Li 6-31G(d,p) 6D 7F 15 28 15
+Be 6-31G(d,p) 6D 7F 15 28 15
+ B 6-31G(d,p) 6D 7F 15 28 15
+ C 6-31G(d,p) 6D 7F 15 28 15
+ N 6-31G(d,p) 6D 7F 15 28 15
+ O 6-31G(d,p) 6D 7F 15 28 15
+ F 6-31G(d,p) 6D 7F 15 28 15
+Ne 6-31G(d,p) 6D 7F 15 28 15
+Na 6-31G(d,p) 6D 7F 19 52 19
+Mg 6-31G(d,p) 6D 7F 19 52 19
+Al 6-31G(d,p) 6D 7F 19 52 19
+Si 6-31G(d,p) 6D 7F 19 52 19
+ P 6-31G(d,p) 6D 7F 19 52 19
+ S 6-31G(d,p) 6D 7F 19 52 19
+Cl 6-31G(d,p) 6D 7F 19 52 19
+Ar 6-31G(d,p) 6D 7F 19 52 19
+ K 6-31G(d,p) 6D 7F 23 76 23
+Ca 6-31G(d,p) 6D 7F 23 76 23
+Sc 6-31G(d,p) 6D 7F 36 104 39
+Ti 6-31G(d,p) 6D 7F 36 104 39
+ V 6-31G(d,p) 6D 7F 36 104 39
+Cr 6-31G(d,p) 6D 7F 36 104 39
+Mn 6-31G(d,p) 6D 7F 36 104 39
+Fe 6-31G(d,p) 6D 7F 36 104 39
+Co 6-31G(d,p) 6D 7F 36 104 39
+Ni 6-31G(d,p) 6D 7F 36 104 39
+Cu 6-31G(d,p) 6D 7F 36 104 39
+Zn 6-31G(d,p) 6D 7F 36 104 39
+Ga 6-31G(d,p) 6D 7F 30 83 30
+Ge 6-31G(d,p) 6D 7F 30 83 30
+As 6-31G(d,p) 6D 7F 30 83 30
+Se 6-31G(d,p) 6D 7F 30 83 30
+Br 6-31G(d,p) 6D 7F 30 83 30
+Kr 6-31G(d,p) 6D 7F 30 83 30
+Rb 6-31G(d,p) 6D 7F nan nan nan
+Sr 6-31G(d,p) 6D 7F nan nan nan
+ Y 6-31G(d,p) 6D 7F nan nan nan
+Zr 6-31G(d,p) 6D 7F nan nan nan
+Nb 6-31G(d,p) 6D 7F nan nan nan
+Mo 6-31G(d,p) 6D 7F nan nan nan
+Tc 6-31G(d,p) 6D 7F nan nan nan
+Ru 6-31G(d,p) 6D 7F nan nan nan
+Rh 6-31G(d,p) 6D 7F nan nan nan
+Pd 6-31G(d,p) 6D 7F nan nan nan
+Ag 6-31G(d,p) 6D 7F nan nan nan
+Cd 6-31G(d,p) 6D 7F nan nan nan
+In 6-31G(d,p) 6D 7F nan nan nan
+Sn 6-31G(d,p) 6D 7F nan nan nan
+Sb 6-31G(d,p) 6D 7F nan nan nan
+Te 6-31G(d,p) 6D 7F nan nan nan
+ I 6-31G(d,p) 6D 7F nan nan nan
+Xe 6-31G(d,p) 6D 7F nan nan nan
+Cs 6-31G(d,p) 6D 7F nan nan nan
+Ba 6-31G(d,p) 6D 7F nan nan nan
+La 6-31G(d,p) 6D 7F nan nan nan
+Ce 6-31G(d,p) 6D 7F nan nan nan
+Pr 6-31G(d,p) 6D 7F nan nan nan
+Nd 6-31G(d,p) 6D 7F nan nan nan
+Pm 6-31G(d,p) 6D 7F nan nan nan
+Sm 6-31G(d,p) 6D 7F nan nan nan
+Eu 6-31G(d,p) 6D 7F nan nan nan
+Gd 6-31G(d,p) 6D 7F nan nan nan
+Tb 6-31G(d,p) 6D 7F nan nan nan
+Dy 6-31G(d,p) 6D 7F nan nan nan
+Ho 6-31G(d,p) 6D 7F nan nan nan
+Er 6-31G(d,p) 6D 7F nan nan nan
+Tm 6-31G(d,p) 6D 7F nan nan nan
+Yb 6-31G(d,p) 6D 7F nan nan nan
+Lu 6-31G(d,p) 6D 7F nan nan nan
+Hf 6-31G(d,p) 6D 7F nan nan nan
+Ta 6-31G(d,p) 6D 7F nan nan nan
+ W 6-31G(d,p) 6D 7F nan nan nan
+Re 6-31G(d,p) 6D 7F nan nan nan
+Os 6-31G(d,p) 6D 7F nan nan nan
+Ir 6-31G(d,p) 6D 7F nan nan nan
+Pt 6-31G(d,p) 6D 7F nan nan nan
+Au 6-31G(d,p) 6D 7F nan nan nan
+Hg 6-31G(d,p) 6D 7F nan nan nan
+Tl 6-31G(d,p) 6D 7F nan nan nan
+Pb 6-31G(d,p) 6D 7F nan nan nan
+Bi 6-31G(d,p) 6D 7F nan nan nan
+Po 6-31G(d,p) 6D 7F nan nan nan
+At 6-31G(d,p) 6D 7F nan nan nan
+Rn 6-31G(d,p) 6D 7F nan nan nan
+Fr 6-31G(d,p) 6D 7F nan nan nan
+Ra 6-31G(d,p) 6D 7F nan nan nan
+Ac 6-31G(d,p) 6D 7F nan nan nan
+Th 6-31G(d,p) 6D 7F nan nan nan
+Pa 6-31G(d,p) 6D 7F nan nan nan
+ U 6-31G(d,p) 6D 7F nan nan nan
+Np 6-31G(d,p) 6D 7F nan nan nan
+Pu 6-31G(d,p) 6D 7F nan nan nan
+Am 6-31G(d,p) 6D 7F nan nan nan
+Cm 6-31G(d,p) 6D 7F nan nan nan
+Bk 6-31G(d,p) 6D 7F nan nan nan
+Cf 6-31G(d,p) 6D 7F nan nan nan
+Es 6-31G(d,p) 6D 7F nan nan nan
+Fm 6-31G(d,p) 6D 7F nan nan nan
+Md 6-31G(d,p) 6D 7F nan nan nan
+No 6-31G(d,p) 6D 7F nan nan nan
+Lr 6-31G(d,p) 6D 7F nan nan nan
+Rf 6-31G(d,p) 6D 7F nan nan nan
+Db 6-31G(d,p) 6D 7F nan nan nan
+Sg 6-31G(d,p) 6D 7F nan nan nan
+Bh 6-31G(d,p) 6D 7F nan nan nan
+Hs 6-31G(d,p) 6D 7F nan nan nan
+Mt 6-31G(d,p) 6D 7F nan nan nan
+Ds 6-31G(d,p) 6D 7F nan nan nan
+Rg 6-31G(d,p) 6D 7F nan nan nan
+Cn 6-31G(d,p) 6D 7F nan nan nan
+Nh 6-31G(d,p) 6D 7F nan nan nan
+Fl 6-31G(d,p) 6D 7F nan nan nan
+Mc 6-31G(d,p) 6D 7F nan nan nan
+Lv 6-31G(d,p) 6D 7F nan nan nan
+Ts 6-31G(d,p) 6D 7F nan nan nan
+Og 6-31G(d,p) 6D 7F nan nan nan
+ H LANL2DZ 6D 7F  2  4  2
+He LANL2DZ 6D 7F nan nan nan
+Li LANL2DZ 6D 7F  9 22  9
+Be LANL2DZ 6D 7F  9 25  9
+ B LANL2DZ 6D 7F  9 25  9
+ C LANL2DZ 6D 7F  9 25  9
+ N LANL2DZ 6D 7F  9 25  9
+ O LANL2DZ 6D 7F  9 25  9
+ F LANL2DZ 6D 7F  9 25  9
+Ne LANL2DZ 6D 7F  9 25  9
+Na LANL2DZ 6D 7F  8 12  8
+Mg LANL2DZ 6D 7F  8 12  8
+Al LANL2DZ 6D 7F  8 12  8
+Si LANL2DZ 6D 7F  8 12  8
+ P LANL2DZ 6D 7F  8 12  8
+ S LANL2DZ 6D 7F  8 12  8
+Cl LANL2DZ 6D 7F  8 12  8
+Ar LANL2DZ 6D 7F  8 12  8
+ K LANL2DZ 6D 7F 12 22 12
+Ca LANL2DZ 6D 7F 12 22 12
+Sc LANL2DZ 6D 7F 24 52 24
+Ti LANL2DZ 6D 7F 24 52 24
+ V LANL2DZ 6D 7F 24 52 24
+Cr LANL2DZ 6D 7F 24 52 24
+Mn LANL2DZ 6D 7F 24 52 24
+Fe LANL2DZ 6D 7F 24 52 24
+Co LANL2DZ 6D 7F 24 52 24
+Ni LANL2DZ 6D 7F 24 52 24
+Cu LANL2DZ 6D 7F 24 52 24
+Zn LANL2DZ 6D 7F 20 39 20
+Ga LANL2DZ 6D 7F  8 12  8
+Ge LANL2DZ 6D 7F  8 12  8
+As LANL2DZ 6D 7F  8 12  8
+Se LANL2DZ 6D 7F  8 12  8
+Br LANL2DZ 6D 7F  8 12  8
+Kr LANL2DZ 6D 7F  8 12  8
+Rb LANL2DZ 6D 7F 12 25 12
+Sr LANL2DZ 6D 7F 12 25 12
+ Y LANL2DZ 6D 7F 24 49 24
+Zr LANL2DZ 6D 7F 24 49 24
+Nb LANL2DZ 6D 7F 24 49 24
+Mo LANL2DZ 6D 7F 24 49 24
+Tc LANL2DZ 6D 7F 24 49 24
+Ru LANL2DZ 6D 7F 24 49 24
+Rh LANL2DZ 6D 7F 24 49 24
+Pd LANL2DZ 6D 7F 24 49 24
+Ag LANL2DZ 6D 7F 24 49 24
+Cd LANL2DZ 6D 7F 20 36 20
+In LANL2DZ 6D 7F  8 12  8
+Sn LANL2DZ 6D 7F  8 12  8
+Sb LANL2DZ 6D 7F  8 12  8
+Te LANL2DZ 6D 7F  8 12  8
+ I LANL2DZ 6D 7F  8 12  8
+Xe LANL2DZ 6D 7F  8 12  8
+Cs LANL2DZ 6D 7F 12 25 12
+Ba LANL2DZ 6D 7F 12 25 12
+La LANL2DZ 6D 7F 24 43 24
+Ce LANL2DZ 6D 7F nan nan nan
+Pr LANL2DZ 6D 7F nan nan nan
+Nd LANL2DZ 6D 7F nan nan nan
+Pm LANL2DZ 6D 7F nan nan nan
+Sm LANL2DZ 6D 7F nan nan nan
+Eu LANL2DZ 6D 7F nan nan nan
+Gd LANL2DZ 6D 7F nan nan nan
+Tb LANL2DZ 6D 7F nan nan nan
+Dy LANL2DZ 6D 7F nan nan nan
+Ho LANL2DZ 6D 7F nan nan nan
+Er LANL2DZ 6D 7F nan nan nan
+Tm LANL2DZ 6D 7F nan nan nan
+Yb LANL2DZ 6D 7F nan nan nan
+Lu LANL2DZ 6D 7F nan nan nan
+Hf LANL2DZ 6D 7F 24 43 24
+Ta LANL2DZ 6D 7F 24 43 24
+ W LANL2DZ 6D 7F 24 43 24
+Re LANL2DZ 6D 7F 24 43 24
+Os LANL2DZ 6D 7F 24 43 24
+Ir LANL2DZ 6D 7F 24 43 24
+Pt LANL2DZ 6D 7F 24 43 24
+Au LANL2DZ 6D 7F 24 43 24
+Hg LANL2DZ 6D 7F 20 30 20
+Tl LANL2DZ 6D 7F 20 30 20
+Pb LANL2DZ 6D 7F  8 12  8
+Bi LANL2DZ 6D 7F  8 12  8
+Po LANL2DZ 6D 7F nan nan nan
+At LANL2DZ 6D 7F nan nan nan
+Rn LANL2DZ 6D 7F nan nan nan
+Fr LANL2DZ 6D 7F nan nan nan
+Ra LANL2DZ 6D 7F nan nan nan
+Ac LANL2DZ 6D 7F nan nan nan
+Th LANL2DZ 6D 7F nan nan nan
+Pa LANL2DZ 6D 7F nan nan nan
+ U LANL2DZ 6D 7F nan nan nan
+Np LANL2DZ 6D 7F nan nan nan
+Pu LANL2DZ 6D 7F nan nan nan
+Am LANL2DZ 6D 7F nan nan nan
+Cm LANL2DZ 6D 7F nan nan nan
+Bk LANL2DZ 6D 7F nan nan nan
+Cf LANL2DZ 6D 7F nan nan nan
+Es LANL2DZ 6D 7F nan nan nan
+Fm LANL2DZ 6D 7F nan nan nan
+Md LANL2DZ 6D 7F nan nan nan
+No LANL2DZ 6D 7F nan nan nan
+Lr LANL2DZ 6D 7F nan nan nan
+Rf LANL2DZ 6D 7F nan nan nan
+Db LANL2DZ 6D 7F nan nan nan
+Sg LANL2DZ 6D 7F nan nan nan
+Bh LANL2DZ 6D 7F nan nan nan
+Hs LANL2DZ 6D 7F nan nan nan
+Mt LANL2DZ 6D 7F nan nan nan
+Ds LANL2DZ 6D 7F nan nan nan
+Rg LANL2DZ 6D 7F nan nan nan
+Cn LANL2DZ 6D 7F nan nan nan
+Nh LANL2DZ 6D 7F nan nan nan
+Fl LANL2DZ 6D 7F nan nan nan
+Mc LANL2DZ 6D 7F nan nan nan
+Lv LANL2DZ 6D 7F nan nan nan
+Ts LANL2DZ 6D 7F nan nan nan
+Og LANL2DZ 6D 7F nan nan nan
+ H SDD 6D 7F  2  4  2
+He SDD 6D 7F  2  4  2
+Li SDD 6D 7F 10 21 10
+Be SDD 6D 7F 10 24 10
+ B SDD 6D 7F 10 24 10
+ C SDD 6D 7F 10 24 10
+ N SDD 6D 7F 10 24 10
+ O SDD 6D 7F 10 24 10
+ F SDD 6D 7F 10 24 10
+Ne SDD 6D 7F 10 24 10
+Na SDD 6D 7F 12 45 12
+Mg SDD 6D 7F 12 45 12
+Al SDD 6D 7F 18 36 18
+Si SDD 6D 7F 18 36 18
+ P SDD 6D 7F 18 36 18
+ S SDD 6D 7F 18 36 18
+Cl SDD 6D 7F 18 36 18
+Ar SDD 6D 7F 12 45 12
+ K SDD 6D 7F 17 25 17
+Ca SDD 6D 7F 28 54 28
+Sc SDD 6D 7F 46 75 49
+Ti SDD 6D 7F 46 75 49
+ V SDD 6D 7F 46 75 49
+Cr SDD 6D 7F 46 75 49
+Mn SDD 6D 7F 46 75 49
+Fe SDD 6D 7F 46 75 49
+Co SDD 6D 7F 46 75 49
+Ni SDD 6D 7F 46 75 49
+Cu SDD 6D 7F 39 65 39
+Zn SDD 6D 7F 39 65 39
+Ga SDD 6D 7F  8 16  8
+Ge SDD 6D 7F  8 16  8
+As SDD 6D 7F  8 16  8
+Se SDD 6D 7F 11 19 11
+Br SDD 6D 7F 11 19 11
+Kr SDD 6D 7F 41 52 44
+Rb SDD 6D 7F 17 25 17
+Sr SDD 6D 7F 28 54 28
+ Y SDD 6D 7F 39 65 39
+Zr SDD 6D 7F 39 65 39
+Nb SDD 6D 7F 39 65 39
+Mo SDD 6D 7F 39 65 39
+Tc SDD 6D 7F 39 65 39
+Ru SDD 6D 7F 39 65 39
+Rh SDD 6D 7F 39 65 39
+Pd SDD 6D 7F 39 65 39
+Ag SDD 6D 7F 39 65 39
+Cd SDD 6D 7F 39 65 39
+In SDD 6D 7F  8 16  8
+Sn SDD 6D 7F  8 16  8
+Sb SDD 6D 7F  8 16  8
+Te SDD 6D 7F 11 19 11
+ I SDD 6D 7F 11 19 11
+Xe SDD 6D 7F 41 52 44
+Cs SDD 6D 7F 17 25 17
+Ba SDD 6D 7F 35 64 38
+La SDD 6D 7F 119 283 149
+Ce SDD 6D 7F 119 283 149
+Pr SDD 6D 7F 119 283 149
+Nd SDD 6D 7F 119 283 149
+Pm SDD 6D 7F 119 283 149
+Sm SDD 6D 7F 119 283 149
+Eu SDD 6D 7F 119 283 149
+Gd SDD 6D 7F 119 283 149
+Tb SDD 6D 7F 119 283 149
+Dy SDD 6D 7F 119 283 149
+Ho SDD 6D 7F 119 283 149
+Er SDD 6D 7F 119 283 149
+Tm SDD 6D 7F 119 283 149
+Yb SDD 6D 7F 119 283 149
+Lu SDD 6D 7F 119 283 149
+Hf SDD 6D 7F 39 65 39
+Ta SDD 6D 7F 39 65 39
+ W SDD 6D 7F 39 65 39
+Re SDD 6D 7F 39 65 39
+Os SDD 6D 7F 39 65 39
+Ir SDD 6D 7F 39 65 39
+Pt SDD 6D 7F 39 65 39
+Au SDD 6D 7F 39 65 39
+Hg SDD 6D 7F 39 65 39
+Tl SDD 6D 7F 14 22 14
+Pb SDD 6D 7F 14 22 14
+Bi SDD 6D 7F 14 22 14
+Po SDD 6D 7F 17 25 17
+At SDD 6D 7F 17 25 17
+Rn SDD 6D 7F 14 22 14
+Fr SDD 6D 7F 139 186 169
+Ra SDD 6D 7F 143 190 173
+Ac SDD 6D 7F 122 283 152
+Th SDD 6D 7F 122 283 152
+Pa SDD 6D 7F 122 283 152
+ U SDD 6D 7F 122 283 152
+Np SDD 6D 7F 122 283 152
+Pu SDD 6D 7F 122 283 152
+Am SDD 6D 7F 122 283 152
+Cm SDD 6D 7F 122 283 152
+Bk SDD 6D 7F 122 283 152
+Cf SDD 6D 7F 122 283 152
+Es SDD 6D 7F 122 283 152
+Fm SDD 6D 7F 122 283 152
+Md SDD 6D 7F 122 283 152
+No SDD 6D 7F 122 283 152
+Lr SDD 6D 7F 122 283 152
+Rf SDD 6D 7F nan nan nan
+Db SDD 6D 7F 68 100 80
+Sg SDD 6D 7F nan nan nan
+Bh SDD 6D 7F nan nan nan
+Hs SDD 6D 7F nan nan nan
+Mt SDD 6D 7F nan nan nan
+Ds SDD 6D 7F nan nan nan
+Rg SDD 6D 7F nan nan nan
+Cn SDD 6D 7F nan nan nan
+Nh SDD 6D 7F nan nan nan
+Fl SDD 6D 7F nan nan nan
+Mc SDD 6D 7F nan nan nan
+Lv SDD 6D 7F nan nan nan
+Ts SDD 6D 7F nan nan nan
+Og SDD 6D 7F nan nan nan
+ H STO-3G 6D 7F  1  3  1
+He STO-3G 6D 7F  1  3  1
+Li STO-3G 6D 7F  5 15  5
+Be STO-3G 6D 7F  5 15  5
+ B STO-3G 6D 7F  5 15  5
+ C STO-3G 6D 7F  5 15  5
+ N STO-3G 6D 7F  5 15  5
+ O STO-3G 6D 7F  5 15  5
+ F STO-3G 6D 7F  5 15  5
+Ne STO-3G 6D 7F  5 15  5
+Na STO-3G 6D 7F  9 27  9
+Mg STO-3G 6D 7F  9 27  9
+Al STO-3G 6D 7F  9 27  9
+Si STO-3G 6D 7F  9 27  9
+ P STO-3G 6D 7F  9 27  9
+ S STO-3G 6D 7F  9 27  9
+Cl STO-3G 6D 7F  9 27  9
+Ar STO-3G 6D 7F  9 27  9
+ K STO-3G 6D 7F 13 39 13
+Ca STO-3G 6D 7F 13 39 13
+Sc STO-3G 6D 7F 19 57 19
+Ti STO-3G 6D 7F 19 57 19
+ V STO-3G 6D 7F 19 57 19
+Cr STO-3G 6D 7F 19 57 19
+Mn STO-3G 6D 7F 19 57 19
+Fe STO-3G 6D 7F 19 57 19
+Co STO-3G 6D 7F 19 57 19
+Ni STO-3G 6D 7F 19 57 19
+Cu STO-3G 6D 7F 19 57 19
+Zn STO-3G 6D 7F 19 57 19
+Ga STO-3G 6D 7F 19 57 19
+Ge STO-3G 6D 7F 19 57 19
+As STO-3G 6D 7F 19 57 19
+Se STO-3G 6D 7F 19 57 19
+Br STO-3G 6D 7F 19 57 19
+Kr STO-3G 6D 7F 19 57 19
+Rb STO-3G 6D 7F 23 69 23
+Sr STO-3G 6D 7F 23 69 23
+ Y STO-3G 6D 7F 29 87 29
+Zr STO-3G 6D 7F 29 87 29
+Nb STO-3G 6D 7F 29 87 29
+Mo STO-3G 6D 7F 29 87 29
+Tc STO-3G 6D 7F 29 87 29
+Ru STO-3G 6D 7F 29 87 29
+Rh STO-3G 6D 7F 29 87 29
+Pd STO-3G 6D 7F 29 87 29
+Ag STO-3G 6D 7F 29 87 29
+Cd STO-3G 6D 7F 29 87 29
+In STO-3G 6D 7F 29 87 29
+Sn STO-3G 6D 7F 29 87 29
+Sb STO-3G 6D 7F 29 87 29
+Te STO-3G 6D 7F 29 87 29
+ I STO-3G 6D 7F 29 87 29
+Xe STO-3G 6D 7F 29 87 29
+Cs STO-3G 6D 7F nan nan nan
+Ba STO-3G 6D 7F nan nan nan
+La STO-3G 6D 7F nan nan nan
+Ce STO-3G 6D 7F nan nan nan
+Pr STO-3G 6D 7F nan nan nan
+Nd STO-3G 6D 7F nan nan nan
+Pm STO-3G 6D 7F nan nan nan
+Sm STO-3G 6D 7F nan nan nan
+Eu STO-3G 6D 7F nan nan nan
+Gd STO-3G 6D 7F nan nan nan
+Tb STO-3G 6D 7F nan nan nan
+Dy STO-3G 6D 7F nan nan nan
+Ho STO-3G 6D 7F nan nan nan
+Er STO-3G 6D 7F nan nan nan
+Tm STO-3G 6D 7F nan nan nan
+Yb STO-3G 6D 7F nan nan nan
+Lu STO-3G 6D 7F nan nan nan
+Hf STO-3G 6D 7F nan nan nan
+Ta STO-3G 6D 7F nan nan nan
+ W STO-3G 6D 7F nan nan nan
+Re STO-3G 6D 7F nan nan nan
+Os STO-3G 6D 7F nan nan nan
+Ir STO-3G 6D 7F nan nan nan
+Pt STO-3G 6D 7F nan nan nan
+Au STO-3G 6D 7F nan nan nan
+Hg STO-3G 6D 7F nan nan nan
+Tl STO-3G 6D 7F nan nan nan
+Pb STO-3G 6D 7F nan nan nan
+Bi STO-3G 6D 7F nan nan nan
+Po STO-3G 6D 7F nan nan nan
+At STO-3G 6D 7F nan nan nan
+Rn STO-3G 6D 7F nan nan nan
+Fr STO-3G 6D 7F nan nan nan
+Ra STO-3G 6D 7F nan nan nan
+Ac STO-3G 6D 7F nan nan nan
+Th STO-3G 6D 7F nan nan nan
+Pa STO-3G 6D 7F nan nan nan
+ U STO-3G 6D 7F nan nan nan
+Np STO-3G 6D 7F nan nan nan
+Pu STO-3G 6D 7F nan nan nan
+Am STO-3G 6D 7F nan nan nan
+Cm STO-3G 6D 7F nan nan nan
+Bk STO-3G 6D 7F nan nan nan
+Cf STO-3G 6D 7F nan nan nan
+Es STO-3G 6D 7F nan nan nan
+Fm STO-3G 6D 7F nan nan nan
+Md STO-3G 6D 7F nan nan nan
+No STO-3G 6D 7F nan nan nan
+Lr STO-3G 6D 7F nan nan nan
+Rf STO-3G 6D 7F nan nan nan
+Db STO-3G 6D 7F nan nan nan
+Sg STO-3G 6D 7F nan nan nan
+Bh STO-3G 6D 7F nan nan nan
+Hs STO-3G 6D 7F nan nan nan
+Mt STO-3G 6D 7F nan nan nan
+Ds STO-3G 6D 7F nan nan nan
+Rg STO-3G 6D 7F nan nan nan
+Cn STO-3G 6D 7F nan nan nan
+Nh STO-3G 6D 7F nan nan nan
+Fl STO-3G 6D 7F nan nan nan
+Mc STO-3G 6D 7F nan nan nan
+Lv STO-3G 6D 7F nan nan nan
+Ts STO-3G 6D 7F nan nan nan
+Og STO-3G 6D 7F nan nan nan
+ H Aug-CC-pV5Z 6D 7F 84 108 105
+He Aug-CC-pV5Z 6D 7F 84 108 105
+Li Aug-CC-pV5Z 6D 7F 132 200 182
+Be Aug-CC-pV5Z 6D 7F 132 205 182
+ B Aug-CC-pV5Z 6D 7F 132 205 182
+ C Aug-CC-pV5Z 6D 7F 132 205 182
+ N Aug-CC-pV5Z 6D 7F 132 205 182
+ O Aug-CC-pV5Z 6D 7F 132 205 182
+ F Aug-CC-pV5Z 6D 7F 132 205 182
+Ne Aug-CC-pV5Z 6D 7F 132 205 182
+Na Aug-CC-pV5Z 6D 7F 136 251 186
+Mg Aug-CC-pV5Z 6D 7F nan nan nan
+Al Aug-CC-pV5Z 6D 7F 136 248 186
+Si Aug-CC-pV5Z 6D 7F 136 248 186
+ P Aug-CC-pV5Z 6D 7F 136 248 186
+ S Aug-CC-pV5Z 6D 7F 136 248 186
+Cl Aug-CC-pV5Z 6D 7F 136 248 186
+Ar Aug-CC-pV5Z 6D 7F 136 248 186
+ K Aug-CC-pV5Z 6D 7F nan nan nan
+Ca Aug-CC-pV5Z 6D 7F nan nan nan
+Sc Aug-CC-pV5Z 6D 7F 209 778 308
+Ti Aug-CC-pV5Z 6D 7F 209 785 308
+ V Aug-CC-pV5Z 6D 7F 209 777 308
+Cr Aug-CC-pV5Z 6D 7F 209 772 308
+Mn Aug-CC-pV5Z 6D 7F 209 760 308
+Fe Aug-CC-pV5Z 6D 7F 209 759 308
+Co Aug-CC-pV5Z 6D 7F 209 779 308
+Ni Aug-CC-pV5Z 6D 7F 209 775 308
+Cu Aug-CC-pV5Z 6D 7F 209 791 308
+Zn Aug-CC-pV5Z 6D 7F 209 772 308
+Ga Aug-CC-pV5Z 6D 7F 146 372 196
+Ge Aug-CC-pV5Z 6D 7F 146 373 196
+As Aug-CC-pV5Z 6D 7F 146 364 196
+Se Aug-CC-pV5Z 6D 7F 146 368 196
+Br Aug-CC-pV5Z 6D 7F 146 371 196
+Kr Aug-CC-pV5Z 6D 7F 146 370 196
+Rb Aug-CC-pV5Z 6D 7F nan nan nan
+Sr Aug-CC-pV5Z 6D 7F nan nan nan
+ Y Aug-CC-pV5Z 6D 7F nan nan nan
+Zr Aug-CC-pV5Z 6D 7F nan nan nan
+Nb Aug-CC-pV5Z 6D 7F nan nan nan
+Mo Aug-CC-pV5Z 6D 7F nan nan nan
+Tc Aug-CC-pV5Z 6D 7F nan nan nan
+Ru Aug-CC-pV5Z 6D 7F nan nan nan
+Rh Aug-CC-pV5Z 6D 7F nan nan nan
+Pd Aug-CC-pV5Z 6D 7F nan nan nan
+Ag Aug-CC-pV5Z 6D 7F nan nan nan
+Cd Aug-CC-pV5Z 6D 7F nan nan nan
+In Aug-CC-pV5Z 6D 7F nan nan nan
+Sn Aug-CC-pV5Z 6D 7F nan nan nan
+Sb Aug-CC-pV5Z 6D 7F nan nan nan
+Te Aug-CC-pV5Z 6D 7F nan nan nan
+ I Aug-CC-pV5Z 6D 7F nan nan nan
+Xe Aug-CC-pV5Z 6D 7F nan nan nan
+Cs Aug-CC-pV5Z 6D 7F nan nan nan
+Ba Aug-CC-pV5Z 6D 7F nan nan nan
+La Aug-CC-pV5Z 6D 7F nan nan nan
+Ce Aug-CC-pV5Z 6D 7F nan nan nan
+Pr Aug-CC-pV5Z 6D 7F nan nan nan
+Nd Aug-CC-pV5Z 6D 7F nan nan nan
+Pm Aug-CC-pV5Z 6D 7F nan nan nan
+Sm Aug-CC-pV5Z 6D 7F nan nan nan
+Eu Aug-CC-pV5Z 6D 7F nan nan nan
+Gd Aug-CC-pV5Z 6D 7F nan nan nan
+Tb Aug-CC-pV5Z 6D 7F nan nan nan
+Dy Aug-CC-pV5Z 6D 7F nan nan nan
+Ho Aug-CC-pV5Z 6D 7F nan nan nan
+Er Aug-CC-pV5Z 6D 7F nan nan nan
+Tm Aug-CC-pV5Z 6D 7F nan nan nan
+Yb Aug-CC-pV5Z 6D 7F nan nan nan
+Lu Aug-CC-pV5Z 6D 7F nan nan nan
+Hf Aug-CC-pV5Z 6D 7F nan nan nan
+Ta Aug-CC-pV5Z 6D 7F nan nan nan
+ W Aug-CC-pV5Z 6D 7F nan nan nan
+Re Aug-CC-pV5Z 6D 7F nan nan nan
+Os Aug-CC-pV5Z 6D 7F nan nan nan
+Ir Aug-CC-pV5Z 6D 7F nan nan nan
+Pt Aug-CC-pV5Z 6D 7F nan nan nan
+Au Aug-CC-pV5Z 6D 7F nan nan nan
+Hg Aug-CC-pV5Z 6D 7F nan nan nan
+Tl Aug-CC-pV5Z 6D 7F nan nan nan
+Pb Aug-CC-pV5Z 6D 7F nan nan nan
+Bi Aug-CC-pV5Z 6D 7F nan nan nan
+Po Aug-CC-pV5Z 6D 7F nan nan nan
+At Aug-CC-pV5Z 6D 7F nan nan nan
+Rn Aug-CC-pV5Z 6D 7F nan nan nan
+Fr Aug-CC-pV5Z 6D 7F nan nan nan
+Ra Aug-CC-pV5Z 6D 7F nan nan nan
+Ac Aug-CC-pV5Z 6D 7F nan nan nan
+Th Aug-CC-pV5Z 6D 7F nan nan nan
+Pa Aug-CC-pV5Z 6D 7F nan nan nan
+ U Aug-CC-pV5Z 6D 7F nan nan nan
+Np Aug-CC-pV5Z 6D 7F nan nan nan
+Pu Aug-CC-pV5Z 6D 7F nan nan nan
+Am Aug-CC-pV5Z 6D 7F nan nan nan
+Cm Aug-CC-pV5Z 6D 7F nan nan nan
+Bk Aug-CC-pV5Z 6D 7F nan nan nan
+Cf Aug-CC-pV5Z 6D 7F nan nan nan
+Es Aug-CC-pV5Z 6D 7F nan nan nan
+Fm Aug-CC-pV5Z 6D 7F nan nan nan
+Md Aug-CC-pV5Z 6D 7F nan nan nan
+No Aug-CC-pV5Z 6D 7F nan nan nan
+Lr Aug-CC-pV5Z 6D 7F nan nan nan
+Rf Aug-CC-pV5Z 6D 7F nan nan nan
+Db Aug-CC-pV5Z 6D 7F nan nan nan
+Sg Aug-CC-pV5Z 6D 7F nan nan nan
+Bh Aug-CC-pV5Z 6D 7F nan nan nan
+Hs Aug-CC-pV5Z 6D 7F nan nan nan
+Mt Aug-CC-pV5Z 6D 7F nan nan nan
+Ds Aug-CC-pV5Z 6D 7F nan nan nan
+Rg Aug-CC-pV5Z 6D 7F nan nan nan
+Cn Aug-CC-pV5Z 6D 7F nan nan nan
+Nh Aug-CC-pV5Z 6D 7F nan nan nan
+Fl Aug-CC-pV5Z 6D 7F nan nan nan
+Mc Aug-CC-pV5Z 6D 7F nan nan nan
+Lv Aug-CC-pV5Z 6D 7F nan nan nan
+Ts Aug-CC-pV5Z 6D 7F nan nan nan
+Og Aug-CC-pV5Z 6D 7F nan nan nan
+ H Aug-CC-pV6Z 6D 7F 132 186 182
+He Aug-CC-pV6Z 6D 7F nan nan nan
+Li Aug-CC-pV6Z 6D 7F nan nan nan
+Be Aug-CC-pV6Z 6D 7F nan nan nan
+ B Aug-CC-pV6Z 6D 7F 195 321 294
+ C Aug-CC-pV6Z 6D 7F 195 320 294
+ N Aug-CC-pV6Z 6D 7F 195 321 294
+ O Aug-CC-pV6Z 6D 7F 195 321 294
+ F Aug-CC-pV6Z 6D 7F nan nan nan
+Ne Aug-CC-pV6Z 6D 7F nan nan nan
+Na Aug-CC-pV6Z 6D 7F nan nan nan
+Mg Aug-CC-pV6Z 6D 7F nan nan nan
+Al Aug-CC-pV6Z 6D 7F nan nan nan
+Si Aug-CC-pV6Z 6D 7F nan nan nan
+ P Aug-CC-pV6Z 6D 7F nan nan nan
+ S Aug-CC-pV6Z 6D 7F nan nan nan
+Cl Aug-CC-pV6Z 6D 7F nan nan nan
+Ar Aug-CC-pV6Z 6D 7F nan nan nan
+ K Aug-CC-pV6Z 6D 7F nan nan nan
+Ca Aug-CC-pV6Z 6D 7F nan nan nan
+Sc Aug-CC-pV6Z 6D 7F nan nan nan
+Ti Aug-CC-pV6Z 6D 7F nan nan nan
+ V Aug-CC-pV6Z 6D 7F nan nan nan
+Cr Aug-CC-pV6Z 6D 7F nan nan nan
+Mn Aug-CC-pV6Z 6D 7F nan nan nan
+Fe Aug-CC-pV6Z 6D 7F nan nan nan
+Co Aug-CC-pV6Z 6D 7F nan nan nan
+Ni Aug-CC-pV6Z 6D 7F nan nan nan
+Cu Aug-CC-pV6Z 6D 7F nan nan nan
+Zn Aug-CC-pV6Z 6D 7F nan nan nan
+Ga Aug-CC-pV6Z 6D 7F nan nan nan
+Ge Aug-CC-pV6Z 6D 7F nan nan nan
+As Aug-CC-pV6Z 6D 7F nan nan nan
+Se Aug-CC-pV6Z 6D 7F nan nan nan
+Br Aug-CC-pV6Z 6D 7F nan nan nan
+Kr Aug-CC-pV6Z 6D 7F nan nan nan
+Rb Aug-CC-pV6Z 6D 7F nan nan nan
+Sr Aug-CC-pV6Z 6D 7F nan nan nan
+ Y Aug-CC-pV6Z 6D 7F nan nan nan
+Zr Aug-CC-pV6Z 6D 7F nan nan nan
+Nb Aug-CC-pV6Z 6D 7F nan nan nan
+Mo Aug-CC-pV6Z 6D 7F nan nan nan
+Tc Aug-CC-pV6Z 6D 7F nan nan nan
+Ru Aug-CC-pV6Z 6D 7F nan nan nan
+Rh Aug-CC-pV6Z 6D 7F nan nan nan
+Pd Aug-CC-pV6Z 6D 7F nan nan nan
+Ag Aug-CC-pV6Z 6D 7F nan nan nan
+Cd Aug-CC-pV6Z 6D 7F nan nan nan
+In Aug-CC-pV6Z 6D 7F nan nan nan
+Sn Aug-CC-pV6Z 6D 7F nan nan nan
+Sb Aug-CC-pV6Z 6D 7F nan nan nan
+Te Aug-CC-pV6Z 6D 7F nan nan nan
+ I Aug-CC-pV6Z 6D 7F nan nan nan
+Xe Aug-CC-pV6Z 6D 7F nan nan nan
+Cs Aug-CC-pV6Z 6D 7F nan nan nan
+Ba Aug-CC-pV6Z 6D 7F nan nan nan
+La Aug-CC-pV6Z 6D 7F nan nan nan
+Ce Aug-CC-pV6Z 6D 7F nan nan nan
+Pr Aug-CC-pV6Z 6D 7F nan nan nan
+Nd Aug-CC-pV6Z 6D 7F nan nan nan
+Pm Aug-CC-pV6Z 6D 7F nan nan nan
+Sm Aug-CC-pV6Z 6D 7F nan nan nan
+Eu Aug-CC-pV6Z 6D 7F nan nan nan
+Gd Aug-CC-pV6Z 6D 7F nan nan nan
+Tb Aug-CC-pV6Z 6D 7F nan nan nan
+Dy Aug-CC-pV6Z 6D 7F nan nan nan
+Ho Aug-CC-pV6Z 6D 7F nan nan nan
+Er Aug-CC-pV6Z 6D 7F nan nan nan
+Tm Aug-CC-pV6Z 6D 7F nan nan nan
+Yb Aug-CC-pV6Z 6D 7F nan nan nan
+Lu Aug-CC-pV6Z 6D 7F nan nan nan
+Hf Aug-CC-pV6Z 6D 7F nan nan nan
+Ta Aug-CC-pV6Z 6D 7F nan nan nan
+ W Aug-CC-pV6Z 6D 7F nan nan nan
+Re Aug-CC-pV6Z 6D 7F nan nan nan
+Os Aug-CC-pV6Z 6D 7F nan nan nan
+Ir Aug-CC-pV6Z 6D 7F nan nan nan
+Pt Aug-CC-pV6Z 6D 7F nan nan nan
+Au Aug-CC-pV6Z 6D 7F nan nan nan
+Hg Aug-CC-pV6Z 6D 7F nan nan nan
+Tl Aug-CC-pV6Z 6D 7F nan nan nan
+Pb Aug-CC-pV6Z 6D 7F nan nan nan
+Bi Aug-CC-pV6Z 6D 7F nan nan nan
+Po Aug-CC-pV6Z 6D 7F nan nan nan
+At Aug-CC-pV6Z 6D 7F nan nan nan
+Rn Aug-CC-pV6Z 6D 7F nan nan nan
+Fr Aug-CC-pV6Z 6D 7F nan nan nan
+Ra Aug-CC-pV6Z 6D 7F nan nan nan
+Ac Aug-CC-pV6Z 6D 7F nan nan nan
+Th Aug-CC-pV6Z 6D 7F nan nan nan
+Pa Aug-CC-pV6Z 6D 7F nan nan nan
+ U Aug-CC-pV6Z 6D 7F nan nan nan
+Np Aug-CC-pV6Z 6D 7F nan nan nan
+Pu Aug-CC-pV6Z 6D 7F nan nan nan
+Am Aug-CC-pV6Z 6D 7F nan nan nan
+Cm Aug-CC-pV6Z 6D 7F nan nan nan
+Bk Aug-CC-pV6Z 6D 7F nan nan nan
+Cf Aug-CC-pV6Z 6D 7F nan nan nan
+Es Aug-CC-pV6Z 6D 7F nan nan nan
+Fm Aug-CC-pV6Z 6D 7F nan nan nan
+Md Aug-CC-pV6Z 6D 7F nan nan nan
+No Aug-CC-pV6Z 6D 7F nan nan nan
+Lr Aug-CC-pV6Z 6D 7F nan nan nan
+Rf Aug-CC-pV6Z 6D 7F nan nan nan
+Db Aug-CC-pV6Z 6D 7F nan nan nan
+Sg Aug-CC-pV6Z 6D 7F nan nan nan
+Bh Aug-CC-pV6Z 6D 7F nan nan nan
+Hs Aug-CC-pV6Z 6D 7F nan nan nan
+Mt Aug-CC-pV6Z 6D 7F nan nan nan
+Ds Aug-CC-pV6Z 6D 7F nan nan nan
+Rg Aug-CC-pV6Z 6D 7F nan nan nan
+Cn Aug-CC-pV6Z 6D 7F nan nan nan
+Nh Aug-CC-pV6Z 6D 7F nan nan nan
+Fl Aug-CC-pV6Z 6D 7F nan nan nan
+Mc Aug-CC-pV6Z 6D 7F nan nan nan
+Lv Aug-CC-pV6Z 6D 7F nan nan nan
+Ts Aug-CC-pV6Z 6D 7F nan nan nan
+Og Aug-CC-pV6Z 6D 7F nan nan nan
+ H Aug-CC-pVDZ 6D 7F  9 11  9
+He Aug-CC-pVDZ 6D 7F  9 11  9
+Li Aug-CC-pVDZ 6D 7F 25 42 25
+Be Aug-CC-pVDZ 6D 7F 25 43 25
+ B Aug-CC-pVDZ 6D 7F 25 43 25
+ C Aug-CC-pVDZ 6D 7F 25 43 25
+ N Aug-CC-pVDZ 6D 7F 25 43 25
+ O Aug-CC-pVDZ 6D 7F 25 43 25
+ F Aug-CC-pVDZ 6D 7F 25 43 25
+Ne Aug-CC-pVDZ 6D 7F 25 43 25
+Na Aug-CC-pVDZ 6D 7F 29 81 29
+Mg Aug-CC-pVDZ 6D 7F 29 81 29
+Al Aug-CC-pVDZ 6D 7F 29 80 29
+Si Aug-CC-pVDZ 6D 7F 29 81 29
+ P Aug-CC-pVDZ 6D 7F 29 81 29
+ S Aug-CC-pVDZ 6D 7F 29 81 29
+Cl Aug-CC-pVDZ 6D 7F 29 81 29
+Ar Aug-CC-pVDZ 6D 7F 29 81 29
+ K Aug-CC-pVDZ 6D 7F nan nan nan
+Ca Aug-CC-pVDZ 6D 7F nan nan nan
+Sc Aug-CC-pVDZ 6D 7F 63 314 69
+Ti Aug-CC-pVDZ 6D 7F 63 311 69
+ V Aug-CC-pVDZ 6D 7F 63 314 69
+Cr Aug-CC-pVDZ 6D 7F 63 312 69
+Mn Aug-CC-pVDZ 6D 7F 63 308 69
+Fe Aug-CC-pVDZ 6D 7F 63 314 69
+Co Aug-CC-pVDZ 6D 7F 63 314 69
+Ni Aug-CC-pVDZ 6D 7F 63 308 69
+Cu Aug-CC-pVDZ 6D 7F 63 314 69
+Zn Aug-CC-pVDZ 6D 7F 63 308 69
+Ga Aug-CC-pVDZ 6D 7F 39 157 39
+Ge Aug-CC-pVDZ 6D 7F 39 158 39
+As Aug-CC-pVDZ 6D 7F 39 156 39
+Se Aug-CC-pVDZ 6D 7F 39 157 39
+Br Aug-CC-pVDZ 6D 7F 39 157 39
+Kr Aug-CC-pVDZ 6D 7F 39 157 39
+Rb Aug-CC-pVDZ 6D 7F nan nan nan
+Sr Aug-CC-pVDZ 6D 7F nan nan nan
+ Y Aug-CC-pVDZ 6D 7F nan nan nan
+Zr Aug-CC-pVDZ 6D 7F nan nan nan
+Nb Aug-CC-pVDZ 6D 7F nan nan nan
+Mo Aug-CC-pVDZ 6D 7F nan nan nan
+Tc Aug-CC-pVDZ 6D 7F nan nan nan
+Ru Aug-CC-pVDZ 6D 7F nan nan nan
+Rh Aug-CC-pVDZ 6D 7F nan nan nan
+Pd Aug-CC-pVDZ 6D 7F nan nan nan
+Ag Aug-CC-pVDZ 6D 7F nan nan nan
+Cd Aug-CC-pVDZ 6D 7F nan nan nan
+In Aug-CC-pVDZ 6D 7F nan nan nan
+Sn Aug-CC-pVDZ 6D 7F nan nan nan
+Sb Aug-CC-pVDZ 6D 7F nan nan nan
+Te Aug-CC-pVDZ 6D 7F nan nan nan
+ I Aug-CC-pVDZ 6D 7F nan nan nan
+Xe Aug-CC-pVDZ 6D 7F nan nan nan
+Cs Aug-CC-pVDZ 6D 7F nan nan nan
+Ba Aug-CC-pVDZ 6D 7F nan nan nan
+La Aug-CC-pVDZ 6D 7F nan nan nan
+Ce Aug-CC-pVDZ 6D 7F nan nan nan
+Pr Aug-CC-pVDZ 6D 7F nan nan nan
+Nd Aug-CC-pVDZ 6D 7F nan nan nan
+Pm Aug-CC-pVDZ 6D 7F nan nan nan
+Sm Aug-CC-pVDZ 6D 7F nan nan nan
+Eu Aug-CC-pVDZ 6D 7F nan nan nan
+Gd Aug-CC-pVDZ 6D 7F nan nan nan
+Tb Aug-CC-pVDZ 6D 7F nan nan nan
+Dy Aug-CC-pVDZ 6D 7F nan nan nan
+Ho Aug-CC-pVDZ 6D 7F nan nan nan
+Er Aug-CC-pVDZ 6D 7F nan nan nan
+Tm Aug-CC-pVDZ 6D 7F nan nan nan
+Yb Aug-CC-pVDZ 6D 7F nan nan nan
+Lu Aug-CC-pVDZ 6D 7F nan nan nan
+Hf Aug-CC-pVDZ 6D 7F nan nan nan
+Ta Aug-CC-pVDZ 6D 7F nan nan nan
+ W Aug-CC-pVDZ 6D 7F nan nan nan
+Re Aug-CC-pVDZ 6D 7F nan nan nan
+Os Aug-CC-pVDZ 6D 7F nan nan nan
+Ir Aug-CC-pVDZ 6D 7F nan nan nan
+Pt Aug-CC-pVDZ 6D 7F nan nan nan
+Au Aug-CC-pVDZ 6D 7F nan nan nan
+Hg Aug-CC-pVDZ 6D 7F nan nan nan
+Tl Aug-CC-pVDZ 6D 7F nan nan nan
+Pb Aug-CC-pVDZ 6D 7F nan nan nan
+Bi Aug-CC-pVDZ 6D 7F nan nan nan
+Po Aug-CC-pVDZ 6D 7F nan nan nan
+At Aug-CC-pVDZ 6D 7F nan nan nan
+Rn Aug-CC-pVDZ 6D 7F nan nan nan
+Fr Aug-CC-pVDZ 6D 7F nan nan nan
+Ra Aug-CC-pVDZ 6D 7F nan nan nan
+Ac Aug-CC-pVDZ 6D 7F nan nan nan
+Th Aug-CC-pVDZ 6D 7F nan nan nan
+Pa Aug-CC-pVDZ 6D 7F nan nan nan
+ U Aug-CC-pVDZ 6D 7F nan nan nan
+Np Aug-CC-pVDZ 6D 7F nan nan nan
+Pu Aug-CC-pVDZ 6D 7F nan nan nan
+Am Aug-CC-pVDZ 6D 7F nan nan nan
+Cm Aug-CC-pVDZ 6D 7F nan nan nan
+Bk Aug-CC-pVDZ 6D 7F nan nan nan
+Cf Aug-CC-pVDZ 6D 7F nan nan nan
+Es Aug-CC-pVDZ 6D 7F nan nan nan
+Fm Aug-CC-pVDZ 6D 7F nan nan nan
+Md Aug-CC-pVDZ 6D 7F nan nan nan
+No Aug-CC-pVDZ 6D 7F nan nan nan
+Lr Aug-CC-pVDZ 6D 7F nan nan nan
+Rf Aug-CC-pVDZ 6D 7F nan nan nan
+Db Aug-CC-pVDZ 6D 7F nan nan nan
+Sg Aug-CC-pVDZ 6D 7F nan nan nan
+Bh Aug-CC-pVDZ 6D 7F nan nan nan
+Hs Aug-CC-pVDZ 6D 7F nan nan nan
+Mt Aug-CC-pVDZ 6D 7F nan nan nan
+Ds Aug-CC-pVDZ 6D 7F nan nan nan
+Rg Aug-CC-pVDZ 6D 7F nan nan nan
+Cn Aug-CC-pVDZ 6D 7F nan nan nan
+Nh Aug-CC-pVDZ 6D 7F nan nan nan
+Fl Aug-CC-pVDZ 6D 7F nan nan nan
+Mc Aug-CC-pVDZ 6D 7F nan nan nan
+Lv Aug-CC-pVDZ 6D 7F nan nan nan
+Ts Aug-CC-pVDZ 6D 7F nan nan nan
+Og Aug-CC-pVDZ 6D 7F nan nan nan
+ H Aug-CC-pVQZ 6D 7F 49 57 55
+He Aug-CC-pVQZ 6D 7F 49 58 55
+Li Aug-CC-pVQZ 6D 7F 84 123 105
+Be Aug-CC-pVQZ 6D 7F 84 123 105
+ B Aug-CC-pVQZ 6D 7F 84 123 105
+ C Aug-CC-pVQZ 6D 7F 84 124 105
+ N Aug-CC-pVQZ 6D 7F 84 124 105
+ O Aug-CC-pVQZ 6D 7F 84 124 105
+ F Aug-CC-pVQZ 6D 7F 84 124 105
+Ne Aug-CC-pVQZ 6D 7F 84 124 105
+Na Aug-CC-pVQZ 6D 7F 88 177 109
+Mg Aug-CC-pVQZ 6D 7F 88 171 109
+Al Aug-CC-pVQZ 6D 7F 88 165 109
+Si Aug-CC-pVQZ 6D 7F 88 168 109
+ P Aug-CC-pVQZ 6D 7F 88 169 109
+ S Aug-CC-pVQZ 6D 7F 88 169 109
+Cl Aug-CC-pVQZ 6D 7F 88 166 109
+Ar Aug-CC-pVQZ 6D 7F 88 166 109
+ K Aug-CC-pVQZ 6D 7F nan nan nan
+Ca Aug-CC-pVQZ 6D 7F nan nan nan
+Sc Aug-CC-pVQZ 6D 7F 146 578 196
+Ti Aug-CC-pVQZ 6D 7F 146 567 196
+ V Aug-CC-pVQZ 6D 7F 146 567 196
+Cr Aug-CC-pVQZ 6D 7F 146 571 196
+Mn Aug-CC-pVQZ 6D 7F 146 562 196
+Fe Aug-CC-pVQZ 6D 7F 146 575 196
+Co Aug-CC-pVQZ 6D 7F 146 580 196
+Ni Aug-CC-pVQZ 6D 7F 146 562 196
+Cu Aug-CC-pVQZ 6D 7F 146 555 196
+Zn Aug-CC-pVQZ 6D 7F 146 570 196
+Ga Aug-CC-pVQZ 6D 7F 98 288 119
+Ge Aug-CC-pVQZ 6D 7F 98 288 119
+As Aug-CC-pVQZ 6D 7F 98 287 119
+Se Aug-CC-pVQZ 6D 7F 98 285 119
+Br Aug-CC-pVQZ 6D 7F 98 279 119
+Kr Aug-CC-pVQZ 6D 7F 98 285 119
+Rb Aug-CC-pVQZ 6D 7F nan nan nan
+Sr Aug-CC-pVQZ 6D 7F nan nan nan
+ Y Aug-CC-pVQZ 6D 7F nan nan nan
+Zr Aug-CC-pVQZ 6D 7F nan nan nan
+Nb Aug-CC-pVQZ 6D 7F nan nan nan
+Mo Aug-CC-pVQZ 6D 7F nan nan nan
+Tc Aug-CC-pVQZ 6D 7F nan nan nan
+Ru Aug-CC-pVQZ 6D 7F nan nan nan
+Rh Aug-CC-pVQZ 6D 7F nan nan nan
+Pd Aug-CC-pVQZ 6D 7F nan nan nan
+Ag Aug-CC-pVQZ 6D 7F nan nan nan
+Cd Aug-CC-pVQZ 6D 7F nan nan nan
+In Aug-CC-pVQZ 6D 7F nan nan nan
+Sn Aug-CC-pVQZ 6D 7F nan nan nan
+Sb Aug-CC-pVQZ 6D 7F nan nan nan
+Te Aug-CC-pVQZ 6D 7F nan nan nan
+ I Aug-CC-pVQZ 6D 7F nan nan nan
+Xe Aug-CC-pVQZ 6D 7F nan nan nan
+Cs Aug-CC-pVQZ 6D 7F nan nan nan
+Ba Aug-CC-pVQZ 6D 7F nan nan nan
+La Aug-CC-pVQZ 6D 7F nan nan nan
+Ce Aug-CC-pVQZ 6D 7F nan nan nan
+Pr Aug-CC-pVQZ 6D 7F nan nan nan
+Nd Aug-CC-pVQZ 6D 7F nan nan nan
+Pm Aug-CC-pVQZ 6D 7F nan nan nan
+Sm Aug-CC-pVQZ 6D 7F nan nan nan
+Eu Aug-CC-pVQZ 6D 7F nan nan nan
+Gd Aug-CC-pVQZ 6D 7F nan nan nan
+Tb Aug-CC-pVQZ 6D 7F nan nan nan
+Dy Aug-CC-pVQZ 6D 7F nan nan nan
+Ho Aug-CC-pVQZ 6D 7F nan nan nan
+Er Aug-CC-pVQZ 6D 7F nan nan nan
+Tm Aug-CC-pVQZ 6D 7F nan nan nan
+Yb Aug-CC-pVQZ 6D 7F nan nan nan
+Lu Aug-CC-pVQZ 6D 7F nan nan nan
+Hf Aug-CC-pVQZ 6D 7F nan nan nan
+Ta Aug-CC-pVQZ 6D 7F nan nan nan
+ W Aug-CC-pVQZ 6D 7F nan nan nan
+Re Aug-CC-pVQZ 6D 7F nan nan nan
+Os Aug-CC-pVQZ 6D 7F nan nan nan
+Ir Aug-CC-pVQZ 6D 7F nan nan nan
+Pt Aug-CC-pVQZ 6D 7F nan nan nan
+Au Aug-CC-pVQZ 6D 7F nan nan nan
+Hg Aug-CC-pVQZ 6D 7F nan nan nan
+Tl Aug-CC-pVQZ 6D 7F nan nan nan
+Pb Aug-CC-pVQZ 6D 7F nan nan nan
+Bi Aug-CC-pVQZ 6D 7F nan nan nan
+Po Aug-CC-pVQZ 6D 7F nan nan nan
+At Aug-CC-pVQZ 6D 7F nan nan nan
+Rn Aug-CC-pVQZ 6D 7F nan nan nan
+Fr Aug-CC-pVQZ 6D 7F nan nan nan
+Ra Aug-CC-pVQZ 6D 7F nan nan nan
+Ac Aug-CC-pVQZ 6D 7F nan nan nan
+Th Aug-CC-pVQZ 6D 7F nan nan nan
+Pa Aug-CC-pVQZ 6D 7F nan nan nan
+ U Aug-CC-pVQZ 6D 7F nan nan nan
+Np Aug-CC-pVQZ 6D 7F nan nan nan
+Pu Aug-CC-pVQZ 6D 7F nan nan nan
+Am Aug-CC-pVQZ 6D 7F nan nan nan
+Cm Aug-CC-pVQZ 6D 7F nan nan nan
+Bk Aug-CC-pVQZ 6D 7F nan nan nan
+Cf Aug-CC-pVQZ 6D 7F nan nan nan
+Es Aug-CC-pVQZ 6D 7F nan nan nan
+Fm Aug-CC-pVQZ 6D 7F nan nan nan
+Md Aug-CC-pVQZ 6D 7F nan nan nan
+No Aug-CC-pVQZ 6D 7F nan nan nan
+Lr Aug-CC-pVQZ 6D 7F nan nan nan
+Rf Aug-CC-pVQZ 6D 7F nan nan nan
+Db Aug-CC-pVQZ 6D 7F nan nan nan
+Sg Aug-CC-pVQZ 6D 7F nan nan nan
+Bh Aug-CC-pVQZ 6D 7F nan nan nan
+Hs Aug-CC-pVQZ 6D 7F nan nan nan
+Mt Aug-CC-pVQZ 6D 7F nan nan nan
+Ds Aug-CC-pVQZ 6D 7F nan nan nan
+Rg Aug-CC-pVQZ 6D 7F nan nan nan
+Cn Aug-CC-pVQZ 6D 7F nan nan nan
+Nh Aug-CC-pVQZ 6D 7F nan nan nan
+Fl Aug-CC-pVQZ 6D 7F nan nan nan
+Mc Aug-CC-pVQZ 6D 7F nan nan nan
+Lv Aug-CC-pVQZ 6D 7F nan nan nan
+Ts Aug-CC-pVQZ 6D 7F nan nan nan
+Og Aug-CC-pVQZ 6D 7F nan nan nan
+ H Aug-CC-pVTZ 6D 7F 25 27 25
+He Aug-CC-pVTZ 6D 7F 25 28 25
+Li Aug-CC-pVTZ 6D 7F 49 74 55
+Be Aug-CC-pVTZ 6D 7F 49 74 55
+ B Aug-CC-pVTZ 6D 7F 49 72 55
+ C Aug-CC-pVTZ 6D 7F 49 72 55
+ N Aug-CC-pVTZ 6D 7F 49 72 55
+ O Aug-CC-pVTZ 6D 7F 49 72 55
+ F Aug-CC-pVTZ 6D 7F 49 72 55
+Ne Aug-CC-pVTZ 6D 7F 49 72 55
+Na Aug-CC-pVTZ 6D 7F 53 123 59
+Mg Aug-CC-pVTZ 6D 7F 53 117 59
+Al Aug-CC-pVTZ 6D 7F 53 115 59
+Si Aug-CC-pVTZ 6D 7F 53 115 59
+ P Aug-CC-pVTZ 6D 7F 53 115 59
+ S Aug-CC-pVTZ 6D 7F 53 114 59
+Cl Aug-CC-pVTZ 6D 7F 53 114 59
+Ar Aug-CC-pVTZ 6D 7F 53 113 59
+ K Aug-CC-pVTZ 6D 7F nan nan nan
+Ca Aug-CC-pVTZ 6D 7F nan nan nan
+Sc Aug-CC-pVTZ 6D 7F 98 386 119
+Ti Aug-CC-pVTZ 6D 7F 98 389 119
+ V Aug-CC-pVTZ 6D 7F 98 389 119
+Cr Aug-CC-pVTZ 6D 7F 98 382 119
+Mn Aug-CC-pVTZ 6D 7F 98 380 119
+Fe Aug-CC-pVTZ 6D 7F 98 386 119
+Co Aug-CC-pVTZ 6D 7F 98 385 119
+Ni Aug-CC-pVTZ 6D 7F 98 377 119
+Cu Aug-CC-pVTZ 6D 7F 98 387 119
+Zn Aug-CC-pVTZ 6D 7F 98 382 119
+Ga Aug-CC-pVTZ 6D 7F 63 216 69
+Ge Aug-CC-pVTZ 6D 7F 63 215 69
+As Aug-CC-pVTZ 6D 7F 63 216 69
+Se Aug-CC-pVTZ 6D 7F 63 216 69
+Br Aug-CC-pVTZ 6D 7F 63 217 69
+Kr Aug-CC-pVTZ 6D 7F 63 217 69
+Rb Aug-CC-pVTZ 6D 7F nan nan nan
+Sr Aug-CC-pVTZ 6D 7F nan nan nan
+ Y Aug-CC-pVTZ 6D 7F nan nan nan
+Zr Aug-CC-pVTZ 6D 7F nan nan nan
+Nb Aug-CC-pVTZ 6D 7F nan nan nan
+Mo Aug-CC-pVTZ 6D 7F nan nan nan
+Tc Aug-CC-pVTZ 6D 7F nan nan nan
+Ru Aug-CC-pVTZ 6D 7F nan nan nan
+Rh Aug-CC-pVTZ 6D 7F nan nan nan
+Pd Aug-CC-pVTZ 6D 7F nan nan nan
+Ag Aug-CC-pVTZ 6D 7F nan nan nan
+Cd Aug-CC-pVTZ 6D 7F nan nan nan
+In Aug-CC-pVTZ 6D 7F nan nan nan
+Sn Aug-CC-pVTZ 6D 7F nan nan nan
+Sb Aug-CC-pVTZ 6D 7F nan nan nan
+Te Aug-CC-pVTZ 6D 7F nan nan nan
+ I Aug-CC-pVTZ 6D 7F nan nan nan
+Xe Aug-CC-pVTZ 6D 7F nan nan nan
+Cs Aug-CC-pVTZ 6D 7F nan nan nan
+Ba Aug-CC-pVTZ 6D 7F nan nan nan
+La Aug-CC-pVTZ 6D 7F nan nan nan
+Ce Aug-CC-pVTZ 6D 7F nan nan nan
+Pr Aug-CC-pVTZ 6D 7F nan nan nan
+Nd Aug-CC-pVTZ 6D 7F nan nan nan
+Pm Aug-CC-pVTZ 6D 7F nan nan nan
+Sm Aug-CC-pVTZ 6D 7F nan nan nan
+Eu Aug-CC-pVTZ 6D 7F nan nan nan
+Gd Aug-CC-pVTZ 6D 7F nan nan nan
+Tb Aug-CC-pVTZ 6D 7F nan nan nan
+Dy Aug-CC-pVTZ 6D 7F nan nan nan
+Ho Aug-CC-pVTZ 6D 7F nan nan nan
+Er Aug-CC-pVTZ 6D 7F nan nan nan
+Tm Aug-CC-pVTZ 6D 7F nan nan nan
+Yb Aug-CC-pVTZ 6D 7F nan nan nan
+Lu Aug-CC-pVTZ 6D 7F nan nan nan
+Hf Aug-CC-pVTZ 6D 7F nan nan nan
+Ta Aug-CC-pVTZ 6D 7F nan nan nan
+ W Aug-CC-pVTZ 6D 7F nan nan nan
+Re Aug-CC-pVTZ 6D 7F nan nan nan
+Os Aug-CC-pVTZ 6D 7F nan nan nan
+Ir Aug-CC-pVTZ 6D 7F nan nan nan
+Pt Aug-CC-pVTZ 6D 7F nan nan nan
+Au Aug-CC-pVTZ 6D 7F nan nan nan
+Hg Aug-CC-pVTZ 6D 7F nan nan nan
+Tl Aug-CC-pVTZ 6D 7F nan nan nan
+Pb Aug-CC-pVTZ 6D 7F nan nan nan
+Bi Aug-CC-pVTZ 6D 7F nan nan nan
+Po Aug-CC-pVTZ 6D 7F nan nan nan
+At Aug-CC-pVTZ 6D 7F nan nan nan
+Rn Aug-CC-pVTZ 6D 7F nan nan nan
+Fr Aug-CC-pVTZ 6D 7F nan nan nan
+Ra Aug-CC-pVTZ 6D 7F nan nan nan
+Ac Aug-CC-pVTZ 6D 7F nan nan nan
+Th Aug-CC-pVTZ 6D 7F nan nan nan
+Pa Aug-CC-pVTZ 6D 7F nan nan nan
+ U Aug-CC-pVTZ 6D 7F nan nan nan
+Np Aug-CC-pVTZ 6D 7F nan nan nan
+Pu Aug-CC-pVTZ 6D 7F nan nan nan
+Am Aug-CC-pVTZ 6D 7F nan nan nan
+Cm Aug-CC-pVTZ 6D 7F nan nan nan
+Bk Aug-CC-pVTZ 6D 7F nan nan nan
+Cf Aug-CC-pVTZ 6D 7F nan nan nan
+Es Aug-CC-pVTZ 6D 7F nan nan nan
+Fm Aug-CC-pVTZ 6D 7F nan nan nan
+Md Aug-CC-pVTZ 6D 7F nan nan nan
+No Aug-CC-pVTZ 6D 7F nan nan nan
+Lr Aug-CC-pVTZ 6D 7F nan nan nan
+Rf Aug-CC-pVTZ 6D 7F nan nan nan
+Db Aug-CC-pVTZ 6D 7F nan nan nan
+Sg Aug-CC-pVTZ 6D 7F nan nan nan
+Bh Aug-CC-pVTZ 6D 7F nan nan nan
+Hs Aug-CC-pVTZ 6D 7F nan nan nan
+Mt Aug-CC-pVTZ 6D 7F nan nan nan
+Ds Aug-CC-pVTZ 6D 7F nan nan nan
+Rg Aug-CC-pVTZ 6D 7F nan nan nan
+Cn Aug-CC-pVTZ 6D 7F nan nan nan
+Nh Aug-CC-pVTZ 6D 7F nan nan nan
+Fl Aug-CC-pVTZ 6D 7F nan nan nan
+Mc Aug-CC-pVTZ 6D 7F nan nan nan
+Lv Aug-CC-pVTZ 6D 7F nan nan nan
+Ts Aug-CC-pVTZ 6D 7F nan nan nan
+Og Aug-CC-pVTZ 6D 7F nan nan nan
+ H CC-pV5Z 6D 7F 58 73 70
+He CC-pV5Z 6D 7F 58 73 70
+Li CC-pV5Z 6D 7F 95 144 126
+Be CC-pV5Z 6D 7F 95 149 126
+ B CC-pV5Z 6D 7F 95 149 126
+ C CC-pV5Z 6D 7F 95 149 126
+ N CC-pV5Z 6D 7F 95 149 126
+ O CC-pV5Z 6D 7F 95 149 126
+ F CC-pV5Z 6D 7F 95 149 126
+Ne CC-pV5Z 6D 7F 95 149 126
+Na CC-pV5Z 6D 7F 99 195 130
+Mg CC-pV5Z 6D 7F 99 204 130
+Al CC-pV5Z 6D 7F 99 192 130
+Si CC-pV5Z 6D 7F 99 192 130
+ P CC-pV5Z 6D 7F 99 192 130
+ S CC-pV5Z 6D 7F 99 192 130
+Cl CC-pV5Z 6D 7F 99 192 130
+Ar CC-pV5Z 6D 7F 99 192 130
+ K CC-pV5Z 6D 7F nan nan nan
+Ca CC-pV5Z 6D 7F 109 277 140
+Sc CC-pV5Z 6D 7F 159 694 224
+Ti CC-pV5Z 6D 7F 159 701 224
+ V CC-pV5Z 6D 7F 159 693 224
+Cr CC-pV5Z 6D 7F 159 688 224
+Mn CC-pV5Z 6D 7F 159 676 224
+Fe CC-pV5Z 6D 7F 159 675 224
+Co CC-pV5Z 6D 7F 159 695 224
+Ni CC-pV5Z 6D 7F 159 691 224
+Cu CC-pV5Z 6D 7F 159 707 224
+Zn CC-pV5Z 6D 7F 159 688 224
+Ga CC-pV5Z 6D 7F 109 316 140
+Ge CC-pV5Z 6D 7F 109 317 140
+As CC-pV5Z 6D 7F 109 308 140
+Se CC-pV5Z 6D 7F 109 312 140
+Br CC-pV5Z 6D 7F 109 315 140
+Kr CC-pV5Z 6D 7F 109 314 140
+Rb CC-pV5Z 6D 7F nan nan nan
+Sr CC-pV5Z 6D 7F nan nan nan
+ Y CC-pV5Z 6D 7F nan nan nan
+Zr CC-pV5Z 6D 7F nan nan nan
+Nb CC-pV5Z 6D 7F nan nan nan
+Mo CC-pV5Z 6D 7F nan nan nan
+Tc CC-pV5Z 6D 7F nan nan nan
+Ru CC-pV5Z 6D 7F nan nan nan
+Rh CC-pV5Z 6D 7F nan nan nan
+Pd CC-pV5Z 6D 7F nan nan nan
+Ag CC-pV5Z 6D 7F nan nan nan
+Cd CC-pV5Z 6D 7F nan nan nan
+In CC-pV5Z 6D 7F nan nan nan
+Sn CC-pV5Z 6D 7F nan nan nan
+Sb CC-pV5Z 6D 7F nan nan nan
+Te CC-pV5Z 6D 7F nan nan nan
+ I CC-pV5Z 6D 7F nan nan nan
+Xe CC-pV5Z 6D 7F nan nan nan
+Cs CC-pV5Z 6D 7F nan nan nan
+Ba CC-pV5Z 6D 7F nan nan nan
+La CC-pV5Z 6D 7F nan nan nan
+Ce CC-pV5Z 6D 7F nan nan nan
+Pr CC-pV5Z 6D 7F nan nan nan
+Nd CC-pV5Z 6D 7F nan nan nan
+Pm CC-pV5Z 6D 7F nan nan nan
+Sm CC-pV5Z 6D 7F nan nan nan
+Eu CC-pV5Z 6D 7F nan nan nan
+Gd CC-pV5Z 6D 7F nan nan nan
+Tb CC-pV5Z 6D 7F nan nan nan
+Dy CC-pV5Z 6D 7F nan nan nan
+Ho CC-pV5Z 6D 7F nan nan nan
+Er CC-pV5Z 6D 7F nan nan nan
+Tm CC-pV5Z 6D 7F nan nan nan
+Yb CC-pV5Z 6D 7F nan nan nan
+Lu CC-pV5Z 6D 7F nan nan nan
+Hf CC-pV5Z 6D 7F nan nan nan
+Ta CC-pV5Z 6D 7F nan nan nan
+ W CC-pV5Z 6D 7F nan nan nan
+Re CC-pV5Z 6D 7F nan nan nan
+Os CC-pV5Z 6D 7F nan nan nan
+Ir CC-pV5Z 6D 7F nan nan nan
+Pt CC-pV5Z 6D 7F nan nan nan
+Au CC-pV5Z 6D 7F nan nan nan
+Hg CC-pV5Z 6D 7F nan nan nan
+Tl CC-pV5Z 6D 7F nan nan nan
+Pb CC-pV5Z 6D 7F nan nan nan
+Bi CC-pV5Z 6D 7F nan nan nan
+Po CC-pV5Z 6D 7F nan nan nan
+At CC-pV5Z 6D 7F nan nan nan
+Rn CC-pV5Z 6D 7F nan nan nan
+Fr CC-pV5Z 6D 7F nan nan nan
+Ra CC-pV5Z 6D 7F nan nan nan
+Ac CC-pV5Z 6D 7F nan nan nan
+Th CC-pV5Z 6D 7F nan nan nan
+Pa CC-pV5Z 6D 7F nan nan nan
+ U CC-pV5Z 6D 7F nan nan nan
+Np CC-pV5Z 6D 7F nan nan nan
+Pu CC-pV5Z 6D 7F nan nan nan
+Am CC-pV5Z 6D 7F nan nan nan
+Cm CC-pV5Z 6D 7F nan nan nan
+Bk CC-pV5Z 6D 7F nan nan nan
+Cf CC-pV5Z 6D 7F nan nan nan
+Es CC-pV5Z 6D 7F nan nan nan
+Fm CC-pV5Z 6D 7F nan nan nan
+Md CC-pV5Z 6D 7F nan nan nan
+No CC-pV5Z 6D 7F nan nan nan
+Lr CC-pV5Z 6D 7F nan nan nan
+Rf CC-pV5Z 6D 7F nan nan nan
+Db CC-pV5Z 6D 7F nan nan nan
+Sg CC-pV5Z 6D 7F nan nan nan
+Bh CC-pV5Z 6D 7F nan nan nan
+Hs CC-pV5Z 6D 7F nan nan nan
+Mt CC-pV5Z 6D 7F nan nan nan
+Ds CC-pV5Z 6D 7F nan nan nan
+Rg CC-pV5Z 6D 7F nan nan nan
+Cn CC-pV5Z 6D 7F nan nan nan
+Nh CC-pV5Z 6D 7F nan nan nan
+Fl CC-pV5Z 6D 7F nan nan nan
+Mc CC-pV5Z 6D 7F nan nan nan
+Lv CC-pV5Z 6D 7F nan nan nan
+Ts CC-pV5Z 6D 7F nan nan nan
+Og CC-pV5Z 6D 7F nan nan nan
+ H CC-pV6Z 6D 7F 95 130 126
+He CC-pV6Z 6D 7F nan nan nan
+Li CC-pV6Z 6D 7F nan nan nan
+Be CC-pV6Z 6D 7F nan nan nan
+ B CC-pV6Z 6D 7F 145 237 210
+ C CC-pV6Z 6D 7F 145 236 210
+ N CC-pV6Z 6D 7F 145 237 210
+ O CC-pV6Z 6D 7F 145 237 210
+ F CC-pV6Z 6D 7F 145 237 210
+Ne CC-pV6Z 6D 7F 145 237 210
+Na CC-pV6Z 6D 7F nan nan nan
+Mg CC-pV6Z 6D 7F nan nan nan
+Al CC-pV6Z 6D 7F nan nan nan
+Si CC-pV6Z 6D 7F nan nan nan
+ P CC-pV6Z 6D 7F nan nan nan
+ S CC-pV6Z 6D 7F nan nan nan
+Cl CC-pV6Z 6D 7F nan nan nan
+Ar CC-pV6Z 6D 7F nan nan nan
+ K CC-pV6Z 6D 7F nan nan nan
+Ca CC-pV6Z 6D 7F nan nan nan
+Sc CC-pV6Z 6D 7F nan nan nan
+Ti CC-pV6Z 6D 7F nan nan nan
+ V CC-pV6Z 6D 7F nan nan nan
+Cr CC-pV6Z 6D 7F nan nan nan
+Mn CC-pV6Z 6D 7F nan nan nan
+Fe CC-pV6Z 6D 7F nan nan nan
+Co CC-pV6Z 6D 7F nan nan nan
+Ni CC-pV6Z 6D 7F nan nan nan
+Cu CC-pV6Z 6D 7F nan nan nan
+Zn CC-pV6Z 6D 7F nan nan nan
+Ga CC-pV6Z 6D 7F nan nan nan
+Ge CC-pV6Z 6D 7F nan nan nan
+As CC-pV6Z 6D 7F nan nan nan
+Se CC-pV6Z 6D 7F nan nan nan
+Br CC-pV6Z 6D 7F nan nan nan
+Kr CC-pV6Z 6D 7F nan nan nan
+Rb CC-pV6Z 6D 7F nan nan nan
+Sr CC-pV6Z 6D 7F nan nan nan
+ Y CC-pV6Z 6D 7F nan nan nan
+Zr CC-pV6Z 6D 7F nan nan nan
+Nb CC-pV6Z 6D 7F nan nan nan
+Mo CC-pV6Z 6D 7F nan nan nan
+Tc CC-pV6Z 6D 7F nan nan nan
+Ru CC-pV6Z 6D 7F nan nan nan
+Rh CC-pV6Z 6D 7F nan nan nan
+Pd CC-pV6Z 6D 7F nan nan nan
+Ag CC-pV6Z 6D 7F nan nan nan
+Cd CC-pV6Z 6D 7F nan nan nan
+In CC-pV6Z 6D 7F nan nan nan
+Sn CC-pV6Z 6D 7F nan nan nan
+Sb CC-pV6Z 6D 7F nan nan nan
+Te CC-pV6Z 6D 7F nan nan nan
+ I CC-pV6Z 6D 7F nan nan nan
+Xe CC-pV6Z 6D 7F nan nan nan
+Cs CC-pV6Z 6D 7F nan nan nan
+Ba CC-pV6Z 6D 7F nan nan nan
+La CC-pV6Z 6D 7F nan nan nan
+Ce CC-pV6Z 6D 7F nan nan nan
+Pr CC-pV6Z 6D 7F nan nan nan
+Nd CC-pV6Z 6D 7F nan nan nan
+Pm CC-pV6Z 6D 7F nan nan nan
+Sm CC-pV6Z 6D 7F nan nan nan
+Eu CC-pV6Z 6D 7F nan nan nan
+Gd CC-pV6Z 6D 7F nan nan nan
+Tb CC-pV6Z 6D 7F nan nan nan
+Dy CC-pV6Z 6D 7F nan nan nan
+Ho CC-pV6Z 6D 7F nan nan nan
+Er CC-pV6Z 6D 7F nan nan nan
+Tm CC-pV6Z 6D 7F nan nan nan
+Yb CC-pV6Z 6D 7F nan nan nan
+Lu CC-pV6Z 6D 7F nan nan nan
+Hf CC-pV6Z 6D 7F nan nan nan
+Ta CC-pV6Z 6D 7F nan nan nan
+ W CC-pV6Z 6D 7F nan nan nan
+Re CC-pV6Z 6D 7F nan nan nan
+Os CC-pV6Z 6D 7F nan nan nan
+Ir CC-pV6Z 6D 7F nan nan nan
+Pt CC-pV6Z 6D 7F nan nan nan
+Au CC-pV6Z 6D 7F nan nan nan
+Hg CC-pV6Z 6D 7F nan nan nan
+Tl CC-pV6Z 6D 7F nan nan nan
+Pb CC-pV6Z 6D 7F nan nan nan
+Bi CC-pV6Z 6D 7F nan nan nan
+Po CC-pV6Z 6D 7F nan nan nan
+At CC-pV6Z 6D 7F nan nan nan
+Rn CC-pV6Z 6D 7F nan nan nan
+Fr CC-pV6Z 6D 7F nan nan nan
+Ra CC-pV6Z 6D 7F nan nan nan
+Ac CC-pV6Z 6D 7F nan nan nan
+Th CC-pV6Z 6D 7F nan nan nan
+Pa CC-pV6Z 6D 7F nan nan nan
+ U CC-pV6Z 6D 7F nan nan nan
+Np CC-pV6Z 6D 7F nan nan nan
+Pu CC-pV6Z 6D 7F nan nan nan
+Am CC-pV6Z 6D 7F nan nan nan
+Cm CC-pV6Z 6D 7F nan nan nan
+Bk CC-pV6Z 6D 7F nan nan nan
+Cf CC-pV6Z 6D 7F nan nan nan
+Es CC-pV6Z 6D 7F nan nan nan
+Fm CC-pV6Z 6D 7F nan nan nan
+Md CC-pV6Z 6D 7F nan nan nan
+No CC-pV6Z 6D 7F nan nan nan
+Lr CC-pV6Z 6D 7F nan nan nan
+Rf CC-pV6Z 6D 7F nan nan nan
+Db CC-pV6Z 6D 7F nan nan nan
+Sg CC-pV6Z 6D 7F nan nan nan
+Bh CC-pV6Z 6D 7F nan nan nan
+Hs CC-pV6Z 6D 7F nan nan nan
+Mt CC-pV6Z 6D 7F nan nan nan
+Ds CC-pV6Z 6D 7F nan nan nan
+Rg CC-pV6Z 6D 7F nan nan nan
+Cn CC-pV6Z 6D 7F nan nan nan
+Nh CC-pV6Z 6D 7F nan nan nan
+Fl CC-pV6Z 6D 7F nan nan nan
+Mc CC-pV6Z 6D 7F nan nan nan
+Lv CC-pV6Z 6D 7F nan nan nan
+Ts CC-pV6Z 6D 7F nan nan nan
+Og CC-pV6Z 6D 7F nan nan nan
+ H CC-pVDZ 6D 7F  5  7  5
+He CC-pVDZ 6D 7F  5  7  5
+Li CC-pVDZ 6D 7F 15 32 15
+Be CC-pVDZ 6D 7F 15 33 15
+ B CC-pVDZ 6D 7F 15 33 15
+ C CC-pVDZ 6D 7F 15 33 15
+ N CC-pVDZ 6D 7F 15 33 15
+ O CC-pVDZ 6D 7F 15 33 15
+ F CC-pVDZ 6D 7F 15 33 15
+Ne CC-pVDZ 6D 7F 15 33 15
+Na CC-pVDZ 6D 7F 19 71 19
+Mg CC-pVDZ 6D 7F 19 71 19
+Al CC-pVDZ 6D 7F 19 70 19
+Si CC-pVDZ 6D 7F 19 71 19
+ P CC-pVDZ 6D 7F 19 71 19
+ S CC-pVDZ 6D 7F 19 71 19
+Cl CC-pVDZ 6D 7F 19 71 19
+Ar CC-pVDZ 6D 7F 19 71 19
+ K CC-pVDZ 6D 7F nan nan nan
+Ca CC-pVDZ 6D 7F 29 141 29
+Sc CC-pVDZ 6D 7F 46 294 49
+Ti CC-pVDZ 6D 7F 46 291 49
+ V CC-pVDZ 6D 7F 46 294 49
+Cr CC-pVDZ 6D 7F 46 292 49
+Mn CC-pVDZ 6D 7F 46 288 49
+Fe CC-pVDZ 6D 7F 46 294 49
+Co CC-pVDZ 6D 7F 46 294 49
+Ni CC-pVDZ 6D 7F 46 288 49
+Cu CC-pVDZ 6D 7F 46 294 49
+Zn CC-pVDZ 6D 7F 46 288 49
+Ga CC-pVDZ 6D 7F 29 147 29
+Ge CC-pVDZ 6D 7F 29 148 29
+As CC-pVDZ 6D 7F 29 146 29
+Se CC-pVDZ 6D 7F 29 147 29
+Br CC-pVDZ 6D 7F 29 147 29
+Kr CC-pVDZ 6D 7F 29 147 29
+Rb CC-pVDZ 6D 7F nan nan nan
+Sr CC-pVDZ 6D 7F nan nan nan
+ Y CC-pVDZ 6D 7F nan nan nan
+Zr CC-pVDZ 6D 7F nan nan nan
+Nb CC-pVDZ 6D 7F nan nan nan
+Mo CC-pVDZ 6D 7F nan nan nan
+Tc CC-pVDZ 6D 7F nan nan nan
+Ru CC-pVDZ 6D 7F nan nan nan
+Rh CC-pVDZ 6D 7F nan nan nan
+Pd CC-pVDZ 6D 7F nan nan nan
+Ag CC-pVDZ 6D 7F nan nan nan
+Cd CC-pVDZ 6D 7F nan nan nan
+In CC-pVDZ 6D 7F nan nan nan
+Sn CC-pVDZ 6D 7F nan nan nan
+Sb CC-pVDZ 6D 7F nan nan nan
+Te CC-pVDZ 6D 7F nan nan nan
+ I CC-pVDZ 6D 7F nan nan nan
+Xe CC-pVDZ 6D 7F nan nan nan
+Cs CC-pVDZ 6D 7F nan nan nan
+Ba CC-pVDZ 6D 7F nan nan nan
+La CC-pVDZ 6D 7F nan nan nan
+Ce CC-pVDZ 6D 7F nan nan nan
+Pr CC-pVDZ 6D 7F nan nan nan
+Nd CC-pVDZ 6D 7F nan nan nan
+Pm CC-pVDZ 6D 7F nan nan nan
+Sm CC-pVDZ 6D 7F nan nan nan
+Eu CC-pVDZ 6D 7F nan nan nan
+Gd CC-pVDZ 6D 7F nan nan nan
+Tb CC-pVDZ 6D 7F nan nan nan
+Dy CC-pVDZ 6D 7F nan nan nan
+Ho CC-pVDZ 6D 7F nan nan nan
+Er CC-pVDZ 6D 7F nan nan nan
+Tm CC-pVDZ 6D 7F nan nan nan
+Yb CC-pVDZ 6D 7F nan nan nan
+Lu CC-pVDZ 6D 7F nan nan nan
+Hf CC-pVDZ 6D 7F nan nan nan
+Ta CC-pVDZ 6D 7F nan nan nan
+ W CC-pVDZ 6D 7F nan nan nan
+Re CC-pVDZ 6D 7F nan nan nan
+Os CC-pVDZ 6D 7F nan nan nan
+Ir CC-pVDZ 6D 7F nan nan nan
+Pt CC-pVDZ 6D 7F nan nan nan
+Au CC-pVDZ 6D 7F nan nan nan
+Hg CC-pVDZ 6D 7F nan nan nan
+Tl CC-pVDZ 6D 7F nan nan nan
+Pb CC-pVDZ 6D 7F nan nan nan
+Bi CC-pVDZ 6D 7F nan nan nan
+Po CC-pVDZ 6D 7F nan nan nan
+At CC-pVDZ 6D 7F nan nan nan
+Rn CC-pVDZ 6D 7F nan nan nan
+Fr CC-pVDZ 6D 7F nan nan nan
+Ra CC-pVDZ 6D 7F nan nan nan
+Ac CC-pVDZ 6D 7F nan nan nan
+Th CC-pVDZ 6D 7F nan nan nan
+Pa CC-pVDZ 6D 7F nan nan nan
+ U CC-pVDZ 6D 7F nan nan nan
+Np CC-pVDZ 6D 7F nan nan nan
+Pu CC-pVDZ 6D 7F nan nan nan
+Am CC-pVDZ 6D 7F nan nan nan
+Cm CC-pVDZ 6D 7F nan nan nan
+Bk CC-pVDZ 6D 7F nan nan nan
+Cf CC-pVDZ 6D 7F nan nan nan
+Es CC-pVDZ 6D 7F nan nan nan
+Fm CC-pVDZ 6D 7F nan nan nan
+Md CC-pVDZ 6D 7F nan nan nan
+No CC-pVDZ 6D 7F nan nan nan
+Lr CC-pVDZ 6D 7F nan nan nan
+Rf CC-pVDZ 6D 7F nan nan nan
+Db CC-pVDZ 6D 7F nan nan nan
+Sg CC-pVDZ 6D 7F nan nan nan
+Bh CC-pVDZ 6D 7F nan nan nan
+Hs CC-pVDZ 6D 7F nan nan nan
+Mt CC-pVDZ 6D 7F nan nan nan
+Ds CC-pVDZ 6D 7F nan nan nan
+Rg CC-pVDZ 6D 7F nan nan nan
+Cn CC-pVDZ 6D 7F nan nan nan
+Nh CC-pVDZ 6D 7F nan nan nan
+Fl CC-pVDZ 6D 7F nan nan nan
+Mc CC-pVDZ 6D 7F nan nan nan
+Lv CC-pVDZ 6D 7F nan nan nan
+Ts CC-pVDZ 6D 7F nan nan nan
+Og CC-pVDZ 6D 7F nan nan nan
+ H CC-pVQZ 6D 7F 32 37 35
+He CC-pVQZ 6D 7F 32 38 35
+Li CC-pVQZ 6D 7F 58 88 70
+Be CC-pVQZ 6D 7F 58 88 70
+ B CC-pVQZ 6D 7F 58 88 70
+ C CC-pVQZ 6D 7F 58 89 70
+ N CC-pVQZ 6D 7F 58 89 70
+ O CC-pVQZ 6D 7F 58 89 70
+ F CC-pVQZ 6D 7F 58 89 70
+Ne CC-pVQZ 6D 7F 58 89 70
+Na CC-pVQZ 6D 7F 62 142 74
+Mg CC-pVQZ 6D 7F 62 136 74
+Al CC-pVQZ 6D 7F 62 130 74
+Si CC-pVQZ 6D 7F 62 133 74
+ P CC-pVQZ 6D 7F 62 134 74
+ S CC-pVQZ 6D 7F 62 134 74
+Cl CC-pVQZ 6D 7F 62 131 74
+Ar CC-pVQZ 6D 7F 62 131 74
+ K CC-pVQZ 6D 7F nan nan nan
+Ca CC-pVQZ 6D 7F 72 226 84
+Sc CC-pVQZ 6D 7F 109 522 140
+Ti CC-pVQZ 6D 7F 109 511 140
+ V CC-pVQZ 6D 7F 109 511 140
+Cr CC-pVQZ 6D 7F 109 515 140
+Mn CC-pVQZ 6D 7F 109 506 140
+Fe CC-pVQZ 6D 7F 109 519 140
+Co CC-pVQZ 6D 7F 109 524 140
+Ni CC-pVQZ 6D 7F 109 506 140
+Cu CC-pVQZ 6D 7F 109 499 140
+Zn CC-pVQZ 6D 7F 109 514 140
+Ga CC-pVQZ 6D 7F 72 253 84
+Ge CC-pVQZ 6D 7F 72 253 84
+As CC-pVQZ 6D 7F 72 252 84
+Se CC-pVQZ 6D 7F 72 250 84
+Br CC-pVQZ 6D 7F 72 244 84
+Kr CC-pVQZ 6D 7F 72 250 84
+Rb CC-pVQZ 6D 7F nan nan nan
+Sr CC-pVQZ 6D 7F nan nan nan
+ Y CC-pVQZ 6D 7F nan nan nan
+Zr CC-pVQZ 6D 7F nan nan nan
+Nb CC-pVQZ 6D 7F nan nan nan
+Mo CC-pVQZ 6D 7F nan nan nan
+Tc CC-pVQZ 6D 7F nan nan nan
+Ru CC-pVQZ 6D 7F nan nan nan
+Rh CC-pVQZ 6D 7F nan nan nan
+Pd CC-pVQZ 6D 7F nan nan nan
+Ag CC-pVQZ 6D 7F nan nan nan
+Cd CC-pVQZ 6D 7F nan nan nan
+In CC-pVQZ 6D 7F nan nan nan
+Sn CC-pVQZ 6D 7F nan nan nan
+Sb CC-pVQZ 6D 7F nan nan nan
+Te CC-pVQZ 6D 7F nan nan nan
+ I CC-pVQZ 6D 7F nan nan nan
+Xe CC-pVQZ 6D 7F nan nan nan
+Cs CC-pVQZ 6D 7F nan nan nan
+Ba CC-pVQZ 6D 7F nan nan nan
+La CC-pVQZ 6D 7F nan nan nan
+Ce CC-pVQZ 6D 7F nan nan nan
+Pr CC-pVQZ 6D 7F nan nan nan
+Nd CC-pVQZ 6D 7F nan nan nan
+Pm CC-pVQZ 6D 7F nan nan nan
+Sm CC-pVQZ 6D 7F nan nan nan
+Eu CC-pVQZ 6D 7F nan nan nan
+Gd CC-pVQZ 6D 7F nan nan nan
+Tb CC-pVQZ 6D 7F nan nan nan
+Dy CC-pVQZ 6D 7F nan nan nan
+Ho CC-pVQZ 6D 7F nan nan nan
+Er CC-pVQZ 6D 7F nan nan nan
+Tm CC-pVQZ 6D 7F nan nan nan
+Yb CC-pVQZ 6D 7F nan nan nan
+Lu CC-pVQZ 6D 7F nan nan nan
+Hf CC-pVQZ 6D 7F nan nan nan
+Ta CC-pVQZ 6D 7F nan nan nan
+ W CC-pVQZ 6D 7F nan nan nan
+Re CC-pVQZ 6D 7F nan nan nan
+Os CC-pVQZ 6D 7F nan nan nan
+Ir CC-pVQZ 6D 7F nan nan nan
+Pt CC-pVQZ 6D 7F nan nan nan
+Au CC-pVQZ 6D 7F nan nan nan
+Hg CC-pVQZ 6D 7F nan nan nan
+Tl CC-pVQZ 6D 7F nan nan nan
+Pb CC-pVQZ 6D 7F nan nan nan
+Bi CC-pVQZ 6D 7F nan nan nan
+Po CC-pVQZ 6D 7F nan nan nan
+At CC-pVQZ 6D 7F nan nan nan
+Rn CC-pVQZ 6D 7F nan nan nan
+Fr CC-pVQZ 6D 7F nan nan nan
+Ra CC-pVQZ 6D 7F nan nan nan
+Ac CC-pVQZ 6D 7F nan nan nan
+Th CC-pVQZ 6D 7F nan nan nan
+Pa CC-pVQZ 6D 7F nan nan nan
+ U CC-pVQZ 6D 7F nan nan nan
+Np CC-pVQZ 6D 7F nan nan nan
+Pu CC-pVQZ 6D 7F nan nan nan
+Am CC-pVQZ 6D 7F nan nan nan
+Cm CC-pVQZ 6D 7F nan nan nan
+Bk CC-pVQZ 6D 7F nan nan nan
+Cf CC-pVQZ 6D 7F nan nan nan
+Es CC-pVQZ 6D 7F nan nan nan
+Fm CC-pVQZ 6D 7F nan nan nan
+Md CC-pVQZ 6D 7F nan nan nan
+No CC-pVQZ 6D 7F nan nan nan
+Lr CC-pVQZ 6D 7F nan nan nan
+Rf CC-pVQZ 6D 7F nan nan nan
+Db CC-pVQZ 6D 7F nan nan nan
+Sg CC-pVQZ 6D 7F nan nan nan
+Bh CC-pVQZ 6D 7F nan nan nan
+Hs CC-pVQZ 6D 7F nan nan nan
+Mt CC-pVQZ 6D 7F nan nan nan
+Ds CC-pVQZ 6D 7F nan nan nan
+Rg CC-pVQZ 6D 7F nan nan nan
+Cn CC-pVQZ 6D 7F nan nan nan
+Nh CC-pVQZ 6D 7F nan nan nan
+Fl CC-pVQZ 6D 7F nan nan nan
+Mc CC-pVQZ 6D 7F nan nan nan
+Lv CC-pVQZ 6D 7F nan nan nan
+Ts CC-pVQZ 6D 7F nan nan nan
+Og CC-pVQZ 6D 7F nan nan nan
+ H CC-pVTZ 6D 7F 15 17 15
+He CC-pVTZ 6D 7F 15 18 15
+Li CC-pVTZ 6D 7F 32 54 35
+Be CC-pVTZ 6D 7F 32 54 35
+ B CC-pVTZ 6D 7F 32 52 35
+ C CC-pVTZ 6D 7F 32 52 35
+ N CC-pVTZ 6D 7F 32 52 35
+ O CC-pVTZ 6D 7F 32 52 35
+ F CC-pVTZ 6D 7F 32 52 35
+Ne CC-pVTZ 6D 7F 32 52 35
+Na CC-pVTZ 6D 7F 36 103 39
+Mg CC-pVTZ 6D 7F 36 97 39
+Al CC-pVTZ 6D 7F 36 95 39
+Si CC-pVTZ 6D 7F 36 95 39
+ P CC-pVTZ 6D 7F 36 95 39
+ S CC-pVTZ 6D 7F 36 94 39
+Cl CC-pVTZ 6D 7F 36 94 39
+Ar CC-pVTZ 6D 7F 36 93 39
+ K CC-pVTZ 6D 7F nan nan nan
+Ca CC-pVTZ 6D 7F 46 185 49
+Sc CC-pVTZ 6D 7F 72 351 84
+Ti CC-pVTZ 6D 7F 72 354 84
+ V CC-pVTZ 6D 7F 72 354 84
+Cr CC-pVTZ 6D 7F 72 347 84
+Mn CC-pVTZ 6D 7F 72 345 84
+Fe CC-pVTZ 6D 7F 72 351 84
+Co CC-pVTZ 6D 7F 72 350 84
+Ni CC-pVTZ 6D 7F 72 342 84
+Cu CC-pVTZ 6D 7F 72 352 84
+Zn CC-pVTZ 6D 7F 72 347 84
+Ga CC-pVTZ 6D 7F 46 196 49
+Ge CC-pVTZ 6D 7F 46 195 49
+As CC-pVTZ 6D 7F 46 196 49
+Se CC-pVTZ 6D 7F 46 196 49
+Br CC-pVTZ 6D 7F 46 197 49
+Kr CC-pVTZ 6D 7F 46 197 49
+Rb CC-pVTZ 6D 7F nan nan nan
+Sr CC-pVTZ 6D 7F nan nan nan
+ Y CC-pVTZ 6D 7F nan nan nan
+Zr CC-pVTZ 6D 7F nan nan nan
+Nb CC-pVTZ 6D 7F nan nan nan
+Mo CC-pVTZ 6D 7F nan nan nan
+Tc CC-pVTZ 6D 7F nan nan nan
+Ru CC-pVTZ 6D 7F nan nan nan
+Rh CC-pVTZ 6D 7F nan nan nan
+Pd CC-pVTZ 6D 7F nan nan nan
+Ag CC-pVTZ 6D 7F nan nan nan
+Cd CC-pVTZ 6D 7F nan nan nan
+In CC-pVTZ 6D 7F nan nan nan
+Sn CC-pVTZ 6D 7F nan nan nan
+Sb CC-pVTZ 6D 7F nan nan nan
+Te CC-pVTZ 6D 7F nan nan nan
+ I CC-pVTZ 6D 7F nan nan nan
+Xe CC-pVTZ 6D 7F nan nan nan
+Cs CC-pVTZ 6D 7F nan nan nan
+Ba CC-pVTZ 6D 7F nan nan nan
+La CC-pVTZ 6D 7F nan nan nan
+Ce CC-pVTZ 6D 7F nan nan nan
+Pr CC-pVTZ 6D 7F nan nan nan
+Nd CC-pVTZ 6D 7F nan nan nan
+Pm CC-pVTZ 6D 7F nan nan nan
+Sm CC-pVTZ 6D 7F nan nan nan
+Eu CC-pVTZ 6D 7F nan nan nan
+Gd CC-pVTZ 6D 7F nan nan nan
+Tb CC-pVTZ 6D 7F nan nan nan
+Dy CC-pVTZ 6D 7F nan nan nan
+Ho CC-pVTZ 6D 7F nan nan nan
+Er CC-pVTZ 6D 7F nan nan nan
+Tm CC-pVTZ 6D 7F nan nan nan
+Yb CC-pVTZ 6D 7F nan nan nan
+Lu CC-pVTZ 6D 7F nan nan nan
+Hf CC-pVTZ 6D 7F nan nan nan
+Ta CC-pVTZ 6D 7F nan nan nan
+ W CC-pVTZ 6D 7F nan nan nan
+Re CC-pVTZ 6D 7F nan nan nan
+Os CC-pVTZ 6D 7F nan nan nan
+Ir CC-pVTZ 6D 7F nan nan nan
+Pt CC-pVTZ 6D 7F nan nan nan
+Au CC-pVTZ 6D 7F nan nan nan
+Hg CC-pVTZ 6D 7F nan nan nan
+Tl CC-pVTZ 6D 7F nan nan nan
+Pb CC-pVTZ 6D 7F nan nan nan
+Bi CC-pVTZ 6D 7F nan nan nan
+Po CC-pVTZ 6D 7F nan nan nan
+At CC-pVTZ 6D 7F nan nan nan
+Rn CC-pVTZ 6D 7F nan nan nan
+Fr CC-pVTZ 6D 7F nan nan nan
+Ra CC-pVTZ 6D 7F nan nan nan
+Ac CC-pVTZ 6D 7F nan nan nan
+Th CC-pVTZ 6D 7F nan nan nan
+Pa CC-pVTZ 6D 7F nan nan nan
+ U CC-pVTZ 6D 7F nan nan nan
+Np CC-pVTZ 6D 7F nan nan nan
+Pu CC-pVTZ 6D 7F nan nan nan
+Am CC-pVTZ 6D 7F nan nan nan
+Cm CC-pVTZ 6D 7F nan nan nan
+Bk CC-pVTZ 6D 7F nan nan nan
+Cf CC-pVTZ 6D 7F nan nan nan
+Es CC-pVTZ 6D 7F nan nan nan
+Fm CC-pVTZ 6D 7F nan nan nan
+Md CC-pVTZ 6D 7F nan nan nan
+No CC-pVTZ 6D 7F nan nan nan
+Lr CC-pVTZ 6D 7F nan nan nan
+Rf CC-pVTZ 6D 7F nan nan nan
+Db CC-pVTZ 6D 7F nan nan nan
+Sg CC-pVTZ 6D 7F nan nan nan
+Bh CC-pVTZ 6D 7F nan nan nan
+Hs CC-pVTZ 6D 7F nan nan nan
+Mt CC-pVTZ 6D 7F nan nan nan
+Ds CC-pVTZ 6D 7F nan nan nan
+Rg CC-pVTZ 6D 7F nan nan nan
+Cn CC-pVTZ 6D 7F nan nan nan
+Nh CC-pVTZ 6D 7F nan nan nan
+Fl CC-pVTZ 6D 7F nan nan nan
+Mc CC-pVTZ 6D 7F nan nan nan
+Lv CC-pVTZ 6D 7F nan nan nan
+Ts CC-pVTZ 6D 7F nan nan nan
+Og CC-pVTZ 6D 7F nan nan nan
+EOF
+
+}
+
+
 function expand_symbol_list(){
 	# $1: str
 	# H-Ar,Ga-Kr,Fe,I
