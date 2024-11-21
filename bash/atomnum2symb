@@ -77,13 +77,13 @@ function process(){
 		mapTable=`print_elementsymbol_atomicnumber_table`
 		systematicPatt1="nubtqphsoeNUBTQPHSOE"
 		systematicPatt2="01234567890123456789"
-		
+
 	else
 		# valid characters to convert from
 		mapTable=`print_atomicnumber_elementsymbol_table`
 		systematicPatt1="0123456789"
 		systematicPatt2="nubtqphsoe"
-		
+
 	fi
 
 	#-------------------------------------------------------
@@ -108,13 +108,13 @@ function process(){
 	echo "$contentData" |
 		#
 		# replace according to mapTable
-		replace_tablecolumn_by_mappingdatabase - "$delimiter" "$targetColumnNum" "$mapTable" ' ' - | 
+		replace_tablecolumn_by_mappingdatabase - "$delimiter" "$targetColumnNum" "$mapTable" ' ' - |
 		#
 		# replace data not in the periodic table according to systematic name rules
 		replace_char_in_tablecolumn_with_char - "$delimiter" "$targetColumnNum" "$systematicPatt1" "$systematicPatt2" |
 		#
 		# convert the first letter of the alphabet to uppercase
-		(if "$reverse"; then toupper_first_char_in_tablecolumn - "$delimiter" "$targetColumnNum"; else cat -; fi)
+		(if "$reverse"; then cat -; else toupper_first_char_in_tablecolumn - "$delimiter" "$targetColumnNum"; fi)
 
 }
 
