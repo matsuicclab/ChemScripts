@@ -191,7 +191,7 @@ function process(){
 
 	# extract content part
 	symbList=`echo "$inpStr" |
-				sed "1,${headerEndLineNum}d" |
+				sed -r -n "$((${headerEndLineNum}+1)),$"p |
 				cut -d "${delimiter}" -f "${targetColumnNum}"`
 
 	# replace symbol with num of basis
