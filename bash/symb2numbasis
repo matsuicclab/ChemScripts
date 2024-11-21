@@ -163,13 +163,14 @@ function print_database(){
 
 	symbbasis_genarg=`echo "$gendict" | sed -r 's/ /-/1'`
 	symbbasis_num_all=`print_elementsymbol_numbasis_table |
+						sed -r 's/ +/ /g' |
+						sed -r 's/^ //' |
 						grep -i " ${dtype} " |
 						grep -i " ${ftype} " |
 						cut -d ' ' -f 1,2,"${columnNo}" |
-						sed -r 's/^ +//' |
 						sed -r 's/ /-/1'`
 	symb_num_genarg=`echo "$symbbasis_num_all" |
-							grep $(echo "$symbbasis_genarg" | awk '{printf "-e %s ", $0}') |
+							grep -i $(echo "$symbbasis_genarg" | awk '{printf "-e %s ", $0}') |
 							sed -r 's/-/ /1' |
 							cut -d ' ' -f 1,3`
 
