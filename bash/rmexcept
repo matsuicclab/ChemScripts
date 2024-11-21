@@ -2,7 +2,7 @@
 
 set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
-source "${SCRIPT_DIR}"/abstract/common
+source "${SCRIPT_DIR}"/utl/common.sh
 
 function help(){
 cat <<EOF
