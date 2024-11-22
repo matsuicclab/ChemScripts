@@ -19,8 +19,11 @@ cat <<EOF
                                 | default: 1
     -s, --skip <num>            | set the number of first comment lines
                                 | default: 0
-    --format <fmt>              | set format for print
+    -w, --whitespace            | treat multiple consecutive whitespace characters as one delimiter
+    --format <fmt>              | set format for print (follows awk's OFMT)
                                 | default: %.10g
+                                | by default, when the calculation result is zero, the integer zero is displayed.
+                                | If that is not convenient, specify '%8.5f'.
     --from <unit> | a.u. / bohr / angstrom / nm / m
     --to <unit>   | same as above
 
@@ -32,6 +35,7 @@ function parse_option(){
 	delimiter=' '
 	targetColumnNum=1
 	headerEndLineNum=0
+	treatAsOneDelim=false
 	fromunit=
 	tounit=
 	format='%.10g'
@@ -55,6 +59,10 @@ function parse_option(){
 		-s | --skip)
 			headerEndLineNum="${args[2]}"
 			shift_args 2
+			;;
+		-w | --whitespace)
+			treatAsOneDelim=true
+			shift_args 1
 			;;
 		--format)
 			format="${args[2]}"
@@ -122,6 +130,9 @@ function process(){
 	local inpStr
 	inpStr="$1"
 
+	if "$treatAsOneDelim"; then
+		inpStr=`echo "$inpStr" | sed -r "s/${delimiter}+/${delimiter}/g"`
+	fi
 	multiply_tablecolumn "$inpStr" "$delimiter" "$targetColumnNum" "$factor" "$format" "$headerEndLineNum"
 
 }
