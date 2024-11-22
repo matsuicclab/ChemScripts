@@ -3,9 +3,10 @@
 set -eu
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/str2str
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
 
 function help(){
-	abstract_help "len2len" "unit1" "unit2" "length in 'unit1'" "length in 'unit2'"
+	abstract_help "len2len" "unit1" "unit2" "String containing length in 'unit1'" "in 'unit2'"
 }
 
 function option_help(){
@@ -14,8 +15,9 @@ cat <<EOF
     -d, --delimiter <delimiter> | set delimiter
                                 | default: ' '
     -f, --field <num>           | set target column number
+                                | multiple columns can be specified by separating them with commas
                                 | default: 1
-    -s, --skip <num>            | set the title section
+    -s, --skip <num>            | set the number of first comment lines
                                 | default: 0
     --format <fmt>              | set format for print
                                 | default: %.10g
@@ -120,25 +122,7 @@ function process(){
 	local inpStr
 	inpStr="$1"
 
-	echo "$inpStr" |
-		awk -v headerend="${headerEndLineNum}" \
-			-v field="${targetColumnNum}" \
-			-v delimiter="${delimiter}" \
-			-v format="${format}" \
-			-v factor="${factor}" \
-			'BEGIN {
-				FS="["delimiter"]"; OFS=delimiter; # set delimiter
-				OFMT=format # format when printing
-			}
-			{
-				if (NR > headerend && NF >= field) {
-					# convert
-					$field=sprintf(OFMT, $field*factor); print $0
-				} else {
-					# do nothing
-					print $0
-				}
-			}'
+	multiply_tablecolumn "$inpStr" "$delimiter" "$targetColumnNum" "$factor" "$format" "$headerEndLineNum"
 
 }
 

@@ -136,5 +136,53 @@ function toupper_first_char_in_tablecolumn(){
 			}'
 }
 
+function multiply_tablecolumn(){
+	# $1: source table string
+	#     if $1 == '-', read from pipe input
+	# $2: delimiter for source
+	# $3: column number
+	#     multiple columns can be specified by separating them with commas
+	# $4: factor
+	# $5: format
+	# $6: num of skip line
+	local sourcedata sourcedelimiter columnnum factor format numskip
 
+	sourcedata="$1"
+	sourcedelimiter="$2"
+	columnnum="$3"
+	factor="$4"
+	format="$5"
+	numskip="$6"
+
+	if [[ "$columnnum" =~ , ]]; then
+		# process recursively
+
+		recursioncolumnnum=`echo "$columnnum" | sed -r 's/^[^,]*,//'`
+		columnnum=`echo "$columnnum" | sed -r 's/^([^,]*),.*$/\1/'`
+		sourcedata=`multiply_tablecolumn "$sourcedata" "$sourcedelimiter" "$recursioncolumnnum" "$factor" "$format" "$numskip"`
+	fi
+	if [[ ! "$columnnum" =~ ^[0-9]+$ ]]; then
+		error "specify a number: '$columnnum'"
+	fi
+
+	echo "$sourcedata" |
+		awk -v headerend="${numskip}" \
+			-v field="${columnnum}" \
+			-v delimiter="${sourcedelimiter}" \
+			-v format="${format}" \
+			-v factor="${factor}" \
+			'BEGIN {
+				FS="["delimiter"]"; OFS=delimiter; # set delimiter
+				OFMT=format # format when printing
+			}
+			{
+				if (NR > headerend && NF >= field) {
+					# convert
+					$field=sprintf(OFMT, $field*factor); print $0
+				} else {
+					# do nothing
+					print $0
+				}
+			}'
+}
 
