@@ -10,7 +10,7 @@ function help(){
 function comment_about_script(){
 cat <<EOF
     NOT compatible with z-matrix.
-    You can also achieve by 'newzmat -icart -oxyz' implemented in Gaussian utility.
+    You can also achieve by 'newzmat -icart -oxyz' implemented in Gaussian's official utility software.
 
 EOF
 }
