@@ -526,3 +526,20 @@ function __complete_xyz2pdb(){
 complete -F __complete_xyz2pdb xyz2pdb
 
 
+###################################################################
+function __complete_xyz2xyz(){
+	local flagoptionlist=(
+		-h --help
+		--eliminate-header
+		--translate-geometric-center
+		--translate-mass-center
+	)
+	local valueoptionlist=(
+		-O
+	)
+	local fileoptionlist=()
+	__complete_files2files
+}
+complete -F __complete_xyz2xyz xyz2xyz
+
+
