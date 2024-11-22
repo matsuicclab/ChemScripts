@@ -1,6 +1,9 @@
 #!/bin/bash
 
 ###################################################################
+###################################################################
+# abstract
+###################################################################
 function __complete_file2seqfiles(){
 	__complete_files2files
 }
@@ -149,6 +152,7 @@ function __complete_str2str_no_option(){
 
 ###################################################################
 ###################################################################
+# implementation of abstract (alphabetical order)
 ###################################################################
 function __complete_atomnum2symb(){
 	local flagoptionlist=(
@@ -164,6 +168,22 @@ function __complete_atomnum2symb(){
 	__complete_str2str
 }
 complete -F __complete_atomnum2symb atomnum2symb
+
+
+###################################################################
+function __complete_chemblid2smiles(){
+	local flagoptionlist=(
+		-h --help
+		-f --force
+	)
+	local valueoptionlist=(
+		-d --default
+	)
+	local fileoptionlist=()
+
+	__complete_str2str
+}
+complete -F __complete_chemblid2smiles chemblid2smiles
 
 
 ###################################################################
@@ -191,6 +211,7 @@ complete -F __complete_csvsmiles2png csvsmiles2png
 function __complete_energy2energy(){
 	local flagoptionlist=(
 		-h --help
+		-w --whitespace
 	)
 	local valueoptionlist=(
 		-d --delimiter
@@ -262,6 +283,9 @@ function __complete_g16log2value(){
 
 complete -F __complete_g16log2value g16log2value
 
+###################################################################
+complete -F __complete_files2files_no_option gjf2xyz
+
 
 ###################################################################
 complete -F __complete_files2files_no_option inpcrd2crd
@@ -277,6 +301,14 @@ complete -F __complete_files2files_no_option mden2csv
 
 ###################################################################
 complete -F __complete_files2files_no_option mdout2csv
+
+
+###################################################################
+complete -F __complete_files2files_no_option mol22xyz
+
+
+###################################################################
+complete -F __complete_files2files_no_option mol2xyz
 
 
 ###################################################################
@@ -307,8 +339,25 @@ function __complete_mkresp(){
 }
 complete -F __complete_mkresp mkresp
 
+
+###################################################################
+complete -F __complete_str2file_no_option name2sdf
+
+
+###################################################################
+complete -F __complete_chemblid2smiles name2smiles
+
+
 ###################################################################
 complete -F __complete_files2files_no_option pdb2csv
+
+
+###################################################################
+complete -F __complete_files2files_no_option pdb2xyz
+
+
+###################################################################
+complete -F __complete_str2file_no_option pdbid2pdb
 
 
 ###################################################################
@@ -340,6 +389,10 @@ function __complete_plotmden(){
 	fi
 }
 complete -F __complete_plotmden plotmden
+
+
+###################################################################
+complete -F __complete_chemblid2smiles pubchemid2smiles
 
 
 ###################################################################
@@ -410,10 +463,35 @@ complete -F __complete_smiles2xyz smiles2xyz
 complete -F __complete_atomnum2symb symb2atomnum
 
 
+
+###################################################################
+function __complete_symb2numbasis(){
+	local flagoptionlist=(
+		-h --help
+		-t --total
+	)
+	local valueoptionlist=(
+		-b --basis
+		-g --gen
+		--dtype
+		--ftype
+		--num-of
+		-d --delimiter
+		-f --field
+		-s --skip
+	)
+	local fileoptionlist=()
+
+	__complete_str2str
+}
+complete -F __complete_symb2numbasis symb2numbasis
+
+
 ###################################################################
 function __complete_xyz2gjf(){
 	local flagoptionlist=(
 		-h --help
+		--resp
 	)
 	local valueoptionlist=(
 		-O
@@ -429,12 +507,22 @@ function __complete_xyz2gjf(){
 
 	__complete_files2files
 }
-
 complete -F __complete_xyz2gjf xyz2gjf
 
 
 ###################################################################
-complete -F __complete_files2files_no_option xyz2pdb
-
+function __complete_xyz2pdb(){
+	local flagoptionlist=(
+		-h --help
+		-n --no-header
+	)
+	local valueoptionlist=(
+		-O
+		-r --residue
+	)
+	local fileoptionlist=()
+	__complete_files2files
+}
+complete -F __complete_xyz2pdb xyz2pdb
 
 
