@@ -50,6 +50,16 @@ from pyg16.cube import visualizeCubeSlice
 visualizeCubeSlice(cubeFile='test.cub', outFile='test_slice.pdf')
 ```
 
+# Are you in trouble?
+## Error1
+```
+ChemScripts/bash/abstract/data2data: line 15: exec: {ChemScript_data2data_stdout_fd}: not found
+```
+This is probably because the version of bash you are using is old.
+Check your bash version with /bin/bash --version.
+bash4.1 or higher is recommended.
+
+
 # TODO
 - g16log2value
     - eliminate title section
