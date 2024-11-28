@@ -72,8 +72,8 @@ class Log:
                 s = pedtab.GetElementSymbol(int(n))
                 # convert unit
                 x = float(x) * factor
-                y = float(x) * factor
-                z = float(x) * factor
+                y = float(y) * factor
+                z = float(z) * factor
 
                 # append
                 symblist.append(s)
