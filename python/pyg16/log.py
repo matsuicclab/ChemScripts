@@ -61,9 +61,10 @@ class Log:
         for line in self.__logdata[idx_orient:]:
             if re.fullmatch('^-+$', line):
                 countHyphenLine += 1
+                continue
             if countHyphenLine == 3:
                 break
-            if countHyphenLine > 2:
+            if countHyphenLine == 2:
                 # center number, atomic number, atomic type, coord x, coord y, coord z (angstrom)
                 _, n, _, x, y, z = line.split()
 
