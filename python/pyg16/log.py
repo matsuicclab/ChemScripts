@@ -3,13 +3,24 @@ import re
 from rdkit import Chem
 
 class Log:
-    def __init__(self, filePath):
+    def __init__(self, **args):
+        if 'filePath' in args.keys():
+            self.__init__fromFile(**args)
+        elif 'logData' in args.keys():
+            self.__init__fromLogData(**args)
+        else:
+            raise ValueError('args must contain filePath or cubeData')
+
+    def __init__fromFile(self, filePath=None):
         """
         load log file
         """
         # ファイル読み込み
         with open(filePath, mode='r') as f:
             self.__logdata = [s.strip('\n') for s in f.readlines()]
+
+    def __init__fromLogData(self, logData=None):
+        self.__logdata = logData
 
 
     def giveNumAtom(self):
