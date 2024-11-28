@@ -59,7 +59,7 @@ class Log:
         xyzlist = []
         countHyphenLine = 0
         for line in self.__logdata[idx_orient:]:
-            if re.fullmatch('^-+$', line):
+            if re.fullmatch('^ -+$', line):
                 countHyphenLine += 1
                 continue
             if countHyphenLine == 3:
