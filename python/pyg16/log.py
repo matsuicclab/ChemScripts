@@ -69,11 +69,11 @@ class Log:
                 _, n, _, x, y, z = line.split()
 
                 # convert atomic number to element symbol
-                s = pedtab.GetElementSymbol(n)
+                s = pedtab.GetElementSymbol(int(n))
                 # convert unit
-                x *= factor
-                y *= factor
-                z *= factor
+                x = float(x) * factor
+                y = float(x) * factor
+                z = float(x) * factor
 
                 # append
                 symblist.append(s)
