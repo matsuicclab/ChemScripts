@@ -80,8 +80,12 @@ bash4.1 or higher is recommended.
 - mkmdin
 - mdcrd2crd (ambpdb)
 - xyz2xyz (consideration on isotope)
-
+- file2seqfiles
+- files2file
+- void2file
 
 - error handling for pdbid2pdb, name2sdf
 - Cube class (generate cube with node data of original cube)
+- convert CRLF to LF before processing
+
 
