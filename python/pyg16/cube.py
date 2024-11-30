@@ -112,50 +112,12 @@ class Cube:
         複数の格子データが存在する場合は4次元(nx,ny,nz,valueDim)とする
         """
         # 値チェック
-        if startingPoint is None:
-            raise ValueError('startingPoint is None')
-        if stepVector is None:
-            raise ValueError('stepVector is None')
-        if numGridPoint is None:
-            raise ValueError('numGridPoint is None')
+        if cubeGrid is None:
+            raise ValueError()
+        
         if cubeData is None:
             raise ValueError('cubeData is None')
 
-        # startingPoint
-        if type(startingPoint) not in [np.ndarray, list, tuple]:
-            # startingPointはnp.ndarrayかlistかtupleである必要がある
-            raise TypeError('type of startingPoint must be np.ndarray or list, or tuple.')
-        elif type(startingPoint) in [list, tuple]:
-            # np.ndarrayに変換
-            startingPoint = np.array(startingPoint)
-        if startingPoint.shape != (3,):
-            raise ValueError('shape of startingPoint must be (3,)')
-        if startingPoint.dtype.name not in ['float64', 'int32', 'int64']:
-            raise TypeError('dtype of startingPoint must be float64 or int32')
-
-        # stepVector
-        if type(stepVector) not in [np.ndarray, list, tuple]:
-            # stepVectorはnp.ndarrayかlistかtupleである必要がある
-            raise TypeError('type of stepVector must be np.ndarray or list, or tuple.')
-        elif type(stepVector) in [list, tuple]:
-            # np.ndarrayに変換
-            stepVector = np.array(stepVector)
-        if stepVector.shape != (3,3):
-            raise ValueError('shape of stepVector must be (3,3)')
-        if stepVector.dtype.name not in ['float64', 'int32', 'int64']:
-            raise TypeError('dtype of stepVector must be float64 or int32, or int64')
-
-        # numGridPoint
-        if type(numGridPoint) is not np.ndarray:
-            # listかtupleならnp.ndarrayに変換
-            if type(numGridPoint) not in [list, tuple]:
-                raise TypeError('type of numGridPoint must be np.ndarray, list or tuple')
-            else:
-                numGridPoint = np.array(numGridPoint)
-        if numGridPoint.shape != (3,):
-            raise ValueError('length of numGridPoint must be 3')
-        if numGridPoint.dtype.name not in ['int32', 'int64']:
-            raise TypeError('dtype of numGridPoint must be int32 or int64')
 
         # valueDim
         if type(valueDim) is not int:
@@ -494,6 +456,65 @@ class Cube:
         self.__atomXYZData *= factor
         self.__unit = unit
 
+class CubeGrid:
+    def __init__(self, startingPoint=None, stepVector=None, numGridPoint=None, endingPoint=None, unit=None):
+        
+        # None判定
+        if startingPoint is None:
+            raise ValueError('startingPoint is None')
+        if sum([x is not None for x in [stepVector, numGridPoint, endingPoint]]) <2:
+            raise ValueError('At least two of stepVector, numGridPoint, and endingPoint must be specified')
+        
+        # None指定のパラメータを決定
+        if stepVector is None:
+            # stepVector決定
+            pass
+        if numGridPoint is None:
+            # numGridPoint決定
+            pass
+        if endingPoint is None:
+            # endingPointは最終的に保持しないので決定しなくて良い
+            pass
+        
+        # 型チェック        
+        # startingPoint
+        if type(startingPoint) not in [np.ndarray, list, tuple]:
+            # startingPointはnp.ndarrayかlistかtupleである必要がある
+            raise TypeError('type of startingPoint must be np.ndarray or list, or tuple.')
+        elif type(startingPoint) in [list, tuple]:
+            # np.ndarrayに変換
+            startingPoint = np.array(startingPoint)
+        if startingPoint.shape != (3,):
+            raise ValueError('shape of startingPoint must be (3,)')
+        if startingPoint.dtype.name not in ['float64', 'int32', 'int64']:
+            raise TypeError('dtype of startingPoint must be float64 or int32')
+
+        # stepVector
+        if type(stepVector) not in [np.ndarray, list, tuple]:
+            # stepVectorはnp.ndarrayかlistかtupleである必要がある
+            raise TypeError('type of stepVector must be np.ndarray or list, or tuple.')
+        elif type(stepVector) in [list, tuple]:
+            # np.ndarrayに変換
+            stepVector = np.array(stepVector)
+        if stepVector.shape != (3,3):
+            raise ValueError('shape of stepVector must be (3,3)')
+        if stepVector.dtype.name not in ['float64', 'int32', 'int64']:
+            raise TypeError('dtype of stepVector must be float64 or int32, or int64')
+
+        # numGridPoint
+        if type(numGridPoint) is not np.ndarray:
+            # listかtupleならnp.ndarrayに変換
+            if type(numGridPoint) not in [list, tuple]:
+                raise TypeError('type of numGridPoint must be np.ndarray, list or tuple')
+            else:
+                numGridPoint = np.array(numGridPoint)
+        if numGridPoint.shape != (3,):
+            raise ValueError('length of numGridPoint must be 3')
+        if numGridPoint.dtype.name not in ['int32', 'int64']:
+            raise TypeError('dtype of numGridPoint must be int32 or int64')
+        
+    def setUnit(self, unit='Bohr'):
+        pass
 
 class Slice:
     """
