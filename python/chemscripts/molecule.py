@@ -1,12 +1,14 @@
 import numpy as np
 
 class Molecule:
-    def __init__(self, atomicnumList=None, xyzList=None):
+    def __init__(self, atomicnumList=None, xyzList=None, unit='Angstrom'):
         # Noneチェック
         if atomicnumList is None:
             raise ValueError('atomicnumList is None')
         if xyzList is None:
             raise ValueError('xyzList is None')
+        if unit is None:
+            raise ValueError('unit is None')
         
         # atomicnumListチェック
         if type(atomicnumList) in [list, tuple]:
@@ -35,13 +37,25 @@ class Molecule:
         if len(atomicnumList) != len(xyzList):
             raise ValueError('The number of atoms differs between atomicnumList and xyzList')
         
+        # unitチェック
+        if unit in ['Angstrom', 'A', 'Ang']:
+            unit = 'Angstrom'
+        elif unit in ['Bohr', 'a.u.']:
+            unit = 'Bohr'
+        else:
+            raise ValueError('invalid unit: {}'.format(unit))
+        
         # メンバ変数に追加
         self.__numAtom = len(atomicnumList)
         self.__atomicnumList = atomicnumList
         self.__xyzList = xyzList
+        self.__unit = unit
+        
+    def __giveUnitConvFactor(self, newunit):
+        return None
         
     def giveNumAtom(self):
-        return len(self.__atomicnumList)
+        return self.__numAtom
         
     def iterateAtom(self, unit='Angstrom', elementSymbol=True):
         return None
