@@ -99,8 +99,6 @@ class Cube:
                             list(itertools.chain.from_iterable(data[6+self.__numAtom:]))
                         ).reshape(*self.__numGridPoint,self.__valueDim)
 
-        # contourデータ保持
-        self.__contourList = []
 
     def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, atomicNumData=None, atomXYZData=None, unit='Bohr'):
         """
