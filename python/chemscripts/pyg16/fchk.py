@@ -4,8 +4,8 @@ import copy
 import numpy as np
 from scipy.spatial.distance import squareform
 
-from pyg16.basisfunction import GTOBasis
-from pyg16.cube import Cube
+from chemscripts.pyg16.basisfunction import GTOBasis
+from chemscripts.pyg16.cube import Cube
 
 class Fchk:
     def __init__(self, filePath):
