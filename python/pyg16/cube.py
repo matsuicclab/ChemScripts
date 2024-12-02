@@ -63,7 +63,7 @@ class Cube:
         # 原子数
         self.__numAtom = int(data[2][0])
         # 格子点の基準点（開始位置）
-        self.__startingPoint = np.array(data[2][1:4])
+        startingPoint = data[2][1:4]
         # データの次元 (設定されてなければ1にする)
         if len(data[2]) == 4:
             valueDim = 1
@@ -80,10 +80,12 @@ class Cube:
         self.__valueNames = valueNames
 
         # 格子のステップ数と単位ベクトル
-        # np.ndarray: [n1,n2,n3] (np.int32)
-        self.__numGridPoint = np.array([int(l[0]) for l in data[3:6]])
-        # np.ndarray: [[v1x,v1y,v1z], [v2x,v2y,v2z], [v3x,v3y,v3z]]
-        self.__stepVector = np.array([l[1:4] for l in data[3:6]])
+        # [n1,n2,n3]
+        numGridPoint = [int(l[0]) for l in data[3:6]]
+        # [[v1x,v1y,v1z], [v2x,v2y,v2z], [v3x,v3y,v3z]]
+        stepVector = [l[1:4] for l in data[3:6]]
+        # gridインスタンス生成
+        self.__cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, numGridPoint=numGridPoint, unit=self.__unit)
 
         # 原子番号、原子座標
         # np.ndarray: shape: (numAtom,) (np.int32)
@@ -100,11 +102,11 @@ class Cube:
         # contourデータ保持
         self.__contourList = []
 
-    def __init__fromCubeData(self, startingPoint=None, stepVector=None, numGridPoint=None, cubeData=None, valueDim=1, valueNames=None, atomicNumData=None, atomXYZData=None, unit='Bohr'):
+    def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, atomicNumData=None, atomXYZData=None, unit='Bohr'):
         """
         格子データが既に存在する場合に利用する
 
-        unitはstartingPoint, stepVectorの単位の指定に使う
+        unitはatomXYZDataの単位の指定に使う
         AngstromとBohrが有効
 
         cubeDataはnp.ndarrayであり、
@@ -113,8 +115,8 @@ class Cube:
         """
         # 値チェック
         if cubeGrid is None:
-            raise ValueError()
-        
+            raise ValueError('cubeGrid is None')
+
         if cubeData is None:
             raise ValueError('cubeData is None')
 
@@ -124,6 +126,8 @@ class Cube:
             raise TypeError('type of valueDim must be int')
         if valueDim < 1:
             raise ValueError('valueDim must be larger than 0')
+
+        numGridPoint = cubeGrid.giveNumGridPoint()
 
         # cubeData
         if type(cubeData) not in [np.ndarray, list, tuple]:
@@ -146,9 +150,7 @@ class Cube:
             # いずれでもなかった場合
             raise ValueError('shape of cubeData must be (nx*ny*nz*valueDim,) or (nx,ny,nz)(valueDim==1), or (nx,ny,nz,valueDim)')
 
-        self.__startingPoint = startingPoint
-        self.__stepVector = stepVector
-        self.__numGridPoint = numGridPoint
+        self.__cubeGrid = cubeGrid
         self.__unit = unit
         self.__cubeData = cubeData
 
@@ -231,32 +233,26 @@ class Cube:
         """
         cubeデータの実座標復元のための格子ベクトルを返す
         """
-        return copy.deepcopy(self.__stepVector)
+        return self.__cubeGrid.giveStepVector()
 
     def giveNumGridPoint(self):
         """
         グリッドの各方向の点数を返す
         """
-        return copy.deepcopy(self.__numGridPoint)
+        return self.__cubeGrid.giveNumGridPoint()
 
     def giveStartingPoint(self):
         """
         cubeデータの実座標復元のための格子の開始位置を返す
         """
-        return copy.deepcopy(self.__startingPoint)
+        return self.__cubeGrid.giveStartingPoint()
 
     def giveNodeCoord(self):
         """
         格子座標を返す
         return: np.ndarray (shape: (na, nb, nc, 3))
         """
-        na, nb, nc = self.__numGridPoint
-        a,b,c = np.meshgrid(np.arange(na),np.arange(nb),np.arange(nc), indexing='ij')
-        sv1 = self.__stepVector[0]
-        sv2 = self.__stepVector[1]
-        sv3 = self.__stepVector[2]
-        nodeCoord = self.__startingPoint + a[:,:,:,np.newaxis] * sv1 + b[:,:,:,np.newaxis] * sv2 + c[:,:,:,np.newaxis] * sv3
-        return nodeCoord
+        return self.__cubeGrid.giveNodeCoord()
 
     def giveAtomData(self):
         """
@@ -266,31 +262,6 @@ class Cube:
             [1]: shape: (numAtom, 3)
         """
         return copy.deepcopy(self.__atomicNumData), copy.deepcopy(self.__atomXYZData)
-
-    def __convertCoordToOrtho(self, r):
-        """
-        実座標(xyz)を直交座標(ijk)へ変換する
-
-        r: np.ndarray (shape: (n, 3) or (3,))
-        return: np.ndarray (shape: (n, 3) or (3,))
-        """
-        # -> r = r0 + [v1,v2,v3] @ p
-        #    p = V^-1 (r-r0)
-
-        if r.shape == (3,):
-            _r = r.reshape(1,3)
-        else:
-            _r = r
-
-        V = self.__stepVector.T
-        Vinv = np.linalg.inv(V)
-        p = (Vinv @ (_r - self.__startingPoint).T).T # shape: (n, 3)
-
-        if r.shape == (3,):
-            return p.reshape(3)
-        else:
-            return p
-
 
     def interpolate(self, r, method='linear'):
         """
@@ -307,12 +278,12 @@ class Cube:
         # 実格子座標(r)を直交系座標(p)へ変換する(__convertCoordToOrtho)
 
         # 補間関数の生成
-        na, nb, nc = self.__numGridPoint
+        na, nb, nc = self.giveNumGridPoint()
         # bounds_error: Falseの場合、補外することになった場合適当な値を代わりにセットする(デフォルト: np.nan)
         interp = RegularGridInterpolator((np.arange(na), np.arange(nb), np.arange(nc)), self.__cubeData, bounds_error=False)
 
         # 指定された座標を直交系に変換
-        p = self.__convertCoordToOrtho(r)
+        p = self.__cubeGrid.convertCoordToOrtho(r)
 
         # 補間手法を設定
         interp.method = method
@@ -403,36 +374,9 @@ class Cube:
             f.write(headerContents)
             f.write(mainContents)
 
-
-    def debug(self):
-        print('startingPoint')
-        print(self.__startingPoint)
-        print('----')
-        print('valueDim')
-        print(self.__valueDim)
-        print('----')
-        print('numGridPoint')
-        print(self.__numGridPoint)
-        print('----')
-        print('stepVector')
-        print(self.__stepVector)
-        print('----')
-        print('atomicNum')
-        print(self.__atomicNumData)
-        print('----')
-        print('atomXYZData')
-        print(self.__atomXYZData)
-        print('----')
-        print('cubeData[:5]')
-        print(self.__cubeData[:5])
-        print('cubeData[-5:]')
-        print(self.__cubeData[-5:])
-        print(self.__cubeData.shape)
-
-    def setUnit(self, unit='Bohr'):
+    def setUnit(self, unit=None):
         """
         座標の単位を設定
-        デフォルト: Bohr
         """
         bohrLength = 0.529177210903 # [angstrom]
 
@@ -451,33 +395,18 @@ class Cube:
             raise ValueError('invalid unit')
 
         # 変換
-        self.__startingPoint *= factor
-        self.__stepVector *= factor
+        self.__cubeGrid.setUnit(unit=unit)
         self.__atomXYZData *= factor
         self.__unit = unit
 
 class CubeGrid:
     def __init__(self, startingPoint=None, stepVector=None, numGridPoint=None, endingPoint=None, unit=None):
-        
+
+        # startingPoint
         # None判定
         if startingPoint is None:
             raise ValueError('startingPoint is None')
-        if sum([x is not None for x in [stepVector, numGridPoint, endingPoint]]) <2:
-            raise ValueError('At least two of stepVector, numGridPoint, and endingPoint must be specified')
-        
-        # None指定のパラメータを決定
-        if stepVector is None:
-            # stepVector決定
-            pass
-        if numGridPoint is None:
-            # numGridPoint決定
-            pass
-        if endingPoint is None:
-            # endingPointは最終的に保持しないので決定しなくて良い
-            pass
-        
-        # 型チェック        
-        # startingPoint
+        # 型チェック
         if type(startingPoint) not in [np.ndarray, list, tuple]:
             # startingPointはnp.ndarrayかlistかtupleである必要がある
             raise TypeError('type of startingPoint must be np.ndarray or list, or tuple.')
@@ -489,32 +418,207 @@ class CubeGrid:
         if startingPoint.dtype.name not in ['float64', 'int32', 'int64']:
             raise TypeError('dtype of startingPoint must be float64 or int32')
 
+
+        nonetuple = (stepVector is None, numGridPoint is None, endingPoint is None)
+        if nonetuple == (True, True, True) or nonetuple == (True, True, False) or nonetuple == (True, False, True) or nonetuple == (False, True, True):
+            raise ValueError('At least two of stepVector, numGridPoint, and endingPoint must be specified')
+
         # stepVector
-        if type(stepVector) not in [np.ndarray, list, tuple]:
-            # stepVectorはnp.ndarrayかlistかtupleである必要がある
-            raise TypeError('type of stepVector must be np.ndarray or list, or tuple.')
-        elif type(stepVector) in [list, tuple]:
-            # np.ndarrayに変換
-            stepVector = np.array(stepVector)
-        if stepVector.shape != (3,3):
-            raise ValueError('shape of stepVector must be (3,3)')
-        if stepVector.dtype.name not in ['float64', 'int32', 'int64']:
-            raise TypeError('dtype of stepVector must be float64 or int32, or int64')
+        if stepVector is not None:
+            # 型チェック
+            if type(stepVector) not in [np.ndarray, list, tuple]:
+                # stepVectorはnp.ndarrayかlistかtupleである必要がある
+                raise TypeError('type of stepVector must be np.ndarray or list, or tuple.')
+            elif type(stepVector) in [list, tuple]:
+                # np.ndarrayに変換
+                stepVector = np.array(stepVector)
+            if stepVector.shape != (3,3):
+                raise ValueError('shape of stepVector must be (3,3)')
+            if stepVector.dtype.name not in ['float64', 'int32', 'int64']:
+                raise TypeError('dtype of stepVector must be float64 or int32, or int64')
+
 
         # numGridPoint
-        if type(numGridPoint) is not np.ndarray:
-            # listかtupleならnp.ndarrayに変換
-            if type(numGridPoint) not in [list, tuple]:
-                raise TypeError('type of numGridPoint must be np.ndarray, list or tuple')
-            else:
-                numGridPoint = np.array(numGridPoint)
-        if numGridPoint.shape != (3,):
-            raise ValueError('length of numGridPoint must be 3')
-        if numGridPoint.dtype.name not in ['int32', 'int64']:
-            raise TypeError('dtype of numGridPoint must be int32 or int64')
-        
-    def setUnit(self, unit='Bohr'):
-        pass
+        if numGridPoint is not None:
+            # 型チェック
+            if type(numGridPoint) is not np.ndarray:
+                # listかtupleならnp.ndarrayに変換
+                if type(numGridPoint) not in [list, tuple]:
+                    raise TypeError('type of numGridPoint must be np.ndarray, list or tuple')
+                else:
+                    numGridPoint = np.array(numGridPoint)
+            if numGridPoint.shape != (3,):
+                raise ValueError('length of numGridPoint must be 3')
+            if numGridPoint.dtype.name not in ['int32', 'int64']:
+                raise TypeError('dtype of numGridPoint must be int32 or int64')
+            if any(numGridPoint < 1):
+                raise ValueError('the number of grids in one direction must be greater than or equal to 1')
+
+        # endingPoint
+        if endingPoint is not None:
+            # 型チェック
+            if type(endingPoint) not in [np.ndarray, list, tuple]:
+                # endingPointはnp.ndarrayかlistかtupleである必要がある
+                raise TypeError('type of endingPoint must be np.ndarray or list, or tuple.')
+            elif type(endingPoint) in [list, tuple]:
+                # np.ndarrayに変換
+                endingPoint = np.array(endingPoint)
+            if endingPoint.shape != (3,):
+                raise ValueError('shape of endingPoint must be (3,)')
+            if endingPoint.dtype.name not in ['float64', 'int32', 'int64']:
+                raise TypeError('dtype of endingPoint must be float64 or int32')
+
+        # 欠けている量を決定
+        if nonetuple == (True, False, False):
+            # stepVector決定
+            if any((endingPoint-startingPoint)[np.where(numGridPoint==1)]==0):
+                raise ValueError('')
+            stepVector = np.diag(endingPoint-startingPoint)/(numGridPoint-1) # shape: (3,3): [v1,v2,v3]
+
+        elif nonetuple == (False, True, False):
+            # numGridPoint決定
+            numGridPoint = np.linalg.inv(stepVector.T)@(endingPoint-startingPoint) + 1
+            # 切り上げ
+            numGridPoint = np.ceil(numGridPoint).astype('int64')
+            # endingPoint更新
+            endingPoint = startingPoint + stepVector.T @ (numGridPoint-1) # r1 = r0 + [v1,v2,v3]@[n1,n2,n3]
+
+        else:
+            # if nonetuple == (False, False, True) or nonetuple == (False, False, False):
+            # endingPointは最終的に計算結果に影響しないが一応決定する
+            # endingPointも含めて全て指定されていた場合はendingPointを上書きする
+            endingPoint = startingPoint + stepVector.T @ (numGridPoint-1)
+
+        # unit
+        if unit is None:
+            raise ValueError('unit is None')
+        if unit not in ['Angstrom', 'A', 'a.u.', 'Bohr']:
+            raise ValueError('unit must be either Angstrom or a.u.')
+        if unit in ['Angstrom', 'A']:
+            unit = 'Angstrom'
+        if unit in ['a.u.', 'Bohr']:
+            unit = 'Bohr'
+
+        # メンバ変数に追加
+        self.__startingPoint = startingPoint
+        self.__endingPoint = endingPoint
+        self.__stepVector = stepVector
+        self.__numGridPoint = numGridPoint
+        self.__unit = unit
+
+    def setUnit(self, unit=None):
+        """
+        単位変換
+        """
+        bohrLength = 0.529177210903 # [angstrom]
+        if unit not in ['Angstrom', 'A', 'a.u.', 'Bohr']:
+            raise ValueError('unit must be either Angstrom or a.u.')
+
+
+        if unit in ['Angstrom', 'A']:
+            unit = 'Angstrom'
+        if unit in ['a.u.', 'Bohr']:
+            unit = 'Bohr'
+
+        if self.__unit == unit:
+            # 変更なし
+            return
+        elif unit == 'Bohr':
+            # 現在: Angstrom
+            # 変更後: Bohr
+            factor = 1/bohrLength
+        elif unit == 'Angstrom':
+            # 現在: Bohr
+            # 変更後: Angstrom
+            factor = bohrLength
+
+        # 変換
+        self.__unit = unit
+        self.__startingPoint *= factor
+        self.__endingPoint *= factor
+        self.__stepVector *= factor
+
+    def giveStartingPoint(self):
+        """
+        cubeデータの実座標復元のための格子の開始位置を返す
+        """
+        return copy.deepcopy(self.__startingPoint)
+
+    def giveEndingPoint(self):
+        """
+        cubeデータの実座標復元のための格子の終了位置を返す
+        """
+        return copy.deepcopy(self.__endingPoint)
+
+    def giveStepVector(self):
+        """
+        cubeデータの実座標復元のための格子ベクトルを返す
+        """
+        return copy.deepcopy(self.__stepVector)
+
+    def giveNumGridPoint(self):
+        """
+        グリッドの各方向の点数を返す
+        """
+        return copy.deepcopy(self.__numGridPoint)
+
+    def giveNodeCoord(self):
+        """
+        格子座標を返す
+        return: np.ndarray (shape: (na, nb, nc, 3))
+        """
+        na, nb, nc = self.__numGridPoint
+        a,b,c = np.meshgrid(np.arange(na),np.arange(nb),np.arange(nc), indexing='ij')
+        sv1 = self.__stepVector[0]
+        sv2 = self.__stepVector[1]
+        sv3 = self.__stepVector[2]
+        nodeCoord = self.__startingPoint + a[:,:,:,np.newaxis] * sv1 + b[:,:,:,np.newaxis] * sv2 + c[:,:,:,np.newaxis] * sv3
+        return nodeCoord
+
+    def convertRealCoordToGridCoord(self, r):
+        """
+        実座標(xyz)をグリッド座標(ijk)へ変換する
+
+        r: np.ndarray (shape: (n, 3) or (3,))
+        return: np.ndarray (shape: (n, 3) or (3,))
+        """
+        # -> r = r0 + [v1,v2,v3] @ p
+        #    p = V^-1 (r-r0)
+
+        if r.shape == (3,):
+            _r = r.reshape(1,3)
+        else:
+            _r = r
+
+        V = self.__stepVector.T # stepVectorは[v1,v2,v3]になっているが、v1等は横ベクトルになっているので縦ベクトルに転置
+        Vinv = np.linalg.inv(V)
+        p = (Vinv @ (_r - self.__startingPoint).T).T # shape: (n, 3)
+
+        if r.shape == (3,):
+            return p.reshape(3)
+        else:
+            return p
+
+    def convertGridCoordToRealCoord(self, p):
+        """
+        グリッド座標(ijk)を実座標(xyz)へ変換する (逆変換)
+
+        p: np.ndarray (shape: (n, 3) or (3,))
+        return: np.ndarray (shape: (n, 3) or (3,))
+        """
+        if p.shape == (3,):
+            _p = p.reshape(1,3)
+        else:
+            _p = p
+
+        V = self.__stepVector.T
+        r = self.__startingPoint + (V@_p.T).T # shape: (n, 3)
+
+        if p.shape == (3,):
+            return r.reshape(3)
+        else:
+            return r
+
 
 class Slice:
     """
