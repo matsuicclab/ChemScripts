@@ -4,27 +4,45 @@ from rdkit import Chem
 from chemscripts.unit import checkValidUnit, getUnitConversionFactor
 
 class Molecule:
-    def __init__(self, atomicnumList=None, xyzList=None, unit='Angstrom'):
+    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, unit='Angstrom'):
         # Noneチェック
-        if atomicnumList is None:
-            raise ValueError('atomicnumList is None')
+        if atomicnumList is None and symbolList is None:
+            raise ValueError('specify either atomicnumList or symbolList')
         if xyzList is None:
             raise ValueError('xyzList is None')
         if unit is None:
             raise ValueError('unit is None')
 
-        # atomicnumListチェック
-        if type(atomicnumList) in [list, tuple]:
-            # listかtupleならnp.ndarrayに変換
-            atomicnumList = np.array(atomicnumList)
-        if type(atomicnumList) is not np.ndarray:
-            raise TypeError('type of atomicnumList must be np.ndarray, list or tuple')
-        if atomicnumList.dtype.name not in ['int32','int64'] or any(atomicnumList < 1):
-            # 要素は自然数のintのみ
-            raise TypeError('elements of atomicnumList must be positive, and the type must be int')
-        if len(atomicnumList.shape) != 1:
-            raise ValueError('shape of atomicnumList must be (*,)')
-
+        table = Chem.GetPeriodicTable()
+        if atomicnumList is not None:
+            # atomicnumListチェック
+            if type(atomicnumList) in [np.ndarray, tuple]:
+                # np.ndarrayかtupleならlistに変換
+                atomicnumList = list(atomicnumList)
+            if type(atomicnumList) is not list:
+                raise TypeError('type of atomicnumList must be list, np.ndarray, or tuple')
+            if any([type(n) is not int for n in atomicnumList]):
+                # 要素は整数のみ
+                raise TypeError('type of elements of atomicnumList must be int')
+            if any([n<1 for n in atomicnumList]):
+                # 要素は自然数のみ
+                raise ValueError('elements of atomicnumList must be positive')
+            numAtom = len(atomicnumList)
+            symbolList = [table.GetElementSymbol(int(n)) for n in atomicnumList]
+            
+        else:
+            # symbolListチェック
+            if type(symbolList) in [np.ndarray, tuple]:
+                # np.ndarrayかtupleならlistに変換
+                symbolList = list(symbolList)
+            if type(symbolList) is not list:
+                raise TypeError('type of symbolList must be list, np.ndarray, or tuple')
+            if any([type(s) is not str for s in symbolList]):
+                # 要素は整数のみ
+                raise TypeError('type of elements of atomicnumList must be str')
+            numAtom = len(symbolList)
+            atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
+            
         # xyzListチェック
         if type(xyzList) in [list, tuple]:
             # listかtupleならnp.ndarrayに変換
@@ -37,15 +55,16 @@ class Molecule:
             raise ValueError('shape of xyzList must be (*,3)')
 
         # 要素数は一致しているか
-        if len(atomicnumList) != len(xyzList):
-            raise ValueError('The number of atoms differs between atomicnumList and xyzList')
+        if len(xyzList) != numAtom:
+            raise ValueError('The number of atoms differs between atomicnumList(symbolList) and xyzList')
 
         if checkValidUnit(unit):
             raise ValueError('Invalid unit: {}'.format(unit))
 
         # メンバ変数に追加
-        self.__numAtom = len(atomicnumList)
-        self.__atomicnumArray = atomicnumList
+        self.__numAtom = numAtom
+        self.__atomicnumList = atomicnumList
+        self.__symbolList = symbolList
         self.__xyzArray = xyzList
         self.__unit = unit
 
@@ -55,17 +74,21 @@ class Molecule:
     def iterateAtoms(self, unit='Angstrom', elementSymbol=True):
         factor = getUnitConversionFactor(self.__unit, unit)
 
-        numlist = self.__atomicnumArray # shape: (n,)
         xyzlist = (self.__xyzArray * factor).T # shape: (3,n)
 
         if elementSymbol:
-            table = Chem.GetPeriodicTable()
-            # convert atomic number to element symbol
-            symblist = [table.GetElementSymbol(int(n)) for n in numlist]
-
-            return zip(symblist, *xyzlist) # shape: (n,4)
+            return zip(self.__symbolList, *xyzlist) # shape: (n,4)
         else:
-            return zip(numlist, *xyzlist) # shape: (n,4)
+            return zip(self.__atomicnumList, *xyzlist) # shape: (n,4)
+
+    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment=''):
+        result = [str(self.__numAtom), comment]
+        result.extend(
+            ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol)]
+        )
+        result = '\n'.join(result)
+
+        return result
 
     def generateRDKitMolObj(self):
         """
@@ -77,15 +100,6 @@ class Molecule:
         mol = Chem.MolFromXYZBlock(xyzblock)
         rdDetermineBonds.DetermineBonds(mol)
         return mol
-
-    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment=''):
-        result = [str(self.__numAtom), comment]
-        result.extend(
-            ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol)]
-        )
-        result = '\n'.join(result)
-
-        return result
 
 
 
