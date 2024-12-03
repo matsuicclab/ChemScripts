@@ -2,6 +2,9 @@ import re
 
 from rdkit import Chem
 
+from chemscripts.molecule import Molecule
+from chemscripts.unit import checkValidUnit, getUnitConversionFactor
+
 class Log:
     def __init__(self, **args):
         if 'filePath' in args.keys():
@@ -24,27 +27,33 @@ class Log:
 
 
     def giveNumAtom(self):
-        symblist, _ = self.giveMolecularGeometry(orientation='Input')
-        numAtom = len(symblist)
-        return numAtom
+        molecule = self.giveMoleculeObj(orientation='Input')
+        return molecule.giveNumAtom()
 
 
-    def giveMolecularGeometry(self, step=-1, unit='Angstrom', orientation=None):
+    def giveMoleculeObj(self, step=-1, orientation=None):
+        """
+        step: step of geometry optimization to obtain (0,1,2,3,...,-1)
+        
+        return: chemscripts.molecule.Molecule
+        """        
+        xyzBlock = self.giveXYZBlock(step=step, unit='Angstrom', orientation=orientation)
+        molecule = Molecule(xyzBlock=xyzBlock, unit='Angstrom')
+        
+        return molecule
+
+
+    def giveXYZBlock(self, step=-1, unit='Angstrom', orientation=None):
         """
         step: step of geometry optimization to obtain (1,2,3,4,...,-1)
         unit: Angstrom or a.u.
 
-        return: (symblist, xyzlist)
+        return: string of xyzBlock
         """
-        if unit == 'a.u.':
-            factor = 1.889726126
-        elif unit == 'Angstrom':
-            factor = 1
-        else:
-            raise ValueError('Unsupported unit: {}'.format(unit))
-
-        if step >= 1:
-            step -= 1
+        factor = getUnitConversionFactor(oldunit='Angstrom', newunit=unit)
+        
+        if type(step) is not int:
+            raise TypeError('type of step must be int')
 
         if orientation not in ['Input', 'Standard']:
             raise ValueError('Invalid orientation setting: {}'.format(orientation))
@@ -54,9 +63,8 @@ class Log:
             return None, None
         idx_orient = idxlist_orient[step]
 
-        pedtab = Chem.GetPeriodicTable()
-        symblist = []
-        xyzlist = []
+        table = Chem.GetPeriodicTable()
+        xyzBlock = []
         countHyphenLine = 0
         for line in self.__logdata[idx_orient:]:
             if re.fullmatch('^ -+$', line):
@@ -69,23 +77,17 @@ class Log:
                 _, n, _, x, y, z = line.split()
 
                 # convert atomic number to element symbol
-                s = pedtab.GetElementSymbol(int(n))
+                s = table.GetElementSymbol(int(n))
                 # convert unit
                 x = float(x) * factor
                 y = float(y) * factor
                 z = float(z) * factor
-
+                
                 # append
-                symblist.append(s)
-                xyzlist.append([float(x),float(y),float(z)])
+                xyzBlock.append('{} {} {} {}'.format(s,x,y,z))
 
-        return symblist, xyzlist
-
-
-    def giveXYZBlock(self, step=-1, unit='Angstrom', orientation=None):
-        symblist, xyzlist = self.giveMolecularGeometry(step=step, unit=unit, orientation=orientation)
-        xyzblock = '\n'.join(['{} {} {} {}'.format(s,x,y,z) for s, (x,y,z) in zip(symblist,xyzlist)])
-        return xyzblock
+        xyzBlock = '\n'.join([len(xyzBlock), 'comment'] + xyzBlock)
+        return xyzBlock
 
 
     def givePCMModel(self):
