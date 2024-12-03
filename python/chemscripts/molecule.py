@@ -78,8 +78,8 @@ class Molecule:
         rdDetermineBonds.DetermineBonds(mol)
         return mol
 
-    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True):
-        result = [str(self.__numAtom), 'comment']
+    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment=''):
+        result = [str(self.__numAtom), comment]
         result.extend(
             ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol)]
         )
