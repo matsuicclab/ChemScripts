@@ -1,20 +1,18 @@
+import re
+
 import numpy as np
 from rdkit import Chem
 
 from chemscripts.unit import checkValidUnit, getUnitConversionFactor
 
 class Molecule:
-    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, unit='Angstrom'):
+    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, unit='Angstrom'):
         # Noneチェック
-        if atomicnumList is None and symbolList is None:
-            raise ValueError('specify either atomicnumList or symbolList')
-        if xyzList is None:
-            raise ValueError('xyzList is None')
         if unit is None:
             raise ValueError('unit is None')
 
         table = Chem.GetPeriodicTable()
-        if atomicnumList is not None:
+        if atomicnumList is not None and xyzList is not None:
             # atomicnumListチェック
             if type(atomicnumList) in [np.ndarray, tuple]:
                 # np.ndarrayかtupleならlistに変換
@@ -30,7 +28,7 @@ class Molecule:
             numAtom = len(atomicnumList)
             symbolList = [table.GetElementSymbol(int(n)) for n in atomicnumList]
             
-        else:
+        elif symbolList is not None and xyzList is not None:
             # symbolListチェック
             if type(symbolList) in [np.ndarray, tuple]:
                 # np.ndarrayかtupleならlistに変換
@@ -42,20 +40,45 @@ class Molecule:
                 raise TypeError('type of elements of atomicnumList must be str')
             numAtom = len(symbolList)
             atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
+        
+        elif xyzBlock is not None:
+            if type(xyzBlock) is not str:
+                raise TypeError('type of xyzBlock must be str')
+            xyzBlock = [line.strip().split() for line in xyzBlock.split()]
+            if len(xyzBlock[0]) == 1:
+                # ヘッダー行を除去
+                xyzBlock = xyzBlock[2:]
             
+            if any([len(line)!=4 for line in xyzBlock]):
+                raise ValueError('There are rows that does not have 4 columns')
+            
+            if re.fullmatch('^[0-9]+$', xyzBlock[0][0]):
+                # 一列目を原子番号としてパース
+                atomicnumList = [int(n) for n,_,_,_ in xyzBlock]
+                symbolList = [table.GetElementSymbol(n) for n in atomicnumList]
+            else:
+                # 一列目を元素記号としてパース
+                symbolList = [s for s,_,_,_ in xyzBlock]
+                atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
+                
+            xyzList = [[float(x),float(y),float(z)] for _,x,y,z in xyzBlock]
+            numAtom = len(xyzBlock)
+
+        else:
+            raise ValueError('The arguments on a molecular geometry are not specified.')
+        
+        
         # xyzListチェック
-        if type(xyzList) in [list, tuple]:
-            # listかtupleならnp.ndarrayに変換
-            xyzList = np.array(xyzList)
-        if type(xyzList) is not np.ndarray:
+        if type(xyzList) not in [np.ndarray, list, tuple]:
             raise TypeError('type of xyzList must be np.ndarray or list, or tuple')
-        if xyzList.dtype.name != 'float64':
+        xyzArray = np.array(xyzList)
+        if xyzArray.dtype.name != 'float64':
             raise TypeError('dtype of xyzList must be float64')
-        if len(xyzList.shape) != 2 or xyzList.shape[1] != 3:
+        if len(xyzArray.shape) != 2 or xyzArray.shape[1] != 3:
             raise ValueError('shape of xyzList must be (*,3)')
 
         # 要素数は一致しているか
-        if len(xyzList) != numAtom:
+        if len(xyzArray) != numAtom:
             raise ValueError('The number of atoms differs between atomicnumList(symbolList) and xyzList')
 
         if checkValidUnit(unit):
@@ -65,7 +88,7 @@ class Molecule:
         self.__numAtom = numAtom
         self.__atomicnumList = atomicnumList
         self.__symbolList = symbolList
-        self.__xyzArray = xyzList
+        self.__xyzArray = xyzArray
         self.__unit = unit
 
     def giveNumAtom(self):
