@@ -42,6 +42,8 @@ class Log:
         return: chemscripts.molecule.Molecule
         """
         xyzBlock = self.giveXYZBlock(step=step, unit='Angstrom', orientation=orientation)
+        if xyzBlock is None:
+            return None
         molecule = Molecule(xyzBlock=xyzBlock, unit='Angstrom')
 
         return molecule
