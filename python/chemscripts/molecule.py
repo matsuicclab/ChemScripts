@@ -6,7 +6,7 @@ from rdkit import Chem
 from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Molecule:
-    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, unit='Angstrom'):
+    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, charge=0, unit='Angstrom'):
         # Noneチェック
         if unit is None:
             raise ValueError('unit is None')
@@ -27,7 +27,7 @@ class Molecule:
                 raise ValueError('elements of atomicnumList must be positive')
             numAtom = len(atomicnumList)
             symbolList = [table.GetElementSymbol(int(n)) for n in atomicnumList]
-            
+
         elif symbolList is not None and xyzList is not None:
             # symbolListチェック
             if type(symbolList) in [np.ndarray, tuple]:
@@ -40,7 +40,7 @@ class Molecule:
                 raise TypeError('type of elements of atomicnumList must be str')
             numAtom = len(symbolList)
             atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
-        
+
         elif xyzBlock is not None:
             if type(xyzBlock) is not str:
                 raise TypeError('type of xyzBlock must be str')
@@ -48,10 +48,10 @@ class Molecule:
             if len(xyzBlock[0]) == 1:
                 # ヘッダー行を除去
                 xyzBlock = xyzBlock[2:]
-            
+
             if any([len(line)!=4 for line in xyzBlock]):
                 raise ValueError('There are rows that does not have 4 columns')
-            
+
             if re.fullmatch('^[0-9]+$', xyzBlock[0][0]):
                 # 一列目を原子番号としてパース
                 atomicnumList = [int(n) for n,_,_,_ in xyzBlock]
@@ -60,14 +60,14 @@ class Molecule:
                 # 一列目を元素記号としてパース
                 symbolList = [s for s,_,_,_ in xyzBlock]
                 atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
-                
+
             xyzList = [[float(x),float(y),float(z)] for _,x,y,z in xyzBlock]
             numAtom = len(xyzBlock)
 
         else:
             raise ValueError('The arguments on a molecular geometry are not specified.')
-        
-        
+
+
         # xyzListチェック
         if type(xyzList) not in [np.ndarray, list, tuple]:
             raise TypeError('type of xyzList must be np.ndarray or list, or tuple')
@@ -84,11 +84,17 @@ class Molecule:
         if checkInvalidUnit(unit):
             raise ValueError('Invalid unit: {}'.format(unit))
 
+        if charge is None:
+            charge = 0
+        if type(charge) is not int:
+            raise TypeError('type of charge must be int')
+
         # メンバ変数に追加
         self.__numAtom = numAtom
         self.__atomicnumList = atomicnumList
         self.__symbolList = symbolList
         self.__xyzArray = xyzArray
+        self.__charge = charge
         self.__unit = unit
 
     def giveNumAtom(self):

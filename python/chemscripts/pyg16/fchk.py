@@ -6,6 +6,7 @@ from scipy.spatial.distance import squareform
 
 from chemscripts.pyg16.basisfunction import GTOBasis
 from chemscripts.pyg16.cube import Cube
+from chemscripts.molecule import Molecule
 
 class Fchk:
     def __init__(self, filePath):
@@ -418,19 +419,16 @@ class Fchk:
 
         return spinDensityMatrix
 
-    def giveMolObject(self, charge=None):
-        from rdkit import Chem
-        # https://github.com/jensengroup/xyz2mol
-        import xyz2mol
-
+    def giveMoleculeObj(self, charge=None):
+        """
+        return: chemscripts.molecule.Molecule
+        """
         # まず、FCHKからxyz形式を得る
         # 原子番号のリストを取得
         atomicNums = self.giveValue('Atomic numbers')
 
-        # 座標リストを取得
+        # 座標リストを取得: unit: Bohr
         coords = self.giveValue('Current cartesian coordinates')
-        # 単位をa.u.からangstromに変換する
-        coords = [0.529177210903 * c for c in coords]
         # [x,y,z]の配列に変換
         coords = [[x,y,z] for x,y,z in zip(coords[0::3],coords[1::3],coords[2::3])]
 
@@ -438,14 +436,7 @@ class Fchk:
         if charge is None:
             charge = self.giveCharge()
 
-        # molオブジェクトを生成
-        mols = xyz2mol.xyz2mol(atomicNums, coords, charge=charge)
-        if mols is None or len(mols) == 0:
-            return None
-        elif len(mols) == 1:
-            return mols[0]
-        else:
-            print('multiple mol objects were obtained, return [0]:'+','.join([Chem.MolToSmiles(mol) for mol in mols]))
-            return mols[0]
+        molecule = Molecule(atomicnumList=atomicNums, xyzList=coords, charge=charge, unit='Bohr')
 
+        return molecule
 
