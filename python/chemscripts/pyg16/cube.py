@@ -6,16 +6,12 @@ import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 
 from chemscripts.molecule import Molecule
-from chemscripts.unit import checkValidUnit, getUnitConversionFactor
+from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Cube:
     """
     gaussianのユーティリティcubegenが生成するcubeファイルを読み込むクラス
 
-    cubeファイル内の単位はBohrで統一されているので
-    (cubegenでの作成時にBohrとangstromを間接的に指定するがそれは入力パラメータの単位を指している)
-    特に読み込み時に一部を単位変換することはしない。
-    ただし、Cubeクラス利用者が単位を指定できるようにsetUnit()が存在する。
     """
     def __init__(self, **args):
         if 'filePath' in args.keys():
@@ -47,7 +43,12 @@ class Cube:
         if 'E' in data[2]:
             raise IOError('Cube file, {} may not contain header'.format(filePath))
 
+
+
         # 3行目からfloatの配列に変換
+        # cubeファイル内の単位はBohrで統一されているので
+        # (cubegenでの作成時にBohrとangstromを間接的に指定するがそれは入力パラメータの単位を指している)
+        # 読み込み時はunit='Bohr'とすればよく、一部を単位変換することはしない。
         titleData = data[0:2]
         numData = data[2:]
         numData = [s for s in numData if s != '']      # 空行は除去
@@ -61,11 +62,10 @@ class Cube:
         if len(numData[0]) == 6:
             raise IOError('Cube file, {} may not contain header'.format(filePath))
 
-        # 単位
-        self.__unit = 'Bohr'
         # 原子数
-        self.__numAtom = int(data[2][0])
+        numAtom = int(data[2][0])
         # 格子点の基準点（開始位置）
+        # [x,y,z]: unit: Bohr
         startingPoint = data[2][1:4]
         # データの次元 (設定されてなければ1にする)
         if len(data[2]) == 4:
@@ -83,33 +83,30 @@ class Cube:
         self.__valueNames = valueNames
 
         # 格子のステップ数と単位ベクトル
-        # [n1,n2,n3]
+        # [n1,n2,n3]: unit: Bohr
         numGridPoint = [int(l[0]) for l in data[3:6]]
-        # [[v1x,v1y,v1z], [v2x,v2y,v2z], [v3x,v3y,v3z]]
+        # [[v1x,v1y,v1z], [v2x,v2y,v2z], [v3x,v3y,v3z]]: unit: Bohr
         stepVector = [l[1:4] for l in data[3:6]]
         # gridインスタンス生成
-        self.__cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, numGridPoint=numGridPoint, unit=self.__unit)
+        self.__cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, numGridPoint=numGridPoint, unit='Bohr')
 
         # 原子番号、原子座標
         # shape: (numAtom,)
-        atomicNumData = [int(l[0]) for l in data[6:6+self.__numAtom]]
+        atomicNumData = [int(l[0]) for l in data[6:6+numAtom]]
         # shape: (numAtom, 3)
-        atomXYZData = [[l[2],l[3],l[4]] for l in data[6:6+self.__numAtom]]
-        self.__molecule = Molecule(atomicnumList=atomicNumData, xyzList=atomXYZData)
+        atomXYZData = [[l[2],l[3],l[4]] for l in data[6:6+numAtom]]
+        self.__molecule = Molecule(atomicnumList=atomicNumData, xyzList=atomXYZData, unit='Bohr')
         
         # cubeデータ取り出し
         # 平坦化し、3次元の行列に変換
         self.__cubeData = np.array(
-                            list(itertools.chain.from_iterable(data[6+self.__numAtom:]))
+                            list(itertools.chain.from_iterable(data[6+numAtom:]))
                         ).reshape(*self.__numGridPoint,self.__valueDim)
 
 
-    def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, moleculeObj=None, unit='Bohr'):
+    def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, moleculeObj=None):
         """
         格子データが既に存在する場合に利用する
-
-        unitはatomXYZDataの単位の指定に使う
-        AngstromとBohrが有効
 
         cubeDataはnp.ndarrayであり、
         shapeは1次元(nx*ny*nz*valueDim,)または3次元(nx,ny,nz)(valueDim==1)、
@@ -156,7 +153,6 @@ class Cube:
             raise ValueError('shape of cubeData must be (nx*ny*nz*valueDim,) or (nx,ny,nz)(valueDim==1), or (nx,ny,nz,valueDim)')
 
         self.__cubeGrid = cubeGrid
-        self.__unit = unit
         self.__cubeData = cubeData
 
         # 値の名前設定
@@ -200,11 +196,11 @@ class Cube:
         """
         return copy.deepcopy(self.__valueNames), copy.deepcopy(self.__cubeData)
 
-    def giveStepVector(self):
+    def giveStepVector(self, unit=None):
         """
         cubeデータの実座標復元のための格子ベクトルを返す
         """
-        return self.__cubeGrid.giveStepVector()
+        return self.__cubeGrid.giveStepVector(unit=unit)
 
     def giveNumGridPoint(self):
         """
@@ -212,29 +208,27 @@ class Cube:
         """
         return self.__cubeGrid.giveNumGridPoint()
 
-    def giveStartingPoint(self):
+    def giveStartingPoint(self, unit=None):
         """
         cubeデータの実座標復元のための格子の開始位置を返す
         """
-        return self.__cubeGrid.giveStartingPoint()
+        return self.__cubeGrid.giveStartingPoint(unit=unit)
 
-    def giveNodeCoord(self):
+    def giveNodeCoord(self, unit=None):
         """
         格子座標を返す
         return: np.ndarray (shape: (na, nb, nc, 3))
         """
-        return self.__cubeGrid.giveNodeCoord()
+        return self.__cubeGrid.giveNodeCoord(unit=unit)
 
-    def giveAtomData(self):
+    def giveMoleculeObj(self):
         """
         各原子の原子番号と核座標を返す
-        return: (np.ndarray, np.ndarray)
-            [0]: shape: (numAtom,) (np.int32)
-            [1]: shape: (numAtom, 3)
+        return: chemscripts.molecule.Molecule
         """
-        return copy.deepcopy(self.__atomicNumData), copy.deepcopy(self.__atomXYZData)
+        return self.__molecule
 
-    def interpolate(self, r, method='linear'):
+    def interpolate(self, r, method='linear', unit=None):
         """
         補間値を計算
         https://zenn.dev/tab_ki/articles/interpolation_of_3d_data
@@ -254,7 +248,7 @@ class Cube:
         interp = RegularGridInterpolator((np.arange(na), np.arange(nb), np.arange(nc)), self.__cubeData, bounds_error=False)
 
         # 指定された座標を直交系に変換
-        p = self.__cubeGrid.convertCoordToOrtho(r)
+        p = self.__cubeGrid.convertRealCoordToGridCoord(r, unit=unit)
 
         # 補間手法を設定
         interp.method = method
@@ -313,14 +307,13 @@ class Cube:
             - 各行6個ずつ値を出力
             - (0,0,n3,d)まで出力したら改行して(0,1,0,0)から再開
         """
-        # TODO 書き直し
         if header:
             header1 = 'Cube Data generated by chemscripts.pyg16.cube.Cube.write()\n'
             header2 = 'value:{}\n'.format(self.__valueNames)
-            header3 = '{} {} {} {} {}\n'.format(self.__numAtom, *self.__startingPoint, self.__valueDim)
-            header456 = ''.join(['{} {} {} {}\n'.format(n,*v) for n,v in zip(self.__numGridPoint,self.__stepVector)])
+            header3 = '{} {} {} {} {}\n'.format(self.__molecule.giveNumAtom(), *self.giveStartingPoint(unit='Bohr'), self.__valueDim)
+            header456 = ''.join(['{} {} {} {}\n'.format(n,*v) for n,v in zip(self.giveNumGridPoint(),self.giveStepVector(unit='Bohr'))])
             if self.__atomicNumData is not None:
-                header7 = ''.join(['{} {} {} {} {}\n'.format(n,n,*v) for n,v in zip(self.__atomicNumData,self.__atomXYZData)])
+                header7 = ''.join(['{} {} {} {} {}\n'.format(n,n,x,y,z) for n,x,y,z in self.__molecule.iterateAtoms(unit='Bohr',elementSymbol=False)])
             else:
                 header7 = ''
 
@@ -346,13 +339,6 @@ class Cube:
             f.write(headerContents)
             f.write(mainContents)
 
-    def setUnit(self, unit=None):
-        """
-        座標の単位を設定
-        """
-        # 変換
-        self.__cubeGrid.setUnit(unit=unit)
-        self.__unit = unit
 
 
 class CubeGrid:
@@ -446,14 +432,8 @@ class CubeGrid:
             endingPoint = startingPoint + stepVector.T @ (numGridPoint-1)
 
         # unit
-        if unit is None:
-            raise ValueError('unit is None')
-        if unit not in ['Angstrom', 'A', 'a.u.', 'Bohr']:
-            raise ValueError('unit must be either Angstrom or a.u.')
-        if unit in ['Angstrom', 'A']:
-            unit = 'Angstrom'
-        if unit in ['a.u.', 'Bohr']:
-            unit = 'Bohr'
+        if checkInvalidUnit(unit):
+            raise ValueError('Invalid unit: {}'.format(unit))
 
         # メンバ変数に追加
         self.__startingPoint = startingPoint
@@ -462,38 +442,27 @@ class CubeGrid:
         self.__numGridPoint = numGridPoint
         self.__unit = unit
 
-    def setUnit(self, unit=None):
-        """
-        単位変換
-        """
-        if checkValidUnit(unit):
-            raise ValueError('Invalid unit: {}'.format(unit))
-            
-        factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
-        
-        # 変換
-        self.__unit = unit
-        self.__startingPoint *= factor
-        self.__endingPoint *= factor
-        self.__stepVector *= factor
 
-    def giveStartingPoint(self):
+    def giveStartingPoint(self, unit=None):
         """
         cubeデータの実座標復元のための格子の開始位置を返す
         """
-        return copy.deepcopy(self.__startingPoint)
+        factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
+        return copy.deepcopy(self.__startingPoint*factor)
 
-    def giveEndingPoint(self):
+    def giveEndingPoint(self, unit=None):
         """
         cubeデータの実座標復元のための格子の終了位置を返す
         """
-        return copy.deepcopy(self.__endingPoint)
+        factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
+        return copy.deepcopy(self.__endingPoint*factor)
 
-    def giveStepVector(self):
+    def giveStepVector(self, unit=None):
         """
         cubeデータの実座標復元のための格子ベクトルを返す
         """
-        return copy.deepcopy(self.__stepVector)
+        factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
+        return copy.deepcopy(self.__stepVector*factor)
 
     def giveNumGridPoint(self):
         """
@@ -501,7 +470,7 @@ class CubeGrid:
         """
         return copy.deepcopy(self.__numGridPoint)
 
-    def giveNodeCoord(self):
+    def giveNodeCoord(self,unit=None):
         """
         格子座標を返す
         return: np.ndarray (shape: (na, nb, nc, 3))
@@ -512,9 +481,11 @@ class CubeGrid:
         sv2 = self.__stepVector[1]
         sv3 = self.__stepVector[2]
         nodeCoord = self.__startingPoint + a[:,:,:,np.newaxis] * sv1 + b[:,:,:,np.newaxis] * sv2 + c[:,:,:,np.newaxis] * sv3
-        return nodeCoord
+        
+        factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
+        return nodeCoord * factor
 
-    def convertRealCoordToGridCoord(self, r):
+    def convertRealCoordToGridCoord(self, r, unit=None):
         """
         実座標(xyz)をグリッド座標(ijk)へ変換する
 
@@ -523,6 +494,8 @@ class CubeGrid:
         """
         # -> r = r0 + [v1,v2,v3] @ p
         #    p = V^-1 (r-r0)
+        factor = getUnitConversionFactor(oldunit=unit, newunit=self.__unit)
+        r = r * factor
 
         if r.shape == (3,):
             _r = r.reshape(1,3)
@@ -538,13 +511,15 @@ class CubeGrid:
         else:
             return p
 
-    def convertGridCoordToRealCoord(self, p):
+    def convertGridCoordToRealCoord(self, p, unit=None):
         """
         グリッド座標(ijk)を実座標(xyz)へ変換する (逆変換)
 
         p: np.ndarray (shape: (n, 3) or (3,))
         return: np.ndarray (shape: (n, 3) or (3,))
         """
+        factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
+        
         if p.shape == (3,):
             _p = p.reshape(1,3)
         else:
@@ -552,6 +527,8 @@ class CubeGrid:
 
         V = self.__stepVector.T
         r = self.__startingPoint + (V@_p.T).T # shape: (n, 3)
+
+        r = r * factor
 
         if p.shape == (3,):
             return r.reshape(3)

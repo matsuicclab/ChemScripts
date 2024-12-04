@@ -3,7 +3,7 @@ import re
 from rdkit import Chem
 
 from chemscripts.molecule import Molecule
-from chemscripts.unit import checkValidUnit, getUnitConversionFactor
+from chemscripts.unit import getUnitConversionFactor
 
 class Log:
     def __init__(self, **args):

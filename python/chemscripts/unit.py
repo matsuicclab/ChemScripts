@@ -7,7 +7,7 @@ def __factor(unit):
     else:
         raise ValueError('invalid unit: {}'.format(unit))
 
-def checkValidUnit(unit):
+def checkInvalidUnit(unit):
     return unit in ['Angstrom', 'A', 'Ang', 'Bohr', 'a.u.']
 
 def getUnitConversionFactor(oldunit=None, newunit=None):

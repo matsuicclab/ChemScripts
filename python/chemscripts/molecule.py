@@ -3,7 +3,7 @@ import re
 import numpy as np
 from rdkit import Chem
 
-from chemscripts.unit import checkValidUnit, getUnitConversionFactor
+from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Molecule:
     def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, unit='Angstrom'):
@@ -81,7 +81,7 @@ class Molecule:
         if len(xyzArray) != numAtom:
             raise ValueError('The number of atoms differs between atomicnumList(symbolList) and xyzList')
 
-        if checkValidUnit(unit):
+        if checkInvalidUnit(unit):
             raise ValueError('Invalid unit: {}'.format(unit))
 
         # メンバ変数に追加
