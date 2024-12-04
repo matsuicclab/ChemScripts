@@ -1,4 +1,5 @@
 import re
+import copy
 
 import numpy as np
 from rdkit import Chem
@@ -109,6 +110,13 @@ class Molecule:
             return zip(self.__symbolList, *xyzlist) # shape: (n,4)
         else:
             return zip(self.__atomicnumList, *xyzlist) # shape: (n,4)
+
+    def giveAtomicnumList(self):
+        return copy.deepcopy(self.__atomicnumList)
+
+    def giveXYZArray(self, unit='Angstrom'):
+        factor = getUnitConversionFactor(self.__unit, unit)
+        return copy.deepcopy(self.__xyzArray * factor)
 
     def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment=''):
         result = [str(self.__numAtom), comment]

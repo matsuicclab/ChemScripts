@@ -96,7 +96,7 @@ class Cube:
         # shape: (numAtom, 3)
         atomXYZData = [[l[2],l[3],l[4]] for l in data[6:6+numAtom]]
         self.__molecule = Molecule(atomicnumList=atomicNumData, xyzList=atomXYZData, unit='Bohr')
-        
+
         # cubeデータ取り出し
         # 平坦化し、3次元の行列に変換
         self.__cubeData = np.array(
@@ -481,7 +481,7 @@ class CubeGrid:
         sv2 = self.__stepVector[1]
         sv3 = self.__stepVector[2]
         nodeCoord = self.__startingPoint + a[:,:,:,np.newaxis] * sv1 + b[:,:,:,np.newaxis] * sv2 + c[:,:,:,np.newaxis] * sv3
-        
+
         factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
         return nodeCoord * factor
 
@@ -519,7 +519,7 @@ class CubeGrid:
         return: np.ndarray (shape: (n, 3) or (3,))
         """
         factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
-        
+
         if p.shape == (3,):
             _p = p.reshape(1,3)
         else:
@@ -540,7 +540,7 @@ class Slice:
     """
     Cubeから生成されたスライス面のデータクラス
     """
-    def __init__(self, cube, pos=None, normal=None, pcaAuto=False):
+    def __init__(self, cube, pos=None, normal=None, pcaAuto=False, unit=None):
         """
         スライスデータを生成
         pos: np.ndarray or list (shape: (3,))
@@ -555,9 +555,13 @@ class Slice:
 
         # posとnormalを設定
         if pcaAuto:
+            if unit is None:
+                unit = 'Angstrom'
+
             from sklearn.decomposition import PCA
             # 原子核の座標を取得
-            _, nucxyz = cube.giveAtomData()
+            molecule = cube.giveMoleculeObj()
+            nucxyz = molecule.giveXYZArray(unit=unit)
             pos = np.mean(nucxyz, axis=0)
 
             # PCA実行
@@ -609,11 +613,11 @@ class Slice:
         #
         # nsv1 = a * sv1 (== v1-v2)
         # -> nsv2, nsv3を使ってv1を生成([0,nsv2,nsv3,nsv2+nsv3])、そこからnsv1を足してv2を生成
-        svs = cube.giveStepVector() # shape: (3,3)
+        svs = cube.giveStepVector(unit=unit) # shape: (3,3)
         nsvs = cube.giveNumGridPoint()[:,np.newaxis] * svs # shape: (3,3)
         arr = nsvs[[1,2, 0,2, 0,1]].reshape(3,2,3) # shape: (3,2,3)
         arr2 = np.sum(arr, keepdims=True, axis=1)  # shape: (3,1,3): nsv2+nsv3に相当
-        v1s = cube.giveStartingPoint() + np.hstack([np.zeros(arr2.shape), arr, arr2]) # shape: (3,4,3)
+        v1s = cube.giveStartingPoint(unit=unit) + np.hstack([np.zeros(arr2.shape), arr, arr2]) # shape: (3,4,3)
         v2s = nsvs[[0, 1, 2],np.newaxis,:] + v1s           # shape: (3,4,3)
 
         # 2.
@@ -665,21 +669,24 @@ class Slice:
         # 6.
         #
         # スライス上の値を計算し、Sliceを生成
-        value = cube.interpolate(r.reshape(-1,3)).reshape(numpatch, numpatch)
+        value = cube.interpolate(r.reshape(-1,3),unit=unit).reshape(numpatch, numpatch)
 
         self.__r = r
         self.__value = value
+        self.__unit = unit
 
-    def give3DCoord(self):
+    def give3DCoord(self,unit=None):
         """
         return: shape: (numpatch,numpatch,3)
         """
-        return copy.deepcopy(self.__r)
-    def give2DCoord(self):
+        factor = getUnitConversionFactor(self.__unit, unit)
+        return copy.deepcopy(self.__r * factor)
+    def give2DCoord(self,unit=None):
         """
         return: (shape: (numpatch,numpatch), shape: (numpatch,numpatch))
         """
-        return copy.deepcopy(self.__c1), copy.deepcopy(self.__c2)
+        factor = getUnitConversionFactor(self.__unit, unit)
+        return copy.deepcopy(self.__c1*factor), copy.deepcopy(self.__c2*factor)
     def convert2DCoordTo3DCoord(self, c1, c2):
         """
         c1, c2: shape: (*,)
@@ -700,20 +707,23 @@ class Slice:
         return: shape: (numpatch,numpatch)
         """
         return copy.deepcopy(self.__value)
-    def give3DRange(self):
+    def give3DRange(self,unit=None):
         """
         return: shape: (3,2) : [[xmin,xmax],[ymin,ymax],[zmin,zmax]]
         """
+        factor = getUnitConversionFactor(self.__unit, unit)
+
         _value = self.__value.reshape(-1) # shape: (numpatch**2,)
         _r = self.__r.reshape(-1,3)       # shape: (numpatch**2,3)
         _r_notnan = _r[~np.isnan(_value)]
         result = np.vstack([np.min(_r, axis=0), np.max(_r, axis=0)]) # shape: (2,3)
-        return result.T # shape: (3,2)
-    def giveSliceCenter(self):
+        return result.T * factor # shape: (3,2)
+    def giveSliceCenter(self,unit=None):
         """
         return: shape: (3,)
         """
-        return copy.deepcopy(self.__center)
+        factor = getUnitConversionFactor(self.__unit, unit)
+        return copy.deepcopy(self.__center * factor)
     def giveSliceNormalVector(self):
         """
         normal vector (normalized)
@@ -735,7 +745,7 @@ class CubeVisualizer:
     def __init__(self):
         pass
 
-    def __giveRadius(self, n, scale):
+    def __giveRadius(self, n, scale,unit=None):
         """
         原子半径
         周期      2r[A]
@@ -765,8 +775,9 @@ class CubeVisualizer:
                 return 1.34/2
             else:
                 return 1.3903/2
+        factor = getUnitConversionFactor('Angstrom', unit)
 
-        return np.array([convertToRadius(ni) for ni in n]) * scale
+        return np.array([convertToRadius(ni) for ni in n]) * scale * factor
 
     def __giveColorConfig(self, n):
         """
@@ -904,7 +915,7 @@ class CubeVisualizer:
 
         return colorConfig
 
-    def giveMoleculeSurfacePlot(self, cube, scale=0.75):
+    def giveMoleculeSurfacePlot(self, cube, scale=0.75, unit=None):
         """
         分子の描画オブジェクトを生成
         scale: 原子半径のスケールを調整
@@ -913,12 +924,14 @@ class CubeVisualizer:
         """
         import plotly.graph_objects as go
 
-        atomNo, center = cube.giveAtomData()
-        radius = self.__giveRadius(atomNo, scale)
-        colorConfig = self.__giveColorConfig(atomNo)
+        molecule = cube.giveMoleculeObj()
+        atomicnumList = molecule.giveAtomicnumList()
+        centerList = molecule.giveXYZArray(unit=unit)
+        radiusList = self.__giveRadius(atomicnumList, scale)
+        colorList = self.__giveColorConfig(atomicnumList)
 
         datList = []
-        for c, r, rgb in zip(center, radius, colorConfig):
+        for c, r, rgb in zip(centerList, radiusList, colorList):
             theta = np.linspace(0,np.pi,15)
             phi = np.linspace(0,2*np.pi,15)
             theta, phi = np.meshgrid(theta, phi)
@@ -935,7 +948,7 @@ class CubeVisualizer:
 
         return datList
 
-    def giveIsosurfacePlot(self, cube, value, enableNegative=True):
+    def giveIsosurfacePlot(self, cube, value, enableNegative=True, unit=None):
         """
         等値面プロットを生成
         return: plotly.graph_objects.Isosurface
@@ -943,7 +956,7 @@ class CubeVisualizer:
         import plotly.graph_objects as go
 
         # 各節点の座標を取得
-        node = cube.giveNodeCoord()
+        node = cube.giveNodeCoord(unit=unit)
         # 各点における値を取得
         _, cubedata = cube.giveCubeData()
 
@@ -965,7 +978,7 @@ class CubeVisualizer:
 
         return cubeIsosurfaceDat
 
-    def giveSlicePlot(self, slice):
+    def giveSlicePlot(self, slice, unit=None):
         """
         スライスプロットを生成
 
@@ -973,7 +986,7 @@ class CubeVisualizer:
         """
         import plotly.graph_objects as go
 
-        r = slice.give3DCoord()
+        r = slice.give3DCoord(unit=unit)
         value = slice.giveSliceValue()
 
         sliceDat = go.Surface(
@@ -983,7 +996,7 @@ class CubeVisualizer:
 
         return sliceDat
 
-    def giveIsolinesPlot(self, slice, numIsoline=None, stepIsoline=1, cutIsolineNote=None, thresholdNoteArrow=-np.inf):
+    def giveIsolinesPlot(self, slice, numIsoline=None, stepIsoline=1, cutIsolineNote=None, thresholdNoteArrow=-np.inf, unit=None):
         """
         スライス上の等値線プロットを生成
         numIsoline: 等値線の数を設定
@@ -1002,7 +1015,7 @@ class CubeVisualizer:
             thresholdNoteArrow = -np.inf
 
         # スライスのデータを取得
-        c1, c2 = slice.give2DCoord()
+        c1, c2 = slice.give2DCoord(unit=unit)
         value = slice.giveSliceValue()
         # スライスの代表長さ
         sliceRepLength1 = np.max(c1)-np.min(c1)
@@ -1069,6 +1082,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
     # load cube data
     if cube is None:
         cube = Cube(filePath=cubeFile)
+    unit = 'Bohr'
 
     node = cube.giveNodeCoord()
     xmin = node[:,:,:,0].min()
@@ -1088,7 +1102,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
         datList.extend(molplotDatList)
 
     # set slice plot
-    slice = Slice(cube, pos=slicePos, normal=sliceNormal, pcaAuto=pcaAuto)
+    slice = Slice(cube, pos=slicePos, normal=sliceNormal, pcaAuto=pcaAuto, unit=unit)
     sliceDat = cvis.giveSlicePlot(slice)
     isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
 
@@ -1105,7 +1119,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
     # set camera parameter
     # convert to rad from deg
     cameraRotate = cameraRotate / 180 * np.pi
-    sliceCenter = slice.giveSliceCenter()
+    sliceCenter = slice.giveSliceCenter(unit=unit)
     sliceNormal = slice.giveSliceNormalVector()
     sliceTangent = slice.giveSliceTangentVector()
     cameraPos = sliceNormal * (16.8 / np.abs(xmax-xmin) * 100 / cameraZoom)
@@ -1144,7 +1158,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
         print('maxValue: {}'.format(np.nanmax(v)))
         print('cmin: {}'.format(cmin))
         print('cmax: {}'.format(cmax))
-        print('sliceCenter: {}'.format(sliceCenter))
+        print('sliceCenter: {} {}'.format(sliceCenter,unit))
         print('sliceNormal: {}'.format(sliceNormal))
         print('sliceTangent: {}'.format(sliceTangent))
         print('cameraPos: {}'.format(cameraPos))
