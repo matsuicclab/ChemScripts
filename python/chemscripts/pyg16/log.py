@@ -27,19 +27,23 @@ class Log:
 
 
     def giveNumAtom(self):
-        molecule = self.giveMoleculeObj(orientation='Input')
-        return molecule.giveNumAtom()
+        """
+        return: the number of atoms (int)
+        """
+        idx = [i for i,s in enumerate(self.__logdata) if 'NAtoms= ' in s][0]
+        numAtom = re.sub(' .+$', '', re.sub('^[^=]+= +', '', self.__logdata[idx]))
+        return int(numAtom)
 
 
     def giveMoleculeObj(self, step=-1, orientation=None):
         """
         step: step of geometry optimization to obtain (0,1,2,3,...,-1)
-        
+
         return: chemscripts.molecule.Molecule
-        """        
+        """
         xyzBlock = self.giveXYZBlock(step=step, unit='Angstrom', orientation=orientation)
         molecule = Molecule(xyzBlock=xyzBlock, unit='Angstrom')
-        
+
         return molecule
 
 
@@ -51,7 +55,7 @@ class Log:
         return: string of xyzBlock
         """
         factor = getUnitConversionFactor(oldunit='Angstrom', newunit=unit)
-        
+
         if type(step) is not int:
             raise TypeError('type of step must be int')
 
@@ -82,7 +86,7 @@ class Log:
                 x = float(x) * factor
                 y = float(y) * factor
                 z = float(z) * factor
-                
+
                 # append
                 xyzBlock.append('{} {} {} {}'.format(s,x,y,z))
 
