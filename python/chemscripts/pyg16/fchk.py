@@ -2,7 +2,7 @@ import re
 import copy
 
 import numpy as np
-from scipy.spatial.distance import squareform
+from scipy.spatial.distance import squareform, cdist
 
 from chemscripts.pyg16.basisfunction import GTOBasis
 from chemscripts.pyg16.cube import Cube, CubeGrid
@@ -70,7 +70,8 @@ class Fchk:
         recordDict = dict([convertRecordToDict(record) for record in recordList])
 
         self.__recordDict = recordDict
-
+        
+        self.__molecule = None
 
     def __devideList(self, targetList, ruleList):
         """
@@ -190,16 +191,9 @@ class Fchk:
         # Input orientationかStandard orientationか、どちらかを保証することはできない
         value = self.giveValue('Current cartesian coordinates')
         coord = np.array(value).reshape(-1,3)
-        factor = getUnitConversionFactor(oldunit='Bohr', newunit='Bohr')
+        factor = getUnitConversionFactor(oldunit='Bohr', newunit=unit)
         return coord * factor
     
-    def giveMoleculeObj(self):
-        atomicNums = self.giveAtomicNums()
-        coords = self.giveCoords(unit='Bohr')
-        charge = self.giveCharge()
-        molecule = Molecule(atomicnumList=atomicNums, xyzList=coords, charge=charge, unit='Bohr')
-        return molecule
-
     def giveSCFEnergy(self):
         # SCF energy
         return self.giveValue('SCF Energy')
@@ -331,6 +325,27 @@ class Fchk:
 
         return densityMatrix
 
+    def giveSpinDensityMatrix(self):
+        """
+        スピン密度行列を返す
+        return: np.ndarray (shape: (numBasis, numBasis))
+        """
+        # spin densityのリストを取得
+        spinDensityList = self.giveValue('Spin SCF Density')
+        if spinDensityList is None:
+            # 制限付き計算の場合等
+            numBasis = self.giveNumBasis()
+            spinDensityMatrix = np.zeros([numBasis, numBasis])
+            return spinDensityMatrix
+
+        spinDensityList = np.array(spinDensityList)
+        # 三角行列になっているので、元の対称行列に変形
+        spinDensityMatrix = np.triu(squareform(spinDensityList))[:-1,1:]
+        spinDensityMatrix = spinDensityMatrix + np.tril(spinDensityMatrix.T, k=-1)
+
+        return spinDensityMatrix
+    
+    
     def giveBasisFuncs(self):
         # 基底関数データ取得
         # shell == 同じ指数、同じ核の縮約基底グループ: (1s), (2s 2px 2py 2pz), (3dx2, 3dy2, 3dz2, 3dxy, 3dxz, 3yz), ...
@@ -368,7 +383,7 @@ class Fchk:
                 cList = [c for i in range(len(lmnList))]
 
             for lmn, c in zip(lmnList, cList):
-                basisFuncList.append(GTOBasis(coord, lmn, c, ex))
+                basisFuncList.append(GTOBasis(coord, lmn, c, ex, unit='Bohr'))
 
         return basisFuncList
 
@@ -388,7 +403,7 @@ class Fchk:
         orbitalCoeffs = np.vstack([alphaOrbitalCoeffs[:numAlphaElec], betaOrbitalCoeffs[:numBetaElec]]) # shape: (numElec, numBasis)
 
         # 各点で基底関数を評価
-        basisFuncValue = np.array([f.calc(r) for f in basisFuncList]) # shape: (numBasis, numPoint)
+        basisFuncValue = np.array([f.calc(r, unit=unit) for f in basisFuncList]) # shape: (numBasis, numPoint)
         # 各点で分子軌道を評価
         moValue = orbitalCoeffs @ basisFuncValue # shape: (numElec, numPoint)
         # 密度計算
@@ -396,18 +411,29 @@ class Fchk:
 
         return densitydata
 
-    def giveElectronDensityCube(self, step=0.2, distance=3.0, unit='Angstrom', cubeGrid=None):
+    def generateElectronDensityCube(self, step=0.2, distance=3.0, unit='Angstrom', cubeGrid=None):
         """
         電子密度のcubeデータを生成
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
         
-        # cubeGrid設定
         if cubeGrid is not None:
+            # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
                 raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+            
+            # 格子点座標取得
+            unit = 'Angstrom' # 結果に影響しないので適当に設定
+            gridcoords = cubeGrid.giveNodeCoord(unit=unit)
+            densitydata = self.calcElectronDensity(gridcoord, unit=unit)
+            # Cubeインスタンス生成
+            cube = Cube(cubeGrid=cubeGrid, cubeData=densitydata, valueNames=['ElectronDensity'], moleculeObj=molecule)
+    
+            return cube
+        
         else:
+            # cubeGridを生成
             if type(step) is not float:
                 raise TypeError('type of step must be float')
             if type(distance) is not float:
@@ -425,53 +451,94 @@ class Fchk:
             endingPoint = maxXYZ + distance # shape: (3,)
             
             cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
+            
+            return self.generateElectronDensityCube(cubeGrid=cubeGrid)
         
-        # 格子点座標取得
-        gridcoords = cubeGrid.giveNodeCoord(unit=unit)
-        densitydata = self.calcElectronDensity(gridcoord, unit=unit)
-        # Cubeインスタンス生成
-        cube = Cube(cubeGrid=cubeGrid, cubeData=densitydata, valueNames=['ElectronDensity'], moleculeObj=molecule)
-
-        return cube
-
-    def giveSpinDensityMatrix(self):
+    
+    def generateElectrostaticPotentialCube(self, step=0.2, distance=3.0, unit='Angstrom', cubeGrid=None, densCube=None):
         """
-        スピン密度行列を返す
-        return: np.ndarray (shape: (numBasis, numBasis))
+        静電ポテンシャルのcubeデータを生成
+        return: Cubeインスタンス
         """
-        # spin densityのリストを取得
-        spinDensityList = self.giveValue('Spin SCF Density')
-        if spinDensityList is None:
-            # 制限付き計算の場合等
-            numBasis = self.giveNumBasis()
-            spinDensityMatrix = np.zeros([numBasis, numBasis])
-            return spinDensityMatrix
+        molecule = self.giveMoleculeObj()
+        
+        if cubeGrid is not None:
+            # cubeGridが指定されている場合
+            if type(cubeGrid) is not CubeGrid:
+                raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+            
+            if densCube is None:
+                raise ValueError('densCube is None')
+            if type(densCube) is not Cube:
+                raise TypeError('type of densCube must be chemscript.pyg16.cube.Cube')
+            
+            unit = 'Bohr'
+            
+            # 電子密度分布を取得
+            dens = densCube.giveCubeData() # shape: (na2,nb2,nc2,1)
+            coords_dens = densCube.giveNodeCoord(unit=unit) # shape: (na2,nb2,nc2,3)
+            
+            # ポテンシャルの計算点の座標を取得
+            coords_pot = cubeGrid.giveNodeCoord(unit=unit) # shape: (na1,nb1,nc1,3)
+            numgrid_pot = cubeGrid.giveNumGridPoint() # == (na1,nb1,nc1)
 
-        spinDensityList = np.array(spinDensityList)
-        # 三角行列になっているので、元の対称行列に変形
-        spinDensityMatrix = np.triu(squareform(spinDensityList))[:-1,1:]
-        spinDensityMatrix = spinDensityMatrix + np.tril(spinDensityMatrix.T, k=-1)
+            # 電子由来の静電ポテンシャル
+            # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
+            # ポテンシャルの計算点ごとに計算を実行
+            dens = dens.reshape(-1)
+            coords_dens = coords_dens.reshape(-1,3)
+            pot_el = (-1) * np.array([np.sum(np.linalg.norm(coords_dens-r,axis=1) * dens) for r in coords_pot.reshape(-1,3)]).reshape(*numgrid_pot,1) # shape: (na1,nb1,nc1,1), unit: a.u.
+            
+            # 原子核由来の静電ポテンシャル
+            atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
+            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
+            pot_nu = np.sum(atomicnums * cdist(coords_pot.reshape(-1,3), atomXYZArray), axis=0).reshape(*numgrid_pot,1) # shape: (na1,nb1,nc1,1), unit: a.u.
+            
+            # 足し算
+            pot = pot_el + pot_nu
+            
+            # Cubeインスタンス生成
+            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, valueNames=['ElectrostaticPotential'], moleculeObj=molecule)
+    
+            return cube
+            
+        else:
+            # cubeGridを生成
+            if type(step) is not float:
+                raise TypeError('type of step must be float')
+            if type(distance) is not float:
+                raise TypeError('type of distance must be float')
+            if step <= 0:
+                raise ValueError('step must be larger than 0')
+            if distance <= 0:
+                raise ValueError('distance must be larger than 0')
+            
+            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (n,3)
+            minXYZ = np.min(atomXYZArray, axis=0) # shape: (3,)
+            maxXYZ = np.max(atomXYZArray, axis=0) # shape: (3,)
+            startingPoint = minXYZ - distance # shape: (3,)
+            stepVector = np.diag([step,step,step]) # shape: (3,3)
+            endingPoint = maxXYZ + distance # shape: (3,)
+            
+            cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
+            
+            return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densCube=densCube)
+        
 
-        return spinDensityMatrix
 
-    def giveMoleculeObj(self, charge=None):
+    def giveMoleculeObj(self):
         """
         return: chemscripts.molecule.Molecule
         """
-        # まず、FCHKからxyz形式を得る
-        # 原子番号のリストを取得
-        atomicNums = self.giveValue('Atomic numbers')
-
-        # 座標リストを取得: unit: Bohr
-        coords = self.giveValue('Current cartesian coordinates')
-        # [x,y,z]の配列に変換
-        coords = [[x,y,z] for x,y,z in zip(coords[0::3],coords[1::3],coords[2::3])]
-
-        # 電荷
-        if charge is None:
+        if self.__molecule is None:
+            # 原子番号のリストを取得
+            atomicNums = self.giveAtomicNums()
+            # 座標リストを取得
+            coords = self.giveCoords(unit='Bohr') # shape: (n,3)
+            # 電荷を取得
             charge = self.giveCharge()
-
-        molecule = Molecule(atomicnumList=atomicNums, xyzList=coords, charge=charge, unit='Bohr')
-
-        return molecule
+    
+            self.__molecule = Molecule(atomicnumList=atomicNums, xyzList=coords, charge=charge, unit='Bohr')
+            
+        return self.__molecule
 
