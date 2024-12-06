@@ -1,9 +1,21 @@
 import numpy as np
 
-class GTOBasis:
-    def __init__(self, shellcoord, angulars, contractions, exponents):
-        # TODO 引数チェック
+from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
+class GTOBasis:
+    def __init__(self, shellcoord, angulars, contractions, exponents, unit=None):
+        """
+        shellcoord: 基底関数の中心座標: np.ndarray, shape: (3,)
+        angulars: 角運動量: 3整数のリスト
+        contractions: 縮約係数: 浮動小数点数のリスト
+        exponents: 指数: 浮動小数点数のリスト
+        unit: shellcoordとexponentsの単位
+        """
+        
+        if checkInvalidUnit(unit):
+            raise ValueError('Invalid unit: {}'.format(unit))
+        
+        self.__unit = unit
         self.__shellcoord = np.array(shellcoord)
         #
         self.__angulars = angulars
@@ -29,11 +41,13 @@ class GTOBasis:
         else:
             return np.math.factorial(2*k)/(2**k * np.math.factorial(k))
 
-    def calc(self, r):
+    def calc(self, r, unit='Bohr'):
         """
-        r: 基底関数の値を計算する座標(単位: Bohr): np.ndarray or list: shape: (3,) or shape: (*,3)
+        r: 基底関数の値を計算する座標: np.ndarray or list: shape: (3,) or shape: (*,3)
+        unit: rの単位
         """
-        r = np.array(r).reshape(-1,3)
+        factor = getUnitConversionFactor(oldunit=unit, newunit=self.__unit)
+        r = np.array(r).reshape(-1,3) * factor # shape: (*,3), unit: self.__unit
         _r = r - self.__shellcoord
         return self.__angularfunc(_r) * \
                 np.sum(
