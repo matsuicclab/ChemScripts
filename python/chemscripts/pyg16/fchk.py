@@ -5,8 +5,9 @@ import numpy as np
 from scipy.spatial.distance import squareform
 
 from chemscripts.pyg16.basisfunction import GTOBasis
-from chemscripts.pyg16.cube import Cube
+from chemscripts.pyg16.cube import Cube, CubeGrid
 from chemscripts.molecule import Molecule
+from chemscripts.unit import getUnitConversionFactor
 
 class Fchk:
     def __init__(self, filePath):
@@ -184,12 +185,20 @@ class Fchk:
         value = self.giveValue('Nuclear charges')
         return np.array(value)
 
-    def giveCoords(self):
+    def giveCoords(self, unit='Bohr'):
         # 原子核座標(bohr単位)
         # Input orientationかStandard orientationか、どちらかを保証することはできない
         value = self.giveValue('Current cartesian coordinates')
         coord = np.array(value).reshape(-1,3)
-        return coord
+        factor = getUnitConversionFactor(oldunit='Bohr', newunit='Bohr')
+        return coord * factor
+    
+    def giveMoleculeObj(self):
+        atomicNums = self.giveAtomicNums()
+        coords = self.giveCoords(unit='Bohr')
+        charge = self.giveCharge()
+        molecule = Molecule(atomicnumList=atomicNums, xyzList=coords, charge=charge, unit='Bohr')
+        return molecule
 
     def giveSCFEnergy(self):
         # SCF energy
@@ -363,10 +372,11 @@ class Fchk:
 
         return basisFuncList
 
-    def calcElectronDensity(self, r):
+    def calcElectronDensity(self, r, unit='Bohr'):
         """
         指定された座標における電子密度を計算
-        r: 電子密度を計算する座標(単位: Bohr): np.ndarray: shape:(*,3) or (3,)
+        r: 電子密度を計算する座標: np.ndarray: shape:(*,3) or (3,)
+        unit: rの単位
         return: np.ndarray: shape:(*,)
         """
         # 基底関数インスタンスのリストを取得
@@ -386,16 +396,41 @@ class Fchk:
 
         return densitydata
 
-    def giveElectronDensityCube(self):
+    def giveElectronDensityCube(self, step=0.2, distance=3.0, unit='Angstrom', cubeGrid=None):
         """
         電子密度のcubeデータを生成
         return: Cubeインスタンス
         """
-        # 格子点設定
-        # TODO
-        gridcoord = np.arange(300000).reshape(-1,3)
-        densitydata = self.calcElectronDensity(gridcoord)
-        cube = Cube()
+        molecule = self.giveMoleculeObj()
+        
+        # cubeGrid設定
+        if cubeGrid is not None:
+            if type(cubeGrid) is not CubeGrid:
+                raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+        else:
+            if type(step) is not float:
+                raise TypeError('type of step must be float')
+            if type(distance) is not float:
+                raise TypeError('type of distance must be float')
+            if step <= 0:
+                raise ValueError('step must be larger than 0')
+            if distance <= 0:
+                raise ValueError('distance must be larger than 0')
+            
+            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (n,3)
+            minXYZ = np.min(atomXYZArray, axis=0) # shape: (3,)
+            maxXYZ = np.max(atomXYZArray, axis=0) # shape: (3,)
+            startingPoint = minXYZ - distance # shape: (3,)
+            stepVector = np.diag([step,step,step]) # shape: (3,3)
+            endingPoint = maxXYZ + distance # shape: (3,)
+            
+            cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
+        
+        # 格子点座標取得
+        gridcoords = cubeGrid.giveNodeCoord(unit=unit)
+        densitydata = self.calcElectronDensity(gridcoord, unit=unit)
+        # Cubeインスタンス生成
+        cube = Cube(cubeGrid=cubeGrid, cubeData=densitydata, valueNames=['ElectronDensity'], moleculeObj=molecule)
 
         return cube
 
