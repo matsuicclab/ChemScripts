@@ -70,7 +70,7 @@ class Fchk:
         recordDict = dict([convertRecordToDict(record) for record in recordList])
 
         self.__recordDict = recordDict
-        
+
         self.__molecule = None
 
     def __devideList(self, targetList, ruleList):
@@ -193,7 +193,7 @@ class Fchk:
         coord = np.array(value).reshape(-1,3)
         factor = getUnitConversionFactor(oldunit='Bohr', newunit=unit)
         return coord * factor
-    
+
     def giveSCFEnergy(self):
         # SCF energy
         return self.giveValue('SCF Energy')
@@ -344,8 +344,8 @@ class Fchk:
         spinDensityMatrix = spinDensityMatrix + np.tril(spinDensityMatrix.T, k=-1)
 
         return spinDensityMatrix
-    
-    
+
+
     def giveBasisFuncs(self):
         # 基底関数データ取得
         # shell == 同じ指数、同じ核の縮約基底グループ: (1s), (2s 2px 2py 2pz), (3dx2, 3dy2, 3dz2, 3dxy, 3dxz, 3yz), ...
@@ -417,21 +417,21 @@ class Fchk:
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
-        
+
         if cubeGrid is not None:
             # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
                 raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
-            
+
             # 格子点座標取得
             unit = 'Angstrom' # 結果に影響しないので適当に設定
-            gridcoords = cubeGrid.giveNodeCoord(unit=unit)
-            densitydata = self.calcElectronDensity(gridcoord, unit=unit)
+            gridcoords = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na*nb*nc,3)
+            densitydata = self.calcElectronDensity(gridcoords, unit=unit) # shape: (na*nb*nc,)
             # Cubeインスタンス生成
             cube = Cube(cubeGrid=cubeGrid, cubeData=densitydata, valueNames=['ElectronDensity'], moleculeObj=molecule)
-    
+
             return cube
-        
+
         else:
             # cubeGridを生成
             if type(step) is not float:
@@ -442,42 +442,42 @@ class Fchk:
                 raise ValueError('step must be larger than 0')
             if distance <= 0:
                 raise ValueError('distance must be larger than 0')
-            
+
             atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (n,3)
             minXYZ = np.min(atomXYZArray, axis=0) # shape: (3,)
             maxXYZ = np.max(atomXYZArray, axis=0) # shape: (3,)
             startingPoint = minXYZ - distance # shape: (3,)
             stepVector = np.diag([step,step,step]) # shape: (3,3)
             endingPoint = maxXYZ + distance # shape: (3,)
-            
+
             cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
-            
+
             return self.generateElectronDensityCube(cubeGrid=cubeGrid)
-        
-    
+
+
     def generateElectrostaticPotentialCube(self, step=0.2, distance=3.0, unit='Angstrom', cubeGrid=None, densCube=None):
         """
         静電ポテンシャルのcubeデータを生成
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
-        
+
         if cubeGrid is not None:
             # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
                 raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
-            
+
             if densCube is None:
                 raise ValueError('densCube is None')
             if type(densCube) is not Cube:
                 raise TypeError('type of densCube must be chemscript.pyg16.cube.Cube')
-            
+
             unit = 'Bohr'
-            
+
             # 電子密度分布を取得
             dens = densCube.giveCubeData() # shape: (na2,nb2,nc2,1)
             coords_dens = densCube.giveNodeCoord(unit=unit) # shape: (na2,nb2,nc2,3)
-            
+
             # ポテンシャルの計算点の座標を取得
             coords_pot = cubeGrid.giveNodeCoord(unit=unit) # shape: (na1,nb1,nc1,3)
             numgrid_pot = cubeGrid.giveNumGridPoint() # == (na1,nb1,nc1)
@@ -488,20 +488,20 @@ class Fchk:
             dens = dens.reshape(-1)
             coords_dens = coords_dens.reshape(-1,3)
             pot_el = (-1) * np.array([np.sum(np.linalg.norm(coords_dens-r,axis=1) * dens) for r in coords_pot.reshape(-1,3)]).reshape(*numgrid_pot,1) # shape: (na1,nb1,nc1,1), unit: a.u.
-            
+
             # 原子核由来の静電ポテンシャル
             atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
             atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
             pot_nu = np.sum(atomicnums * cdist(coords_pot.reshape(-1,3), atomXYZArray), axis=0).reshape(*numgrid_pot,1) # shape: (na1,nb1,nc1,1), unit: a.u.
-            
+
             # 足し算
             pot = pot_el + pot_nu
-            
+
             # Cubeインスタンス生成
             cube = Cube(cubeGrid=cubeGrid, cubeData=pot, valueNames=['ElectrostaticPotential'], moleculeObj=molecule)
-    
+
             return cube
-            
+
         else:
             # cubeGridを生成
             if type(step) is not float:
@@ -512,18 +512,18 @@ class Fchk:
                 raise ValueError('step must be larger than 0')
             if distance <= 0:
                 raise ValueError('distance must be larger than 0')
-            
+
             atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (n,3)
             minXYZ = np.min(atomXYZArray, axis=0) # shape: (3,)
             maxXYZ = np.max(atomXYZArray, axis=0) # shape: (3,)
             startingPoint = minXYZ - distance # shape: (3,)
             stepVector = np.diag([step,step,step]) # shape: (3,3)
             endingPoint = maxXYZ + distance # shape: (3,)
-            
+
             cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
-            
+
             return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densCube=densCube)
-        
+
 
 
     def giveMoleculeObj(self):
@@ -537,8 +537,8 @@ class Fchk:
             coords = self.giveCoords(unit='Bohr') # shape: (n,3)
             # 電荷を取得
             charge = self.giveCharge()
-    
+
             self.__molecule = Molecule(atomicnumList=atomicNums, xyzList=coords, charge=charge, unit='Bohr')
-            
+
         return self.__molecule
 
