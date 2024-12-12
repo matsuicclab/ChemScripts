@@ -350,11 +350,21 @@ class CubeGrid:
         else:
             raise ValueError('args must contain moleculeObj or --')
     
-    def __init__fromMoleculeObj(self, moleculeObj=None, axesMethod=None, step=0.5, padding=3, unit='Angstrom'):
+    def __init__fromMoleculeObj(self, moleculeObj=None, axesMethod=None, step=0.5, padding=3.0, unit='Angstrom'):
+        """
+        unit: unit of step and padding
+        """
+        
         # molecule
         if moleculeObj is None:
             raise ValueError()
         if type(moleculeObj) is not Molecule:
+            raise TypeError()
+        # step
+        if type(step) is not float:
+            raise TypeError()
+        # padding
+        if type(padding) is not float:
             raise TypeError()
         # unit
         if checkInvalidUnit(unit):
@@ -369,6 +379,10 @@ class CubeGrid:
             
         else:
             raise ValueError()
+        # それぞれのベクトルの長さをstepに調整
+        v1 = v1 / np.linalg.norm(v1) * step
+        v2 = v2 / np.linalg.norm(v3) * step
+        v3 = v3 / np.linalg.norm(v3) * step
         stepVector = np.array([v1,v2,v3])
 
         # startingPoint決定
@@ -382,15 +396,11 @@ class CubeGrid:
         minijkAtom = np.min(ijkAtom, axis=0) # shape: (3,)
         maxijkAtom = np.max(ijkAtom, axis=0) # shape: (3,)
         # 端の位置のxyz座標を取得
-        startingPoint = (V @ minijkAtom.T).T - padding * (v1 + v2 + v3)
-        endingPoint = (V @ maxijkAtom.T).T + padding * (v1 + v2 + v3)
+        startingPoint = (V @ minijkAtom.T).T - padding * (v1 + v2 + v3) / step
+        endingPoint = (V @ maxijkAtom.T).T + padding * (v1 + v2 + v3) / step
         
         self.__init__fromParam(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
         
-        # TODO stepVectorの単位に関する解釈がおかしい気がする
-        # 恐らくSliceクラスでのnormalVectorなどでは無次元なのに対して、Cubeでは有次元なのが混乱の原因かと
-        # 引数stepが未使用
-
     
     def __init__fromParam(self, startingPoint=None, stepVector=None, numGridPoint=None, endingPoint=None, unit=None):
 
@@ -540,6 +550,7 @@ class CubeGrid:
         実座標(xyz)をグリッド座標(ijk)へ変換する
 
         r: np.ndarray (shape: (n, 3) or (3,))
+        unit: unit of r
         return: np.ndarray (shape: (n, 3) or (3,))
         """
         # -> r = r0 + [v1,v2,v3] @ p
@@ -566,6 +577,7 @@ class CubeGrid:
         グリッド座標(ijk)を実座標(xyz)へ変換する (逆変換)
 
         p: np.ndarray (shape: (n, 3) or (3,))
+        unit: unit of r (return)
         return: np.ndarray (shape: (n, 3) or (3,))
         """
         factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
