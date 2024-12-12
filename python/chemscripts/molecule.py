@@ -1,5 +1,6 @@
 import re
 import copy
+import itertools
 
 import numpy as np
 from rdkit import Chem
@@ -101,27 +102,48 @@ class Molecule:
     def giveNumAtom(self):
         return self.__numAtom
 
-    def iterateAtoms(self, unit='Angstrom', elementSymbol=True):
+    def iterateAtoms(self, unit='Angstrom', elementSymbol=True, filter=None):
+        """
+        unit: unit of xyz
+        elementSymbol: Whether to output element symbol or atomic number
+        filter: Specify element symbols (atomic numbers) to exclude
+        """
         factor = getUnitConversionFactor(self.__unit, unit)
 
         xyzlist = (self.__xyzArray * factor).T # shape: (3,n)
 
         if elementSymbol:
-            return zip(self.__symbolList, *xyzlist) # shape: (n,4)
+            zipit = zip(self.__symbolList, *xyzlist) # shape: (n,4)
         else:
-            return zip(self.__atomicnumList, *xyzlist) # shape: (n,4)
+            zipit = zip(self.__atomicnumList, *xyzlist) # shape: (n,4)
+        
+        if filter is None:
+            return zipit
+        elif type(filter) is list:
+            table = Chem.GetPeriodicTable()
+            filter = [table.GetAtomicNumber(s) if type(s) is str else s for s in filter] +\
+                        [table.GetElementSymbol(n) if type(n) is int else n for n in filter]
+            return itertools.filterfalse(lambda v: v[0] in filter, zipit) # shape: (n-m,4)
+        else:
+            raise TypeError()
+
 
     def giveAtomicnumList(self):
         return copy.deepcopy(self.__atomicnumList)
 
-    def giveXYZArray(self, unit='Angstrom'):
-        factor = getUnitConversionFactor(self.__unit, unit)
-        return copy.deepcopy(self.__xyzArray * factor)
+    def giveXYZArray(self, unit='Angstrom', filter=None):
+        if filter is None: 
+            factor = getUnitConversionFactor(self.__unit, unit)
+            xyzArray = self.__xyzArray * factor
+            return xyzArray
+        
+        else:
+            return np.array([[x,y,z] for _,x,y,z in self.iterateAtoms(unit=unit, filter=filter)])
 
-    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment=''):
+    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment='', filter=None):
         result = [str(self.__numAtom), comment]
         result.extend(
-            ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol)]
+            ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, filter=filter)]
         )
         result = '\n'.join(result)
 
@@ -138,8 +160,45 @@ class Molecule:
         rdDetermineBonds.DetermineBonds(mol)
         return mol
 
-
-
+    def generateStandardizedCoordSystem(self, unit='Angstrom', method='PCA'):
+        """
+        method: PCA, PCA-ignoreHs
+        """
+        
+        if method == 'PCA':
+            from sklearn.decomposition import PCA
+            
+            # 原子核の座標を取得
+            nucxyz = self.giveXYZArray(unit=unit)
+            center = np.mean(nucxyz, axis=0) # shape: (3,)
+    
+            # PCA実行
+            pca = PCA()
+            pca.fit(nucxyz - center)
+            # PC3軸目を法線に設定する
+            tangent1 = pca.components_[0] # shape: (3,)
+            tangent2 = pca.components_[1] # shape: (3,)
+            normal = pca.components_[2] # shape: (3,)
+            
+        elif method == 'PCA-ignoreHs':
+            from sklearn.decomposition import PCA
+            
+            # 水素以外の原子核の座標を取得
+            nucxyz = self.giveXYZArray(unit=unit, filter=['H'])
+            center = np.mean(nucxyz, axis=0) # shape: (3,)
+    
+            # PCA実行
+            pca = PCA()
+            pca.fit(nucxyz - center)
+            # PC3軸目を法線に設定する
+            tangent1 = pca.components_[0] # shape: (3,)
+            tangent2 = pca.components_[1] # shape: (3,)
+            normal = pca.components_[2] # shape: (3,)            
+            
+        else:
+            raise ValueError('invalid method')
+        
+        return center, tangent1, tangent2, normal
 
 
 
