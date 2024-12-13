@@ -342,7 +342,67 @@ class Cube:
 
 
 class CubeGrid:
-    def __init__(self, startingPoint=None, stepVector=None, numGridPoint=None, endingPoint=None, unit=None):
+    def __init__(self, **args):
+        if 'moleculeObj' in args.keys():
+            self.__init__fromMoleculeObj(**args)
+        elif '--' in args.keys():
+            self.__init__fromParam(**args)
+        else:
+            raise ValueError('args must contain moleculeObj or --')
+    
+    def __init__fromMoleculeObj(self, moleculeObj=None, axesMethod=None, step=0.5, padding=3.0, unit='Angstrom'):
+        """
+        unit: unit of step and padding
+        """
+        
+        # molecule
+        if moleculeObj is None:
+            raise ValueError()
+        if type(moleculeObj) is not Molecule:
+            raise TypeError()
+        # step
+        if type(step) is not float:
+            raise TypeError()
+        # padding
+        if type(padding) is not float:
+            raise TypeError()
+        # unit
+        if checkInvalidUnit(unit):
+            raise ValueError('Invalid unit: {}'.format(unit))
+        
+        # stepVector決定
+        if axesMethod is None or axesMethod == 'Direct':
+            v1,v2,v3 = np.diag([1,1,1])
+            
+        elif axesMethod == 'PCA' or axesMethod == 'PCA-ignoreHs':
+            _, v1, v2, v3 = moleculeObj.generateStandardizedCoordSystem(method=axesMethod)
+            
+        else:
+            raise ValueError()
+        # それぞれのベクトルの長さをstepに調整
+        v1 = v1 / np.linalg.norm(v1) * step
+        v2 = v2 / np.linalg.norm(v3) * step
+        v3 = v3 / np.linalg.norm(v3) * step
+        stepVector = np.array([v1,v2,v3])
+
+        # startingPoint決定
+        # 各原子のxyz座標を取得
+        xyzAtom = moleculeObj.giveXYZArray(unit=unit)
+        # グリッド座標(原点位置はxyz座標と共通)を取得
+        V = stepVector.T
+        Vinv = np.linalg.inv(V)
+        ijkAtom = (Vinv @ xyzAtom.T).T # shape: (n, 3)
+        # グリッド座標で最も端の座標を取得
+        minijkAtom = np.min(ijkAtom, axis=0) # shape: (3,)
+        maxijkAtom = np.max(ijkAtom, axis=0) # shape: (3,)
+        # 端の位置のxyz座標を取得
+        startingPoint = (V @ minijkAtom.T).T - padding * (v1 + v2 + v3) / step
+        endingPoint = (V @ maxijkAtom.T).T + padding * (v1 + v2 + v3) / step
+        
+        self.__init__fromParam(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
+        
+    
+    def __init__fromParam(self, startingPoint=None, stepVector=None, numGridPoint=None, endingPoint=None, unit=None):
 
         # startingPoint
         # None判定
@@ -490,6 +550,7 @@ class CubeGrid:
         実座標(xyz)をグリッド座標(ijk)へ変換する
 
         r: np.ndarray (shape: (n, 3) or (3,))
+        unit: unit of r
         return: np.ndarray (shape: (n, 3) or (3,))
         """
         # -> r = r0 + [v1,v2,v3] @ p
@@ -516,6 +577,7 @@ class CubeGrid:
         グリッド座標(ijk)を実座標(xyz)へ変換する (逆変換)
 
         p: np.ndarray (shape: (n, 3) or (3,))
+        unit: unit of r (return)
         return: np.ndarray (shape: (n, 3) or (3,))
         """
         factor = getUnitConversionFactor(oldunit=self.__unit, newunit=unit)
@@ -558,17 +620,10 @@ class Slice:
             if unit is None:
                 unit = 'Angstrom'
 
-            from sklearn.decomposition import PCA
             # 原子核の座標を取得
             molecule = cube.giveMoleculeObj()
-            nucxyz = molecule.giveXYZArray(unit=unit)
-            pos = np.mean(nucxyz, axis=0)
-
-            # PCA実行
-            pca = PCA()
-            pca.fit(nucxyz - pos)
-            # PC3軸目を法線に設定する
-            normal = pca.components_[-1]
+            pos, tanVector, tan2Vector, normVector = molecule.generateStandardizedCoordSystem(unit=unit,method='PCA-ignoreHs')
+            
         else:
             if pos is None or normal is None:
                 raise ValueError()
@@ -577,22 +632,23 @@ class Slice:
             elif pos.shape != (3,) or normal.shape != (3,):
                 raise ValueError()
 
-        # 面の接線ベクトルを生成
-        normVector = normal / np.linalg.norm(normal)
-        for tanVector in np.diag([1,1,1]): # 接線ベクトルの候補3つを順に判定
-            # 直交化
-            tanVector = tanVector - (tanVector@normVector) * normVector
-            if np.all(tanVector == 0):
-                # もしもtanVectorとnormVectorが線形従属ならば
-                continue
-            else:
-                # 線形独立の場合
-                break
-        tan2Vector = np.cross(normVector, tanVector)
-
-        # 規格化
-        tanVector  = tanVector  / np.linalg.norm(tanVector)
-        tan2Vector = tan2Vector / np.linalg.norm(tan2Vector)
+            # 面の接線ベクトルを生成
+            normVector = normal / np.linalg.norm(normal)
+            for tanVector in np.diag([1,1,1]): # 接線ベクトルの候補3つを順に判定
+                # 直交化
+                tanVector = tanVector - (tanVector@normVector) * normVector
+                if np.all(tanVector == 0):
+                    # もしもtanVectorとnormVectorが線形従属ならば
+                    continue
+                else:
+                    # 線形独立の場合
+                    break
+            tan2Vector = np.cross(normVector, tanVector)
+    
+            # 規格化
+            tanVector  = tanVector  / np.linalg.norm(tanVector)
+            tan2Vector = tan2Vector / np.linalg.norm(tan2Vector)
+            
         self.__tanVector = tanVector
         self.__tan2Vector = tan2Vector
         self.__normVector = normVector
@@ -1084,7 +1140,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
         cube = Cube(filePath=cubeFile)
     unit = 'Bohr'
 
-    node = cube.giveNodeCoord()
+    node = cube.giveNodeCoord(unit=unit)
     xmin = node[:,:,:,0].min()
     xmax = node[:,:,:,0].max()
     ymin = node[:,:,:,1].min()
@@ -1097,14 +1153,14 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
     datList = []
 
     # set molecule plot
-    if cube.giveAtomData()[0] is not None:
-        molplotDatList = cvis.giveMoleculeSurfacePlot(cube, scale=1.5)
+    if cube.giveMoleculeObj() is not None:
+        molplotDatList = cvis.giveMoleculeSurfacePlot(cube, scale=1.5, unit=unit)
         datList.extend(molplotDatList)
 
     # set slice plot
     slice = Slice(cube, pos=slicePos, normal=sliceNormal, pcaAuto=pcaAuto, unit=unit)
-    sliceDat = cvis.giveSlicePlot(slice)
-    isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow)
+    sliceDat = cvis.giveSlicePlot(slice, unit=unit)
+    isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow, unit=unit)
 
     sliceDat['cmin'] = cmin
     sliceDat['cmax'] = cmax
