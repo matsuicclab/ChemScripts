@@ -101,7 +101,7 @@ class Cube:
         # 平坦化し、3次元の行列に変換
         self.__cubeData = np.array(
                             list(itertools.chain.from_iterable(data[6+numAtom:]))
-                        ).reshape(*self.__numGridPoint,self.__valueDim)
+                        ).reshape(*numGridPoint,self.__valueDim)
 
 
     def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, moleculeObj=None):
@@ -345,16 +345,16 @@ class CubeGrid:
     def __init__(self, **args):
         if 'moleculeObj' in args.keys():
             self.__init__fromMoleculeObj(**args)
-        elif '--' in args.keys():
+        elif 'startingPoint' in args.keys():
             self.__init__fromParam(**args)
         else:
-            raise ValueError('args must contain moleculeObj or --')
-    
+            raise ValueError('args must contain moleculeObj or startingPoint')
+
     def __init__fromMoleculeObj(self, moleculeObj=None, axesMethod=None, step=0.5, padding=3.0, unit='Angstrom'):
         """
         unit: unit of step and padding
         """
-        
+
         # molecule
         if moleculeObj is None:
             raise ValueError()
@@ -369,14 +369,14 @@ class CubeGrid:
         # unit
         if checkInvalidUnit(unit):
             raise ValueError('Invalid unit: {}'.format(unit))
-        
+
         # stepVector決定
         if axesMethod is None or axesMethod == 'Direct':
             v1,v2,v3 = np.diag([1,1,1])
-            
+
         elif axesMethod == 'PCA' or axesMethod == 'PCA-ignoreHs':
             _, v1, v2, v3 = moleculeObj.generateStandardizedCoordSystem(method=axesMethod)
-            
+
         else:
             raise ValueError()
         # それぞれのベクトルの長さをstepに調整
@@ -398,10 +398,10 @@ class CubeGrid:
         # 端の位置のxyz座標を取得
         startingPoint = (V @ minijkAtom.T).T - padding * (v1 + v2 + v3) / step
         endingPoint = (V @ maxijkAtom.T).T + padding * (v1 + v2 + v3) / step
-        
+
         self.__init__fromParam(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
-        
-    
+
+
     def __init__fromParam(self, startingPoint=None, stepVector=None, numGridPoint=None, endingPoint=None, unit=None):
 
         # startingPoint
@@ -623,7 +623,7 @@ class Slice:
             # 原子核の座標を取得
             molecule = cube.giveMoleculeObj()
             pos, tanVector, tan2Vector, normVector = molecule.generateStandardizedCoordSystem(unit=unit,method='PCA-ignoreHs')
-            
+
         else:
             if pos is None or normal is None:
                 raise ValueError()
@@ -644,11 +644,11 @@ class Slice:
                     # 線形独立の場合
                     break
             tan2Vector = np.cross(normVector, tanVector)
-    
+
             # 規格化
             tanVector  = tanVector  / np.linalg.norm(tanVector)
             tan2Vector = tan2Vector / np.linalg.norm(tan2Vector)
-            
+
         self.__tanVector = tanVector
         self.__tan2Vector = tan2Vector
         self.__normVector = normVector
@@ -801,7 +801,7 @@ class CubeVisualizer:
     def __init__(self):
         pass
 
-    def __giveRadius(self, n, scale,unit=None):
+    def __giveRadius(self, n, scale=1.0, unit=None):
         """
         原子半径
         周期      2r[A]
@@ -983,7 +983,7 @@ class CubeVisualizer:
         molecule = cube.giveMoleculeObj()
         atomicnumList = molecule.giveAtomicnumList()
         centerList = molecule.giveXYZArray(unit=unit)
-        radiusList = self.__giveRadius(atomicnumList, scale)
+        radiusList = self.__giveRadius(atomicnumList, scale=scale, unit=unit)
         colorList = self.__giveColorConfig(atomicnumList)
 
         datList = []
