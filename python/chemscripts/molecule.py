@@ -7,7 +7,7 @@ from rdkit import Chem
 from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Molecule:
-    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, charge=0, unit='Angstrom'):
+    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, charge=0, multiplicity='low', unit='Angstrom'):
         # Noneチェック
         if unit is None:
             raise ValueError('unit is None')
@@ -85,10 +85,29 @@ class Molecule:
         if checkInvalidUnit(unit):
             raise ValueError('Invalid unit: {}'.format(unit))
 
+        # charge
         if charge is None:
             charge = 0
         if type(charge) is not int:
             raise TypeError('type of charge must be int')
+
+        # multiplicity
+        if multiplicity is None:
+            multiplicity = 'low'
+        if type(multiplicity) is str:
+            numElec = sum(atomicnumList) - charge
+            if multiplicity == 'low':
+                multiplicity = 1 + numElec%2
+            elif multiplicity == 'high':
+                multiplicity = 3 + numElec%2
+            elif re.fullmatch('^high[0-9]+$', multiplicity):
+                multiplicity = 1 + int(re.sub('[^0-9]', '', multiplicity)) + numElec%2
+            else:
+                raise ValueError()
+        elif type(multiplicity) is int:
+            pass
+        else:
+            raise TypeError()
 
         # メンバ変数に追加
         self.__numAtom = numAtom
@@ -96,6 +115,7 @@ class Molecule:
         self.__symbolList = symbolList
         self.__xyzArray = xyzArray
         self.__charge = charge
+        self.__multiplicity = multiplicity
         self.__unit = unit
 
     def giveNumAtom(self):
