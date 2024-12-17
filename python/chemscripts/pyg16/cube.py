@@ -971,10 +971,12 @@ class CubeVisualizer:
 
         return colorConfig
 
-    def giveMoleculeSurfacePlot(self, cube, scale=0.75, unit=None):
+    def giveMoleculeSurfacePlot(self, cube, radiusScale=1.0, addBonds=False, bondScale=1.0, unit=None):
         """
         分子の描画オブジェクトを生成
-        scale: 原子半径のスケールを調整
+        radiusScale: 原子半径のスケールを調整
+        unit: 描画座標の単位を設定
+        addBonds: 化学結合も可視化 (rdkit 2022.09以上が必要)
 
         return: list of plotly.graph_objects.Surface
         """
@@ -983,7 +985,7 @@ class CubeVisualizer:
         molecule = cube.giveMoleculeObj()
         atomicnumList = molecule.giveAtomicnumList()
         centerList = molecule.giveXYZArray(unit=unit)
-        radiusList = self.__giveRadius(atomicnumList, scale=scale, unit=unit)
+        radiusList = self.__giveRadius(atomicnumList, scale=radiusScale, unit=unit)
         colorList = self.__giveColorConfig(atomicnumList)
 
         datList = []
@@ -1001,6 +1003,48 @@ class CubeVisualizer:
                 showscale=False
             )
             datList.append(surfaceDat)
+
+        if addBonds:
+            # 結合を表示
+
+            # 結合の棒の太さ
+            w = 0.05 * getUnitConversionFactor('Angstrom', unit) * bondScale
+
+            rgb = 'rgb(150,150,150)'
+            theta = np.linspace(0,2*np.pi,10)
+            h = np.linspace(0,1,2)
+            theta, h = np.meshgrid(theta, h)
+
+            # rdkitのMolオブジェクトを取得し、結合情報を復元
+            mol = molecule.generateRDKitMolObj()
+            bonds = mol.GetBonds()
+            for b in bonds:
+                atomIdx1 = b.GetBeginAtomIdx()
+                atomIdx2 = b.GetEndAtomIdx()
+                bondtype = str(b.GetBondType())
+
+                r1 = centerList[atomIdx1]
+                r2 = centerList[atomIdx2]
+                dr = r2 - r1
+
+                bondlen = np.linalg.norm(dr)
+                n = dr / bondlen # 規格化
+                t1 = np.roll(n+np.array([2,0,0]), 1) # 線形従属でないベクトルを生成
+                t1 = t1 - (t1@n) * n # nに対して直交化
+                t1 = t1 / np.linalg.norm(t1) # 規格化
+                t2 = np.cross(n,t1)
+
+                x = r1[0] + dr[0] * h + w * (t1[0] * np.cos(theta) + t2[0] * np.sin(theta))
+                y = r1[1] + dr[1] * h + w * (t1[1] * np.cos(theta) + t2[1] * np.sin(theta))
+                z = r1[2] + dr[2] * h + w * (t1[2] * np.cos(theta) + t2[2] * np.sin(theta))
+
+                surfaceDat = go.Surface(
+                    x=x, y=y, z=z,
+                    colorscale=[[0,rgb],[1,rgb]],
+                    showscale=False
+                )
+                datList.append(surfaceDat)
+
 
         return datList
 
@@ -1154,7 +1198,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
 
     # set molecule plot
     if cube.giveMoleculeObj() is not None:
-        molplotDatList = cvis.giveMoleculeSurfacePlot(cube, scale=1.5, unit=unit)
+        molplotDatList = cvis.giveMoleculeSurfacePlot(cube, radiusScale=0.75, unit=unit)
         datList.extend(molplotDatList)
 
     # set slice plot
