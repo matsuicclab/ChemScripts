@@ -122,11 +122,11 @@ class Molecule:
     def giveNumAtom(self):
         return self.__numAtom
 
-    def iterateAtoms(self, unit='Angstrom', elementSymbol=True, filter=None):
+    def iterateAtoms(self, unit='Angstrom', elementSymbol=True, atomfilter=None):
         """
         unit: unit of xyz
         elementSymbol: Whether to output element symbol or atomic number
-        filter: Specify element symbols (atomic numbers) to exclude
+        atomfilter: Specify element symbols (atomic numbers) to exclude (type is list)
         """
         factor = getUnitConversionFactor(self.__unit, unit)
 
@@ -136,14 +136,14 @@ class Molecule:
             zipit = zip(self.__symbolList, *xyzlist) # shape: (n,4)
         else:
             zipit = zip(self.__atomicnumList, *xyzlist) # shape: (n,4)
-        
-        if filter is None:
+
+        if atomfilter is None:
             return zipit
-        elif type(filter) is list:
+        elif type(atomfilter) is list:
             table = Chem.GetPeriodicTable()
-            filter = [table.GetAtomicNumber(s) if type(s) is str else s for s in filter] +\
-                        [table.GetElementSymbol(n) if type(n) is int else n for n in filter]
-            return itertools.filterfalse(lambda v: v[0] in filter, zipit) # shape: (n-m,4)
+            atomfilter = [table.GetAtomicNumber(s) if type(s) is str else s for s in atomfilter] +\
+                        [table.GetElementSymbol(n) if type(n) is int else n for n in atomfilter]
+            return itertools.filterfalse(lambda v: v[0] in atomfilter, zipit) # shape: (n-m,4)
         else:
             raise TypeError()
 
@@ -151,19 +151,19 @@ class Molecule:
     def giveAtomicnumList(self):
         return copy.deepcopy(self.__atomicnumList)
 
-    def giveXYZArray(self, unit='Angstrom', filter=None):
-        if filter is None: 
+    def giveXYZArray(self, unit='Angstrom', atomfilter=None):
+        if atomfilter is None:
             factor = getUnitConversionFactor(self.__unit, unit)
             xyzArray = self.__xyzArray * factor
             return xyzArray
-        
-        else:
-            return np.array([[x,y,z] for _,x,y,z in self.iterateAtoms(unit=unit, filter=filter)])
 
-    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment='', filter=None):
+        else:
+            return np.array([[x,y,z] for _,x,y,z in self.iterateAtoms(unit=unit, atomfilter=atomfilter)])
+
+    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment='', atomfilter=None):
         result = [str(self.__numAtom), comment]
         result.extend(
-            ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, filter=filter)]
+            ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, atomfilter=atomfilter)]
         )
         result = '\n'.join(result)
 
@@ -184,14 +184,14 @@ class Molecule:
         """
         method: PCA, PCA-ignoreHs
         """
-        
+
         if method == 'PCA':
             from sklearn.decomposition import PCA
-            
+
             # 原子核の座標を取得
             nucxyz = self.giveXYZArray(unit=unit)
             center = np.mean(nucxyz, axis=0) # shape: (3,)
-    
+
             # PCA実行
             pca = PCA()
             pca.fit(nucxyz - center)
@@ -199,25 +199,25 @@ class Molecule:
             tangent1 = pca.components_[0] # shape: (3,)
             tangent2 = pca.components_[1] # shape: (3,)
             normal = pca.components_[2] # shape: (3,)
-            
+
         elif method == 'PCA-ignoreHs':
             from sklearn.decomposition import PCA
-            
+
             # 水素以外の原子核の座標を取得
-            nucxyz = self.giveXYZArray(unit=unit, filter=['H'])
+            nucxyz = self.giveXYZArray(unit=unit, atomfilter=['H'])
             center = np.mean(nucxyz, axis=0) # shape: (3,)
-    
+
             # PCA実行
             pca = PCA()
             pca.fit(nucxyz - center)
             # PC3軸目を法線に設定する
             tangent1 = pca.components_[0] # shape: (3,)
             tangent2 = pca.components_[1] # shape: (3,)
-            normal = pca.components_[2] # shape: (3,)            
-            
+            normal = pca.components_[2] # shape: (3,)
+
         else:
             raise ValueError('invalid method')
-        
+
         return center, tangent1, tangent2, normal
 
 
