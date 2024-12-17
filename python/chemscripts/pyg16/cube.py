@@ -1215,7 +1215,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
 
     # set molecule plot
     if cube.giveMoleculeObj() is not None:
-        molplotDatList = cvis.giveMoleculeSurfacePlot(cube, radiusScale=0.75, unit=unit)
+        molplotDatList = cvis.giveMoleculeSurfacePlot(cube, radiusScale=0.75, unit=unit, addBonds=True)
         datList.extend(molplotDatList)
 
     # set slice plot
