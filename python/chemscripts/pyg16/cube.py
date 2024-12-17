@@ -1170,7 +1170,7 @@ class CubeVisualizer:
                 x = r[:,0] # shape: (numVertices,)
                 y = r[:,1] # shape: (numVertices,)
                 z = r[:,2] # shape: (numVertices,)
-                trace = go.Scatter3d(x=x, y=y, z=z, mode='lines', line=dict(width=2, cmin=levels[0], cmax=levels[-1], color=np.ones_like(x)*level), showlegend=False)
+                trace = go.Scatter3d(x=x, y=y, z=z, mode='lines', line=dict(width=2, cmin=levels[0], cmax=levels[-1], color=np.ones_like(x)*level_i), showlegend=False)
                 isolineDatList.append(trace)
 
                 # annotation
