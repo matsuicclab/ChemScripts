@@ -1143,21 +1143,38 @@ class CubeVisualizer:
         # 等値線の座標を折れ線グラフで描画する
         isolineDatList = []
         annotationList = []
-        for i in range(len(isolines.collections)):
-            paths = isolines.collections[i].get_paths()
-            for j in range(len(paths)):
-                isoline_c1 = paths[j].vertices[:, 0] # shape: (*,)
-                isoline_c2 = paths[j].vertices[:, 1] # shape: (*,)
-                r = slice.convert2DCoordTo3DCoord(isoline_c1, isoline_c2) # shape: (*,3)
-                x = r[:,0]
-                y = r[:,1]
-                z = r[:,2]
-                level = levels[i]
+
+        for i in range(len(levels)):
+            # 各レベルごとにループ
+            level_i = levels[i]
+            # 当該レベルのpathsを取得
+            # matplotlibのバージョンによりPathのcodes周りで若干挙動が違うので条件分岐
+            paths_i = [isolines.get_paths()[i]] if 'get_paths' in dir(isolines) else isolines.collections[i].get_paths() # list of Path object
+
+            verticesList = []
+            for path in paths_i:
+                if path.codes is None:
+                    verticesList.append(path.vertices)
+
+                else:
+                    # codeが1の箇所でpathが切れているので、
+                    # その位置でverticesを切断
+                    idxs = np.append(np.where(path.codes==1)[0], len(path.codes))
+                    verticesList.extend([path.vertices[i1:i2] for i1,i2 in zip(idxs,idxs[1:])])
+
+            for vertices in verticesList:
+                # 各レベルのpathごとにループ
+                isoline_c1 = vertices[:, 0] # shape: (numVertices,)
+                isoline_c2 = vertices[:, 1] # shape: (numVertices,)
+                r = slice.convert2DCoordTo3DCoord(isoline_c1, isoline_c2) # shape: (numVertices,3)
+                x = r[:,0] # shape: (numVertices,)
+                y = r[:,1] # shape: (numVertices,)
+                z = r[:,2] # shape: (numVertices,)
                 trace = go.Scatter3d(x=x, y=y, z=z, mode='lines', line=dict(width=2, cmin=levels[0], cmax=levels[-1], color=np.ones_like(x)*level), showlegend=False)
                 isolineDatList.append(trace)
 
                 # annotation
-                if cutIsolineNote(level):
+                if cutIsolineNote(level_i):
                     continue
                 c1i = isoline_c1[0]
                 c2i = isoline_c2[0]
@@ -1166,7 +1183,7 @@ class CubeVisualizer:
                 length = np.sum(np.sqrt(np.diff(isoline_c1)**2 + np.diff(isoline_c2)**2))
                 isLooped = (abs(c1i-c1f)<1e-10*sliceRepLength1) and (abs(c2i-c2f)<1e-10*sliceRepLength2)
                 annotationList.append(dict(
-                    text=level, x=x[0], y=y[0], z=z[0], font=dict(color='black'),
+                    text=level_i, x=x[0], y=y[0], z=z[0], font=dict(color='black'),
                     showarrow=bool((length<thresholdNoteArrow) and isLooped),
                     bgcolor='white', opacity=0.8
                 ))
