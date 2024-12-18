@@ -46,7 +46,7 @@ class Molecule:
         elif xyzBlock is not None:
             if type(xyzBlock) is not str:
                 raise TypeError('type of xyzBlock must be str')
-            xyzBlock = [line.strip().split() for line in xyzBlock.split()]
+            xyzBlock = [line.strip().split() for line in xyzBlock.splitlines()]
             if len(xyzBlock[0]) == 1:
                 # ヘッダー行を除去
                 xyzBlock = xyzBlock[2:]

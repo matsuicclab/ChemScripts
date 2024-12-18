@@ -312,7 +312,7 @@ class Cube:
             header2 = 'value:{}\n'.format(self.__valueNames)
             header3 = '{} {} {} {} {}\n'.format(self.__molecule.giveNumAtom(), *self.giveStartingPoint(unit='Bohr'), self.__valueDim)
             header456 = ''.join(['{} {} {} {}\n'.format(n,*v) for n,v in zip(self.giveNumGridPoint(),self.giveStepVector(unit='Bohr'))])
-            if self.__atomicNumData is not None:
+            if self.__molecule is not None:
                 header7 = ''.join(['{} {} {} {} {}\n'.format(n,n,x,y,z) for n,x,y,z in self.__molecule.iterateAtoms(unit='Bohr',elementSymbol=False)])
             else:
                 header7 = ''
@@ -361,11 +361,11 @@ class CubeGrid:
         if type(moleculeObj) is not Molecule:
             raise TypeError()
         # step
-        if type(step) is not float:
-            raise TypeError()
+        if type(step) not in [int, float, np.float64, np.float32]:
+            raise TypeError('step must be a number: type is {}'.format(type(step)))
         # padding
-        if type(padding) is not float:
-            raise TypeError()
+        if type(padding) not in [int, float, np.float64, np.float32]:
+            raise TypeError('padding must be a number: type is {}'.format(type(padding)))
         # unit
         if checkInvalidUnit(unit):
             raise ValueError('Invalid unit: {}'.format(unit))

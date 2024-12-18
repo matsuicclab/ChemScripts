@@ -66,7 +66,7 @@ class Log:
 
         idxlist_orient = [i for i,s in enumerate(self.__logdata) if '{} orientation:'.format(orientation) in s]
         if len(idxlist_orient) == 0:
-            return None, None
+            return None
         idx_orient = idxlist_orient[step]
 
         table = Chem.GetPeriodicTable()
