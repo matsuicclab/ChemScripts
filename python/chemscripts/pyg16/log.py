@@ -92,7 +92,7 @@ class Log:
                 # append
                 xyzBlock.append('{} {} {} {}'.format(s,x,y,z))
 
-        xyzBlock = '\n'.join([len(xyzBlock), 'comment'] + xyzBlock)
+        xyzBlock = '\n'.join([str(len(xyzBlock)), 'comment'] + xyzBlock)
         return xyzBlock
 
 
