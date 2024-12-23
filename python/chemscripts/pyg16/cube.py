@@ -1200,7 +1200,7 @@ class CubeVisualizer:
 """
 上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
 """
-def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, thresholdNoteArrow=None, cameraZoom=100, cameraRotate=0, printParam=False):
+def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, showNote=True, thresholdNoteArrow=None, cameraZoom=100, cameraRotate=0, printParam=False):
     import plotly.graph_objects as go
 
     # load cube data
@@ -1231,6 +1231,8 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
     slice = Slice(cube, pos=slicePos, normal=sliceNormal, pcaAuto=pcaAuto, unit=unit)
     sliceDat = cvis.giveSlicePlot(slice, unit=unit)
     isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow, unit=unit)
+    if not showNote:
+        annotationList = None
 
     sliceDat['cmin'] = cmin
     sliceDat['cmax'] = cmax
