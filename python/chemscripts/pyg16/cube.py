@@ -103,6 +103,8 @@ class Cube:
                             list(itertools.chain.from_iterable(data[6+numAtom:]))
                         ).reshape(*numGridPoint,self.__valueDim)
 
+        self.__sourceFilePath = filePath
+
 
     def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, moleculeObj=None):
         """
@@ -166,6 +168,8 @@ class Cube:
 
         self.__molecule = moleculeObj
 
+        self.__sourceFilePath = None
+
 
     def __checkValueNames(self, newValueNames, newValueDim):
         """
@@ -189,6 +193,9 @@ class Cube:
             newValueNames = ['value{}'.format(i) for i in range(self.__valueDim,self.__valueDim+newValueDim)]
 
         return newValueNames
+
+    def giveSourceFilePath(self):
+        return self.__sourceFilePath
 
     def giveCubeData(self):
         """
@@ -1199,6 +1206,8 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
     # load cube data
     if cube is None:
         cube = Cube(filePath=cubeFile)
+    else:
+        cubeFile = cube.giveSourceFilePath()
     unit = 'Bohr'
 
     node = cube.giveNodeCoord(unit=unit)
