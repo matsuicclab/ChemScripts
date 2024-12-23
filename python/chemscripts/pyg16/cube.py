@@ -22,7 +22,7 @@ class Cube:
             raise ValueError('args must contain filePath or cubeData')
 
 
-    def __init__fromFile(self, filePath=None, valueNames=None):
+    def __init__fromFile(self, filePath=None, valueNames=None, charge=None):
         # 値チェック
         if filePath is None:
             raise ValueError('filePath is None')
@@ -95,7 +95,7 @@ class Cube:
         atomicNumData = [int(l[0]) for l in data[6:6+numAtom]]
         # shape: (numAtom, 3)
         atomXYZData = [[l[2],l[3],l[4]] for l in data[6:6+numAtom]]
-        self.__molecule = Molecule(atomicnumList=atomicNumData, xyzList=atomXYZData, unit='Bohr')
+        self.__molecule = Molecule(atomicnumList=atomicNumData, xyzList=atomXYZData, unit='Bohr', charge=charge)
 
         # cubeデータ取り出し
         # 平坦化し、3次元の行列に変換

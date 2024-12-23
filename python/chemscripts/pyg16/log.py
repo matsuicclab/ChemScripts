@@ -30,10 +30,21 @@ class Log:
         """
         return: the number of atoms (int)
         """
-        idx = [i for i,s in enumerate(self.__logdata) if 'NAtoms= ' in s][0]
-        numAtom = re.sub(' .+$', '', re.sub('^[^=]+= +', '', self.__logdata[idx]))
+        idxs = [i for i,s in enumerate(self.__logdata) if 'NAtoms= ' in s]
+        if len(idxs) == 0:
+            return None
+        numAtom = re.sub(' .+$', '', re.sub('^[^=]+= +', '', self.__logdata[idxs[0]]))
         return int(numAtom)
 
+    def giveCharge(self):
+        """
+        return: charge (int)
+        """
+        idxs = [i for i,s in enumerate(self.__logdata) if 'Charge = ' in s]
+        if len(idxs) == 0:
+            return None
+        charge = re.sub(' .+$', '', re.sub('^[^=]+= +', '', self.__logdata[idxs[0]]))
+        return int(charge)
 
     def giveMoleculeObj(self, step=-1, orientation=None):
         """
@@ -41,10 +52,11 @@ class Log:
 
         return: chemscripts.molecule.Molecule
         """
+        charge = self.giveCharge()
         xyzBlock = self.giveXYZBlock(step=step, unit='Angstrom', orientation=orientation)
         if xyzBlock is None:
             return None
-        molecule = Molecule(xyzBlock=xyzBlock, unit='Angstrom')
+        molecule = Molecule(xyzBlock=xyzBlock, unit='Angstrom', charge=charge)
 
         return molecule
 

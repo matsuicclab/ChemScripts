@@ -8,7 +8,7 @@ from rdkit import Chem
 from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Molecule:
-    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, charge=0, multiplicity='low', unit='Angstrom'):
+    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, charge=None, multiplicity=None, spinState='low', unit='Angstrom'):
         # Noneチェック
         if unit is None:
             raise ValueError('unit is None')
@@ -92,23 +92,29 @@ class Molecule:
         if type(charge) is not int:
             raise TypeError('type of charge must be int')
 
-        # multiplicity
+        # multiplicity, spinState
         if multiplicity is None:
-            multiplicity = 'low'
-        if type(multiplicity) is str:
-            numElec = sum(atomicnumList) - charge
-            if multiplicity == 'low':
-                multiplicity = 1 + numElec%2
-            elif multiplicity == 'high':
-                multiplicity = 3 + numElec%2
-            elif re.fullmatch('^high[0-9]+$', multiplicity):
-                multiplicity = 1 + int(re.sub('[^0-9]', '', multiplicity)) + numElec%2
-            else:
-                raise ValueError()
+            _spinState = 0
         elif type(multiplicity) is int:
-            pass
+            _spinState = (multiplicity + multiplicity%2)/2 - 1
         else:
             raise TypeError()
+
+        if spinState is None:
+            _spinState = 0
+        elif type(spinState) is int:
+            if spinState < 0:
+                raise ValueError()
+            _spinState = spinState
+        elif type(spinState) is str:
+            if re.fullmatch('^low$', spinState):
+                _spinState = 0
+            elif re.fullmatch('^high[0-9]*$', spinState):
+                _spinState = int(re.sub('[^0-9]', '', spinState))
+            else:
+                raise ValueError()
+        else:
+            raise ValueError()
 
         # メンバ変数に追加
         self.__numAtom = numAtom
@@ -116,7 +122,7 @@ class Molecule:
         self.__symbolList = symbolList
         self.__xyzArray = xyzArray
         self.__charge = charge
-        self.__multiplicity = multiplicity
+        self.__spinState = _spinState
         self.__unit = unit
 
     def giveNumAtom(self):
@@ -175,9 +181,24 @@ class Molecule:
         """
         from rdkit.Chem import rdDetermineBonds
 
+        # 不飽和度を計算し、chargeが適切な値か判断
+        # 不適切ならば不飽和度に応じて適当に電荷を設定
+        #numC = len([n for n in self.__atomicnumList if n in [6]])
+        #numH = len([n for n in self.__atomicnumList if n in [1,9,17,35,53]])
+        #numN = len([n for n in self.__atomicnumList if n in [7]])
+        #numOther = len(self.__atomicnumList) - numC - numH - numN
+        #if numOther > 0:
+        #    # 不飽和度を計算できない原子が存在するので
+        #    # 不飽和度を計算しないで適当に電荷を設定
+        #    unsatu = np.nan
+        #else:
+        #    unsatu =  2 * numC - numH + numN + 2
+        #    isHalfint = (unsatu % 2 == 1)
+        #    unsatu /= 2
+
         xyzblock = self.giveXYZBlock(unit='Angstrom', elementSymbol=True)
         mol = Chem.MolFromXYZBlock(xyzblock)
-        rdDetermineBonds.DetermineBonds(mol)
+        rdDetermineBonds.DetermineBonds(mol, charge=self.__charge)
         return mol
 
     def generateStandardizedCoordSystem(self, unit='Angstrom', method='PCA'):
@@ -219,8 +240,6 @@ class Molecule:
             raise ValueError('invalid method')
 
         return center, tangent1, tangent2, normal
-
-
 
 
 
