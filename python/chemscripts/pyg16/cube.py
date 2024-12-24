@@ -194,6 +194,52 @@ class Cube:
 
         return newValueNames
 
+    def __add_and_sub(self, other, sign1, sign2):
+        """
+        sign1 * self + sign2 * other
+        """
+        if type(other) is Cube:
+            if self.__valueDim != other.__valueDim:
+                raise ValueError('Number of dimensions in cubeData does not match: {} & {}'.format(self.__valueDim, other.__valueDim))
+            elif self.__cubeGrid == other.__cubeGrid:
+                # 同じグリッド上でcubeデータを保持している場合
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other.__cubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule)
+            else:
+                # グリッドが異なる場合
+                # selfのグリッド上でotherの値を補間して和を計算する
+                interpolatedCubeData = other.interpolate(self.giveNodeCoord(unit='Bohr').reshape(-1,3), unit='Bohr')
+                newCubeData = sign1 * self.__cubeData + sign2 * interpolatedCubeData
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=newCubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule)
+
+        elif type(other) in [float, int, np.float16, np.float32, np.float64, np.int16, np.int32, np.int64]:
+            return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule)
+        else:
+            raise TypeError('invalid type: {}'.format(type(other)))
+
+    def __add__(self, other):
+        """
+        self + other
+        """
+        return self.__add_and_sub(other, 1, 1)
+
+    def __radd__(self, other):
+        """
+        other + self
+        """
+        return self.__add_and_sub(other, 1, 1)
+
+    def __sub__(self, other):
+        """
+        self - other
+        """
+        return self.__add_and_sub(other, 1, -1)
+
+    def __rsub__(self, other):
+        """
+        other - self
+        """
+        return self.__add_and_sub(other, -1, 1)
+
     def giveSourceFilePath(self):
         return self.__sourceFilePath
 
@@ -509,6 +555,25 @@ class CubeGrid:
         self.__numGridPoint = numGridPoint
         self.__unit = unit
 
+    def __eq__(self, other):
+        """
+        self == other
+        """
+        if type(other) is not CubeGrid:
+            # 型判定
+            return False
+        elif self is other:
+            # 同値判定
+            return True
+        elif all(self.__startingPoint == other.__startingPoint) and \
+            all(self.__endingPoint == other.__endingPoint) and \
+            all(self.__stepVector == other.__stepVector) and \
+            all(self.__numGridPoint == other.__numGridPoint) and \
+            self.__unit == other.__unit:
+            # 等価判定
+            return True
+        else:
+            return False
 
     def giveStartingPoint(self, unit=None):
         """
