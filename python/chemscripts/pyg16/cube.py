@@ -22,7 +22,7 @@ class Cube:
             raise ValueError('args must contain filePath or cubeData')
 
 
-    def __init__fromFile(self, filePath=None, valueNames=None, charge=None, comment=None):
+    def __init__fromFile(self, filePath=None, charge=None, comment=None):
         # 値チェック
         if filePath is None:
             raise ValueError('filePath is None')
