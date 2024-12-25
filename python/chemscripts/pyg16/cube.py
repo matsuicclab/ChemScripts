@@ -44,7 +44,6 @@ class Cube:
             raise IOError('Cube file, {} may not contain header'.format(filePath))
 
 
-
         # 3行目からfloatの配列に変換
         # cubeファイル内の単位はBohrで統一されているので
         # (cubegenでの作成時にBohrとangstromを間接的に指定するがそれはcubegenの入力パラメータの単位を指している)
@@ -73,14 +72,7 @@ class Cube:
         else:
             valueDim = int(data[2][4])
 
-        # 値の名前設定
-        # 先に初期化しておく
-        self.__valueDim = 0
-        self.__valueNames = None
-        # チェック
-        valueNames =  self.__checkValueNames(valueNames, valueDim)
         self.__valueDim = valueDim
-        self.__valueNames = valueNames
 
         # 格子のステップ数と単位ベクトル
         # [n1,n2,n3]: unit: Bohr
@@ -101,7 +93,7 @@ class Cube:
         # 平坦化し、3次元の行列に変換
         self.__cubeData = np.array(
                             list(itertools.chain.from_iterable(data[6+numAtom:]))
-                        ).reshape(*numGridPoint,self.__valueDim)
+                        ).reshape(*numGridPoint,valueDim)
 
         self.__sourceFilePath = filePath
         
@@ -110,7 +102,7 @@ class Cube:
         self.setComment(comment)
 
 
-    def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, moleculeObj=None, comment=None):
+    def __init__fromCubeData(self, cubeGrid=None, cubeData=None, moleculeObj=None, comment=None):
         """
         格子データが既に存在する場合に利用する
 
@@ -119,8 +111,8 @@ class Cube:
         複数の格子データが存在する場合は4次元(nx,ny,nz,valueDim)とする
         """
         # 値チェック
-        if cubeGrid is None:
-            raise ValueError('cubeGrid is None')
+        if cubeGrid is None or type(cubeGrid) is not CubeGrid:
+            raise ValueError('type of cubeGrid must be chemscripts.pyg16.cube.CubeGrid')
 
         if cubeData is None:
             raise ValueError('cubeData is None')
@@ -129,14 +121,8 @@ class Cube:
             # Noneは許容するが型チェックだけしとく
             raise TypeError('type of moleculeObj must be chemscripts.molecule.Molecule')
 
-        # valueDim
-        if type(valueDim) is not int:
-            raise TypeError('type of valueDim must be int')
-        if valueDim < 1:
-            raise ValueError('valueDim must be larger than 0')
 
         numGridPoint = cubeGrid.giveNumGridPoint()
-
         # cubeData
         if type(cubeData) not in [np.ndarray, list, tuple]:
             # cubeDataはnp.ndarrayかlistかtupleである必要がある
@@ -146,29 +132,23 @@ class Cube:
             cubeData = np.array(cubeData)
         if cubeData.dtype.name != 'float64':
             raise TypeError('type of elements of cubeData must be float64')
-        if len(cubeData.shape) == 1:
-            cubeData = cubeData.reshape(*numGridPoint, valueDim)
-        elif len(cubeData.shape) == 3 and valueDim == 1:
+        # shapeを(*numGridPoint, valueDim)に変形
+        if len(cubeData.shape) == 1 and float(np.prod(cubeData.shape)/np.prod(numGridPoint)).is_integer():
+            cubeData = cubeData.reshape(*numGridPoint, -1)
+        elif len(cubeData.shape) == 3 and cubeData.shape == tuple(numGridPoint):
             cubeData = cubeData.reshape(*numGridPoint, 1)
-        elif len(cubeData.shape) == 4:
-            # reshapeする必要はないがnumGridPointに一致するかは確認する
-            if cubeData.shape != tuple(list(numGridPoint) + [valueDim]):
-                raise ValueError('shape of cubeData must match (nx,ny,nz,valueDim)')
+        elif len(cubeData.shape) == 4 and cubeData.shape[:-1] == tuple(numGridPoint):
+            pass # reshapeの必要なし
         else:
             # いずれでもなかった場合
             raise ValueError('shape of cubeData must be (nx*ny*nz*valueDim,) or (nx,ny,nz)(valueDim==1), or (nx,ny,nz,valueDim)')
 
+        # valueDim決定
+        valueDim = int(np.prod(cubeData.shape) / np.prod(numGridPoint))
+
         self.__cubeGrid = cubeGrid
         self.__cubeData = cubeData
-
-        # 値の名前設定
-        # 先に初期化しておく
-        self.__valueDim = 0
-        self.__valueNames = None
-        # チェック
-        valueNames =  self.__checkValueNames(valueNames, valueDim)
         self.__valueDim = valueDim
-        self.__valueNames = valueNames
 
         self.__molecule = moleculeObj
 
@@ -178,29 +158,6 @@ class Cube:
             comment = 'generate from cubeData'
         self.setComment(comment)
 
-
-    def __checkValueNames(self, newValueNames, newValueDim):
-        """
-        追加するvalueNamesが適切な値になっているかをチェックし、可能ならば修正したもの(intかstrのlist)を返す
-
-        """
-        if newValueNames is not None:
-            if type(newValueNames) in [int, str]:
-                # 型をリストに変換
-                newValueNames = [newValueNames]
-            if type(newValueNames) in [list, tuple]:
-                if len(newValueNames) != newValueDim:
-                    raise ValueError('The length of valueName does not fit the number of cube data')
-                if any([type(n) not in [int, str] for n in newValueNames]):
-                    raise ValueError('ValueNames must be str list or int list.')
-
-            else:
-                raise ValueError('ValueNames must be str list or int list.')
-
-        else:
-            newValueNames = ['value{}'.format(i) for i in range(self.__valueDim,self.__valueDim+newValueDim)]
-
-        return newValueNames
 
     def __add_and_sub(self, other, sign1, sign2):
         """
@@ -218,20 +175,20 @@ class Cube:
                 raise ValueError('Number of dimensions in cubeData does not match: {} & {}'.format(self.__valueDim, other.__valueDim))
             elif self.__cubeGrid == other.__cubeGrid:
                 # 同じグリッド上でcubeデータを保持している場合
-                return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other.__cubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule, comment=newComment)
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other.__cubeData, moleculeObj=self.__molecule, comment=newComment)
             else:
                 # グリッドが異なる場合
                 # selfのグリッド上でotherの値を補間して和を計算する
                 interpolatedCubeData = other.interpolate(self.giveNodeCoord(unit='Bohr').reshape(-1,3), unit='Bohr')
                 newCubeData = sign1 * self.__cubeData + sign2 * interpolatedCubeData
-                return Cube(cubeGrid=self.__cubeGrid, cubeData=newCubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule, comment=newComment)
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=newCubeData, moleculeObj=self.__molecule, comment=newComment)
 
         elif type(other) in [float, int, np.float16, np.float32, np.float64, np.int16, np.int32, np.int64]:
             sign1str = '' if sign1 == 1 else '-'
             sign2str = '+' if sign2 == 1 else '-'
             newComment = '{}: {}(Cube: {}) + ({})'.format(operation, sign1str, self.__comment, sign2str, other)
             
-            return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule, comment=newComment)
+            return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other, moleculeObj=self.__molecule, comment=newComment)
         else:
             raise TypeError('invalid type: {}'.format(type(other)))
 
@@ -274,9 +231,9 @@ class Cube:
 
     def giveCubeData(self):
         """
-        cubeデータと値の名前リストのコピーを返す
+        cubeデータのコピーを返す
         """
-        return copy.deepcopy(self.__valueNames), copy.deepcopy(self.__cubeData)
+        return copy.deepcopy(self.__cubeData)
 
     def giveStepVector(self, unit=None):
         """
@@ -337,31 +294,6 @@ class Cube:
         # 補間値を計算
         return interp(p)
 
-
-    def addCubeData(self, newCubeData, newValueNames=None):
-        """
-        cubeデータを新しく追加する
-        newCubeData: numpy配列((x方向の点数)*(y方向の点数)*(z方向の点数)*(値の数)の次元)
-        """
-        # numpy配列か
-        if type(newCubeData) is not np.ndarray:
-            raise ValueError('Type of newCubeData must be numpy array')
-
-        # 次元をチェック
-        if len(self.__cubeData.shape) != len(newCubeData.shape) or self.__cubeData.shape[:-1] != newCubeData.shape[:-1]:
-            raise ValueError('Does not fit the xyz dimension of the existing cubeData.')
-
-        # 値の数を取得
-        newValueDim = newCubeData.shape[-1]
-
-        # 値の名前設定
-        # チェック
-        newValueNames = self.__checkValueNames(newValueNames, newValueDim)
-        self.__valueDim += newValueDim
-        self.__valueNames.extend(newValueNames)
-
-        # 問題なければcubeDataに追加
-        self.__cubeData = np.block([self.__cubeData, newCubeData])
 
     def write(self, cubeFilePath, header=True):
         """
