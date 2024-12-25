@@ -22,7 +22,7 @@ class Cube:
             raise ValueError('args must contain filePath or cubeData')
 
 
-    def __init__fromFile(self, filePath=None, valueNames=None, charge=None):
+    def __init__fromFile(self, filePath=None, valueNames=None, charge=None, comment=None):
         # 値チェック
         if filePath is None:
             raise ValueError('filePath is None')
@@ -47,8 +47,8 @@ class Cube:
 
         # 3行目からfloatの配列に変換
         # cubeファイル内の単位はBohrで統一されているので
-        # (cubegenでの作成時にBohrとangstromを間接的に指定するがそれは入力パラメータの単位を指している)
-        # 読み込み時はunit='Bohr'とすればよく、一部を単位変換することはしない。
+        # (cubegenでの作成時にBohrとangstromを間接的に指定するがそれはcubegenの入力パラメータの単位を指している)
+        # ここではunit='Bohr'として扱えばよく、一部を単位変換することはしない。
         titleData = data[0:2]
         numData = data[2:]
         numData = [s for s in numData if s != '']      # 空行は除去
@@ -104,9 +104,13 @@ class Cube:
                         ).reshape(*numGridPoint,self.__valueDim)
 
         self.__sourceFilePath = filePath
+        
+        if comment is None:
+            comment = 'load from {}'.format(filePath)
+        self.setComment(comment)
 
 
-    def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, moleculeObj=None):
+    def __init__fromCubeData(self, cubeGrid=None, cubeData=None, valueDim=1, valueNames=None, moleculeObj=None, comment=None):
         """
         格子データが既に存在する場合に利用する
 
@@ -169,6 +173,10 @@ class Cube:
         self.__molecule = moleculeObj
 
         self.__sourceFilePath = None
+        
+        if comment is None:
+            comment = 'generate from cubeData'
+        self.setComment(comment)
 
 
     def __checkValueNames(self, newValueNames, newValueDim):
@@ -198,21 +206,32 @@ class Cube:
         """
         sign1 * self + sign2 * other
         """
+        operation = 'addition' if sign1 * sign2 == 1 else 'subtraction'
+        
         if type(other) is Cube:
+            sign1str = ''
+            sign2str = '+' if sign2 == 1 else '-'
+            # どっちもCubeの場合は self + other かself - otherしかないためselfの符号は+
+            newComment = '{}: {}(Cube: {}) {} (Cube: {})'.format(operation, sign1str, self.__comment, sign2str, other.__comment)
+            
             if self.__valueDim != other.__valueDim:
                 raise ValueError('Number of dimensions in cubeData does not match: {} & {}'.format(self.__valueDim, other.__valueDim))
             elif self.__cubeGrid == other.__cubeGrid:
                 # 同じグリッド上でcubeデータを保持している場合
-                return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other.__cubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule)
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other.__cubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule, comment=newComment)
             else:
                 # グリッドが異なる場合
                 # selfのグリッド上でotherの値を補間して和を計算する
                 interpolatedCubeData = other.interpolate(self.giveNodeCoord(unit='Bohr').reshape(-1,3), unit='Bohr')
                 newCubeData = sign1 * self.__cubeData + sign2 * interpolatedCubeData
-                return Cube(cubeGrid=self.__cubeGrid, cubeData=newCubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule)
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=newCubeData, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule, comment=newComment)
 
         elif type(other) in [float, int, np.float16, np.float32, np.float64, np.int16, np.int32, np.int64]:
-            return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule)
+            sign1str = '' if sign1 == 1 else '-'
+            sign2str = '+' if sign2 == 1 else '-'
+            newComment = '{}: {}(Cube: {}) + ({})'.format(operation, sign1str, self.__comment, sign2str, other)
+            
+            return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other, valueDim=self.__valueDim, valueNames=self.__valueNames, moleculeObj=self.__molecule, comment=newComment)
         else:
             raise TypeError('invalid type: {}'.format(type(other)))
 
@@ -239,6 +258,16 @@ class Cube:
         other - self
         """
         return self.__add_and_sub(other, -1, 1)
+
+    def setComment(self, comment):
+        if comment is None:
+            comment = '' # 空文字にする
+        elif type(comment) is not str:
+            raise TypeError('type of comment must be str: {}'.format(type(comment)))
+        elif '\n' in comment:
+            raise ValueError('Multi-line string is invalid as comment')
+        self.__comment = comment
+
 
     def giveSourceFilePath(self):
         return self.__sourceFilePath
@@ -362,7 +391,7 @@ class Cube:
         """
         if header:
             header1 = 'Cube Data generated by chemscripts.pyg16.cube.Cube.write()\n'
-            header2 = 'value:{}\n'.format(self.__valueNames)
+            header2 = '{}\n'.format(self.__comment)
             header3 = '{} {} {} {} {}\n'.format(self.__molecule.giveNumAtom(), *self.giveStartingPoint(unit='Bohr'), self.__valueDim)
             header456 = ''.join(['{} {} {} {}\n'.format(n,*v) for n,v in zip(self.giveNumGridPoint(),self.giveStepVector(unit='Bohr'))])
             if self.__molecule is not None:
