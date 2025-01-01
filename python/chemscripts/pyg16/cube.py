@@ -235,6 +235,9 @@ class Cube:
         """
         return copy.deepcopy(self.__cubeData)
 
+    def giveCubeGrid(self):
+        return self.__cubeGrid
+
     def giveStepVector(self, unit=None):
         """
         cubeデータの実座標復元のための格子ベクトルを返す
