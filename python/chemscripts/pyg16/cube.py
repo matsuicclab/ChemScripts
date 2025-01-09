@@ -158,6 +158,17 @@ class Cube:
             comment = 'generate from cubeData'
         self.setComment(comment)
 
+    def __pos__(self):
+        """
+        + self
+        """
+        return Cube(cubeGrid=self.__cubeGrid, cubeData=self.__cubeData, moleculeObj=self.__molecule, comment=self.__comment)
+    
+    def __neg__(self):
+        """
+        - self
+        """
+        return Cube(cubeGrid=self.__cubeGrid, cubeData=-self.__cubeData, moleculeObj=self.__molecule, comment='Negation: (Cube: {})'.format(self.__comment))
 
     def __add_and_sub(self, other, sign1, sign2):
         """
@@ -186,7 +197,7 @@ class Cube:
         elif type(other) in [float, int, np.float16, np.float32, np.float64, np.int16, np.int32, np.int64]:
             sign1str = '' if sign1 == 1 else '-'
             sign2str = '+' if sign2 == 1 else '-'
-            newComment = '{}: {}(Cube: {}) + ({})'.format(operation, sign1str, self.__comment, sign2str, other)
+            newComment = '{}: {}(Cube: {}) {} ({})'.format(operation, sign1str, self.__comment, sign2str, other)
             
             return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other, moleculeObj=self.__molecule, comment=newComment)
         else:
@@ -215,6 +226,64 @@ class Cube:
         other - self
         """
         return self.__add_and_sub(other, -1, 1)
+    
+    def __mul_and_div(self, other, sign1, sign2):
+        """
+        self ^ sign1 * other ^ sign2
+        """
+        operation = 'multiply' if sign1 * sign2 == 1 else 'division'
+        
+        if type(other) is Cube:
+            sign1str = ''
+            sign2str = '*' if sign2 == 1 else '/'
+            # どっちもCubeの場合は self * other かself / otherしかないためselfの符号は''
+            newComment = '{}: {}(Cube: {}) {} (Cube: {})'.format(operation, sign1str, self.__comment, sign2str, other.__comment)
+            
+            if self.__valueDim != other.__valueDim:
+                raise ValueError('Number of dimensions in cubeData does not match: {} & {}'.format(self.__valueDim, other.__valueDim))
+            elif self.__cubeGrid == other.__cubeGrid:
+                # 同じグリッド上でcubeデータを保持している場合
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=self.__cubeData**sign1 * other.__cubeData**sign2, moleculeObj=self.__molecule, comment=newComment)
+            else:
+                # グリッドが異なる場合
+                # selfのグリッド上でotherの値を補間して和を計算する
+                interpolatedCubeData = other.interpolate(self.giveNodeCoord(unit='Bohr').reshape(-1,3), unit='Bohr')
+                newCubeData = self.__cubeData**sign1 * interpolatedCubeData**sign2
+                return Cube(cubeGrid=self.__cubeGrid, cubeData=newCubeData, moleculeObj=self.__molecule, comment=newComment)
+
+        elif type(other) in [float, int, np.float16, np.float32, np.float64, np.int16, np.int32, np.int64]:
+            sign1str = '' if sign1 == 1 else '1/'
+            sign2str = '*' if sign2 == 1 else '/'
+            newComment = '{}: {}(Cube: {}) {} ({})'.format(operation, sign1str, self.__comment, sign2str, other)
+            
+            return Cube(cubeGrid=self.__cubeGrid, cubeData=self.__cubeData**sign1 * other**sign2, moleculeObj=self.__molecule, comment=newComment)
+        else:
+            raise TypeError('invalid type: {}'.format(type(other)))
+    
+    def __mul__(self, other):
+        """
+        self * other
+        """
+        return self.__mul_and_div(other, 1, 1)
+    
+    def __rmul__(self, other):
+        """
+        other * self
+        """
+        return self.__mul_and_div(other, 1, 1)
+    
+    def __truediv__(self, other):
+        """
+        self / other
+        """
+        return self.__mul_and_div(other, 1, -1)
+    
+    def __rtruediv__(self, other):
+        """
+        other / self
+        """
+        return self.__mul_and_div(other, -1, 1)
+    
 
     def setComment(self, comment):
         if comment is None:
