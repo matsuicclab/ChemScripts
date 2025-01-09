@@ -1201,7 +1201,7 @@ class CubeVisualizer:
 
         return sliceDat
 
-    def giveIsolinesPlot(self, slice, numIsoline=None, stepIsoline=1, cutIsolineNote=None, thresholdNoteArrow=-np.inf, unit=None):
+    def giveIsolinesPlot(self, slice, numIsoline=None, stepIsoline=1, cutIsolineNote=None, noteFormat=None, thresholdNoteArrow=-np.inf, unit=None):
         """
         スライス上の等値線プロットを生成
         numIsoline: 等値線の数を設定
@@ -1218,6 +1218,9 @@ class CubeVisualizer:
             cutIsolineNote = lambda level : False
         if thresholdNoteArrow is None:
             thresholdNoteArrow = -np.inf
+        if noteFormat is None:
+            noteFormat = ''
+        noteFormat = '{' + noteFormat + '}'
 
         # スライスのデータを取得
         c1, c2 = slice.give2DCoord(unit=unit)
@@ -1292,7 +1295,7 @@ class CubeVisualizer:
                 length = np.sum(np.sqrt(np.diff(isoline_c1)**2 + np.diff(isoline_c2)**2))
                 isLooped = (abs(c1i-c1f)<1e-10*sliceRepLength1) and (abs(c2i-c2f)<1e-10*sliceRepLength2)
                 annotationList.append(dict(
-                    text=level_i, x=x[0], y=y[0], z=z[0], font=dict(color='black'),
+                    text=noteFormat.format(level_i), x=x[0], y=y[0], z=z[0], font=dict(color='black'),
                     showarrow=bool((length<thresholdNoteArrow) and isLooped),
                     bgcolor='white', opacity=0.8
                 ))
@@ -1302,7 +1305,7 @@ class CubeVisualizer:
 """
 上のクラスを統合して、cubeファイルのコンター図をプロットするための関数
 """
-def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, showNote=True, thresholdNoteArrow=None, cameraZoom=100, cameraRotate=0, printParam=False):
+def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, numIsoline=None, stepIsoline=None, cutIsolineNote=None, noteFormat=None, showNote=True, thresholdNoteArrow=None, cameraZoom=100, cameraRotate=0, printParam=False):
     import plotly.graph_objects as go
 
     # load cube data
@@ -1332,7 +1335,7 @@ def visualizeCubeSlice(cube=None, cubeFile=None, outFile=None, slicePos=None, sl
     # set slice plot
     slice = Slice(cube, pos=slicePos, normal=sliceNormal, pcaAuto=pcaAuto, unit=unit)
     sliceDat = cvis.giveSlicePlot(slice, unit=unit)
-    isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, thresholdNoteArrow=thresholdNoteArrow, unit=unit)
+    isolineDatList, annotationList = cvis.giveIsolinesPlot(slice, numIsoline=numIsoline, stepIsoline=stepIsoline, cutIsolineNote=cutIsolineNote, noteFormat=noteFormat, thresholdNoteArrow=thresholdNoteArrow, unit=unit)
     if not showNote:
         annotationList = None
 
