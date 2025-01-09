@@ -598,10 +598,10 @@ class CubeGrid:
         elif self is other:
             # 同値判定
             return True
-        elif all(self.__startingPoint == other.__startingPoint) and \
-            all(self.__endingPoint == other.__endingPoint) and \
-            all(self.__stepVector == other.__stepVector) and \
-            all(self.__numGridPoint == other.__numGridPoint) and \
+        elif (self.__startingPoint == other.__startingPoint).all() and \
+            (self.__endingPoint == other.__endingPoint).all() and \
+            (self.__stepVector == other.__stepVector).all() and \
+            (self.__numGridPoint == other.__numGridPoint).all() and \
             self.__unit == other.__unit:
             # 等価判定
             return True
