@@ -1271,6 +1271,10 @@ class CubeVisualizer:
                 # 各レベルのpathごとにループ
                 isoline_c1 = vertices[:, 0] # shape: (numVertices,)
                 isoline_c2 = vertices[:, 1] # shape: (numVertices,)
+                if len(isoline_c1) == 0:
+                    # numVertices == 0の場合
+                    continue
+                
                 r = slice.convert2DCoordTo3DCoord(isoline_c1, isoline_c2) # shape: (numVertices,3)
                 x = r[:,0] # shape: (numVertices,)
                 y = r[:,1] # shape: (numVertices,)
