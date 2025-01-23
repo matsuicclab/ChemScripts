@@ -96,7 +96,7 @@ class Cube:
                         ).reshape(*numGridPoint,valueDim)
 
         self.__sourceFilePath = filePath
-        
+
         if comment is None:
             comment = 'load from {}'.format(filePath)
         self.setComment(comment)
@@ -153,7 +153,7 @@ class Cube:
         self.__molecule = moleculeObj
 
         self.__sourceFilePath = None
-        
+
         if comment is None:
             comment = 'generate from cubeData'
         self.setComment(comment)
@@ -163,7 +163,7 @@ class Cube:
         + self
         """
         return Cube(cubeGrid=self.__cubeGrid, cubeData=self.__cubeData, moleculeObj=self.__molecule, comment=self.__comment)
-    
+
     def __neg__(self):
         """
         - self
@@ -175,13 +175,13 @@ class Cube:
         sign1 * self + sign2 * other
         """
         operation = 'addition' if sign1 * sign2 == 1 else 'subtraction'
-        
+
         if type(other) is Cube:
             sign1str = ''
             sign2str = '+' if sign2 == 1 else '-'
             # どっちもCubeの場合は self + other かself - otherしかないためselfの符号は+
             newComment = '{}: {}(Cube: {}) {} (Cube: {})'.format(operation, sign1str, self.__comment, sign2str, other.__comment)
-            
+
             if self.__valueDim != other.__valueDim:
                 raise ValueError('Number of dimensions in cubeData does not match: {} & {}'.format(self.__valueDim, other.__valueDim))
             elif self.__cubeGrid == other.__cubeGrid:
@@ -198,7 +198,7 @@ class Cube:
             sign1str = '' if sign1 == 1 else '-'
             sign2str = '+' if sign2 == 1 else '-'
             newComment = '{}: {}(Cube: {}) {} ({})'.format(operation, sign1str, self.__comment, sign2str, other)
-            
+
             return Cube(cubeGrid=self.__cubeGrid, cubeData=sign1 * self.__cubeData + sign2 * other, moleculeObj=self.__molecule, comment=newComment)
         else:
             raise TypeError('invalid type: {}'.format(type(other)))
@@ -226,19 +226,19 @@ class Cube:
         other - self
         """
         return self.__add_and_sub(other, -1, 1)
-    
+
     def __mul_and_div(self, other, sign1, sign2):
         """
         self ^ sign1 * other ^ sign2
         """
         operation = 'multiply' if sign1 * sign2 == 1 else 'division'
-        
+
         if type(other) is Cube:
             sign1str = ''
             sign2str = '*' if sign2 == 1 else '/'
             # どっちもCubeの場合は self * other かself / otherしかないためselfの符号は''
             newComment = '{}: {}(Cube: {}) {} (Cube: {})'.format(operation, sign1str, self.__comment, sign2str, other.__comment)
-            
+
             if self.__valueDim != other.__valueDim:
                 raise ValueError('Number of dimensions in cubeData does not match: {} & {}'.format(self.__valueDim, other.__valueDim))
             elif self.__cubeGrid == other.__cubeGrid:
@@ -255,35 +255,35 @@ class Cube:
             sign1str = '' if sign1 == 1 else '1/'
             sign2str = '*' if sign2 == 1 else '/'
             newComment = '{}: {}(Cube: {}) {} ({})'.format(operation, sign1str, self.__comment, sign2str, other)
-            
+
             return Cube(cubeGrid=self.__cubeGrid, cubeData=self.__cubeData**sign1 * other**sign2, moleculeObj=self.__molecule, comment=newComment)
         else:
             raise TypeError('invalid type: {}'.format(type(other)))
-    
+
     def __mul__(self, other):
         """
         self * other
         """
         return self.__mul_and_div(other, 1, 1)
-    
+
     def __rmul__(self, other):
         """
         other * self
         """
         return self.__mul_and_div(other, 1, 1)
-    
+
     def __truediv__(self, other):
         """
         self / other
         """
         return self.__mul_and_div(other, 1, -1)
-    
+
     def __rtruediv__(self, other):
         """
         other / self
         """
         return self.__mul_and_div(other, -1, 1)
-    
+
 
     def setComment(self, comment):
         if comment is None:
@@ -1248,10 +1248,12 @@ class CubeVisualizer:
         # matplotのcontourを使って座標を取得する
         isolines = plt.contour(c1, c2, value, levels=levels)
         plt.close() # これがないとplt.contour()が描画されるのでそれを防ぐ
-        # 等値線の座標を折れ線グラフで描画する
-        isolineDatList = []
-        annotationList = []
 
+        # isolinesからpathの情報を取得
+        # levelとverticesとpathの長さをリストにまとめる
+        levelList = []
+        verticesList = []
+        lengthList = []
         for i in range(len(levels)):
             # 各レベルごとにループ
             level_i = levels[i]
@@ -1259,46 +1261,53 @@ class CubeVisualizer:
             # matplotlibのバージョンによりPathのcodes周りで若干挙動が違うので条件分岐
             paths_i = [isolines.get_paths()[i]] if 'get_paths' in dir(isolines) else isolines.collections[i].get_paths() # list of Path object
 
-            verticesList = []
             for path in paths_i:
                 if path.codes is None:
+                    levelList.append(level_i)
                     verticesList.append(path.vertices)
 
                 else:
                     # codeが1の箇所でpathが切れているので、
                     # その位置でverticesを切断
                     idxs = np.append(np.where(path.codes==1)[0], len(path.codes))
-                    verticesList.extend([path.vertices[i1:i2] for i1,i2 in zip(idxs,idxs[1:])])
+                    newVerticesList = [path.vertices[i1:i2] for i1,i2 in zip(idxs,idxs[1:])]
+                    levelList.extend([level_i]*len(newVerticesList))
+                    verticesList.extend(newVerticesList)
+        # pathの長さを計算 (vertices: shape: (numVertices,2))
+        lengthList = [np.sum(np.sqrt(np.sum(np.diff(vertices, axis=0)**2, axis=1))) for vertices in verticesList]
 
-            for vertices in verticesList:
-                # 各レベルのpathごとにループ
-                isoline_c1 = vertices[:, 0] # shape: (numVertices,)
-                isoline_c2 = vertices[:, 1] # shape: (numVertices,)
-                if len(isoline_c1) == 0:
-                    # numVertices == 0の場合
-                    continue
-                
-                r = slice.convert2DCoordTo3DCoord(isoline_c1, isoline_c2) # shape: (numVertices,3)
-                x = r[:,0] # shape: (numVertices,)
-                y = r[:,1] # shape: (numVertices,)
-                z = r[:,2] # shape: (numVertices,)
-                trace = go.Scatter3d(x=x, y=y, z=z, mode='lines', line=dict(width=2, cmin=levels[0], cmax=levels[-1], color=np.ones_like(x)*level_i), showlegend=False)
-                isolineDatList.append(trace)
+        # 等値線の座標を折れ線グラフで描画する
+        # pathの長さが長いものから描画していく (annotationが重なってしまい極大極小のannotationが見えないことがあるためその対策)
+        isolineDatList = []
+        annotationList = []
+        for level, vertices, length in list(zip(levelList,verticesList,lengthList)).sort(key=lambda x: -x[2]): # lengthを基準にソート(長いものを先にしたいので負符号をつける)
+            # 各レベルのpathごとにループ
+            isoline_c1 = vertices[:, 0] # shape: (numVertices,)
+            isoline_c2 = vertices[:, 1] # shape: (numVertices,)
+            if len(isoline_c1) == 0:
+                # numVertices == 0の場合
+                continue
 
-                # annotation
-                if cutIsolineNote(level_i):
-                    continue
-                c1i = isoline_c1[0]
-                c2i = isoline_c2[0]
-                c1f = isoline_c1[-1]
-                c2f = isoline_c2[-1]
-                length = np.sum(np.sqrt(np.diff(isoline_c1)**2 + np.diff(isoline_c2)**2))
-                isLooped = (abs(c1i-c1f)<1e-10*sliceRepLength1) and (abs(c2i-c2f)<1e-10*sliceRepLength2)
-                annotationList.append(dict(
-                    text=noteFormat.format(level_i), x=x[0], y=y[0], z=z[0], font=dict(color='black'),
-                    showarrow=bool((length<thresholdNoteArrow) and isLooped),
-                    bgcolor='white', opacity=0.8
-                ))
+            r = slice.convert2DCoordTo3DCoord(isoline_c1, isoline_c2) # shape: (numVertices,3)
+            x = r[:,0] # shape: (numVertices,)
+            y = r[:,1] # shape: (numVertices,)
+            z = r[:,2] # shape: (numVertices,)
+            trace = go.Scatter3d(x=x, y=y, z=z, mode='lines', line=dict(width=2, cmin=levels[0], cmax=levels[-1], color=np.ones_like(x)*level_i), showlegend=False)
+            isolineDatList.append(trace)
+
+            # annotation
+            if cutIsolineNote(level):
+                continue
+            c1i = isoline_c1[0]
+            c2i = isoline_c2[0]
+            c1f = isoline_c1[-1]
+            c2f = isoline_c2[-1]
+            isLooped = (abs(c1i-c1f)<1e-10*sliceRepLength1) and (abs(c2i-c2f)<1e-10*sliceRepLength2)
+            annotationList.append(dict(
+                text=noteFormat.format(level), x=x[0], y=y[0], z=z[0], font=dict(color='black'),
+                showarrow=bool((length<thresholdNoteArrow) and isLooped),
+                bgcolor='white', opacity=0.8
+            ))
 
         return isolineDatList, annotationList
 
