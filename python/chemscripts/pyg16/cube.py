@@ -1280,7 +1280,7 @@ class CubeVisualizer:
         # pathの長さが長いものから描画していく (annotationが重なってしまい極大極小のannotationが見えないことがあるためその対策)
         isolineDatList = []
         annotationList = []
-        for level, vertices, length in list(zip(levelList,verticesList,lengthList)).sort(key=lambda x: -x[2]): # lengthを基準にソート(長いものを先にしたいので負符号をつける)
+        for level, vertices, length in sorted(list(zip(levelList,verticesList,lengthList)), key=lambda x: -x[2]): # lengthを基準にソート(長いものを先にしたいので負符号をつける)
             # 各レベルのpathごとにループ
             isoline_c1 = vertices[:, 0] # shape: (numVertices,)
             isoline_c2 = vertices[:, 1] # shape: (numVertices,)
