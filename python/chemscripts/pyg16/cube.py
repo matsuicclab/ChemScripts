@@ -294,6 +294,8 @@ class Cube:
             raise ValueError('Multi-line string is invalid as comment')
         self.__comment = comment
 
+    def giveComment(self):
+        return self.__comment
 
     def giveSourceFilePath(self):
         return self.__sourceFilePath
