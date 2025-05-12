@@ -166,10 +166,14 @@ class Molecule:
         else:
             return np.array([[x,y,z] for _,x,y,z in self.iterateAtoms(unit=unit, atomfilter=atomfilter)])
 
-    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment='', atomfilter=None):
+    def giveXYZBlock(self, unit='Angstrom', elementSymbol=True, comment='', atomfilter=None, xyzformat=None):
+        if xyzformat is None:
+            xyzformat = ''
+        lineformat = '{} {'+xyzformat+'} {'+xyzformat+'} {'+xyzformat+'}'
+        
         result = [str(self.__numAtom), comment]
         result.extend(
-            ['{} {} {} {}'.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, atomfilter=atomfilter)]
+            [lineformat.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, atomfilter=atomfilter)]
         )
         result = '\n'.join(result)
 
@@ -196,7 +200,8 @@ class Molecule:
         #    isHalfint = (unsatu % 2 == 1)
         #    unsatu /= 2
 
-        xyzblock = self.giveXYZBlock(unit='Angstrom', elementSymbol=True)
+        # Chem.MolFromXYZBlock()は固定小数点しか付けつけないのでformatする
+        xyzblock = self.giveXYZBlock(unit='Angstrom', elementSymbol=True, xyzformat=':.8f')
         mol = Chem.MolFromXYZBlock(xyzblock)
         rdDetermineBonds.DetermineBonds(mol, charge=self.__charge)
         return mol
