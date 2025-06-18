@@ -1244,9 +1244,21 @@ class CubeVisualizer:
         else:
             # stepIsolineが指定されている場合はレベルの間隔を指定する
             # levelがstepIsolineの整数倍になるように調整
+            maxNumIsoline = 100
+            if (level_max-level_min)/stepIsoline > maxNumIsoline:
+                if np.abs(level_max) > np.abs(level_min):
+                    adjusted_level_max = level_min + maxNumIsoline * stepIsoline
+                    adjusted_level_min = level_min
+                else:
+                    adjusted_level_max = level_max
+                    adjusted_level_min = level_max - maxNumIsoline * stepIsoline
+            else:
+                adjusted_level_max = level_max
+                adjusted_level_min = level_min
+            
             levels = np.arange(
-                        np.ceil(level_min/stepIsoline)*stepIsoline,
-                        (np.floor(level_max/stepIsoline)+1)*stepIsoline,
+                        np.ceil(adjusted_level_min/stepIsoline)*stepIsoline,
+                        (np.floor(adjusted_level_max/stepIsoline)+1)*stepIsoline,
                         stepIsoline
                     )
 
