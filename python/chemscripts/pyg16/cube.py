@@ -286,6 +286,15 @@ class Cube:
         """
         return self.__mul_and_div(other, -1, 1)
 
+    def __pow__(self, other):
+        """
+        self ** other
+        """
+        if type(other) not in [int, float]:
+            raise ValueError()
+        newCubeData = self.__cubeData ** other
+        newComment = '({})**({})'.format(self.__comment, other)
+        return Cube(cubeGrid=self.__cubeGrid, cubeData=newCubeData, moleculeObj=self.__molecule, comment=newComment)
 
     def setComment(self, comment):
         if comment is None:
@@ -1255,7 +1264,7 @@ class CubeVisualizer:
             else:
                 adjusted_level_max = level_max
                 adjusted_level_min = level_min
-            
+
             levels = np.arange(
                         np.ceil(adjusted_level_min/stepIsoline)*stepIsoline,
                         (np.floor(adjusted_level_max/stepIsoline)+1)*stepIsoline,
