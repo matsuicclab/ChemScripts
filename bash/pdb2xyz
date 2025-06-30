@@ -19,11 +19,15 @@ EOF
 function option_help(){
 cat <<EOF
     -h, -help, --help | display this help
+    -m, --model | model number
 
 EOF
 }
 
 function parse_option(){
+	# set default
+	modelnum=all
+
 	while [ "${#args[@]}" -gt 1 ]
 	do
 		case "${args[1]}" in
@@ -34,6 +38,10 @@ function parse_option(){
 			;;
 		-O)
 			parse_O_option
+			;;
+		-m | --model)
+			modelnum="${args[2]}"
+			shift_args 2
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"
@@ -46,7 +54,19 @@ function parse_option(){
 }
 
 function get_default_conversion_patt(){
-	echo '{s/.pdb$//; s/$/.xyz/}'
+	if [ "$modelnum" = all ]; then
+		echo '{s/.pdb$//; s/$/.xyz/}'
+	else
+		echo "{s/.pdb$//; s/$/.${modelnum}.xyz/}"
+	fi
+}
+
+function trimmodel(){
+	if [ "$modelnum" = all ]; then
+		cat -
+	else
+		sed -r -n "/^MODEL +${modelnum}/,/^MODEL/p"
+	fi
 }
 
 function process(){
@@ -57,31 +77,26 @@ function process(){
 	local xyzData numAtom title
 
 	pdbFile="$1"
-	pdbData=`cat "$pdbFile"`
-	atomData=`echo "$pdbData" | grep -e '^ATOM' -e '^HETATM'`
+	title="pdb2xyz: from ${pdbFile} model ${modelnum}: `date`"
 
-	prexyzData=`echo "$atomData" |
-					sed -r 's/^.{12}(.{4}).{14}(.{8})(.{8})(.{8}).*$/\1 \2 \3 \4/' |
-					sed -r 's/ +/ /g' |
-					sed -r 's/^ //'`
+	cat "$pdbFile" |
+		trimmodel |
+		grep -e '^ATOM' -e '^HETATM' |
+		sed -r 's/^(.{6}).{6}(.{4}).{14}(.{8})(.{8})(.{8}).*$/\1 \2 \3 \4 \5/' |
+		tac |
+		awk -v title="$title" \
+			'$1=="ATOM"{
+				$2=substr($2,1,1); print $2,$3,$4,$5
+			}$1=="HETATM"{
+				gsub(/[0-9]/, "", $2); print $2,$3,$4,$5
+			}{
+				numAtom+=1
+			}END{
+				print title;
+				print numAtom
+			}' |
+		tac
 
-	# get valid element symbol
-	minNumChar=`echo "$atomData" | awk '{print length($0)}' | sort -n | head -n 1`
-	if [ "$minNumChar" -ge 77 ]; then
-		elementList=`echo "$atomData" | sed -r 's/^.{76}(.{,2}).*/\1/'`
-		xyzData=`paste -d ' ' <(echo "$elementList") <(echo "$prexyzData" | cut -d ' ' -f 2-)`
-	else
-		xyzData="$prexyzData"
-	fi
-
-	# set header
-	numAtom=`echo "$xyzData" | wc -l`
-	title="pdb2xyz: from ${pdbFile}: `date`"
-
-	# print
-	echo "$numAtom"
-	echo "$title"
-	echo "$xyzData"
 }
 
 main "$@"
