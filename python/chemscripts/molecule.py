@@ -125,8 +125,32 @@ class Molecule:
         self.__spinState = _spinState
         self.__unit = unit
 
+    def __str__(self):
+        return '\n'.join([
+                    repr(self),
+                    '{} (charge:{},spinState:{})'.format(self.giveStoichiometry(), self.__charge, self.__spinState),
+                    ''
+                ])
+
     def giveNumAtom(self):
         return self.__numAtom
+
+    def giveStoichiometry(self):
+        """
+        give Stoichiometry
+        e.g., C3H8O
+        """
+        from collections import Counter
+        count = Counter([s for s,_,_,_ in self.iterateAtoms(unit='Angstrom', elementSymbol=True, atomfilter=None)])
+
+        stoichiometry = ''
+        for symb in ['C', 'H', 'N', 'O']:
+            if count['C'] != 0:
+                stoichiometry += '{}{}'.format(symb,count[symb])
+        for symb, c in count.items():
+            if symb not in ['C', 'H', 'N', 'O']:
+                stoichiometry += '{}{}'.format(symb,c)
+        return stoichiometry
 
     def iterateAtoms(self, unit='Angstrom', elementSymbol=True, atomfilter=None):
         """
@@ -170,7 +194,7 @@ class Molecule:
         if xyzformat is None:
             xyzformat = ''
         lineformat = '{} {'+xyzformat+'} {'+xyzformat+'} {'+xyzformat+'}'
-        
+
         result = [str(self.__numAtom), comment]
         result.extend(
             [lineformat.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, atomfilter=atomfilter)]

@@ -158,6 +158,15 @@ class Cube:
             comment = 'generate from cubeData'
         self.setComment(comment)
 
+    def __str__(self):
+        return '\n'.join([
+                    repr(self),
+                    'comment: {}'.format(self.__comment),
+                    'cubeGrid:', *[re.sub('^', '\t', s) for s in format(self.__cubeGrid).split()],
+                    'moleculeObj', *[re.sub('^', '\t', s) for s in format(self.__molecule).split()],
+                    ''
+                ])
+
     def __pos__(self):
         """
         + self
@@ -602,6 +611,18 @@ class CubeGrid:
         self.__stepVector = stepVector
         self.__numGridPoint = numGridPoint
         self.__unit = unit
+
+
+    def __str__(self):
+        return '\n'.join([
+                    repr(self),
+                    'startingPoint: {}'.format(self.__startingPoint),
+                    'endingPoint: {}'.format(self.__endingPoint),
+                    'stepVector: {}'.format(self.__stepVector),
+                    'numGridPoint: {}'.format(self.__numGridPoint),
+                    'unit: {}'.format(self.__unit),
+                    ''
+                ])
 
     def __eq__(self, other):
         """
