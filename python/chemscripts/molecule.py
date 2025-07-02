@@ -145,7 +145,11 @@ class Molecule:
 
         stoichiometry = ''
         for symb in ['C', 'H', 'N', 'O']:
-            if count[symb] != 0:
+            if count[symb] == 0:
+                continue
+            elif count[symb] == 1:
+                stoichiometry += '{}'.format(symb)
+            else:
                 stoichiometry += '{}{}'.format(symb,count[symb])
         for symb, c in count.items():
             if symb not in ['C', 'H', 'N', 'O']:
