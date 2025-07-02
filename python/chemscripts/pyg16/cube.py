@@ -162,8 +162,8 @@ class Cube:
         return '\n'.join([
                     repr(self),
                     'comment: {}'.format(self.__comment),
-                    'cubeGrid:', *[re.sub('^', '\t', s) for s in format(self.__cubeGrid).split('\n')],
-                    'moleculeObj', *[re.sub('^', '\t', s) for s in format(self.__molecule).split('\n')],
+                    'cubeGrid:', *[re.sub('^', '\t', s) for s in format(self.__cubeGrid).split('\n') if s != ''],
+                    'moleculeObj', *[re.sub('^', '\t', s) for s in format(self.__molecule).split('\n') if s != ''],
                     ''
                 ])
 
