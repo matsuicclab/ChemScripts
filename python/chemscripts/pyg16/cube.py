@@ -781,6 +781,12 @@ class CubeGrid:
         else:
             return r
 
+    def giveDeltaV(self, unit=None):
+        """
+        グリッド一間隔辺りの体積を計算
+        """
+        return np.abs(np.linalg.det(self.giveStepVector(unit=unit)))
+        
 
 class Slice:
     """

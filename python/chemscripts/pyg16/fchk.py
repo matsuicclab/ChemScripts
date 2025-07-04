@@ -466,23 +466,24 @@ class Fchk:
             else:
                 shift = 1 / (2*np.abs(densDetailRatio))
             densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepDetailRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
+            deltaV = densCubeGrid.giveDeltaV(unit=unit) 
             
             # 電子密度分布を取得
             coords_dens = densCubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na1*nb1*nc1,3)
             dens = self.calcElectronDensity(coords_dens) # shape: (na1*nb1*nc1,)
 
             # ポテンシャルの計算点の座標を取得
-            coords_pot = cubeGrid.giveNodeCoord(unit=unit) # shape: (na2,nb2,nc2,3)
+            coords_pot = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na2*nb2*nc2,3)
 
             # 電子由来の静電ポテンシャル
             # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
             # ポテンシャルの計算点ごとに計算を実行
-            pot_el = (-1) * np.array([np.sum(dens / np.linalg.norm(coords_dens-r,axis=1)) for r in coords_pot.reshape(-1,3)]) # shape: (na2*nb2*nc2,), unit: a.u.
+            pot_el = (-1) * deltaV * np.array([np.sum(dens / np.linalg.norm(coords_dens-r,axis=1)) for r in coords_pot]) # shape: (na2*nb2*nc2,), unit: a.u.
 
             # 原子核由来の静電ポテンシャル
             atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
             atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
-            pot_nu = np.sum(atomicnums / cdist(coords_pot.reshape(-1,3), atomXYZArray), axis=1) # shape: (na2*nb2*nc2,), unit: a.u.
+            pot_nu = np.sum(atomicnums / cdist(coords_pot, atomXYZArray), axis=1) # shape: (na2*nb2*nc2,), unit: a.u.
 
             # 足し算
             pot = pot_el + pot_nu
