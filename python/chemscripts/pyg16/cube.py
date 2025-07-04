@@ -642,7 +642,7 @@ class CubeGrid:
         newUnit = cubeGrid.__unit
         
         # stepVector決定
-        ratio = np.abs(stepDetailRatio) ** np.sign(stepDetailRatio)
+        ratio = np.abs(stepDetailRatio) ** np.sign(stepDetailRatio).astype(np.float64) # (負整数)^(負整数)ではエラーになるのでキャスト
         newStepVector = cubeGrid.__stepVector / ratio
         v1, v2, v3 = newStepVector
         
