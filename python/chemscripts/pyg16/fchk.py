@@ -504,6 +504,64 @@ class Fchk:
             # 再度呼び出し
             return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densDetail=densDetail)
 
+    def generateElectricFieldCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None, densDetailRatio=1):
+        """
+        電場のcubeデータを生成
+        unit: step, paddingの単位指定 (cubeGrid指定時は無視)
+        densDetailRatio: 非ゼロ整数
+                    densStepVector = espStepVector / (abs(ratio) ** sign(ratio))
+        return: Cubeインスタンス
+        """
+        molecule = self.giveMoleculeObj()
+
+        if cubeGrid is not None:
+            # cubeGridが指定されている場合
+            if type(cubeGrid) is not CubeGrid:
+                raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+
+            unit = 'Bohr' # 一旦a.u.で計算する
+
+            # 電子密度分布のグリッドを生成
+            # 電場グリッドから等距離に電子密度グリッドを配置するように位置を調整(shift)
+            # これをしないと二つの離散点が重なってしまい発散してしまう
+            if densDetailRatio > 0:
+                shift = 0.5
+            else:
+                shift = 1 / (2*np.abs(densDetailRatio))
+            densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepDetailRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
+            deltaV = densCubeGrid.giveDeltaV(unit=unit) 
+            
+            # 電子密度分布を取得
+            coords_dens = densCubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na1*nb1*nc1,3)
+            dens = self.calcElectronDensity(coords_dens) # shape: (na1*nb1*nc1,)
+
+            # 電場の計算点の座標を取得
+            coords_E = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na2*nb2*nc2,3)
+
+            # 電子由来の静電ポテンシャル
+            # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
+            # ポテンシャルの計算点ごとに計算を実行
+            E_el = (-1) * deltaV * np.array([np.sum((dens / np.linalg.norm(r-coords_dens,axis=1)**3)[:,np.newaxis]*(r-coords_dens), axis=0) for r in coords_E]) # shape: (na2*nb2*nc2,3), unit: a.u.
+
+            # 原子核由来の静電ポテンシャル
+            atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
+            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
+            E_nu = np.sum((atomicnums / cdist(coords_E, atomXYZArray)**3)[:,:,np.newaxis] * (coords_E[:,np.newaxis,:]-atomXYZArray[np.newaxis,:,:]), axis=1) # shape: (na2*nb2*nc2,3), unit: a.u.
+
+            # 足し算
+            E = E_el + E_nu
+
+            # Cubeインスタンス生成
+            cube = Cube(cubeGrid=cubeGrid, cubeData=E, comment='ElectricField[a.u.]', moleculeObj=molecule)
+
+            return cube
+
+        else:
+            # cubeGridを生成
+            cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
+            
+            # 再度呼び出し
+            return self.generateElectricFieldCube(cubeGrid=cubeGrid, densDetail=densDetail)
 
 
     def giveMoleculeObj(self):
