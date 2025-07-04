@@ -455,9 +455,6 @@ class Fchk:
             # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
                 raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
-            
-            if densDetail is not int:
-                raise TypeError('type of densDetail must be int')
 
             unit = 'Bohr' # 一旦a.u.で計算する
 
