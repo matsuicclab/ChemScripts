@@ -465,7 +465,7 @@ class Fchk:
                 shift = 0.5
             else:
                 shift = 1 / (2*np.abs(densDetailRatio))
-            densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
+            densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepDetailRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
             
             # 電子密度分布を取得
             coords_dens = densCubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na1*nb1*nc1,3)
