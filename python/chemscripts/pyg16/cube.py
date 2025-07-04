@@ -653,7 +653,7 @@ class CubeGrid:
         newStartingPoint = cubeGrid.__startingPoint + (v1+v2+v3) * (- numMarginGrid + shiftGrid)
 
         # 構築        
-        self.__init__fromParam(startingPoint=newStartingPoint, stepVector=newStepVector, unit=unit)
+        self.__init__fromParam(startingPoint=newStartingPoint, stepVector=newStepVector, unit=newUnit)
         
 
     def __str__(self):
