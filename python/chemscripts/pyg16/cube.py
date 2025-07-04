@@ -642,12 +642,14 @@ class CubeGrid:
         newUnit = cubeGrid.__unit
         
         # stepVector決定
-        ratio = np.abs(stepDetailRatio) ** np.sign(stepDetailRatio).astype(np.float64) # (負整数)^(負整数)ではエラーになるのでキャスト
-        newStepVector = cubeGrid.__stepVector / ratio
-        v1, v2, v3 = newStepVector
-        
         # numGridPoint決定
-        newNumGridPoint = (2 * cubeGrid.__numGridPoint - 1) + numMarginGrid * 2
+        if stepDetailRatio > 0:
+            newStepVector = cubeGrid.__stepVector / stepDetailRatio
+            newNumGridPoint = (stepDetailRatio * (cubeGrid.__numGridPoint - 1) + 1) + numMarginGrid * 2
+        else:
+            newStepVector = cubeGrid.__stepVector * stepDetailRatio
+            newNumGridPoint = ((cubeGrid.__numGridPoint - 1) // np.abs(stepDetailRatio) + 1) + numMarginGrid * 2
+        v1, v2, v3 = newStepVector
         
         # startingPoint決定
         newStartingPoint = cubeGrid.__startingPoint + (v1+v2+v3) * (- numMarginGrid + shiftGrid)
