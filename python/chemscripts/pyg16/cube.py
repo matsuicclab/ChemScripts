@@ -457,12 +457,15 @@ class CubeGrid:
             self.__init__fromMoleculeObj(**args)
         elif 'startingPoint' in args.keys():
             self.__init__fromParam(**args)
+        elif 'cubeGrid' in args.keys():
+            self.__init__fromCubeGrid(**args)
         else:
-            raise ValueError('args must contain moleculeObj or startingPoint')
+            raise ValueError('args must contain moleculeObj or startingPoint or cubeGrid')
 
     def __init__fromMoleculeObj(self, moleculeObj=None, axesMethod=None, step=0.5, padding=3.0, unit='Angstrom'):
         """
         unit: unit of step and padding
+        axesMethod: 'Direct' or 'PCA' or 'PCA-ignoreHs'
         """
 
         # molecule
@@ -612,6 +615,46 @@ class CubeGrid:
         self.__numGridPoint = numGridPoint
         self.__unit = unit
 
+    def __init__fromCubeGrid(self, cubeGrid=None, stepRatio=1, numMarginGrid=0, shiftGrid=0):
+        """
+        stepRatio: 非ゼロ整数
+                    newStepVector = oldStepVector * abs(ratio) ** sign(ratio)
+        numMarginGrid: 整数 
+                    与えられたcubeGridの外側にどれだけ広げるか(newStepVector単位)
+        shiftGrid: [0,1)の実数
+                    startingPointをどれだけズラすか(newStepVector単位)
+        """
+        if type(cubeGrid) is not CubeGrid:
+            raise TypeError('type of cubeGrid must be CubeGrid')
+        if type(stepRatio) is not int:
+            raise TypeError('type of stepRatio must be int')
+        if type(numMarginGrid) is not int:
+            raise TypeError('type of numMarginGrid must be int')
+        if type(shiftGrid) not in [int, float]:
+            raise TypeError('shiftGrid must be a number')
+
+        if stepRatio == 0:
+            raise ValueError('stepRatio must not be zero')
+        if shiftGrid < 0 or shiftGrid >= 1:
+            raise ValueError('shiftGrid must be a real number greater than or equal to 0 and less than 1')
+        
+        # 単位決定
+        newUnit = cubeGrid.__unit
+        
+        # stepVector決定
+        ratio = np.abs(stepRatio) ** np.sign(stepRatio)
+        newStepVector = cubeGrid.__stepVector * ratio
+        v1, v2, v3 = newStepVector
+        
+        # numGridPoint決定
+        newNumGridPoint = cubeGrid.__numGridPoint + numMarginGrid * 2
+        
+        # startingPoint決定
+        newStartingPoint = cubeGrid.__startingPoint + (v1+v2+v3) * (- numMarginGrid + shiftGrid)
+
+        # 構築        
+        self.__init__fromParam(startingPoint=newStartingPoint, stepVector=newStepVector, unit=unit)
+        
 
     def __str__(self):
         return '\n'.join([

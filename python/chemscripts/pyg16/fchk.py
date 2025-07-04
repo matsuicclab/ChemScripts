@@ -414,6 +414,7 @@ class Fchk:
     def generateElectronDensityCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None):
         """
         電子密度のcubeデータを生成
+        unit: step, paddingの単位指定 (cubeGrid指定時は無視)
         return: Cubeインスタンス
         """
         if cubeGrid is not None:
@@ -439,9 +440,12 @@ class Fchk:
             return self.generateElectronDensityCube(cubeGrid=cubeGrid)
 
 
-    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None, densCube=None):
+    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', espunit='a.u.', cubeGrid=None, densDetailRatio=1):
         """
         静電ポテンシャルのcubeデータを生成
+        unit: step, paddingの単位指定 (cubeGrid指定時は無視)
+        densDetailRatio: 非ゼロ整数
+                    densStepVector = espStepVector * abs(ratio) ** sign(ratio)
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
@@ -450,39 +454,43 @@ class Fchk:
             # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
                 raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+            
+            if densDetail is not int:
+                raise TypeError('type of densDetail must be int')
 
-            if densCube is None:
-                raise ValueError('densCube is None')
-            if type(densCube) is not Cube:
-                raise TypeError('type of densCube must be chemscript.pyg16.cube.Cube')
+            unit = 'Bohr' # 一旦a.u.で計算する
 
-            unit = 'Bohr'
-
+            # 電子密度分布のグリッドを生成
+            # ESPグリッドから等距離に電子密度グリッドを配置するように位置を調整(shift=0.5)
+            # これをしないと二つの離散点が重なってしまい発散してしまう
+            densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
+            
             # 電子密度分布を取得
-            dens = densCube.giveCubeData() # shape: (na2,nb2,nc2,1)
-            coords_dens = densCube.giveNodeCoord(unit=unit) # shape: (na2,nb2,nc2,3)
+            coords_dens = densCubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na1*nb1*nc1,3)
+            dens = self.calcElectronDensity(coords_dens) # shape: (na1*nb1*nc1,)
 
             # ポテンシャルの計算点の座標を取得
-            coords_pot = cubeGrid.giveNodeCoord(unit=unit) # shape: (na1,nb1,nc1,3)
-            numgrid_pot = cubeGrid.giveNumGridPoint() # == (na1,nb1,nc1)
+            coords_pot = cubeGrid.giveNodeCoord(unit=unit) # shape: (na2,nb2,nc2,3)
 
             # 電子由来の静電ポテンシャル
             # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
             # ポテンシャルの計算点ごとに計算を実行
-            dens = dens.reshape(-1)
-            coords_dens = coords_dens.reshape(-1,3)
-            pot_el = (-1) * np.array([np.sum(np.linalg.norm(coords_dens-r,axis=1) * dens) for r in coords_pot.reshape(-1,3)]).reshape(*numgrid_pot,1) # shape: (na1,nb1,nc1,1), unit: a.u.
+            pot_el = (-1) * np.array([np.sum(dens / np.linalg.norm(coords_dens-r,axis=1)) for r in coords_pot.reshape(-1,3)]) # shape: (na2*nb2*nc2,), unit: a.u.
 
             # 原子核由来の静電ポテンシャル
             atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
             atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
-            pot_nu = np.sum(atomicnums * cdist(coords_pot.reshape(-1,3), atomXYZArray), axis=0).reshape(*numgrid_pot,1) # shape: (na1,nb1,nc1,1), unit: a.u.
+            pot_nu = np.sum(atomicnums / cdist(coords_pot.reshape(-1,3), atomXYZArray), axis=1) # shape: (na2*nb2*nc2,), unit: a.u.
 
             # 足し算
             pot = pot_el + pot_nu
 
+            # 単位変換
+            if espunit == 'V':
+                pot *= 27.21162
+
             # Cubeインスタンス生成
-            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, valueNames=['ElectrostaticPotential'], moleculeObj=molecule)
+            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, valueNames=['ElectrostaticPotential[{}]'.format(espunit)], moleculeObj=molecule)
 
             return cube
 
@@ -491,7 +499,7 @@ class Fchk:
             cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
             
             # 再度呼び出し
-            return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densCube=densCube)
+            return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densDetail=densDetail)
 
 
 
