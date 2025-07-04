@@ -429,7 +429,7 @@ class Fchk:
             gridcoords = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na*nb*nc,3)
             densitydata = self.calcElectronDensity(gridcoords, unit=unit) # shape: (na*nb*nc,)
             # Cubeインスタンス生成
-            cube = Cube(cubeGrid=cubeGrid, cubeData=densitydata, valueNames=['ElectronDensity'], moleculeObj=molecule)
+            cube = Cube(cubeGrid=cubeGrid, cubeData=densitydata, comment=['ElectronDensity'], moleculeObj=molecule)
 
             return cube
 
@@ -491,7 +491,7 @@ class Fchk:
                 pot *= 27.21162
 
             # Cubeインスタンス生成
-            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, valueNames=['ElectrostaticPotential[{}]'.format(espunit)], moleculeObj=molecule)
+            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, comment=['ElectrostaticPotential[{}]'.format(espunit)], moleculeObj=molecule)
 
             return cube
 
