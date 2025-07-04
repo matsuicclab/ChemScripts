@@ -615,10 +615,10 @@ class CubeGrid:
         self.__numGridPoint = numGridPoint
         self.__unit = unit
 
-    def __init__fromCubeGrid(self, cubeGrid=None, stepRatio=1, numMarginGrid=0, shiftGrid=0):
+    def __init__fromCubeGrid(self, cubeGrid=None, stepDetailRatio=1, numMarginGrid=0, shiftGrid=0):
         """
-        stepRatio: 非ゼロ整数
-                    newStepVector = oldStepVector * abs(ratio) ** sign(ratio)
+        stepDetailRatio: 非ゼロ整数
+                    newStepVector = oldStepVector / (abs(ratio) ** sign(ratio))
         numMarginGrid: 整数 
                     与えられたcubeGridの外側にどれだけ広げるか(newStepVector単位)
         shiftGrid: [0,1)の実数
@@ -626,15 +626,15 @@ class CubeGrid:
         """
         if type(cubeGrid) is not CubeGrid:
             raise TypeError('type of cubeGrid must be CubeGrid')
-        if type(stepRatio) is not int:
-            raise TypeError('type of stepRatio must be int')
+        if type(stepDetailRatio) is not int:
+            raise TypeError('type of stepDetailRatio must be int')
         if type(numMarginGrid) is not int:
             raise TypeError('type of numMarginGrid must be int')
         if type(shiftGrid) not in [int, float]:
             raise TypeError('shiftGrid must be a number')
 
-        if stepRatio == 0:
-            raise ValueError('stepRatio must not be zero')
+        if stepDetailRatio == 0:
+            raise ValueError('stepDetailRatio must not be zero')
         if shiftGrid < 0 or shiftGrid >= 1:
             raise ValueError('shiftGrid must be a real number greater than or equal to 0 and less than 1')
         
@@ -642,8 +642,8 @@ class CubeGrid:
         newUnit = cubeGrid.__unit
         
         # stepVector決定
-        ratio = np.abs(stepRatio) ** np.sign(stepRatio)
-        newStepVector = cubeGrid.__stepVector * ratio
+        ratio = np.abs(stepDetailRatio) ** np.sign(stepDetailRatio)
+        newStepVector = cubeGrid.__stepVector / ratio
         v1, v2, v3 = newStepVector
         
         # numGridPoint決定

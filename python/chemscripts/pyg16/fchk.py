@@ -446,7 +446,7 @@ class Fchk:
         静電ポテンシャルのcubeデータを生成
         unit: step, paddingの単位指定 (cubeGrid指定時は無視)
         densDetailRatio: 非ゼロ整数
-                    densStepVector = espStepVector * abs(ratio) ** sign(ratio)
+                    densStepVector = espStepVector / (abs(ratio) ** sign(ratio))
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
@@ -459,8 +459,12 @@ class Fchk:
             unit = 'Bohr' # 一旦a.u.で計算する
 
             # 電子密度分布のグリッドを生成
-            # ESPグリッドから等距離に電子密度グリッドを配置するように位置を調整(shift=0.5)
+            # ESPグリッドから等距離に電子密度グリッドを配置するように位置を調整(shift)
             # これをしないと二つの離散点が重なってしまい発散してしまう
+            if densDetailRatio > 0:
+                shift = 0.5
+            else:
+                shift = 1 / (2*np.abs(densDetailRatio))
             densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
             
             # 電子密度分布を取得
