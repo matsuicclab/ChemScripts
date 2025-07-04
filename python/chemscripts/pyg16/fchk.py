@@ -417,6 +417,8 @@ class Fchk:
         unit: step, paddingの単位指定 (cubeGrid指定時は無視)
         return: Cubeインスタンス
         """
+        molecule = self.giveMoleculeObj()
+        
         if cubeGrid is not None:
             # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
@@ -433,7 +435,6 @@ class Fchk:
 
         else:
             # cubeGridを生成
-            molecule = self.giveMoleculeObj()
             cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
             
             # 再度呼び出し
