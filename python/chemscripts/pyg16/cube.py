@@ -647,7 +647,7 @@ class CubeGrid:
             newStepVector = cubeGrid.__stepVector / stepDetailRatio
             newNumGridPoint = (stepDetailRatio * (cubeGrid.__numGridPoint - 1) + 1) + numMarginGrid * 2
         else:
-            newStepVector = cubeGrid.__stepVector * stepDetailRatio
+            newStepVector = cubeGrid.__stepVector * np.abs(stepDetailRatio)
             newNumGridPoint = ((cubeGrid.__numGridPoint - 1) // np.abs(stepDetailRatio) + 1) + numMarginGrid * 2
         v1, v2, v3 = newStepVector
         
