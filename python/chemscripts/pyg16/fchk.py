@@ -411,13 +411,11 @@ class Fchk:
 
         return densitydata
 
-    def generateElectronDensityCube(self, step=0.2, distance=3.0, unit='Angstrom', cubeGrid=None):
+    def generateElectronDensityCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None):
         """
         電子密度のcubeデータを生成
         return: Cubeインスタンス
         """
-        molecule = self.giveMoleculeObj()
-
         if cubeGrid is not None:
             # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
@@ -434,28 +432,14 @@ class Fchk:
 
         else:
             # cubeGridを生成
-            if type(step) is not float:
-                raise TypeError('type of step must be float')
-            if type(distance) is not float:
-                raise TypeError('type of distance must be float')
-            if step <= 0:
-                raise ValueError('step must be larger than 0')
-            if distance <= 0:
-                raise ValueError('distance must be larger than 0')
-
-            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (n,3)
-            minXYZ = np.min(atomXYZArray, axis=0) # shape: (3,)
-            maxXYZ = np.max(atomXYZArray, axis=0) # shape: (3,)
-            startingPoint = minXYZ - distance # shape: (3,)
-            stepVector = np.diag([step,step,step]) # shape: (3,3)
-            endingPoint = maxXYZ + distance # shape: (3,)
-
-            cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
-
+            molecule = self.giveMoleculeObj()
+            cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
+            
+            # 再度呼び出し
             return self.generateElectronDensityCube(cubeGrid=cubeGrid)
 
 
-    def generateElectrostaticPotentialCube(self, step=0.2, distance=3.0, unit='Angstrom', cubeGrid=None, densCube=None):
+    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None, densCube=None):
         """
         静電ポテンシャルのcubeデータを生成
         return: Cubeインスタンス
@@ -504,24 +488,9 @@ class Fchk:
 
         else:
             # cubeGridを生成
-            if type(step) is not float:
-                raise TypeError('type of step must be float')
-            if type(distance) is not float:
-                raise TypeError('type of distance must be float')
-            if step <= 0:
-                raise ValueError('step must be larger than 0')
-            if distance <= 0:
-                raise ValueError('distance must be larger than 0')
-
-            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (n,3)
-            minXYZ = np.min(atomXYZArray, axis=0) # shape: (3,)
-            maxXYZ = np.max(atomXYZArray, axis=0) # shape: (3,)
-            startingPoint = minXYZ - distance # shape: (3,)
-            stepVector = np.diag([step,step,step]) # shape: (3,3)
-            endingPoint = maxXYZ + distance # shape: (3,)
-
-            cubeGrid = CubeGrid(startingPoint=startingPoint, stepVector=stepVector, endingPoint=endingPoint, unit=unit)
-
+            cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
+            
+            # 再度呼び出し
             return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densCube=densCube)
 
 
