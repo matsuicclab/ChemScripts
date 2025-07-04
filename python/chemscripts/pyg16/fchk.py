@@ -441,12 +441,14 @@ class Fchk:
             return self.generateElectronDensityCube(cubeGrid=cubeGrid)
 
 
-    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', espunit='a.u.', cubeGrid=None, densDetailRatio=1):
+    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', espunit='a.u.', cubeGrid=None, densDetailRatio=1, numSplit=100):
         """
         静電ポテンシャルのcubeデータを生成
         unit: step, paddingの単位指定 (cubeGrid指定時は無視)
         densDetailRatio: 非ゼロ整数
                     densStepVector = espStepVector / (abs(ratio) ** sign(ratio))
+        numSplit: メモリオーバー対策のオプション
+                  numSplitの数だけ計算を小分けにする
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
@@ -478,7 +480,11 @@ class Fchk:
             # 電子由来の静電ポテンシャル
             # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
             # ポテンシャルの計算点ごとに計算を実行
-            pot_el = (-1) * deltaV * np.array([np.sum(dens / np.linalg.norm(coords_dens-r,axis=1)) for r in coords_pot]) # shape: (na2*nb2*nc2,), unit: a.u.
+            
+            pot_el = (-1) * deltaV * \
+                        np.concatenate(
+                            [np.sum(dens / cdist(_coords_pot, coords_dens), axis=1) for _coords_pot in np.array_split(coords_pot, numSplit, axis=0)]
+                        ) # shape: (na2*nb2*nc2,), unit: a.u.
 
             # 原子核由来の静電ポテンシャル
             atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
