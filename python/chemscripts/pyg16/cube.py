@@ -647,7 +647,7 @@ class CubeGrid:
         v1, v2, v3 = newStepVector
         
         # numGridPoint決定
-        newNumGridPoint = cubeGrid.__numGridPoint + numMarginGrid * 2
+        newNumGridPoint = (2 * cubeGrid.__numGridPoint - 1) + numMarginGrid * 2
         
         # startingPoint決定
         newStartingPoint = cubeGrid.__startingPoint + (v1+v2+v3) * (- numMarginGrid + shiftGrid)
