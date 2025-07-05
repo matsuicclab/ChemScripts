@@ -499,7 +499,10 @@ class Fchk:
                 pot *= 27.21162
 
             # Cubeインスタンス生成
-            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, comment='ElectrostaticPotential[{}]'.format(espunit), moleculeObj=molecule)
+            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, 
+                        comment='ElectrostaticPotential[{}] calculated using electron density at densDetailRatio={}'.format(espunit,densDetailRatio), 
+                        moleculeObj=molecule
+                )
 
             return cube
 
@@ -508,7 +511,7 @@ class Fchk:
             cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
             
             # 再度呼び出し
-            return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densDetail=densDetail)
+            return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densDetailRatio=densDetailRatio, numSplit=numSplit)
 
     def generateElectricFieldCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None, densDetailRatio=1):
         """
@@ -558,7 +561,10 @@ class Fchk:
             E = E_el + E_nu
 
             # Cubeインスタンス生成
-            cube = Cube(cubeGrid=cubeGrid, cubeData=E, comment='ElectricField[a.u.]', moleculeObj=molecule)
+            cube = Cube(cubeGrid=cubeGrid, cubeData=E, 
+                        comment='ElectricField[a.u.] calculated using electron density at densDetailRatio={}'.format(densDetailRatio),
+                        moleculeObj=molecule
+                )
 
             return cube
 
