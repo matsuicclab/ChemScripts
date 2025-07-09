@@ -415,6 +415,7 @@ class Fchk:
                                            divideList(divideList(contractions,numPrimitives),numShells),
                                            divideList(divideList(SPcontractions,numPrimitives),numShells)
                                           ):
+            _result = []
             symb = table.GetElementSymbol(an)
             symbCounter[symb] += 1
             for st, _exs, _cts, _spcts in zip(sts,exs,cts,spcts):
@@ -428,9 +429,10 @@ class Fchk:
                     st_str = 'D'
                 else:
                     raise ValueError('unsupported shell type: {}'.format(st))
-                result.append('{}{} {}'.format(symb, symbCounter[symb], st_str))
-                result.extend(['    {:.10e} {:.10e} {:.10e}'.format(e,c,spct) if spct != 0 else '    {:.10e} {:.10e}'.format(e,c) for e,c,spct in zip(_exs,_cts,_spcts)])
-        return '\n'.join(result), '6D'
+                _result.append('{}{} {}'.format(symb, symbCounter[symb], st_str))
+                _result.extend(['    {:.10e} {:.10e} {:.10e}'.format(e,c,spct) if spct != 0 else '    {:.10e} {:.10e}'.format(e,c) for e,c,spct in zip(_exs,_cts,_spcts)])
+                result.append('\n'.join(_result))
+        return result, '6D'
     
 
     def calcElectronDensity(self, r, unit='Bohr'):
@@ -645,7 +647,12 @@ class Fchk:
         from collections import defaultdict
         from pyscf import gto
         from rdkit import Chem
+        import re
         
+        charge = self.giveCharge()
+        multiplicity = self.giveMultiplicity()
+        spin = multiplicity - 1
+
         table = Chem.GetPeriodicTable()
         atomicNums = self.giveAtomicNums()
         elementSymbs = [table.GetElementSymbol(int(n)) for n in atomicNums]
@@ -656,10 +663,9 @@ class Fchk:
             labeledElementSymbs.append('{}{}'.format(s,counter[s]))
         coords = self.giveCoords(unit='Bohr')
         xyzdata = '\n'.join(['{} {} {} {}'.format(s,x,y,z) for s,(x,y,z) in zip(labeledElementSymbs, coords)])
-        basisdata, dtype = self.giveBasisFuncsData()
-        charge = self.giveCharge()
-        multiplicity = self.giveMultiplicity()
-        spin = multiplicity - 1
+        
+        basisdataList, dtype = self.giveBasisFuncsData()
+        basisdataDict = {re.sub(' .+','', data, flags=re.DOTALL): gto.basis.parse(data) for data in basisdataList}
 
         cart = dtype == '6D'
         mol = gto.M(atom=xyzdata, charge=charge, spin=spin, basis=basisdata, cart=cart)
