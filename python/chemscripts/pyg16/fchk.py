@@ -391,6 +391,7 @@ class Fchk:
         """
         NWChem形式で基底関数情報を出力
         """
+        from collections import defaultdict
         from rdkit import Chem
         table = Chem.GetPeriodicTable()
         
@@ -405,7 +406,7 @@ class Fchk:
         _, numShells = np.unique(self.giveValue('Shell to atom map'), return_counts=True)
         atomicNums = self.giveValue('Atomic numbers')
     
-        symbCounter = {}
+        symbCounter = defaultdict(int)
         result = []
         divideList = self.__divideList
         for an, sts, exs, cts, spcts in zip(atomicNums, 
@@ -641,13 +642,15 @@ class Fchk:
         """
         return: pyscf.gto.mole.Mole
         """
+        from collections import defaultdict
         from pyscf import gto
         from rdkit import Chem
+        
         table = Chem.GetPeriodicTable()
         atomicNums = self.giveAtomicNums()
         elementSymbs = [table.GetElementSymbol(int(n)) for n in atomicNums]
         labeledElementSymbs = []
-        counter = {}
+        counter = defaultdict(int)
         for s in elementSymbs:
             counter[s] += 1
             labeledElementSymbs.append('{}{}'.format(s,counter[s]))
