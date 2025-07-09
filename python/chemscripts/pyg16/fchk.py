@@ -73,7 +73,7 @@ class Fchk:
 
         self.__molecule = None
 
-    def __devideList(self, targetList, ruleList):
+    def __divideList(self, targetList, ruleList):
         """
         指定された(一次元)リストを複数のリストに分割する
         targetList = [a,b,c,d,e,f,g]
@@ -359,9 +359,9 @@ class Fchk:
         coordsshell = np.array(self.giveValue('Coordinates of each shell')).reshape(-1,3) # len == numShell * 3
 
         # 各shell単位で分割
-        exponents = self.__devideList(exponents, numPrimitives)            # len == numShell
-        contractions = self.__devideList(contractions, numPrimitives)      # len == numShell
-        SPcontractions = self.__devideList(SPcontractions, numPrimitives)  # len == numShell
+        exponents = self.__divideList(exponents, numPrimitives)            # len == numShell
+        contractions = self.__divideList(contractions, numPrimitives)      # len == numShell
+        SPcontractions = self.__divideList(SPcontractions, numPrimitives)  # len == numShell
 
         basisFuncList = []
         for st, coord, c, spc, ex in zip(shelltypes, coordsshell, contractions, SPcontractions, exponents):
@@ -394,19 +394,20 @@ class Fchk:
         from rdkit import Chem
         table = Chem.GetPeriodicTable()
         
-        shelltypes = fchkfile.giveValue('Shell types')                         # len == numShell
-        numPrimitives = fchkfile.giveValue('Number of primitives per shell')   # len == numShell
-        exponents = fchkfile.giveValue('Primitive exponents')                  # len == numPrimitive
-        contractions = fchkfile.giveValue('Contraction coefficients')          # len == numPrimitive
-        SPcontractions = fchkfile.giveValue('P(S=P) Contraction coefficients') # len == numPrimitive
+        shelltypes = self.giveValue('Shell types')                         # len == numShell
+        numPrimitives = self.giveValue('Number of primitives per shell')   # len == numShell
+        exponents = self.giveValue('Primitive exponents')                  # len == numPrimitive
+        contractions = self.giveValue('Contraction coefficients')          # len == numPrimitive
+        SPcontractions = self.giveValue('P(S=P) Contraction coefficients') # len == numPrimitive
         if SPcontractions is None:
             SPcontractions = [0 for i in contractions]
-        coordsshell = np.array(fchkfile.giveValue('Coordinates of each shell')).reshape(-1,3)
-        _, numShells = np.unique(fchkfile.giveValue('Shell to atom map'), return_counts=True)
-        atomicNums = fchkfile.giveValue('Atomic numbers')
+        coordsshell = np.array(self.giveValue('Coordinates of each shell')).reshape(-1,3)
+        _, numShells = np.unique(self.giveValue('Shell to atom map'), return_counts=True)
+        atomicNums = self.giveValue('Atomic numbers')
     
         symbCounter = {}
         result = []
+        divideList = self.__divideList
         for an, sts, exs, cts, spcts in zip(atomicNums, 
                                            divideList(shelltypes, numShells), 
                                            divideList(divideList(exponents,numPrimitives),numShells),
@@ -644,7 +645,7 @@ class Fchk:
         from rdkit import Chem
         table = Chem.GetPeriodicTable()
         atomicNums = self.giveAtomicNums()
-        elementSymbs = [table.GetElementSymbol(n) for n in atomicNums]
+        elementSymbs = [table.GetElementSymbol(int(n)) for n in atomicNums]
         labeledElementSymbs = []
         counter = {}
         for s in elementSymbs:
