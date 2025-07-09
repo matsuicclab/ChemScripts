@@ -387,6 +387,50 @@ class Fchk:
 
         return basisFuncList
 
+    def giveBasisFuncsData(self):
+        """
+        NWChem形式で基底関数情報を出力
+        """
+        from rdkit import Chem
+        table = Chem.GetPeriodicTable()
+        
+        shelltypes = fchkfile.giveValue('Shell types')                         # len == numShell
+        numPrimitives = fchkfile.giveValue('Number of primitives per shell')   # len == numShell
+        exponents = fchkfile.giveValue('Primitive exponents')                  # len == numPrimitive
+        contractions = fchkfile.giveValue('Contraction coefficients')          # len == numPrimitive
+        SPcontractions = fchkfile.giveValue('P(S=P) Contraction coefficients') # len == numPrimitive
+        if SPcontractions is None:
+            SPcontractions = [0 for i in contractions]
+        coordsshell = np.array(fchkfile.giveValue('Coordinates of each shell')).reshape(-1,3)
+        _, numShells = np.unique(fchkfile.giveValue('Shell to atom map'), return_counts=True)
+        atomicNums = fchkfile.giveValue('Atomic numbers')
+    
+        symbCounter = {}
+        result = []
+        for an, sts, exs, cts, spcts in zip(atomicNums, 
+                                           divideList(shelltypes, numShells), 
+                                           divideList(divideList(exponents,numPrimitives),numShells),
+                                           divideList(divideList(contractions,numPrimitives),numShells),
+                                           divideList(divideList(SPcontractions,numPrimitives),numShells)
+                                          ):
+            symb = table.GetElementSymbol(an)
+            symbCounter[symb] += 1
+            for st, _exs, _cts, _spcts in zip(sts,exs,cts,spcts):
+                if st == 0:
+                    st_str = 'S'
+                elif st == 1:
+                    st_str = 'P'
+                elif st == -1:
+                    st_str = 'SP'
+                elif st == 2:
+                    st_str = 'D'
+                else:
+                    raise ValueError('unsupported shell type: {}'.format(st))
+                result.append('{}{} {}'.format(symb, symbCounter[symb], st_str))
+                result.extend(['    {:.10e} {:.10e} {:.10e}'.format(e,c,spct) if spct != 0 else '    {:.10e} {:.10e}'.format(e,c) for e,c,spct in zip(_exs,_cts,_spcts)])
+        return '\n'.join(result), '6D'
+    
+
     def calcElectronDensity(self, r, unit='Bohr'):
         """
         指定された座標における電子密度を計算
@@ -592,3 +636,30 @@ class Fchk:
 
         return self.__molecule
 
+    def givePySCFMoleculeObj(self):
+        """
+        return: pyscf.gto.mole.Mole
+        """
+        from pyscf import gto
+        from rdkit import Chem
+        table = Chem.GetPeriodicTable()
+        atomicNums = self.giveAtomicNums()
+        elementSymbs = [table.GetElementSymbol(n) for n in atomicNums]
+        labeledElementSymbs = []
+        counter = {}
+        for s in elementSymbs:
+            counter[s] += 1
+            labeledElementSymbs.append('{}{}'.format(s,counter[s]))
+        coords = self.giveCoords(unit='Bohr')
+        xyzdata = '\n'.join(['{} {} {} {}'.format(s,x,y,z) for s,(x,y,z) in zip(labeledElementSymbs, coords)])
+        basisdata, dtype = self.giveBasisFuncsData()
+        charge = self.giveCharge()
+        multiplicity = self.giveMultiplicity()
+        spin = multiplicity - 1
+
+        cart = dtype == '6D'
+        mol = gto.M(atom=xyzdata, charge=charge, spin=spin, basis=basisdata, cart=cart)
+        return mol
+        
+        
+        
