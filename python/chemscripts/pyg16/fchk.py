@@ -668,7 +668,7 @@ class Fchk:
         basisdataDict = {re.sub(' .+','', data, flags=re.DOTALL): gto.basis.parse(data) for data in basisdataList}
 
         cart = dtype == '6D'
-        mol = gto.M(atom=xyzdata, charge=charge, spin=spin, basis=basisdata, cart=cart)
+        mol = gto.M(atom=xyzdata, unit='Bohr', charge=charge, spin=spin, basis=basisdataDict, cart=cart)
         return mol
         
         
