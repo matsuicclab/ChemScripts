@@ -313,15 +313,20 @@ class Fchk:
 
     def giveDensityMatrix(self):
         """
-        密度行列を返す
+        電子密度行列を返す
         return: np.ndarray (shape: (numBasis, numBasis))
         """
-        # densityのリストを取得
-        densityList = self.giveValue('Spin SCF Density')
-        densityList = np.array(densityList)
-        # 三角行列になっているので、元の対称行列に変形
-        densityMatrix = np.triu(squareform(densityList))[:-1,1:]
-        densityMatrix = densityMatrix + np.tril(densityMatrix.T, k=-1)
+        #以下でも計算可能だが、一次元配列を二次元行列に変える際にインデックスの取り方に注意
+        #p = np.array(self.giveValue('Total SCF Density'))
+        #_P = squareform(p[::-1])[::-1][:,::-1]
+        #_P = np.triu(_P)
+        #P = _P + np.tril(_P.T, k=-1)
+
+        numAlpha = self.giveNumAlphaElectrons()
+        numBeta = self.giveNumBetaElectrons()
+        alphaCoeffs, betaCoeffs = self.giveOrbitalCoeffList(merge=False)
+        orbitalCoeffs = np.vstack([alphaCoeffs[:numAlpha], betaCoeffs[:numBeta]])
+        densityMatrix = np.einsum('ij,ik->jk', orbitalCoeffs, orbitalCoeffs)
 
         return densityMatrix
 
@@ -339,11 +344,12 @@ class Fchk:
             return spinDensityMatrix
 
         spinDensityList = np.array(spinDensityList)
+        _P = squareform(spinDensityList[::-1])[::-1][:,::-1]
+        _P = np.triu(_P)
         # 三角行列になっているので、元の対称行列に変形
-        spinDensityMatrix = np.triu(squareform(spinDensityList))[:-1,1:]
-        spinDensityMatrix = spinDensityMatrix + np.tril(spinDensityMatrix.T, k=-1)
+        P = _P + np.tril(_P.T, k=-1)
 
-        return spinDensityMatrix
+        return P
 
 
     def giveBasisFuncs(self):
