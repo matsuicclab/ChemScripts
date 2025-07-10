@@ -21,7 +21,7 @@ class Molecule:
                 atomicnumList = list(atomicnumList)
             if type(atomicnumList) is not list:
                 raise TypeError('type of atomicnumList must be list, np.ndarray, or tuple')
-            if any([type(n) is not int for n in atomicnumList]):
+            if any([type(n) not in [int, np.int32, np.int64] for n in atomicnumList]):
                 # 要素は整数のみ
                 raise TypeError('type of elements of atomicnumList must be int')
             if any([n<1 for n in atomicnumList]):
