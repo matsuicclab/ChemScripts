@@ -529,7 +529,7 @@ class Fchk:
 
         return P
 
-    def calcElectrostaticPotentialCube(self, r, unit='Bohr', espunit='a.u.', method='GTOIntegral',
+    def calcElectrostaticPotential(self, r, unit='Bohr', espunit='a.u.', method='GTOIntegral',
                                        degree=None,
                                        densCubeGrid=None, numSplit=100
                                        ):
@@ -668,12 +668,10 @@ class Fchk:
             # 再度呼び出し
             return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densDetailRatio=densDetailRatio, numSplit=numSplit)
 
-    def generateElectricFieldCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None, densDetailRatio=1):
+    def generateElectricFieldCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None):
         """
         電場のcubeデータを生成
         unit: step, paddingの単位指定 (cubeGrid指定時は無視)
-        densDetailRatio: 非ゼロ整数
-                    densStepVector = espStepVector / (abs(ratio) ** sign(ratio))
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
@@ -715,7 +713,7 @@ class Fchk:
 
             # Cubeインスタンス生成
             cube = Cube(cubeGrid=cubeGrid, cubeData=E,
-                        comment='ElectricField[a.u.] calculated using GTO integral'.format(densDetailRatio),
+                        comment='ElectricField[a.u.] calculated using GTO integral',
                         moleculeObj=molecule
                 )
 

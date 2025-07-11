@@ -133,8 +133,10 @@ class Cube:
         if cubeData.dtype.name != 'float64':
             raise TypeError('type of elements of cubeData must be float64')
         # shapeを(*numGridPoint, valueDim)に変形
-        if len(cubeData.shape) == 1 and float(np.prod(cubeData.shape)/np.prod(numGridPoint)).is_integer():
+        if len(cubeData.shape) == 1 and float(cubeData.shape[0]/np.prod(numGridPoint)).is_integer():
             cubeData = cubeData.reshape(*numGridPoint, -1)
+        elif len(cubeData.shape) == 2 and float(cubeData.shape[0]/np.prod(numGridPoint)).is_integer():
+            cubeData = cubeData.reshape(*numGridPoint, cubeData.shape[1])
         elif len(cubeData.shape) == 3 and cubeData.shape == tuple(numGridPoint):
             cubeData = cubeData.reshape(*numGridPoint, 1)
         elif len(cubeData.shape) == 4 and cubeData.shape[:-1] == tuple(numGridPoint):
@@ -619,7 +621,7 @@ class CubeGrid:
         """
         stepDetailRatio: 非ゼロ整数
                     newStepVector = oldStepVector / (abs(ratio) ** sign(ratio))
-        numMarginGrid: 整数 
+        numMarginGrid: 整数
                     与えられたcubeGridの外側にどれだけ広げるか(newStepVector単位)
         shiftGrid: [0,1)の実数
                     startingPointをどれだけズラすか(newStepVector単位)
@@ -637,10 +639,10 @@ class CubeGrid:
             raise ValueError('stepDetailRatio must not be zero')
         if shiftGrid < 0 or shiftGrid >= 1:
             raise ValueError('shiftGrid must be a real number greater than or equal to 0 and less than 1')
-        
+
         # 単位決定
         newUnit = cubeGrid.__unit
-        
+
         # stepVector決定
         # numGridPoint決定
         if stepDetailRatio > 0:
@@ -650,13 +652,13 @@ class CubeGrid:
             newStepVector = cubeGrid.__stepVector * np.abs(stepDetailRatio)
             newNumGridPoint = ((cubeGrid.__numGridPoint - 1) // np.abs(stepDetailRatio) + 1) + numMarginGrid * 2
         v1, v2, v3 = newStepVector
-        
+
         # startingPoint決定
         newStartingPoint = cubeGrid.__startingPoint + (v1+v2+v3) * (- numMarginGrid + shiftGrid)
 
-        # 構築        
+        # 構築
         self.__init__fromParam(startingPoint=newStartingPoint, stepVector=newStepVector, numGridPoint=newNumGridPoint, unit=newUnit)
-        
+
 
     def __str__(self):
         return '\n'.join([
@@ -788,7 +790,7 @@ class CubeGrid:
         グリッド一間隔辺りの体積を計算
         """
         return np.abs(np.linalg.det(self.giveStepVector(unit=unit)))
-        
+
 
 class Slice:
     """
