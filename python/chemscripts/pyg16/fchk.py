@@ -698,10 +698,11 @@ class Fchk:
             P_ = np.einsum('ij,i,j->ij', P,C,C) # shape: (numAO, numAO)
             def func(center):
                 with pyscfmol.with_rinv_origin(center):
-                    # <mu| (r1-center)/|r1-center|^3 |nu>
+                    # <mu| grad(1/|r1-center|) |nu>
+                    # = -1 * <mu| (r1-center)/|r1-center|^3 |nu>
                     V = pyscfmol.intor('int1e_drinv', comp=3) # shape: (3, numAO, numAO)
                 return np.einsum('ij,nij->n',P_,V) # shape: (3,)
-            E_el = -np.array([func(center) for center in coords_E]) # shape: (na*nb*nc,3), unit: a.u.
+            E_el = np.array([func(center) for center in coords_E]) # shape: (na*nb*nc,3), unit: a.u.
 
             # 原子核由来の電場
             atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
