@@ -400,7 +400,7 @@ class Fchk:
         from collections import defaultdict
         from rdkit import Chem
         table = Chem.GetPeriodicTable()
-        
+
         shelltypes = self.giveValue('Shell types')                         # len == numShell
         numPrimitives = self.giveValue('Number of primitives per shell')   # len == numShell
         exponents = self.giveValue('Primitive exponents')                  # len == numPrimitive
@@ -411,12 +411,12 @@ class Fchk:
         coordsshell = np.array(self.giveValue('Coordinates of each shell')).reshape(-1,3)
         _, numShells = np.unique(self.giveValue('Shell to atom map'), return_counts=True)
         atomicNums = self.giveValue('Atomic numbers')
-    
+
         symbCounter = defaultdict(int)
         result = []
         divideList = self.__divideList
-        for an, sts, exs, cts, spcts in zip(atomicNums, 
-                                           divideList(shelltypes, numShells), 
+        for an, sts, exs, cts, spcts in zip(atomicNums,
+                                           divideList(shelltypes, numShells),
                                            divideList(divideList(exponents,numPrimitives),numShells),
                                            divideList(divideList(contractions,numPrimitives),numShells),
                                            divideList(divideList(SPcontractions,numPrimitives),numShells)
@@ -439,7 +439,7 @@ class Fchk:
                 _result.extend(['    {:.10e} {:.10e} {:.10e}'.format(e,c,spct) if spct != 0 else '    {:.10e} {:.10e}'.format(e,c) for e,c,spct in zip(_exs,_cts,_spcts)])
                 result.append('\n'.join(_result))
         return result, '6D'
-    
+
 
     def calcElectronDensity(self, r, unit='Bohr'):
         """
@@ -472,7 +472,7 @@ class Fchk:
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
-        
+
         if cubeGrid is not None:
             # cubeGridが指定されている場合
             if type(cubeGrid) is not CubeGrid:
@@ -490,19 +490,133 @@ class Fchk:
         else:
             # cubeGridを生成
             cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
-            
+
             # 再度呼び出し
             return self.generateElectronDensityCube(cubeGrid=cubeGrid)
 
+    def __giveDensityMatrixForPySCF(self):
+        """
+        PySCFとGaussianとでAOの並び順が異なるため、順番を特定し、密度行列を並び替える
+        """
+        import itertools
 
-    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', espunit='a.u.', cubeGrid=None, densDetailRatio=1, numSplit=100):
+        def mapShelltypeToAngular(st):
+            if st == 0:
+                return [[0,0,0]]
+            elif st == 1:
+                return [[1,0,0],[0,1,0],[0,0,1]]
+            elif st == -1:
+                return [[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+            elif st == 2:
+                return [[2,0,0],[0,2,0],[0,0,2],[1,1,0],[1,0,1],[0,1,1]]
+
+        _, numShellEachAtom = np.unique(self.giveValue('Shell to atom map'), return_counts=True)
+        shelltypes = self.giveValue('Shell types')
+        angularFuncsEachShell = [mapShelltypeToAngular(st) for st in shelltypes]
+        numAngularFuncsEachShell = [len(l) for l in angularFuncsEachShell]
+        numAngularFuncsEachAtom = [sum(l) for l in self.__divideList(numAngularFuncsEachShell, numShellEachAtom)]
+        shellIdxEachAngularFuncs = np.array(list(itertools.chain.from_iterable([[i]*n for i,n in enumerate(numAngularFuncsEachShell)])))
+        atomIdxEachAngularFuncs = np.array(list(itertools.chain.from_iterable([[i]*n for i,n in enumerate(numAngularFuncsEachAtom)])))
+        angularEachAngularFuncs = np.array(list(itertools.chain.from_iterable(angularFuncsEachShell))).reshape(-1,3)
+        totalAngularEachAngularFuncs = np.sum(angularEachAngularFuncs, axis=1)
+        order = np.lexsort((-angularEachAngularFuncs[:,2],-angularEachAngularFuncs[:,1],-angularEachAngularFuncs[:,0],
+            shellIdxEachAngularFuncs,
+            totalAngularEachAngularFuncs,
+            atomIdxEachAngularFuncs
+        ))
+        P = self.giveDensityMatrix() # shape: (numAO, numAO)
+        P = P[order][:,order]
+
+        return P
+
+    def calcElectrostaticPotentialCube(self, r, unit='Bohr', espunit='a.u.', method='GTOIntegral',
+                                       degree=None,
+                                       densCubeGrid=None, numSplit=100
+                                       ):
+        """
+        指定された座標における分子がつくる静電ポテンシャルを計算
+        r: 電子密度を計算する座標: np.ndarray: shape:(*,3) or (3,)
+        unit: rの単位
+        numSplit: メモリオーバー対策のオプション
+                  numSplitの数だけ計算を小分けにする
+        return: np.ndarray: shape:(*,)
+        """
+        # 単位変換
+        factor = getUnitConversionFactor(oldunit=unit, newunit='Bohr')
+        r *= factor # unit: Bohr
+
+        def __calcByGTOIntegral():
+            pyscfmol = self.givePySCFMoleculeObj()
+            P = self.__giveDensityMatrixForPySCF() # shape: (numAO, numAO)
+
+            # cart=Trueの場合、AOがそのままでは分極d関数が規格化されていないため、
+            # 規格化定数を取得する。
+            S = pyscfmol.intor('int1e_ovlp') # shape: (numAO, numAO)
+            C = np.diag(S) ** -0.5 # normalize coeff # shape: (numAO,)
+
+            # 電子由来の静電ポテンシャルを計算
+            P_ = np.einsum('ij,i,j->ij', P,C,C) # shape: (numAO, numAO)
+            def func(center):
+                with pyscfmol.with_rinv_origin(center):
+                    # <mu| 1/|r1-center| |nu>
+                    V = pyscfmol.intor('int1e_rinv') # shape: (numAO, numAO)
+                return np.einsum('ij,ij->',P_,V)
+            pot_el = -np.array([func(center) for center in r])
+            return pot_el
+
+        def __calcByHarmonicIntegral():
+            return 0
+
+        def __calcByDensityCube():
+            # グリッドの体積を計算
+            deltaV = densCubeGrid.giveDeltaV(unit='Bohr')
+
+            # 電子密度分布を取得
+            coords_dens = densCubeGrid.giveNodeCoord(unit='Bohr').reshape(-1,3) # shape: (na1*nb1*nc1,3)
+            dens = self.calcElectronDensity(coords_dens) # shape: (na1*nb1*nc1,)
+
+            # 電子由来の静電ポテンシャルを計算
+            # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
+            # ポテンシャルの計算点ごとに計算を実行
+            pot_el = (-1) * deltaV * \
+                        np.concatenate(
+                            [np.sum(dens / cdist(_coords_pot, coords_dens), axis=1) for _coords_pot in np.array_split(r, numSplit, axis=0)]
+                        ) # shape: (na2*nb2*nc2,), unit: a.u.
+            return pot_el
+
+        if method == 'GTOIntegral':
+            pot_el = __calcByGTOIntegral()
+        elif method == 'HarmonicIntegral':
+            pot_el = __calcByHarmonicIntegral()
+        elif method == 'DensityCube':
+            pot_el = __calcByDensityCube()
+        else:
+            raise ValueError('invalid method: {}'.format(method))
+
+        # 原子核由来の静電ポテンシャル
+        molecule = self.giveMoleculeObj()
+        atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
+        atomXYZArray = molecule.giveXYZArray(unit='Bohr') # shape: (numAtom, 3)
+        pot_nu = np.sum(atomicnums / cdist(r, atomXYZArray), axis=1) # shape: (*,), unit: a.u.
+
+        # 足し算
+        pot = pot_el + pot_nu # shape: (*,)
+
+        # 単位変換
+        if espunit == 'V':
+            pot *= 27.21162
+
+        return pot
+
+
+    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None, espunit='a.u.', method='GTOIntegral',
+                                           densDetailRatio=1, numSplit=100
+                                           ):
         """
         静電ポテンシャルのcubeデータを生成
         unit: step, paddingの単位指定 (cubeGrid指定時は無視)
-        densDetailRatio: 非ゼロ整数
+        densDetailRatio: method=='DensityCube'の時に指定する。非ゼロ整数
                     densStepVector = espStepVector / (abs(ratio) ** sign(ratio))
-        numSplit: メモリオーバー対策のオプション
-                  numSplitの数だけ計算を小分けにする
         return: Cubeインスタンス
         """
         molecule = self.giveMoleculeObj()
@@ -514,47 +628,34 @@ class Fchk:
 
             unit = 'Bohr' # 一旦a.u.で計算する
 
-            # 電子密度分布のグリッドを生成
-            # ESPグリッドから等距離に電子密度グリッドを配置するように位置を調整(shift)
-            # これをしないと二つの離散点が重なってしまい発散してしまう
-            if densDetailRatio > 0:
-                shift = 0.5
-            else:
-                shift = 1 / (2*np.abs(densDetailRatio))
-            densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepDetailRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
-            deltaV = densCubeGrid.giveDeltaV(unit=unit) 
-            
-            # 電子密度分布を取得
-            coords_dens = densCubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na1*nb1*nc1,3)
-            dens = self.calcElectronDensity(coords_dens) # shape: (na1*nb1*nc1,)
-
             # ポテンシャルの計算点の座標を取得
             coords_pot = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na2*nb2*nc2,3)
 
-            # 電子由来の静電ポテンシャル
-            # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
-            # ポテンシャルの計算点ごとに計算を実行
-            
-            pot_el = (-1) * deltaV * \
-                        np.concatenate(
-                            [np.sum(dens / cdist(_coords_pot, coords_dens), axis=1) for _coords_pot in np.array_split(coords_pot, numSplit, axis=0)]
-                        ) # shape: (na2*nb2*nc2,), unit: a.u.
+            if method == 'DensityCube':
+                # 電子密度分布のグリッドを生成
+                # ESPグリッドから等距離に電子密度グリッドを配置するように位置を調整(shift)
+                # これをしないと二つの離散点が重なってしまい発散してしまう
+                if densDetailRatio > 0:
+                    shift = 0.5
+                else:
+                    shift = 1 / (2*np.abs(densDetailRatio))
+                densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepDetailRatio=densDetailRatio, numMarginGrid=2, shiftGrid=shift)
+                methodComment = 'electron density cube at densDetailRatio={}'.format(densDetailRatio)
+            elif method == 'GTOIntegral':
+                densCubeGrid = None
+                methodComment = 'GTO integral'
+            elif method == 'HarmonicIntegral':
+                densCubeGrid = None
+                methodComment = 'quadrature'
+            else:
+                raise ValueError('invalid method: {}'.format(method))
 
-            # 原子核由来の静電ポテンシャル
-            atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
-            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
-            pot_nu = np.sum(atomicnums / cdist(coords_pot, atomXYZArray), axis=1) # shape: (na2*nb2*nc2,), unit: a.u.
-
-            # 足し算
-            pot = pot_el + pot_nu
-
-            # 単位変換
-            if espunit == 'V':
-                pot *= 27.21162
+            # 静電ポテンシャルを計算
+            pot = self.calcElectrostaticPotential(coords_pot, unit=unit, espunit=espunit, method=method, densCubeGrid=densCubeGrid, numSplit=numSplit) # shape: (na2*nb2*nc2,)
 
             # Cubeインスタンス生成
-            cube = Cube(cubeGrid=cubeGrid, cubeData=pot, 
-                        comment='ElectrostaticPotential[{}] calculated using electron density at densDetailRatio={}'.format(espunit,densDetailRatio), 
+            cube = Cube(cubeGrid=cubeGrid, cubeData=pot,
+                        comment='ElectrostaticPotential[{}] calculated using {}'.format(espunit,methodComment),
                         moleculeObj=molecule
                 )
 
@@ -563,7 +664,7 @@ class Fchk:
         else:
             # cubeGridを生成
             cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
-            
+
             # 再度呼び出し
             return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densDetailRatio=densDetailRatio, numSplit=numSplit)
 
@@ -584,39 +685,37 @@ class Fchk:
 
             unit = 'Bohr' # 一旦a.u.で計算する
 
-            # 電子密度分布のグリッドを生成
-            # 電場グリッドから等距離に電子密度グリッドを配置するように位置を調整(shift)
-            # これをしないと二つの離散点が重なってしまい発散してしまう
-            if densDetailRatio > 0:
-                shift = 0.5
-            else:
-                shift = 1 / (2*np.abs(densDetailRatio))
-            densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepDetailRatio=densDetailRatio, numMarginGrid=2, shiftGrid=0.5)
-            deltaV = densCubeGrid.giveDeltaV(unit=unit) 
-            
-            # 電子密度分布を取得
-            coords_dens = densCubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na1*nb1*nc1,3)
-            dens = self.calcElectronDensity(coords_dens) # shape: (na1*nb1*nc1,)
-
             # 電場の計算点の座標を取得
-            coords_E = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na2*nb2*nc2,3)
+            coords_E = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na*nb*nc,3)
 
-            # 電子由来の静電ポテンシャル
-            # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
-            # ポテンシャルの計算点ごとに計算を実行
-            E_el = (-1) * deltaV * np.array([np.sum((dens / np.linalg.norm(r-coords_dens,axis=1)**3)[:,np.newaxis]*(r-coords_dens), axis=0) for r in coords_E]) # shape: (na2*nb2*nc2,3), unit: a.u.
+            # 電子由来の電場
+            pyscfmol = self.givePySCFMoleculeObj()
+            P = self.__giveDensityMatrixForPySCF() # shape: (numAO, numAO)
 
-            # 原子核由来の静電ポテンシャル
+            # cart=Trueの場合、AOがそのままでは分極d関数が規格化されていないため、
+            # 規格化定数を取得する。
+            S = pyscfmol.intor('int1e_ovlp') # shape: (numAO, numAO)
+            C = np.diag(S) ** -0.5 # normalize coeff # shape: (numAO,)
+
+            P_ = np.einsum('ij,i,j->ij', P,C,C) # shape: (numAO, numAO)
+            def func(center):
+                with pyscfmol.with_rinv_origin(center):
+                    # <mu| (r1-center)/|r1-center|^3 |nu>
+                    V = pyscfmol.intor('int1e_drinv', comp=3) # shape: (3, numAO, numAO)
+                return np.einsum('ij,nij->n',P_,V) # shape: (3,)
+            E_el = -np.array([func(center) for center in coords_E]) # shape: (na*nb*nc,3), unit: a.u.
+
+            # 原子核由来の電場
             atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
             atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
-            E_nu = np.sum((atomicnums / cdist(coords_E, atomXYZArray)**3)[:,:,np.newaxis] * (coords_E[:,np.newaxis,:]-atomXYZArray[np.newaxis,:,:]), axis=1) # shape: (na2*nb2*nc2,3), unit: a.u.
+            E_nu = np.sum((atomicnums / cdist(coords_E, atomXYZArray)**3)[:,:,np.newaxis] * (coords_E[:,np.newaxis,:]-atomXYZArray[np.newaxis,:,:]), axis=1) # shape: (na*nb*nc,3), unit: a.u.
 
             # 足し算
             E = E_el + E_nu
 
             # Cubeインスタンス生成
-            cube = Cube(cubeGrid=cubeGrid, cubeData=E, 
-                        comment='ElectricField[a.u.] calculated using electron density at densDetailRatio={}'.format(densDetailRatio),
+            cube = Cube(cubeGrid=cubeGrid, cubeData=E,
+                        comment='ElectricField[a.u.] calculated using GTO integral'.format(densDetailRatio),
                         moleculeObj=molecule
                 )
 
@@ -625,9 +724,9 @@ class Fchk:
         else:
             # cubeGridを生成
             cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
-            
+
             # 再度呼び出し
-            return self.generateElectricFieldCube(cubeGrid=cubeGrid, densDetail=densDetail)
+            return self.generateElectricFieldCube(cubeGrid=cubeGrid)
 
 
     def giveMoleculeObj(self):
@@ -654,7 +753,7 @@ class Fchk:
         from pyscf import gto
         from rdkit import Chem
         import re
-        
+
         charge = self.giveCharge()
         multiplicity = self.giveMultiplicity()
         spin = multiplicity - 1
@@ -669,13 +768,12 @@ class Fchk:
             labeledElementSymbs.append('{}{}'.format(s,counter[s]))
         coords = self.giveCoords(unit='Bohr')
         xyzdata = '\n'.join(['{} {} {} {}'.format(s,x,y,z) for s,(x,y,z) in zip(labeledElementSymbs, coords)])
-        
+
         basisdataList, dtype = self.giveBasisFuncsData()
         basisdataDict = {re.sub(' .+','', data, flags=re.DOTALL): gto.basis.parse(data) for data in basisdataList}
 
         cart = dtype == '6D'
         mol = gto.M(atom=xyzdata, unit='Bohr', charge=charge, spin=spin, basis=basisdataDict, cart=cart)
         return mol
-        
-        
-        
+
+
