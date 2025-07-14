@@ -1,0 +1,87 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function help(){
+	abstract_help "mol2xyz" "mol" "xyz" "MDL mol file" "xyz file"
+}
+
+#function comment_about_script(){
+#cat <<EOF
+#
+#EOF
+#}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
+}
+
+function parse_option(){
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-O)
+			parse_O_option
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function get_default_conversion_patt(){
+	echo '{s/.mol$//; s/$/.xyz/}'
+}
+
+function process(){
+	# $1: inpFile
+	#
+	local molFile molData
+	local xyzData numAtom
+
+	molFile="$1"
+	molData=`cat "$molFile"`
+
+	# extract
+	xyzData=`echo "$molData" |
+				sed -r -n '5,/^[^A-z]+$/p' | # extract until a line with no element symbol
+				sed -r '/^[^A-z]+$/d' |      # delete a line with no element symbol
+				awk '{printf "%s   %s   %s   %s\n", $4, $1, $2, $3}' | # convert to xyz format
+				sed -r 's/ -/-/g'` # adjust the number of spaces
+	# set header
+	numAtom=`echo "$xyzData" | wc -l`
+	title="mol2xyz: from ${molFile}: `date`"
+
+	# print
+	echo "$numAtom"
+	echo "$title"
+	echo "$xyzData"
+
+}
+
+main "$@"
+
+
+
+
+
+
+
+
+
+
+

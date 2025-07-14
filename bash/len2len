@@ -1,0 +1,143 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
+
+function help(){
+	abstract_help "len2len" "unit1" "unit2" "String containing length in 'unit1'" "in 'unit2'"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --field <num>           | set target column number
+                                | multiple columns can be specified by separating them with commas
+                                | default: 1
+    -s, --skip <num>            | set the number of first comment lines
+                                | default: 0
+    -w, --whitespace            | treat multiple consecutive whitespace characters as one delimiter
+    --format <fmt>              | set format for print (follows awk's OFMT)
+                                | default: %.10g
+                                | by default, when the calculation result is zero, the integer zero is displayed.
+                                | If that is not convenient, specify '%8.5f'.
+    --from <unit> | a.u. / bohr / angstrom / nm / m
+    --to <unit>   | same as above
+
+EOF
+}
+
+function parse_option(){
+	# set default
+	delimiter=' '
+	targetColumnNum=1
+	headerEndLineNum=0
+	treatAsOneDelim=false
+	fromunit=
+	tounit=
+	format='%.10g'
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-d | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-f | --field)
+			targetColumnNum="${args[2]}"
+			shift_args 2
+			;;
+		-s | --skip)
+			headerEndLineNum="${args[2]}"
+			shift_args 2
+			;;
+		-w | --whitespace)
+			treatAsOneDelim=true
+			shift_args 1
+			;;
+		--format)
+			format="${args[2]}"
+			shift_args 2
+			;;
+		--from)
+			fromunit="${args[2]}"
+			shift_args 2
+			;;
+		--to)
+			tounit="${args[2]}"
+			shift_args 2
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+
+	if [ ! "$fromunit" ] ; then
+		error "--from option is unspecified"
+	fi
+	if [ ! "$tounit" ] ; then
+		error "--to option is unspecified"
+	fi
+
+	# calc unit conversion factor
+	fromunitfactor=`get_factor "$fromunit"`
+	tounitfactor=`get_factor "$tounit"`
+	factor=`awk -v format="${format}" "BEGIN {OFMT=format; print 1 / ${fromunitfactor} * ${tounitfactor} }"`
+}
+
+function get_factor(){
+	# $1: unitname
+	local unitname
+	unitname="$1"
+	case "$unitname" in
+	au | a.u. | bohr | Bohr)
+		factor=1
+		;;
+	A | angstrom | Angstrom)
+		# 1[a.u.] = 0.529177210544[A] from https://en.wikipedia.org/wiki/Atomic_units
+		factor="0.529177210544"
+		;;
+	nm)
+		factor="( 0.529177210903 * 1e-1 )"
+		;;
+	m)
+		factor="( 0.529177210903 * 1e-10 )"
+		;;
+	*)
+		error "specified unit is invalid: ${unitname}"
+		;;
+	esac
+
+	echo "$factor"
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local inpStr
+	inpStr="$1"
+
+	if "$treatAsOneDelim"; then
+		inpStr=`echo "$inpStr" | sed -r "s/${delimiter}+/${delimiter}/g"`
+	fi
+	multiply_tablecolumn "$inpStr" "$delimiter" "$targetColumnNum" "$factor" "$format" "$headerEndLineNum"
+
+}
+
+main "$@"
+
+
+

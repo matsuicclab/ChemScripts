@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${SCRIPT_DIR}"/abstract/common
+source "${SCRIPT_DIR}"/abstract/data2data
 
 function abstract_help(){
 	local cmd="$1"
@@ -8,35 +8,50 @@ function abstract_help(){
 	local out="$3"
 	local inpDetail="$4"
 	local outDetail="$5"
-	local optionUsage="$6"
+
+	local comment=`comment_about_script`
+	local optionUsage=`option_help`
+
 cat <<EOF
 ${cmd}
-    convert ${inp} to ${out}
-    ${inp}: ${inpDetail}
-    ${out}: ${outDetail}
+    convert <${inp}> to <${out}>
+    <${inp}>: ${inpDetail}
+    <${out}>: ${outDetail}
     implementation of str2str
-
+${comment}${comment:+
+}
 usage:
-    + ${cmd} ${inp}
-    +--- convert ${inp} to ${out} and print to stdout
+    + ${cmd} <${inp}>
+    +--- convert <${inp}> to <${out}> and print to stdout
     |
-    + ${cmd} ${inp} > ${out}
-    +--- save to the ${out} file
+    + ${cmd} <${inp}> > file
+    +--- save to the file
     |
-    + ${cmd} ${inp} | <COMMAND>
+    + ${cmd} <${inp}> | <COMMAND>
     +--- input to the next command
     |
     + <COMMAND> | ${cmd}
-    +--- convert the entered ${inp} data and print to stdout
+    +--- convert the entered <${inp}> data and print to stdout
     |
     + ${cmd} <(<COMMAND>)
-    +--- if input by process substitution, print to stdout
+    +--- handle input by process substitution, print to stdout
 
 option usage:
-    -h, -help, --help | display this help
-${optionUsage}
-
+${optionUsage}${optionUsage:+
+}
 EOF
+}
+
+# to override
+function comment_about_script(){
+	# print comment
+	:
+}
+
+# to override
+function option_help(){
+	# print option help
+	:
 }
 
 function parse_args(){
@@ -64,25 +79,23 @@ function parse_args(){
 
 	# set out
 	# always stdout
-	:
+	set_output -
 
 }
 
+# to override
 #function parse_option(){
 #	# parse option from "${args[@]}"
 #}
 
-#function get_default_output_path(){
-#	echo 'str2file.out'
-#}
-
+# to override
 #function process(){
 #	# $1: inpStr
 #}
 
 function main(){
 	set_args "$@"
-	parse_args "$@"
+	parse_args
 
 	process "$inpStr"
 }

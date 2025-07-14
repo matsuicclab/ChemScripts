@@ -1,0 +1,139 @@
+#!/bin/bash
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function help(){
+	abstract_help "fchk2json" "fchk" "json" "Formatted checkpoint file" "JavaScript object notation file"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
+}
+
+function parse_option(){
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-O)
+			parse_O_option
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function get_default_conversion_patt(){
+	echo '{s/.fchk$//; s/$/.json/}'
+}
+
+
+function get_random_string_not_exist_in_string(){
+	# $1: string
+	local string randstr
+
+	string="$1"
+	while true
+	do
+		randstr=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16`
+		if grep -q "$randstr" <(echo "$string"); then
+			continue
+		else
+			break
+		fi
+	done
+	echo "$randstr"
+}
+
+
+function process(){
+	# $1: inpFile
+	#
+	local fchkFile fchkData
+	local label startlistlabel endlabel
+
+	fchkFile="$1"
+	fchkData=`cat "$fchkFile"`
+
+	# get a string that does not exist in fchkData and create some labels
+	label=`get_random_string_not_exist_in_string "$fchkData"`
+	startnumlistlabel="${label} start of numlist"
+	startcharlistlabel="${label} start of charlist"
+	endlabel="${label} end of item"
+
+	# convert to json format
+	#-- input into pipe
+	echo "$fchkData" |
+		#-- insert a label at the end of one data item
+		sed -r "/^.{40}   [IRC]   /i ${endlabel}" |
+		#-- remove data at the beginning without keywords
+		sed -r "1,/^${endlabel}/d" |
+		#-- append label to last line
+		sed -r '$a '"${endlabel}" |
+		#-- lists of numbers and chars are additionally labeled before the data
+		sed -r "/^.{40}   [IR]   N=/a ${startnumlistlabel}" |
+		sed -r "/^.{40}   C   N=/a ${startcharlistlabel}" |
+		#-- process rows with keywords
+		sed -r '/^.{40}   [IRC]   /{
+			s/^(.{40})   [IRC]   (.+)/\1\n:\n\2,/; # convert to keyword\n:\n1234, or keyword\n:\nN=   1234,
+			s/\nN=.+/\n/; # if N=, the size of the list is printed, and it is unnecessary for json, so remove it
+			s/^ */"/; # keyword***** -> "keyword*****
+			s/ +$//;
+			s/ *\n:\n */" : / # -> "keyword \n:\n *****"
+		}' |
+		#-- process lists of numbers
+		#-- process matching lines together using the pattern space and hold space
+		sed -r "/^${startnumlistlabel}/,/^${endlabel}/{
+			/^${startnumlistlabel}/{s/.*//;h}; # replace with empty and copy to the hold space
+			/${endlabel}/!{H;d}; # append to the hold space and delete spaces
+			/^${endlabel}/{
+				x;              # change the pattern space with the hold space and process list data as one string
+				s/^/\n/;        # rewrite fchk list data to json array format
+				s/$/\n/;
+				s/\n+/\n/g;
+				s/\n +/ \n/g;
+				s/^ +//;
+				s/^\n *//;
+				s/ *\n$//;
+				s/ +/, /g;
+				s/^/[/; s/$/],/
+			}
+		}" |
+		#-- process lists of chars
+		sed -r "/^${startcharlistlabel}/,/^${endlabel}/{
+			/^${startcharlistlabel}/{s/.*//;h};
+			/${endlabel}/!{H;d};
+			/^${endlabel}/{
+				x;
+				s/\n//g; # delete all newline characters and convert to a single line string
+				s/^ +//; # remove leading and trailing whitespace characters
+				s/ +$//;
+				s/^/\"/; # surround with double quotes
+				s/$/\",/
+			}
+		}" |
+		#-- remove label
+		grep -v "${label}" |
+		#-- remove unnecessary comma at the end of the last item
+		sed -r '$s/,$//' |
+		#-- add {} to indicate object type in json format
+		sed -e '1i {' |
+		sed -e '$a }'
+
+}
+
+main "$@"
+

@@ -1,0 +1,778 @@
+import re
+import copy
+
+import numpy as np
+from scipy.spatial.distance import squareform, cdist
+
+from chemscripts.pyg16.basisfunction import GTOBasis
+from chemscripts.pyg16.cube import Cube, CubeGrid
+from chemscripts.molecule import Molecule
+from chemscripts.unit import getUnitConversionFactor
+
+class Fchk:
+    def __init__(self, filePath):
+        """
+        load fchk file
+        """
+        # ファイル読み込み
+        with open(filePath, mode='r') as f:
+            try:
+                data = [s.strip('\n') for s in f.readlines()]
+            except UnicodeDecodeError as e:
+                # binaryではないか
+                print('Fchk file, {} may be a binary file'.format(filePath))
+                print(e)
+                exit()
+
+        # キーワードの出現する行数(index)を取得し、
+        # index間毎にdataを分割していく
+        keywordLineMatch = [re.match(r'^(.{42}) ([IRC]) (.+)$', line) for line in data]
+        keywordLineIndex = [i for i, match in enumerate(keywordLineMatch) if match is not None]
+        recordIndexRange = [[start, nextstart] for start,nextstart in zip(keywordLineIndex, keywordLineIndex[1:])]
+        recordIndexRange.append([keywordLineIndex[-1],len(data)])
+
+        # [[match object, 分割データ], [*, *], ....]
+        recordList = [[keywordLineMatch[start], data[start:nextstart]] for start, nextstart in recordIndexRange]
+
+        # キーワードの値を取得できるように辞書型に変換していく
+        def convertRecordToDict(record):
+            match = record[0]
+            recorddata = record[1]
+
+            keyword = match.group(1).strip(' ')
+            valuetype = match.group(2)
+            value = re.sub('.+ ', '', match.group(3))
+
+            if len(recorddata) == 1:
+                # 単行レコードの場合
+                if valuetype == 'R':
+                    value = float(value)
+                elif valuetype == 'I':
+                    value = int(value)
+
+            else:
+                # 複数行のレコードの場合
+                # valueには要素数(に相当するもの)が入っているため、recorddata[1:]で置換する
+                if valuetype == 'C':
+                    # レコードタイプがコメント(文字列)だった場合
+                    value = ''.join(recorddata[1:])
+                else:
+                    stringList = ' '.join(recorddata[1:]).split()
+                    if valuetype == 'R':
+                        value = [float(s) for s in stringList]
+                    else: # valuetype == 'I'
+                        value = [int(s) for s in stringList]
+
+            return keyword, value
+
+        # [(keyword, dict), (*, *), ....]
+        # -> {key1: dict1, key2: dict2, ....}
+        recordDict = dict([convertRecordToDict(record) for record in recordList])
+
+        self.__recordDict = recordDict
+
+        self.__molecule = None
+
+    def __divideList(self, targetList, ruleList):
+        """
+        指定された(一次元)リストを複数のリストに分割する
+        targetList = [a,b,c,d,e,f,g]
+        ruleList = [3,2,1,1]
+        のとき、
+        [[a,b,c],[d,e],[f],[g]]
+        を生成する
+        """
+        numTotal1 = len(targetList)
+        numTotal2 = sum(ruleList)
+        if type(numTotal2) not in [int, np.int16, np.int32, np.int64]:
+            raise ValueError('ruleList is a list of int')
+        if type(ruleList) not in [np.ndarray, list, tuple]:
+            raise ValueError('ruleList is a list of int')
+        if numTotal1 != numTotal2:
+            raise ValueError('The number of elements indicated by targetList and ruleList do not match')
+
+        cumruleList2 = np.cumsum(ruleList)             # array([3, 5, 6, 7] # ruleListが[3,2,1,1]の場合
+        cumruleList1 = np.append(0, cumruleList2)[:-1] # array([0, 3, 5, 6])
+        result = [targetList[i:j] for i,j in zip(cumruleList1, cumruleList2)]
+        return result
+
+
+    def giveValue(self, key):
+        """
+        指定されたキーワードに対応する値を返す
+
+        key: キーワード
+        return: 数値、または文字列、または数値のリスト
+        """
+        return self.__recordDict.get(key, None)
+
+    def containsRecord(self, key):
+        """
+        指定されたキーワードがfchkに含まれているかチェックする
+
+        key: キーワード
+        return: boolean
+        """
+        return key in self.__recordDict.keys()
+
+    def giveRouteSection(self):
+        # ルートセクション
+        return self.giveValue('Route')
+
+    def giveTitleSection(self):
+        # タイトルセクション
+        return self.giveValue('Full Title')
+
+    def giveCharge(self):
+        # 系全体の電荷
+        return self.giveValue('Charge')
+
+    def giveMultiplicity(self):
+        # スピン多重度
+        return self.giveValue('Multiplicity')
+
+    def giveNumAtoms(self):
+        # 全原子数
+        return self.giveValue('Number of atoms')
+
+    def giveNumElectrons(self):
+        # 全電子数
+        # 擬ポテンシャルを張っている場合は内殻電子は含まれないので注意
+        return self.giveValue('Number of electrons')
+
+    def giveNumAlphaElectrons(self):
+        # 全alpha電子数
+        # 擬ポテンシャルを張っている場合は内殻電子は含まれないので注意
+        return self.giveValue('Number of alpha electrons')
+
+    def giveNumBetaElectrons(self):
+        # 全beta電子数
+        # 擬ポテンシャルを張っている場合は内殻電子は含まれないので注意
+        return self.giveValue('Number of beta electrons')
+
+    def giveNumBasis(self):
+        # 基底関数の総数
+        # 擬ポテンシャルの部分はカウントされないので注意
+        return self.giveValue('Number of basis functions')
+
+    def isRestrictedOrbital(self):
+        # 制限付き計算かどうか
+        # beta orbitalが含まれていれば非制限(False)
+        return not self.containsRecord('Beta Orbital Energies')
+
+    def giveRotTr(self, toInput=True):
+        # input orientationとstandard orientationの間を変換する回転行列と並進ベクトル(bohr単位)
+        # return: rot, trans: np.ndarray
+        # r' = rot @ r + trans
+        value = self.giveValue('RotTr to input orientation')
+        if value is None:
+            return None
+
+        rot = np.array(value[:9]).reshape(3,3).T
+        trans = np.array(value[9:])
+
+        if toInput:
+            return rot, trans
+        else:
+            return rot.T, - rot.T @ trans
+
+    def giveAtomicNums(self):
+        # 原子番号リスト
+        value = self.giveValue('Atomic numbers')
+        return np.array(value)
+
+    def giveNuclearCharges(self):
+        # 原子核電荷リスト
+        value = self.giveValue('Nuclear charges')
+        return np.array(value)
+
+    def giveCoords(self, unit='Bohr'):
+        # 原子核座標(bohr単位)
+        # Input orientationかStandard orientationか、どちらかを保証することはできない
+        value = self.giveValue('Current cartesian coordinates')
+        coord = np.array(value).reshape(-1,3)
+        factor = getUnitConversionFactor(oldunit='Bohr', newunit=unit)
+        return coord * factor
+
+    def giveSCFEnergy(self):
+        # SCF energy
+        return self.giveValue('SCF Energy')
+
+    def giveTotalEnergy(self):
+        # Total energy
+        return self.giveValue('Total Energy')
+
+    def giveOrbitalEnergyList(self, merge=False):
+        # 各軌道のエネルギーを低い順に返す
+        # merge : Trueの場合、alphaとbetaのエネルギーリストを結合
+        #       : ['alpha', alpha軌道の何番目の軌道か(int,0始まり), エネルギー]の配列が返る
+        #       : Falseの場合、(np.ndarray (alpha, shape: (numBasis,)), np.ndarray (beta, shape: (numBasis,)))が返る
+        isRestricted = self.isRestrictedOrbital()
+
+        alphaEnergies = self.giveValue('Alpha Orbital Energies')
+
+        if not isRestricted:
+            betaEnergies = self.giveValue('Beta Orbital Energies')
+        else:
+            betaEnergies = alphaEnergies
+
+        if not merge:
+            return alphaEnergies, betaEnergies
+
+        # mergeする場合
+        mergedresult = []
+        alphai = 0
+        betai = 0
+        while True:
+            alphaEi = alphaEnergies[alphai]
+            betaEi = betaEnergies[betai]
+
+            if alphaEi <= betaEi:
+                mergedresult.append(['alpha',alphai,alphaEi])
+                alphai += 1
+            else:
+                mergedresult.append(['beta',betai,betaEi])
+                betai += 1
+
+            if alphai == len(alphaEnergies):
+                mergedresult.append(['beta',betai,betaEi])
+                break
+            if betai == len(betaEnergies):
+                mergedresult.append(['alpha',alphai,alphaEi])
+                break
+
+        return mergedresult
+
+    def giveOrbitalCoeffList(self, merge=False):
+        """
+        各軌道中の基底関数の係数を、軌道エネルギーが低い順に返す
+        merge : Trueの場合、alphaとbetaの係数リストを結合
+              : ['alpha', alpha軌道の何番目の軌道か(int,0始まり), 軌道係数リスト(np.ndarray)]の配列が返る
+              : Falseの場合、(np.ndarray (alpha, shape: (numBasis,numBasis)), np.ndarray (beta, shape: (numBasis,numBasis)))が返る
+        """
+        isRestricted = self.isRestrictedOrbital()
+        numBasis = self.giveNumBasis()
+
+        alphaCoeffs = np.array(self.giveValue('Alpha MO coefficients')).reshape(numBasis, numBasis)
+
+        if not isRestricted:
+            betaCoeffs = np.array(self.giveValue('Beta MO coefficients')).reshape(numBasis, numBasis)
+        else:
+            betaCoeffs = alphaCoeffs
+
+        if not merge:
+            return alphaCoeffs, betaCoeffs
+
+        # mergeする場合
+        mergedresult = []
+        for spin, spinIndex, _ in self.giveOrbitalEnergyList(merge=True):
+            if spin == 'alpha':
+                coeffs = alphaCoeffs[spinIndex]
+            else:
+                coeffs = betaCoeffs[spinIndex]
+            mergedresult.append([spin, spinIndex, coeffs])
+
+        return mergedresult
+
+    def __mapShellTypeToNumBasis(self,shelltypes):
+        def __temp(st):
+            if st == 0:
+                return 1
+            elif st == 1:
+                return 3
+            elif st == -1:
+                return 4
+            elif st == 2:
+                return 6
+            elif st == -2:
+                return 5
+            elif st == 3:
+                return 10
+            elif st == -3:
+                return 7
+            else:
+                raise ValueError('shell type:{} is unknown'.format(st))
+
+        return [__temp(x) for x in shelltypes]
+
+    def giveNumBasisEachAtom(self):
+        # 各原子にいくつの基底関数が張られているか
+        # リストのインデックス0の要素は常に0
+        # (インデックスに原子の通し番号を指定できるようにするための処置)
+
+        shelltypes = self.giveValue('Shell types')
+        shelltypes = self.__mapShellTypeToNumBasis(shelltypes)
+
+        shellatommap = self.giveValue('Shell to atom map')
+
+        numBasisEachAtomId = [0] * (len(set(shellatommap))+1)
+        for atomId, numBasis in zip(shellatommap, shelltypes):
+            numBasisEachAtomId[atomId] += numBasis
+
+        return numBasisEachAtomId
+
+    def giveDensityMatrix(self):
+        """
+        電子密度行列を返す
+        return: np.ndarray (shape: (numBasis, numBasis))
+        """
+        #以下でも計算可能だが、一次元配列を二次元行列に変える際にインデックスの取り方に注意
+        #p = np.array(self.giveValue('Total SCF Density'))
+        #_P = squareform(p[::-1])[::-1][:,::-1]
+        #_P = np.triu(_P)
+        #P = _P + np.tril(_P.T, k=-1)
+
+        numAlpha = self.giveNumAlphaElectrons()
+        numBeta = self.giveNumBetaElectrons()
+        alphaCoeffs, betaCoeffs = self.giveOrbitalCoeffList(merge=False)
+        orbitalCoeffs = np.vstack([alphaCoeffs[:numAlpha], betaCoeffs[:numBeta]])
+        densityMatrix = np.einsum('ij,ik->jk', orbitalCoeffs, orbitalCoeffs)
+
+        return densityMatrix
+
+    def giveSpinDensityMatrix(self):
+        """
+        スピン密度行列を返す
+        return: np.ndarray (shape: (numBasis, numBasis))
+        """
+        # spin densityのリストを取得
+        spinDensityList = self.giveValue('Spin SCF Density')
+        if spinDensityList is None:
+            # 制限付き計算の場合等
+            numBasis = self.giveNumBasis()
+            spinDensityMatrix = np.zeros([numBasis, numBasis])
+            return spinDensityMatrix
+
+        spinDensityList = np.array(spinDensityList)
+        _P = squareform(spinDensityList[::-1])[::-1][:,::-1]
+        _P = np.triu(_P)
+        # 三角行列になっているので、元の対称行列に変形
+        P = _P + np.tril(_P.T, k=-1)
+
+        return P
+
+
+    def giveBasisFuncs(self):
+        # 基底関数データ取得
+        # shell == 同じ指数、同じ核の縮約基底グループ: (1s), (2s 2px 2py 2pz), (3dx2, 3dy2, 3dz2, 3dxy, 3dxz, 3yz), ...
+        shelltypes = self.giveValue('Shell types')                         # len == numShell
+        numPrimitives = self.giveValue('Number of primitives per shell')   # len == numShell
+        exponents = self.giveValue('Primitive exponents')                  # len == numPrimitive
+        contractions = self.giveValue('Contraction coefficients')          # len == numPrimitive
+        SPcontractions = self.giveValue('P(S=P) Contraction coefficients') # len == numPrimitive
+        if SPcontractions is None:
+            SPcontractions = [0 for i in contractions]
+        coordsshell = np.array(self.giveValue('Coordinates of each shell')).reshape(-1,3) # len == numShell * 3
+
+        # 各shell単位で分割
+        exponents = self.__divideList(exponents, numPrimitives)            # len == numShell
+        contractions = self.__divideList(contractions, numPrimitives)      # len == numShell
+        SPcontractions = self.__divideList(SPcontractions, numPrimitives)  # len == numShell
+
+        basisFuncList = []
+        for st, coord, c, spc, ex in zip(shelltypes, coordsshell, contractions, SPcontractions, exponents):
+            if st == 0:
+                lmnList = [[0,0,0]]
+            elif st == 1:
+                lmnList = [[1,0,0],[0,1,0],[0,0,1]]
+            elif st == -1:
+                lmnList = [[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+            elif st == 2:
+                lmnList = [[2,0,0],[0,2,0],[0,0,2],[1,1,0],[1,0,1],[0,1,1]]
+            else:
+                raise ValueError('not yet implemented')
+
+            if st == -1:
+                # contraction修正
+                cList = [c, spc, spc, spc]
+            else:
+                cList = [c for i in range(len(lmnList))]
+
+            for lmn, c in zip(lmnList, cList):
+                basisFuncList.append(GTOBasis(coord, lmn, c, ex, unit='Bohr'))
+
+        return basisFuncList
+
+    def giveBasisFuncsData(self):
+        """
+        NWChem形式で基底関数情報を出力
+        """
+        from collections import defaultdict
+        from rdkit import Chem
+        table = Chem.GetPeriodicTable()
+
+        shelltypes = self.giveValue('Shell types')                         # len == numShell
+        numPrimitives = self.giveValue('Number of primitives per shell')   # len == numShell
+        exponents = self.giveValue('Primitive exponents')                  # len == numPrimitive
+        contractions = self.giveValue('Contraction coefficients')          # len == numPrimitive
+        SPcontractions = self.giveValue('P(S=P) Contraction coefficients') # len == numPrimitive
+        if SPcontractions is None:
+            SPcontractions = [0 for i in contractions]
+        coordsshell = np.array(self.giveValue('Coordinates of each shell')).reshape(-1,3)
+        _, numShells = np.unique(self.giveValue('Shell to atom map'), return_counts=True)
+        atomicNums = self.giveValue('Atomic numbers')
+
+        symbCounter = defaultdict(int)
+        result = []
+        divideList = self.__divideList
+        for an, sts, exs, cts, spcts in zip(atomicNums,
+                                           divideList(shelltypes, numShells),
+                                           divideList(divideList(exponents,numPrimitives),numShells),
+                                           divideList(divideList(contractions,numPrimitives),numShells),
+                                           divideList(divideList(SPcontractions,numPrimitives),numShells)
+                                          ):
+            _result = []
+            symb = table.GetElementSymbol(an)
+            symbCounter[symb] += 1
+            for st, _exs, _cts, _spcts in zip(sts,exs,cts,spcts):
+                if st == 0:
+                    st_str = 'S'
+                elif st == 1:
+                    st_str = 'P'
+                elif st == -1:
+                    st_str = 'SP'
+                elif st == 2:
+                    st_str = 'D'
+                else:
+                    raise ValueError('unsupported shell type: {}'.format(st))
+                _result.append('{}{} {}'.format(symb, symbCounter[symb], st_str))
+                _result.extend(['    {:.10e} {:.10e} {:.10e}'.format(e,c,spct) if spct != 0 else '    {:.10e} {:.10e}'.format(e,c) for e,c,spct in zip(_exs,_cts,_spcts)])
+                result.append('\n'.join(_result))
+        return result, '6D'
+
+
+    def calcElectronDensity(self, r, unit='Bohr'):
+        """
+        指定された座標における電子密度を計算
+        r: 電子密度を計算する座標: np.ndarray: shape:(*,3) or (3,)
+        unit: rの単位
+        return: np.ndarray: shape:(*,)
+        """
+        # 基底関数インスタンスのリストを取得
+        basisFuncList = self.giveBasisFuncs()
+        # 軌道係数を取得
+        numAlphaElec = self.giveNumAlphaElectrons()
+        numBetaElec  = self.giveNumBetaElectrons()
+        alphaOrbitalCoeffs, betaOrbitalCoeffs = self.giveOrbitalCoeffList(merge=False)
+        orbitalCoeffs = np.vstack([alphaOrbitalCoeffs[:numAlphaElec], betaOrbitalCoeffs[:numBetaElec]]) # shape: (numElec, numBasis)
+
+        # 各点で基底関数を評価
+        basisFuncValue = np.array([f.calc(r, unit=unit) for f in basisFuncList]) # shape: (numBasis, numPoint)
+        # 各点で分子軌道を評価
+        moValue = orbitalCoeffs @ basisFuncValue # shape: (numElec, numPoint)
+        # 密度計算
+        densitydata = np.sum(moValue**2, axis=0) # shape: (numPoint,)
+
+        return densitydata
+
+    def generateElectronDensityCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None):
+        """
+        電子密度のcubeデータを生成
+        unit: step, paddingの単位指定 (cubeGrid指定時は無視)
+        return: Cubeインスタンス
+        """
+        molecule = self.giveMoleculeObj()
+
+        if cubeGrid is not None:
+            # cubeGridが指定されている場合
+            if type(cubeGrid) is not CubeGrid:
+                raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+
+            # 格子点座標取得
+            unit = 'Angstrom' # 結果に影響しないので適当に設定
+            gridcoords = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na*nb*nc,3)
+            densitydata = self.calcElectronDensity(gridcoords, unit=unit) # shape: (na*nb*nc,)
+            # Cubeインスタンス生成
+            cube = Cube(cubeGrid=cubeGrid, cubeData=densitydata, comment='ElectronDensity[a.u.]', moleculeObj=molecule)
+
+            return cube
+
+        else:
+            # cubeGridを生成
+            cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
+
+            # 再度呼び出し
+            return self.generateElectronDensityCube(cubeGrid=cubeGrid)
+
+    def __giveDensityMatrixForPySCF(self):
+        """
+        PySCFとGaussianとでAOの並び順が異なるため、順番を特定し、密度行列を並び替える
+        """
+        import itertools
+
+        def mapShelltypeToAngular(st):
+            if st == 0:
+                return [[0,0,0]]
+            elif st == 1:
+                return [[1,0,0],[0,1,0],[0,0,1]]
+            elif st == -1:
+                return [[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+            elif st == 2:
+                return [[2,0,0],[0,2,0],[0,0,2],[1,1,0],[1,0,1],[0,1,1]]
+
+        _, numShellEachAtom = np.unique(self.giveValue('Shell to atom map'), return_counts=True)
+        shelltypes = self.giveValue('Shell types')
+        angularFuncsEachShell = [mapShelltypeToAngular(st) for st in shelltypes]
+        numAngularFuncsEachShell = [len(l) for l in angularFuncsEachShell]
+        numAngularFuncsEachAtom = [sum(l) for l in self.__divideList(numAngularFuncsEachShell, numShellEachAtom)]
+        shellIdxEachAngularFuncs = np.array(list(itertools.chain.from_iterable([[i]*n for i,n in enumerate(numAngularFuncsEachShell)])))
+        atomIdxEachAngularFuncs = np.array(list(itertools.chain.from_iterable([[i]*n for i,n in enumerate(numAngularFuncsEachAtom)])))
+        angularEachAngularFuncs = np.array(list(itertools.chain.from_iterable(angularFuncsEachShell))).reshape(-1,3)
+        totalAngularEachAngularFuncs = np.sum(angularEachAngularFuncs, axis=1)
+        order = np.lexsort((-angularEachAngularFuncs[:,2],-angularEachAngularFuncs[:,1],-angularEachAngularFuncs[:,0],
+            shellIdxEachAngularFuncs,
+            totalAngularEachAngularFuncs,
+            atomIdxEachAngularFuncs
+        ))
+        P = self.giveDensityMatrix() # shape: (numAO, numAO)
+        P = P[order][:,order]
+
+        return P
+
+    def calcElectrostaticPotential(self, r, unit='Bohr', espunit='a.u.', method='GTOIntegral',
+                                       degree=None,
+                                       densCubeGrid=None, numSplit=100
+                                       ):
+        """
+        指定された座標における分子がつくる静電ポテンシャルを計算
+        r: 電子密度を計算する座標: np.ndarray: shape:(*,3) or (3,)
+        unit: rの単位
+        numSplit: メモリオーバー対策のオプション
+                  numSplitの数だけ計算を小分けにする
+        return: np.ndarray: shape:(*,)
+        """
+        # 単位変換
+        factor = getUnitConversionFactor(oldunit=unit, newunit='Bohr')
+        r *= factor # unit: Bohr
+
+        def __calcByGTOIntegral():
+            pyscfmol = self.givePySCFMoleculeObj()
+            P = self.__giveDensityMatrixForPySCF() # shape: (numAO, numAO)
+
+            # cart=Trueの場合、AOがそのままでは分極d関数が規格化されていないため、
+            # 規格化定数を取得する。
+            S = pyscfmol.intor('int1e_ovlp') # shape: (numAO, numAO)
+            C = np.diag(S) ** -0.5 # normalize coeff # shape: (numAO,)
+
+            # 電子由来の静電ポテンシャルを計算
+            P_ = np.einsum('ij,i,j->ij', P,C,C) # shape: (numAO, numAO)
+            def func(center):
+                with pyscfmol.with_rinv_origin(center):
+                    # <mu| 1/|r1-center| |nu>
+                    V = pyscfmol.intor('int1e_rinv') # shape: (numAO, numAO)
+                return np.einsum('ij,ij->',P_,V)
+            pot_el = -np.array([func(center) for center in r])
+            return pot_el
+
+        def __calcByHarmonicIntegral():
+            return 0
+
+        def __calcByDensityCube():
+            # グリッドの体積を計算
+            deltaV = densCubeGrid.giveDeltaV(unit='Bohr')
+
+            # 電子密度分布を取得
+            coords_dens = densCubeGrid.giveNodeCoord(unit='Bohr').reshape(-1,3) # shape: (na1*nb1*nc1,3)
+            dens = self.calcElectronDensity(coords_dens) # shape: (na1*nb1*nc1,)
+
+            # 電子由来の静電ポテンシャルを計算
+            # 一気に距離行列を計算するとメモリオーバーになる可能性があるため、
+            # ポテンシャルの計算点ごとに計算を実行
+            pot_el = (-1) * deltaV * \
+                        np.concatenate(
+                            [np.sum(dens / cdist(_coords_pot, coords_dens), axis=1) for _coords_pot in np.array_split(r, numSplit, axis=0)]
+                        ) # shape: (na2*nb2*nc2,), unit: a.u.
+            return pot_el
+
+        if method == 'GTOIntegral':
+            pot_el = __calcByGTOIntegral()
+        elif method == 'HarmonicIntegral':
+            pot_el = __calcByHarmonicIntegral()
+        elif method == 'DensityCube':
+            pot_el = __calcByDensityCube()
+        else:
+            raise ValueError('invalid method: {}'.format(method))
+
+        # 原子核由来の静電ポテンシャル
+        molecule = self.giveMoleculeObj()
+        atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
+        atomXYZArray = molecule.giveXYZArray(unit='Bohr') # shape: (numAtom, 3)
+        pot_nu = np.sum(atomicnums / cdist(r, atomXYZArray), axis=1) # shape: (*,), unit: a.u.
+
+        # 足し算
+        pot = pot_el + pot_nu # shape: (*,)
+
+        # 単位変換
+        if espunit == 'V':
+            pot *= 27.21162
+
+        return pot
+
+
+    def generateElectrostaticPotentialCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None, espunit='a.u.', method='GTOIntegral',
+                                           densDetailRatio=1, numSplit=100
+                                           ):
+        """
+        静電ポテンシャルのcubeデータを生成
+        unit: step, paddingの単位指定 (cubeGrid指定時は無視)
+        densDetailRatio: method=='DensityCube'の時に指定する。非ゼロ整数
+                    densStepVector = espStepVector / (abs(ratio) ** sign(ratio))
+        return: Cubeインスタンス
+        """
+        molecule = self.giveMoleculeObj()
+
+        if cubeGrid is not None:
+            # cubeGridが指定されている場合
+            if type(cubeGrid) is not CubeGrid:
+                raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+
+            unit = 'Bohr' # 一旦a.u.で計算する
+
+            # ポテンシャルの計算点の座標を取得
+            coords_pot = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na2*nb2*nc2,3)
+
+            if method == 'DensityCube':
+                # 電子密度分布のグリッドを生成
+                # ESPグリッドから等距離に電子密度グリッドを配置するように位置を調整(shift)
+                # これをしないと二つの離散点が重なってしまい発散してしまう
+                if densDetailRatio > 0:
+                    shift = 0.5
+                else:
+                    shift = 1 / (2*np.abs(densDetailRatio))
+                densCubeGrid = CubeGrid(cubeGrid=cubeGrid, stepDetailRatio=densDetailRatio, numMarginGrid=2, shiftGrid=shift)
+                methodComment = 'electron density cube at densDetailRatio={}'.format(densDetailRatio)
+            elif method == 'GTOIntegral':
+                densCubeGrid = None
+                methodComment = 'GTO integral'
+            elif method == 'HarmonicIntegral':
+                densCubeGrid = None
+                methodComment = 'quadrature'
+            else:
+                raise ValueError('invalid method: {}'.format(method))
+
+            # 静電ポテンシャルを計算
+            pot = self.calcElectrostaticPotential(coords_pot, unit=unit, espunit=espunit, method=method, densCubeGrid=densCubeGrid, numSplit=numSplit) # shape: (na2*nb2*nc2,)
+
+            # Cubeインスタンス生成
+            cube = Cube(cubeGrid=cubeGrid, cubeData=pot,
+                        comment='ElectrostaticPotential[{}] calculated using {}'.format(espunit,methodComment),
+                        moleculeObj=molecule
+                )
+
+            return cube
+
+        else:
+            # cubeGridを生成
+            cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
+
+            # 再度呼び出し
+            return self.generateElectrostaticPotentialCube(cubeGrid=cubeGrid, densDetailRatio=densDetailRatio, numSplit=numSplit)
+
+    def generateElectricFieldCube(self, step=0.2, padding=3.0, unit='Angstrom', cubeGrid=None):
+        """
+        電場のcubeデータを生成
+        unit: step, paddingの単位指定 (cubeGrid指定時は無視)
+        return: Cubeインスタンス
+        """
+        molecule = self.giveMoleculeObj()
+
+        if cubeGrid is not None:
+            # cubeGridが指定されている場合
+            if type(cubeGrid) is not CubeGrid:
+                raise TypeError('type of cubeGrid must be chemscript.pyg16.cube.CubeGrid')
+
+            unit = 'Bohr' # 一旦a.u.で計算する
+
+            # 電場の計算点の座標を取得
+            coords_E = cubeGrid.giveNodeCoord(unit=unit).reshape(-1,3) # shape: (na*nb*nc,3)
+
+            # 電子由来の電場
+            pyscfmol = self.givePySCFMoleculeObj()
+            P = self.__giveDensityMatrixForPySCF() # shape: (numAO, numAO)
+
+            # cart=Trueの場合、AOがそのままでは分極d関数が規格化されていないため、
+            # 規格化定数を取得する。
+            S = pyscfmol.intor('int1e_ovlp') # shape: (numAO, numAO)
+            C = np.diag(S) ** -0.5 # normalize coeff # shape: (numAO,)
+
+            P_ = np.einsum('ij,i,j->ij', P,C,C) # shape: (numAO, numAO)
+            def func(center):
+                with pyscfmol.with_rinv_origin(center):
+                    # <mu| grad(1/|r1-center|) |nu>
+                    # = -1 * <mu| (r1-center)/|r1-center|^3 |nu>
+                    V = pyscfmol.intor('int1e_drinv', comp=3) # shape: (3, numAO, numAO)
+                return np.einsum('ij,nij->n',P_,V) # shape: (3,)
+            E_el = np.array([func(center) for center in coords_E]) # shape: (na*nb*nc,3), unit: a.u.
+
+            # 原子核由来の電場
+            atomicnums = np.array(molecule.giveAtomicnumList()) # shape: (numAtom,)
+            atomXYZArray = molecule.giveXYZArray(unit=unit) # shape: (numAtom, 3)
+            E_nu = np.sum((atomicnums / cdist(coords_E, atomXYZArray)**3)[:,:,np.newaxis] * (coords_E[:,np.newaxis,:]-atomXYZArray[np.newaxis,:,:]), axis=1) # shape: (na*nb*nc,3), unit: a.u.
+
+            # 足し算
+            E = E_el + E_nu
+
+            # Cubeインスタンス生成
+            cube = Cube(cubeGrid=cubeGrid, cubeData=E,
+                        comment='ElectricField[a.u.] calculated using GTO integral',
+                        moleculeObj=molecule
+                )
+
+            return cube
+
+        else:
+            # cubeGridを生成
+            cubeGrid = CubeGrid(moleculeObj=molecule, axesMethod='Direct', step=step, padding=padding, unit=unit)
+
+            # 再度呼び出し
+            return self.generateElectricFieldCube(cubeGrid=cubeGrid)
+
+
+    def giveMoleculeObj(self):
+        """
+        return: chemscripts.molecule.Molecule
+        """
+        if self.__molecule is None:
+            # 原子番号のリストを取得
+            atomicNums = self.giveAtomicNums()
+            # 座標リストを取得
+            coords = self.giveCoords(unit='Bohr') # shape: (n,3)
+            # 電荷を取得
+            charge = self.giveCharge()
+
+            self.__molecule = Molecule(atomicnumList=atomicNums, xyzList=coords, charge=charge, unit='Bohr')
+
+        return self.__molecule
+
+    def givePySCFMoleculeObj(self):
+        """
+        return: pyscf.gto.mole.Mole
+        """
+        from collections import defaultdict
+        from pyscf import gto
+        from rdkit import Chem
+        import re
+
+        charge = self.giveCharge()
+        multiplicity = self.giveMultiplicity()
+        spin = multiplicity - 1
+
+        table = Chem.GetPeriodicTable()
+        atomicNums = self.giveAtomicNums()
+        elementSymbs = [table.GetElementSymbol(int(n)) for n in atomicNums]
+        labeledElementSymbs = []
+        counter = defaultdict(int)
+        for s in elementSymbs:
+            counter[s] += 1
+            labeledElementSymbs.append('{}{}'.format(s,counter[s]))
+        coords = self.giveCoords(unit='Bohr')
+        xyzdata = '\n'.join(['{} {} {} {}'.format(s,x,y,z) for s,(x,y,z) in zip(labeledElementSymbs, coords)])
+
+        basisdataList, dtype = self.giveBasisFuncsData()
+        basisdataDict = {re.sub(' .+','', data, flags=re.DOTALL): gto.basis.parse(data) for data in basisdataList}
+
+        cart = dtype == '6D'
+        mol = gto.M(atom=xyzdata, unit='Bohr', charge=charge, spin=spin, basis=basisdataDict, cart=cart)
+        return mol
+
+

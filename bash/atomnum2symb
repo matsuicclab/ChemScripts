@@ -1,0 +1,124 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
+source "${SCRIPT_DIR}"/utl/element.sh
+
+function help(){
+	abstract_help "atomnum2symb" "num" "symb" "atomic number" "element symbol"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --field <num>           | set target column number
+                                | default: 1
+    -s, --skip <num>            | set the title section
+                                | default: 0
+
+EOF
+}
+
+function parse_option(){
+	# set default
+	delimiter=' '
+	targetColumnNum=1
+	headerEndLineNum=0
+	reverse=false
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-d | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-f | --field)
+			targetColumnNum="${args[2]}"
+			shift_args 2
+			;;
+		-s | --skip)
+			headerEndLineNum="${args[2]}"
+			shift_args 2
+			;;
+		-r | --reverse)
+			reverse=true
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+
+function process(){
+	# $1: inpStr
+	#
+	local inpStr
+	inpStr="$1"
+
+	#-------------------------------------------------------
+	if "$reverse"; then
+		# valid characters to convert from
+		mapTable=`print_elementsymbol_atomicnumber_table`
+		systematicPatt1="nubtqphsoeNUBTQPHSOE"
+		systematicPatt2="01234567890123456789"
+
+	else
+		# valid characters to convert from
+		mapTable=`print_atomicnumber_elementsymbol_table`
+		systematicPatt1="0123456789"
+		systematicPatt2="nubtqphsoe"
+
+	fi
+
+	#-------------------------------------------------------
+	# extract header part
+	if [ "$headerEndLineNum" -eq 0 ]; then
+		headerData=
+	else
+		headerData=`echo "$inpStr" | sed -n "1,${headerEndLineNum}p"`
+	fi
+
+	# get the number of the line after the line where the header ends
+	contentStartLineNum=$(($headerEndLineNum + 1))
+	# extract content part
+	contentData=`echo "$inpStr" | sed -n "${contentStartLineNum},"'$p'`
+
+	# convert and print
+	if [ ! -z "$headerData" ]; then
+		# if $headerData is not empty
+		echo "$headerData"
+	fi
+
+	echo "$contentData" |
+		#
+		# replace according to mapTable
+		replace_tablecolumn_by_mappingdatabase - "$delimiter" "$targetColumnNum" "$mapTable" ' ' - |
+		#
+		# replace data not in the periodic table according to systematic name rules
+		replace_char_in_tablecolumn_with_char - "$delimiter" "$targetColumnNum" "$systematicPatt1" "$systematicPatt2" |
+		#
+		# convert the first letter of the alphabet to uppercase
+		(if "$reverse"; then cat -; else toupper_first_char_in_tablecolumn - "$delimiter" "$targetColumnNum"; fi)
+
+}
+
+main "$@"
+
+
+

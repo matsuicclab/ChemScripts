@@ -5,7 +5,22 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "pdb2csv" "<pdb>" "<csv>" "PDB: protein data bank based on https://pdbj.org/help/pdb-brief?lang=ja" "csv file" ""
+	abstract_help "pdb2csv" "pdb" "csv" "PDB: protein data bank based on https://pdbj.org/help/pdb-brief?lang=ja" "csv file"
+}
+
+function comment_about_script(){
+cat <<EOF
+    If you want to process trajectory data with python,
+    you should load mdcrd(s) directly into pytraj.
+
+EOF
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
 }
 
 function parse_option(){
@@ -16,6 +31,9 @@ function parse_option(){
 			help
 			exit
 			# shift_args 1
+			;;
+		-O)
+			parse_O_option
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"

@@ -5,7 +5,14 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 source "${SCRIPT_DIR}"/abstract/files2files
 
 function help(){
-	abstract_help "mdout2csv" "<mdout>" "<csv>" "Amber output file" "csv file" ""
+	abstract_help "mdout2csv" "mdout" "csv" "Amber output file" "csv file"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+
+EOF
 }
 
 function parse_option(){
@@ -16,6 +23,9 @@ function parse_option(){
 			help
 			exit
 			# shift_args 1
+			;;
+		-O)
+			parse_O_option
 			;;
 		-*)
 			error "unknown option: '${args[1]}'"

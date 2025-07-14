@@ -1,0 +1,170 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/file2seqfiles
+
+function help(){
+	abstract_help "csvsmiles2png" "csv" "png" "csv file" "png files"
+}
+
+function comment_about_script(){
+cat <<EOF
+    Deprecated: Specifications may change in the future
+
+EOF
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -d, --delimiter | delimiter used in csv
+    -e, --header    | line number of header (>=0)
+    -f, --field     | column number of SMILES (>=0)
+    -pc, --per-column | number of molecules arranged per column in the image
+    -pr, --per-row    | number of molecules arranged per row in the image
+    -p, --add-proton  | add proton
+
+EOF
+}
+
+function parse_option(){
+	# set default
+	delimiter=,
+	linenumOfHeader=0
+	field=
+	numPerColumn=4
+	numPerRow=5
+	addH=False
+
+	# parse option
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-O)
+			parse_O_option
+			;;
+		-d | -delimiter | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-e | -header | --header)
+			linenumOfHeader="${args[2]}"
+			shift_args 2
+			;;
+		-f | -field | --field)
+			field="${args[2]}"
+			shift_args 2
+			;;
+		-pc | -per-colomn | --per-column)
+			numPerColumn="${args[2]}"
+			shift_args 2
+			;;
+		-pr | -per-row | --per-row)
+			numPerRow="${args[2]}"
+			shift_args 2
+			;;
+		-p | --add-proton)
+			addH=True
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+
+	sizeOfGroup=`expr "$numPerColumn" \* "$numPerRow"`
+
+	if [ ! "$field" ]; then
+		error "specify column containing SMILES with the -f option"
+	elif [[ ! "$field" =~ ^[0-9]+$ ]]; then
+		error "-f option can only be specified as an integer (>=0)"
+	fi
+}
+
+function get_default_outputfilename_format(){
+	echo 'csvsmiles2png.%d.png'
+}
+
+function get_outputfilename_format(){
+	# $1: inpFile
+	echo "$1" | sed -r 's/\.csv$/.%d.png/'
+}
+
+
+function process(){
+	# $1: inpFile
+	#
+	local csvFile="$1"
+	local csvData=`cat "$csvFile"`
+
+	exec {csvDataFdNum}< <(echo "$csvData")
+	local csvDataFd="/dev/fd/${csvDataFdNum}"
+	# get datasize
+	local datasize=`get_datasize "$csvDataFd"`
+
+	# calculate the total number of pages by roundingup-dividing
+	local numpage=`expr \( "$datasize" + "$sizeOfGroup" - 1 \) / "$sizeOfGroup"`
+	# get output list with comma separated
+	local outputList=`get_outputlist 1 "$numpage" | xargs -d '\n' -I{} printf "'%s', " "{}"`
+
+	# reset
+	exec {csvDataFdNum}< <(echo "$csvData")
+	csvDataFd="/dev/fd/${csvDataFdNum}"
+
+	# generate pngs
+python <<EOF
+import pandas as pd
+from rdkit import Chem
+from rdkit.Chem import Draw
+
+csvData = pd.read_csv('${csvDataFd}',
+						header=[${linenumOfHeader}],
+						delimiter='${delimiter}'
+					)
+outputList = [${outputList}]
+smilesList = list(csvData[csvData.columns[${field}]].values)
+molList = [Chem.MolFromSmiles(s) for s in smilesList]
+if ${addH}:
+	molList = [Chem.AddHs(m) if m is not None else None for m in molList]
+legendList = [str(i) for i in range(1,1+${datasize})]
+
+groupedMolList = [molList[i*${sizeOfGroup}:(i+1)*${sizeOfGroup}] for i in range(${numpage})]
+groupedLegendList = [legendList[i*${sizeOfGroup}:(i+1)*${sizeOfGroup}] for i in range(${numpage})]
+for mlist, llist, output in zip(groupedMolList, groupedLegendList, outputList):
+	img = Draw.MolsToGridImage(mlist, molsPerRow=${numPerRow}, subImgSize=(1000,500), legends=llist)
+	img.save(output)
+
+EOF
+
+}
+
+function get_datasize(){
+	local csvFile="$1"
+
+python <<EOF
+import pandas as pd
+
+csvData = pd.read_csv('${csvFile}',
+						header=[${linenumOfHeader}],
+						delimiter='${delimiter}'
+					)
+print(len(csvData))
+EOF
+}
+
+
+
+main "$@"
+
+
+

@@ -1,0 +1,219 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+source "${SCRIPT_DIR}"/utl/element.sh
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
+
+function help(){
+	abstract_help "symb2numbasis" "symb" "num" "element symbol" "num of basis function"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -b, --basis <name> | set basis function (case insensitive)
+                       | available:
+                       |     STO-3G,
+                       |     3-21G,
+                       |     6-31G, 6-31G(d), 6-31G(d,p), 6-31G(d'), 6-31G(d',p'), 6-31G(3df,3pd), 6-31G(df,pd),
+                       |     6-31+G, 6-31+G(d), 6-31+G(d,p), 6-31++G, 6-31++G(d), 6-31++G(d,p), 6-31G*, 6-31G**,
+                       |     6-311G,
+                       |     CC-pVDZ, CC-pVTZ, CC-pVQZ, CC-pV5Z, CC-pV6Z,
+                       |     Aug-CC-pVDZ, Aug-CC-pVTZ, Aug-CC-pVQZ, Aug-CC-pV5Z, Aug-CC-pV6Z,
+                       |     LANL2DZ, SDD
+                       | default: STO-3G
+    -g, --gen <record> | set basis functions for each element
+                       | If this option is specified last among options,
+                       | '--' has the ability to force termination of input for this option
+                       | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
+    --dtype <type>  | set d function type: 5D / 6D
+                    | default: 5D
+    --ftype <type>  | set f function type: 7F / 10F (currently valid only on 7F)
+                    | default: 7F
+    --num-of <type> | Which type of basis functions to count: basis / primitive-basis / cartesian-basis
+                    | default: basis
+    -d, --delimiter <delimiter> | set delimiter
+                                | default: ' '
+    -f, --field <num>           | set target column number
+                                | default: 1
+    -s, --skip <num>            | set the title section
+                                | default: 0
+    -t, --total | calculate the number of total basis functions and print only
+EOF
+}
+
+function parse_option(){
+	# set default
+	delimiter=' '
+	targetColumnNum=1
+	headerEndLineNum=0
+	dtype=5D
+	ftype=7F
+	basistype=basis
+	isTotal=false
+
+	# initialize
+	gendist=
+	append_to_genecp_dict gen "H-Og: STO-3G"
+
+	local optionlist=(
+		-h -help --help
+		-b --basis
+		-g --gen
+		--dtype
+		--ftype
+		--num-of
+		-d --delimiter
+		-f --field
+		-s --skip
+		-t --total
+	)
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-b | --basis)
+			gendict= # re-initialize
+			append_to_genecp_dict gen "H-Og: ${args[2]}"
+			shift_args 2
+			;;
+		-g | --gen)
+			shift_args 1
+			gendict= # re-initialize
+			while true
+			do
+				if [ "${#args[@]}" -eq 1 ]; then
+					break
+				elif [ "${args[1]}" = -- ]; then
+					shift_args 1 # for '--'
+					break
+				elif ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}" && [[ "${args[1]}" =~ : ]]; then
+					append_to_genecp_dict gen "${args[1]}"
+					shift_args 1
+				else
+					break
+				fi
+			done
+			;;
+		--dtype)
+			dtype="${args[2]}"
+			shift_args 2
+			;;
+		--ftype)
+			ftype="${args[2]}"
+			shift_args 2
+			;;
+		--num-of)
+			basistype="${args[2]}"
+			shift_args 2
+			;;
+		-d | --delimiter)
+			delimiter="${args[2]}"
+			shift_args 2
+			;;
+		-f | --field)
+			targetColumnNum="${args[2]}"
+			shift_args 2
+			;;
+		-s | --skip)
+			headerEndLineNum="${args[2]}"
+			shift_args 2
+			;;
+		-t | --total)
+			isTotal=true
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+
+	database=`print_database`
+}
+
+function print_database(){
+	local columnNo
+	local symbbasis_genarg symbbasis_num_all symb_num_genarg
+
+	case "${basistype}" in
+	basis)
+		columnNo=5
+		;;
+	primitive-basis)
+		columnNo=6
+		;;
+	cartesian-basis)
+		columnNo=7
+		;;
+	*)
+		error "unknown --num-of option: '${basistype}'"
+		;;
+	esac
+
+	symbbasis_genarg=`echo "$gendict" | sed -r 's/ /-/1'`
+	symbbasis_num_all=`print_elementsymbol_numbasis_table |
+						sed -r 's/^ +//' |               # remove leading spaces as they are unnecessary
+						sed -r 's/ +/=/g' |              # change delimiter from ' ' to '=' to facilitate grep based on symbbasis_genarg after this
+						grep -i "=${dtype}=" |           # narrow down by type of D function (case insensitive)
+						grep -i "=${ftype}=" |           # narrow down by type of F function (case insensitive)
+						cut -d '=' -f 1,2,"${columnNo}" |# {symb}={basisname}={num}
+						sed -r 's/=/-/1'`                # {symb}-{basisname}={num}
+
+	symb_num_genarg=`echo "$symbbasis_num_all" |
+							# extract with the basis function condition specified in --gen or --basis option
+							grep -i $(echo "$symbbasis_genarg" | awk '{printf "-e %s= ", $0}') |
+							sed -r 's/-/=/1' | # {symb}={basisname}={num}
+							cut -d '=' -f 1,3 |# {symb}={num}
+							sed -r 's/=/ /'`   # {symb} {num}
+
+	echo "$symb_num_genarg"
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local inpStr
+	local symbList numList
+
+	inpStr="$1"
+
+	# data generation for basis.dat
+	# seq 118 | while read i ; do symb=`atomnum2symb "$i"` ; echo "$symb" ; xyzData=`echo -e "1\ntitle\n${symb} 0.0 0.0 0.0"` ; fmti=`printf '%03d' "$i"` ; echo "$xyzData" | xyz2gjf --link0 "%chk=${fmti}_${symb}.chk" --route '# p hf/sto-3g' --charge 0 > "${fmti}_${symb}.gjf" ; done
+	# ls *.gjf | sed -r 's/^/g16 /' | sed -r 's/$/\nrm core.*/' > exec.sh
+	# ls *.log | while read file ; do num=`g16log2value --num-basis "$file"` ; echo "$file $num" ; done
+
+	# extract content part
+	symbList=`echo "$inpStr" |
+				sed -r -n "$((${headerEndLineNum}+1)),$"p |
+				cut -d "${delimiter}" -f "${targetColumnNum}"`
+
+	# replace symbol with num of basis
+	numList=`replace_tablecolumn_by_mappingdatabase "$symbList" ' ' 1 "$database" ' ' 'none'`
+
+	if "$isTotal"; then
+		_s=`echo "$numList" | tr -d '\n'`
+		if [[ "$_s" =~ [^0-9] ]]; then
+			# If it contains anything other than numbers
+			echo 0
+		else
+			echo "$numList" | awk '{s+=$0}END{print s}'
+		fi
+	else
+		echo "$numList"
+	fi
+
+}
+
+main "$@"
+

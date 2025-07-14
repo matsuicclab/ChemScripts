@@ -1,0 +1,138 @@
+#!/bin/bash
+
+source "${SCRIPT_DIR}"/abstract/data2data
+
+function abstract_help(){
+	local cmd="$1"
+	local inp="$2"
+	local out="$3"
+	local inpDetail="$4"
+	local outDetail="$5"
+
+	local comment=`comment_about_script`
+	local optionUsage=`option_help`
+
+cat <<EOF
+${cmd}
+    convert <${inp}> to <${out}>
+    <${inp}>: ${inpDetail}
+    <${out}>: ${outDetail}
+    implementation of str2file
+${comment}${comment:+
+}
+usage:
+    + ${cmd} <${inp}>
+    +--- convert <${inp}> to <${out}> file with a default name
+    |
+    + ${cmd} <${inp}> > <${out}>
+    +--- save to the <${out}> file
+    |
+    + ${cmd} <${inp}> | <COMMAND>
+    +--- input to the next command
+    |
+    + <COMMAND> | ${cmd}
+    +--- convert the entered <${inp}> data and save to a file with a default name
+    |
+    + ${cmd} <(<COMMAND>)
+    +--- if input by process substitution, save to a file with a default name
+    |
+    + ${cmd} -O <${out}> <${inp}>
+    + ${cmd} -O - <${inp}>
+    +--- if you want to force the output destination, use the -O option
+
+option usage:
+${optionUsage}${optionUsage:+
+}
+EOF
+}
+
+# to override
+function comment_about_script(){
+	# print comment
+	:
+}
+
+# to override
+function option_help(){
+	# print option help
+	:
+}
+
+function parse_args(){
+	# Default value if -O is not set
+	forcedOutputDestType=unforced  # unforced, stdout, fixfile
+	forcedOutputDest=
+
+	# parse options of implemented script
+	parse_option
+
+	# parse inp data
+	inpStr="${args[@]:1}"
+	if [ "$inpStr" = "" ]; then
+		# if there are no remaining arguments
+
+		if [ ! -t 0 ]; then
+			# Without this judgment, it will wait if there is no pipe input and no argument input.
+			# from pipe
+			inpStr=`cat -`
+
+		else
+			error "inp data is not set"
+		fi
+	else
+		if [[ "$inpStr" =~ ^/dev/fd ]]; then
+			inpStr=`cat "$inpStr"`
+		fi
+	fi
+
+	# set out
+	local output
+	if [ "$forcedOutputDestType" = unforced ]; then
+		if [ -t 1 ]; then
+			output=`get_default_output_path "$inpStr"`
+		else
+			output="-"
+		fi
+	else
+		output="$forcedOutputDest"
+	fi
+
+	set_output "$output"
+}
+
+function parse_O_option(){
+	# parse -O option
+
+	local value="${args[2]}"
+	if [ "$value" = "-" ]; then
+		forcedOutputDestType=stdout
+		forcedOutputDest="-"
+	else
+		forcedOutputDestType=fixfile
+		forcedOutputDest="$value"
+	fi
+	shift_args 2
+
+}
+
+# to override
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
+# to override
+#function get_default_output_path(){
+#	echo 'str2file.out'
+#}
+
+# to override
+#function process(){
+#	# $1: inpStr
+#}
+
+function main(){
+	set_args "$@"
+	parse_args
+
+	process "$inpStr"
+}

@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/str2str
+
+function help(){
+	abstract_help "pubchemid2smiles" "id" "smiles" "PubChem ID" "SMILES"
+}
+
+function comment_about_script(){
+cat <<EOF
+    Data is obtained by scraping from PubChem database
+
+EOF
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -d, --default <value> | default value if not obtained
+                          | default: ''
+    -f, --force           | force normal termination even if not obtained
+
+EOF
+}
+
+function parse_option(){
+	# set default
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-d | --default)
+			defaultValue="${args[2]}"
+			shift_args 2
+			;;
+		-f | --force)
+			force=true
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function errorhandling(){
+	exitstatus="$?"
+	echo "$defaultValue"
+	if "$force"; then
+		exit 0
+	else
+		exit "$exitstatus"
+	fi
+}
+
+function process(){
+	# $1: inpStr
+	#
+	local cid smiles
+
+	cid="$1"
+	smiles=$(wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/property/CanonicalSMILES/TXT") || errorhandling
+
+	# print
+	echo "$smiles"
+
+}
+
+main "$@"
+
+
+

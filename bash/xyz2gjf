@@ -1,0 +1,256 @@
+#!/bin/bash
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+source "${SCRIPT_DIR}"/utl/element.sh
+source "${SCRIPT_DIR}"/utl/stringoperation.sh
+
+function help(){
+	abstract_help "xyz2gjf" "xyz" "gjf" "xyz file" "gaussian input file"
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    --link0  | set the link0 command (default: %LINK0%)
+    --route  | set the route section (default: %ROUTE%)
+    --title  | set the title section (default: %TITLE%)
+    --charge | set charge            (default: 0)
+    --multi  | set multiplicity      (default: low)
+             | --multi 1 / --multi 2 / ...
+             | --multi low / --multi high / --multi high2 / ... (determined from the number of electrons)
+    --gen <record> | set basis function when gen is specified in route
+                   | If this option is specified last among options,
+                   | '--' has the ability to force termination of input for this option
+                   | --gen 'H-Ar,Ga-Kr: 6-31G**' 'Fe,I,Ce: Lanl2dz' -- <file1> ...
+    --ecp <record> | set effective core potential
+                   | same specification as --gen
+                   | --ecp 'Fe,I,Ce: Lanl2dz'
+    --resp | set resp flag (add iop to the route section)
+EOF
+}
+
+function parse_option(){
+	# set default
+	link0command='%LINK0%'
+	routesection='%ROUTE%'
+	titlesection='%TITLE%'
+	charge=0           # default (= --charge 0)
+	spinstate=0        # default (= --multi low)
+	fixedmultiplicity= # initialize for unbound variable
+	gendict=
+	ecpdict=
+	isresp=false
+	local optionlist=(
+		-O
+		-h -help --help
+		--link0 --route --title --charge --multi --gen --ecp --resp
+	)
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-O)
+			parse_O_option
+			;;
+		--link0)
+			link0command="${args[2]}"
+			shift_args 2
+			;;
+		--route)
+			routesection="${args[2]}"
+			shift_args 2
+			;;
+		--title)
+			titlesection="${args[2]}"
+			shift_args 2
+			;;
+		--charge)
+			charge="${args[2]}"
+			shift_args 2
+			;;
+		--multi)
+			local __multi
+			__multi="${args[2]}"
+			if [[ "$__multi" =~ ^[0-9]+$ ]]; then
+				fixedmultiplicity="$__multi"
+			elif [ "$__multi" = low ]; then
+				spinstate=0
+			elif [ "$__multi" = high ]; then
+				spinstate=1
+			elif [[ "$__multi" =~ ^high[0-9]+$ ]]; then
+				spinstate="${__multi/high/}"
+			else
+				error "invalid value for --multi: ${__multi}"
+			fi
+			shift_args 2
+			;;
+		--gen)
+			shift_args 1
+			gendict= # re-initialize
+			while true
+			do
+				if [ "${#args[@]}" -eq 1 ]; then
+					break
+				elif [ "${args[1]}" = -- ]; then
+					shift_args 1 # for '--'
+					break
+				elif ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}" && [[ "${args[1]}" =~ : ]]; then
+					append_to_genecp_dict gen "${args[1]}"
+					shift_args 1
+				else
+					break
+				fi
+			done
+			;;
+		--ecp)
+			shift_args 1
+			ecpdict= # re-initialize
+			while true
+			do
+				if [ "${#args[@]}" -eq 1 ]; then
+					break
+				elif [ "${args[1]}" = -- ]; then
+					shift_args 1 # for '--'
+					break
+				elif ! echo " ${optionlist[@]} " | grep -q -- "${args[1]}" && [[ "${args[1]}" =~ : ]]; then
+					append_to_genecp_dict ecp "${args[1]}"
+					shift_args 1
+				else
+					break
+				fi
+			done
+			;;
+		--resp)
+			isresp=true
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+
+	if "$isresp"; then
+		routesection="${routesection} iop(6/33=2,6/41=10,6/42=17) pop=(mk,readradii)"
+	fi
+
+}
+
+function get_default_conversion_patt(){
+	echo '{s/.xyz$//; s/$/.gjf/}'
+}
+
+function generate_genecp_section(){
+	# $1: gen / ecp
+	# $2: elementList
+	# e.g. elementList: 'C\nH\nH\nH\nO\nH'
+	local dict
+	if [ "$1" = "gen" ]; then
+		dict="${gendict}"
+	else
+		dict="${ecpdict}"
+	fi
+
+	echo "$2" |
+		awk '!a[$0]++{print}' | # equals to sort | uniq
+		awk '{print $0 " " $0}' |
+		replace_tablecolumn_by_mappingdatabase - ' ' 2 "$dict" ' ' 'none' | # replace a element symbol in second column with basis function
+		while read symb basis
+		do
+			if [ ! "$basis" = 'none' ]; then
+				# print
+				echo "${symb} 0"
+				echo "${basis}"
+				echo "****"
+			else
+				error "No basis functions specified: ${symb}"
+			fi
+		done
+}
+
+function process(){
+	# $1: inpFile
+	#
+	local xyzData
+	xyzData=`cat "$1"`
+
+	# get coordinate from the 3rd line onwards
+	coordData=`echo "$xyzData" | xyz2xyz --eliminate-header` # eliminate header
+	# list the elements that exist
+	elementList=`echo "$coordData" | cut -d ' ' -f 1`
+
+	# set multiplicity
+	if [ "$fixedmultiplicity" ]; then
+		# multiplicity is already set with --multi option
+		multiplicity="$fixedmultiplicity"
+
+	else
+		# count the total number of electrons
+		# and determine whether the number is odd or even.
+		# - if even, multiplicity = 1, 3, 5, ...
+		# - if odd,  multiplicity = 2, 4, 6, ...
+		numElecMod2=`echo "$elementList" | symb2atomnum | awk -v c="$charge" '{s += $1} END {print (s-c)%2}'`
+
+		# reset multiplicity
+		multiplicity=$((2 * ${spinstate} + 1 + ${numElecMod2}))
+
+	fi
+
+	# set genecp
+	gensection=
+	ecpsection=
+	if [ "$gendict" ]; then
+		gensection=`generate_genecp_section gen "${elementList}"`
+	fi
+	if [ "$ecpdict" ]; then
+		ecpsection=`generate_genecp_section ecp "${elementList}"`
+	fi
+
+	# save to gjf
+	# - print link0
+	echo "$link0command"
+
+	# - print route section
+	echo "$routesection"
+
+	# - print a empty line
+	echo ""
+
+	# - print title section
+	echo "$titlesection"
+
+	# - print a empty line
+	echo ""
+
+	# - print charge and multiplicity
+	echo "${charge} ${multiplicity}"
+
+	# - print a molecule structure
+	echo "$coordData"
+
+	# - print a empty line
+	echo ""
+
+	# - print genecp
+	if [ "$gensection" ]; then
+		echo "$gensection"
+		echo ""
+	fi
+	if [ "$ecpsection" ]; then
+		echo "$ecpsection"
+		echo ""
+		echo ""
+	fi
+}
+
+main "$@"
+

@@ -1,0 +1,763 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/file2str
+
+function help(){
+	abstract_help "g16log2value" "g16log" "value" "gaussian log file" "arbitary value"
+}
+
+function comment_about_script(){
+cat <<EOF
+    Because the contents of Gaussian's log files are complex,
+    this script cannot guarantee that it will always work correctly.
+    Be sure to verify the execution results.
+
+EOF
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    --num-atom   | num of atoms
+    --num-elec   | num of electrons
+    --num-a-elec | num of alpha-electrons
+    --num-b-elec | num of beta-electrons
+    --charge        | charge
+    --multiplicity  | multiplicity
+    --stoichiometry | stoichiometry
+    --basis               | basis function
+    --num-basis           | num of basis function
+    --num-primitive-basis | num of primitive basis function
+    --num-cartesian-basis | num of cartesian basis function
+    --theory          | theory of electronic state (unimplemented)
+    --is-unrestricted | is it UHF? (true/false)
+    --solvation-model | solvation model
+    --solvent         | solvent
+    --SCF-energy        | SCF energy (total energy in B.O. approx.)
+    --total-energy      | total energy (= --SCF-energy)
+    --alpha-orbital-energy <orbital> | alpha orbital energy
+    --beta-orbital-energy <orbital>  | beta orbital energy
+    --orbital-energy <orbital>       | alpha & beta orbital energy
+        <orbital> | specify the orbital you want: all / occall / virtall / HOMO1 / HOMO2 / .. / LUMO1 / ..
+    --ZPVE-energy       | zero-point vibration energy
+    --total+ZPVE-energy | total energy + ZPVE
+    --internal-energy   | internal energy
+    --gibbs-energy      | gibbs energy
+    --temperature       | temperature
+    --pressure          | pressure
+    --total-opt-step | total num of optimization step
+    --geometry <num> | geometry in step <num> (unimplemented)
+    --opt-geometry   | optimized geometry (unimplemented)
+    --num-im-freq    | num of imaginary frequencies
+    --scr-files-path | scratch files path
+    --version        | gaussian version
+    --exit-status    | gaussian exit status
+    --cpu-time           | cpu time for each internal job step
+    --total-cpu-time     | total cpu time
+    --elapsed-time       | elapsed time for each internal job step
+    --total-elapsed-time | total elapsed time
+
+EOF
+}
+
+function parse_option(){
+	varfunc=
+
+	if [ "${#args[@]}" -gt 1 ]; then
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		--num-atom)
+			varfunc=get_num_atom
+			;;
+		--num-elec)
+			varfunc=get_num_elec
+			;;
+		--num-a-elec)
+			varfunc=get_num_a_elec
+			;;
+		--num-b-elec)
+			varfunc=get_num_b_elec
+			;;
+		--charge)
+			varfunc=get_charge
+			;;
+		--multiplicity)
+			varfunc=get_num_elec
+			;;
+		--stoichiometry)
+			varfunc=get_stoichiometry
+			;;
+		--basis)
+			varfunc=get_basis
+			;;
+		--num-basis)
+			varfunc=get_num_basis
+			;;
+		--num-primitive-basis)
+			varfunc=get_primitive_basis
+			;;
+		--num-cartesian-basis)
+			varfunc=get_cartesian_basis
+			;;
+		--theory)
+			varfunc=get_theory
+			;;
+		--is-unrestricted)
+			varfunc=is_unrestricted
+			;;
+		--solvation-model)
+			varfunc=get_solvation_model
+			;;
+		--solvent)
+			varfunc=get_solvent
+			;;
+		--SCF-energy)
+			varfunc=get_total_energy
+			;;
+		--total-energy)
+			varfunc=get_total_energy
+			;;
+		--alpha-orbital-energy | --beta-orbital-energy | --orbital-energy)
+			local __spin __args
+			__args=
+
+			# どの関数が指定されたか
+			case "${args[1]}" in
+			--alpha-orbital-energy)
+				__spin=Alpha
+				;;
+			--beta-orbital-energy)
+				__spin=Beta
+				;;
+			--orbital-energy)
+				__spin=Both
+				;;
+			esac
+
+			# 引数解釈
+			while :
+			do
+				case "${args[2]}" in
+				all | occall | virtall | HOMO* | LUMO*)
+					__args="${__args} ${args[2]}"
+					shift_args 1
+					;;
+				*)
+					break
+					;;
+				esac
+			done
+			if [ "${__args}" ]; then
+				varfunc="get_orbital_energy ${__spin} ${__args}"
+			else
+				error "unknown option for --orbital-energy: '${args[2]}'"
+			fi
+			;;
+		--ZPVE-energy)
+			varfunc=get_ZPVE_energy
+			;;
+		--total+ZPVE-energy)
+			varfunc=get_total+ZPVE_energy
+			;;
+		--internal-energy)
+			varfunc=get_internal_energy
+			;;
+		--gibbs-energy)
+			varfunc=get_gibbs_energy
+			;;
+		--temperature)
+			varfunc=get_temperature
+			;;
+		--pressure)
+			varfunc=get_pressure
+			;;
+		--total-opt-step)
+			varfunc=get_total_opt_step
+			;;
+		--geometry)
+			local step="${args[2]}"
+			varfunc="get_geometry $step"
+			shift_args 1
+			;;
+		--opt-geometry)
+			varfunc=get_opt_geometry
+			;;
+		--num-im-freq)
+			varfunc=get_num_im_freq
+			;;
+		--scr-files-path)
+			varfunc=get_scr_files_path
+			;;
+		--version)
+			varfunc=get_version
+			;;
+		--exit-status)
+			varfunc=get_exit_status
+			;;
+		--cpu-time)
+			varfunc=get_cpu_time
+			;;
+		--total-cpu-time)
+			varfunc=get_total_cpu_time
+			;;
+		--elapsed-time)
+			varfunc=get_elapsed_time
+			;;
+		--total-elapsed-time)
+			varfunc=get_total_elapsed_time
+			;;
+		*)
+			error "unknown option: '${args[1]}'"
+			;;
+		esac
+
+		shift_args 1
+
+	else
+		error "specify option"
+	fi
+}
+
+function process(){
+	# $1: inpFile
+	#
+	local glogFile glogData
+
+	glogFile="$1"
+	glogData=`cat "$glogFile"`
+	$varfunc "$glogData"
+
+}
+
+function get_num_atom(){
+	# $1: logData
+	echo "$1" |
+		grep 'NAtoms' |
+		tail -n 1 |
+		sed -r 's/.+NAtoms= +//' |
+		sed -r 's/ .+//'
+}
+
+function get_num_elec(){
+	# $1: logData
+	echo "$1" |
+		grep 'alpha electrons' |
+		tail -n 1 |
+		sed -r 's/[^0-9]/ /g' |
+		sed -r 's/ +/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/ / + /' |
+		xargs expr
+}
+
+function get_num_a_elec(){
+	# $1: logData
+	echo "$1" |
+		grep 'alpha electrons' |
+		tail -n 1 |
+		sed -r 's/[^0-9]/ /g' |
+		sed -r 's/ +/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/ .+//'
+}
+
+function get_num_b_elec(){
+	# $1: logData
+	echo "$1" |
+		grep 'beta electrons' |
+		tail -n 1 |
+		sed -r 's/[^0-9]/ /g' |
+		sed -r 's/ +/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/^[^ ]+ //' |
+		sed -r 's/ +$//'
+}
+
+function get_charge(){
+	# $1: logData
+	echo "$1" |
+		grep 'Charge' |
+		grep 'Multiplicity' |
+		tail -n 1 |
+		sed -r 's/[^0-9+-]+/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/ .+//'
+}
+
+function get_multiplicity(){
+	# $1: logData
+	echo "$1" |
+		grep 'Charge' |
+		grep 'Multiplicity' |
+		tail -n 1 |
+		sed -r 's/[^0-9+-]+/ /g' |
+		sed -r 's/^ //' |
+		sed -r 's/^[^ ]+ //' |
+		sed -r 's/ $//'
+}
+
+function get_stoichiometry(){
+	# $1: logData
+	echo "$1" |
+		grep 'Stoichiometry' |
+		tail -n 1 |
+		sed -r 's/ +$//' |
+		sed -r 's/.+ //'
+}
+
+function get_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'Standard basis' |
+		tail -n 1 |
+		sed -r 's/^[^:]+://' |
+		sed -r 's/^ +//' |
+		sed -r 's/ +$//'
+}
+
+function get_num_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'basis functions' |
+		grep primitive |
+		tail -n 1 |
+		sed -r 's/[^0-9]+/ /g' |
+		awk '{print $1}'
+}
+
+function get_primitive_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'basis functions' |
+		grep primitive |
+		tail -n 1 |
+		sed -r 's/[^0-9]+/ /g' |
+		awk '{print $2}'
+}
+
+function get_cartesian_basis(){
+	# $1: logData
+	echo "$1" |
+		grep 'basis functions' |
+		grep primitive |
+		tail -n 1 |
+		sed -r 's/[^0-9]+/ /g' |
+		awk '{print $3}'
+}
+
+function get_theory(){
+	error "unimplemented"
+}
+
+function is_unrestricted(){
+	# $1: logData
+	if echo "$1" | grep -q 'Beta .*eigenvalues'; then
+		echo true
+	else
+		echo false
+	fi
+}
+
+function get_solvation_model(){
+	error "unimplemented"
+}
+function get_solvent(){
+	error "unimplemented"
+}
+
+function get_total_energy(){
+	# $1: logData
+	echo "$1" |
+		grep 'SCF Done' |
+		tail -n 1 |
+		sed -r 's/.+=//' |
+		sed -r 's/A\.U\..+//' |
+		sed -r 's/ //g'
+}
+
+function __get_orbital_energy_list(){
+	# $1: logData
+	local logData energyData
+	logData="$1"
+
+	energyData=`echo "$logData" |
+					grep -B 1 -e 'Alpha .*eigenvalues' -e 'Beta .*eigenvalues' |
+					tac |
+					sed -r -n '1,/^--/p' |
+					tac |
+					grep eigenvalues`
+
+	alphaOccEnergyList=`echo "$energyData" |
+							grep 'Alpha  occ' |
+							sed -r 's/.+-- //' |
+							sed -r 's/(.{10})/\1\n/g' |
+							sed -r '/^$/d' |
+							sed -r 's/^ *//'`
+	alphaVirtEnergyList=`echo "$energyData" |
+							grep 'Alpha virt' |
+							sed -r 's/.+-- //' |
+							sed -r 's/(.{10})/\1\n/g' |
+							sed -r '/^$/d' |
+							sed -r 's/^ *//'`
+	if echo "$energyData" | grep -q 'Beta'; then
+		betaOccEnergyList=`echo "$energyData" |
+								grep 'Beta  occ' |
+								sed -r 's/.+-- //' |
+								sed -r 's/(.{10})/\1\n/g' |
+								sed -r '/^$/d' |
+								sed -r 's/^ *//'`
+		betaVirtEnergyList=`echo "$energyData" |
+								grep 'Beta virt' |
+								sed -r 's/.+-- //' |
+								sed -r 's/(.{10})/\1\n/g' |
+								sed -r '/^$/d' |
+								sed -r 's/^ *//'`
+	else
+		betaOccEnergyList="$alphaOccEnergyList"
+		betaVirtEnergyList="$alphaVirtEnergyList"
+	fi
+
+	bothOccEnergyList=`echo -e "${alphaOccEnergyList}\n${betaOccEnergyList}" | sort -n`
+	bothVirtEnergyList=`echo -e "${alphaVirtEnergyList}\n${betaVirtEnergyList}" | sort -n`
+	alphaAllEnergyList=`echo -e "${alphaOccEnergyList}\n${alphaVirtEnergyList}" | sort -n`
+	betaAllEnergyList=`echo -e "${betaOccEnergyList}\n${betaVirtEnergyList}" | sort -n`
+	bothAllEnergyList=`echo -e "${bothOccEnergyList}\n${bothVirtEnergyList}" | sort -n`
+}
+
+function __get_orbital_energy(){
+	# 先に__get_orbital_energy_list()を実行しておくこと
+	# $1: spin (Alpha, Beta, Both)
+	# $2: orbitalName
+	local spin orbitalName
+	spin="$1"
+	orbitalName="$2"
+
+	case "${orbitalName}" in
+	all | occall | virtall)
+		case "${spin}-${orbitalName}" in
+		Alpha-all)
+			echo "$alphaAllEnergyList"
+			;;
+		Beta-all)
+			echo "$betaAllEnergyList"
+			;;
+		Both-all)
+			echo "$bothAllEnergyList"
+			;;
+		Alpha-occall)
+			echo "$alphaOccEnergyList"
+			;;
+		Beta-occall)
+			echo "$betaOccEnergyList"
+			;;
+		Both-occall)
+			echo "$bothOccEnergyList"
+			;;
+		Alpha-virtall)
+			echo "$alphaVirtEnergyList"
+			;;
+		Beta-virtall)
+			echo "$betaVirtEnergyList"
+			;;
+		Both-virtall)
+			echo "$bothVirtEnergyList"
+			;;
+		esac
+		;;
+	HOMO* | LUMO*)
+		pos=`echo "$orbitalName" | sed -r 's/^(HOMO|LUMO)//'`
+		if [ ! "$pos" ]; then
+			pos=1
+		fi
+		if [[ ! "$pos" =~ ^[0-9]+$ ]]; then
+			error "invalid orbital name: ${orbitalName}"
+		fi
+		case "${spin}-${orbitalName}" in
+		Alpha-HOMO*)
+			echo "$alphaOccEnergyList" |
+				tac |
+				sed -n "${pos}p"
+			;;
+		Beta-HOMO*)
+			echo "$betaOccEnergyList" |
+				tac |
+				sed -n "${pos}p"
+			;;
+		Both-HOMO*)
+			echo "$bothOccEnergyList" |
+				tac |
+				sed -n "${pos}p"
+			;;
+		Alpha-LUMO*)
+			echo "$alphaVirtEnergyList" |
+				sed -n "${pos}p"
+			;;
+		Beta-LUMO*)
+			echo "$betaVirtEnergyList" |
+				sed -n "${pos}p"
+			;;
+		Both-LUMO*)
+			echo "$bothVirtEnergyList" |
+				sed -n "${pos}p"
+			;;
+		esac
+		;;
+	*)
+		;;
+	esac
+
+}
+
+function get_orbital_energy(){
+	# $1:    spin
+	# $2-:   orbitalNames
+	# ${!#}: logData
+	local spin logData
+	spin="$1"
+	shift 1
+
+	# logデータを取得
+	logData="${!#}"
+	# 軌道エネルギーリストを設定
+	__get_orbital_energy_list "$logData"
+
+	# 各orbitalNameに対して対応するエネルギーを取得
+	for i in `seq $(($# - 1))`
+	do
+		orbitalName="$1"
+		__get_orbital_energy "$spin" "$orbitalName"
+		shift 1
+	done
+}
+
+
+function get_ZPVE_energy(){
+	# $1: logData
+	echo "$logData" |
+		sed -r -n '/Zero-point correction=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
+}
+
+function get_total+ZPVE_energy(){
+	# $1: logData
+	echo "$logData" |
+		sed -r -n '/Sum of electronic and zero-point Energies=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
+}
+
+function get_internal_energy(){
+	# $1: logData
+	echo "$logData" |
+		sed -n -r '/Sum of electronic and thermal Energies=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
+}
+
+function get_gibbs_energy(){
+	# $1: logData
+	echo "$logData" |
+		sed -n -r '/Sum of electronic and thermal Free Energies=/p' |
+		tail -n 1 |
+		sed -r 's/.*= +([^ ]+) ?.*/\1/'
+}
+
+function get_temperature(){
+	# $1: logData
+	echo "$logData" |
+		grep Temperature |
+		head -n 1 |
+		sed -r 's/.+Temperature +//' |
+		sed -r 's/ +Kelvin.+//'
+}
+
+function get_pressure(){
+	# $1: logData
+	echo "$logData" |
+		grep Temperature |
+		head -n 1 |
+		sed -r 's/.+Pressure +//' |
+		sed -r 's/ +Atm.+//'
+}
+
+function get_total_opt_step(){
+	# $1: logData
+	echo "$1" |
+		grep 'Step number' |
+		grep 'out of a maximum of' |
+		wc -l
+}
+
+function get_geometry(){
+	# $1: stepnum
+	# $2: logData
+	local step="$1"
+	local logData="$2"
+
+	error "unimplemented"
+	#echo "$1" |
+
+}
+
+function get_opt_geometry(){
+	# $1: logData
+	local logData="$1"
+	local totalStep=`get_total_opt_step "$logData"`
+	get_geometry "$totalStep" "$logData"
+}
+
+function get_num_im_freq(){
+	# $1: logData
+	echo "$1" |
+		sed -r -n '/\*{6}.+imaginary frequencies.+\*{6}/p' |
+		tail -n 1 |
+		sed -r 's/[^0-9]//g'
+}
+
+function get_scr_files_path(){
+	# $1: logData
+	local logData="$1"
+	local inpFilePath=`echo "$logData" |
+						grep 'scrdir' |
+						head -n 1 |
+						sed -r 's/ *-scrdir=.+//' |
+						sed -r 's/.* +//' |
+						sed -r 's/"//g'`
+	local PID=`echo "$logData" |
+				grep ' PID=' |
+				head -n 1 |
+				sed -r 's/.+ //' |
+				sed -r 's/[^0-9]//g'`
+
+	# get a pattern of the d2e, rwf, int files
+	local otherFilePathPattern=`echo "$inpFilePath" | sed -r "s/-[^-]+$/-${PID}./"`
+
+	local scrFilesPath=`ls -l "$inpFilePath" "$otherFilePathPattern"* 2>/dev/null |
+					 		sed -r 's/^([^ ]+ +){2}//' |
+					 		sed -r -n "/^`whoami`/p" |
+					 		sed -r 's/^([^ ]+ +){6}//'`
+	if [ "$scrFilesPath" ]; then
+		echo "$scrFilesPath"
+	else
+		warning "scr file not found"
+	fi
+}
+
+function get_version(){
+	# $1: logData
+	echo "$1" |
+		sed -r -n '/^ +\*+ *$/,$p' |
+		head |
+		grep -i gaussian |
+		head -n 1 |
+		sed -r 's/^[^:]+: +//' |
+		sed -r 's/ .+//'
+}
+
+function get_exit_status(){
+	# $1: logData
+	local logData="$1"
+	local error=`__get_error_status "$logData"`
+	if [ "$error" ]; then
+		echo "$error"
+	else
+		echo "Normal termination"
+	fi
+}
+
+function __get_error_status(){
+	# $1: logData
+	local logData="$1"
+
+	#gaussianExitsSuddenly
+	#If there is no Error termination (or Normal termination) in the last 4 lines
+	if [ ! "`echo \"$logData\" | tail -n 4 | grep -e 'Normal termination' -e 'Error termination'`" ]; then
+		echo "gaussianExitsSuddenly"
+		return
+	fi
+
+	#failSCFConvg
+	#If SCF calculation does not converge
+	# TODO fix the problem of incorrect judgment when scf=xqc
+	[ "`echo \"$logData\" | grep 'Convergence criterion not met'`" ] &&
+		echo "failSCFConvergence"
+
+	#failOpt
+	#If optimization fails
+	[ "`echo \"$logData\" | grep 'Optimization stopped'`" ] &&
+		echo "failOptimization"
+
+	#smallInteratomicDistance
+	#If interatomic distance is too small and it fails
+	[ "`echo \"$logData\" | grep 'Small interatomic distances encountered'`" ] &&
+		echo "smallInteratomicDistance"
+
+	#FormBXProblem
+	#If the structure becomes a straight line or plane during the structural optimization process
+	[ "`echo \"$logData\" | grep -e 'FormBX had a problem' -e 'Linear angle in Tors' -e 'Linear angle in Bend' -e 'Error in internal coordinate system'`" ] &&
+		echo "FormBXProblem"
+
+	#NotEnoughMaxDisk
+	#If the program ends due to insufficient disk space
+	[ "`echo \"$logData\" | grep -e 'Transformation cannot fit in the specified MaxDisk.' -e 'Not enough resources for E2 calculation.'`" ] &&
+		echo "NotEnoughMaxDisk"
+}
+
+function get_cpu_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Job cpu time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
+		xargs -d '\n' -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
+}
+
+function get_total_cpu_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Job cpu time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
+		xargs echo |
+		xargs -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
+}
+
+function get_elapsed_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Elapsed time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
+		xargs -d '\n' -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
+}
+
+function get_total_elapsed_time(){
+	# $1: logData
+	echo "$1" |
+		grep 'Elapsed time' |
+		sed -r 's/.+://' |
+		sed -r 's/\.$//' |
+		xargs echo |
+		xargs -I{} date --date '19700101 {}' +%s |
+		xargs -I{} expr {} - `date --date '19700101' +%s` |
+		xargs printf "%s s\n"
+}
+
+
+main "$@"
+
+
+

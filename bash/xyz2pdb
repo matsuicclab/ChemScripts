@@ -1,0 +1,104 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function help(){
+	abstract_help "xyz2pdb" "xyz" "pdb" "xyz file" "PDB: protein data bank"
+}
+
+function comment_about_script(){
+cat <<EOF
+    You can also achieve by 'newzmat -ixyz -opdb' implemented in Gaussian utility.
+    That approach has the advantage of restoring connecting information with no multiplicity.
+    In that case, you need to remove the header of the first two lines of the xyz file.
+
+    You can also create by rdkit 2022.09--, please check MolFromXYZFile, DetermineBonds, and MolToPDBFile.
+
+EOF
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -r, --residue   | set residue name
+    -n, --no-header | if the input xyz data has no header
+
+EOF
+}
+
+function parse_option(){
+	# set default
+	residueName=MOL
+	noHeader=false
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-O)
+			parse_O_option
+			;;
+		-r | --residue)
+			residueName=`printf '%3s' "${args[2]}"`
+			shift_args 2
+			;;
+		-n | --no-header)
+			noHeader=true
+			shift_args 1
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+
+	# set headerHandling
+	if "$noHeader"; then
+		headerHandling="cat -"
+	else
+		headerHandling="sed -r '1,2d'"
+	fi
+
+}
+
+function get_default_conversion_patt(){
+	echo '{s/.xyz$//; s/$/.pdb/}'
+}
+
+function process(){
+	# $1: inpFile
+	#
+	local xyzFile xyzData
+
+	xyzFile="$1"
+	xyzData=`cat "$xyzFile"`
+
+	# convert and print
+	echo "$xyzData" |
+			eval "$headerHandling" | # process header (eliminate)
+			nl | # set serial number of atoms
+			xargs printf "ATOM  %5d %-4s ${residueName}     1    %8.3f%8.3f%8.3f\n" # print
+
+}
+
+main "$@"
+
+
+
+
+
+
+
+
+
+
+

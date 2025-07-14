@@ -1,0 +1,104 @@
+#!/bin/bash
+
+source "${SCRIPT_DIR}"/abstract/data2data
+
+function abstract_help(){
+	local cmd="$1"
+	local inp="$2"
+	local out="$3"
+	local inpDetail="$4"
+	local outDetail="$5"
+
+	local comment=`comment_about_script`
+	local optionUsage=`option_help`
+
+cat <<EOF
+${cmd}
+    convert <${inp}> to <${out}>
+    <${inp}>: ${inpDetail}
+    <${out}>: ${outDetail}
+    implementation of file2str
+${comment}${comment:+
+}
+usage:
+    + ${cmd} <${inp}>
+    +--- convert <${inp}> to <${out}> and print to stdout
+    |
+    + ${cmd} <${inp}> > file
+    +--- save to the file
+    |
+    + ${cmd} <${inp}> | <COMMAND>
+    +--- input to the next command
+    |
+    + <COMMAND> | ${cmd}
+    +--- convert the entered <${inp}> data and print to stdout
+    |
+    + ${cmd} <(<COMMAND>)
+    +--- if input by process substitution, print to stdout
+
+option usage:
+${optionUsage}${optionUsage:+
+}
+EOF
+}
+
+# to override
+function comment_about_script(){
+	# print comment
+	:
+}
+
+# to override
+function option_help(){
+	# print option help
+	:
+}
+
+function parse_args(){
+	# parse options of implemented script
+	parse_option
+
+	# parse inp data
+	inpFile="${args[@]:1}"
+	if [ "$inpFile" = "" ]; then
+		# if there are no remaining arguments
+
+		if [ ! -t 0 ]; then
+			# Without this judgment, it will wait if there is no pipe input and no argument input.
+			# from pipe
+			inpFile=/dev/fd/0
+
+		else
+			error "inp data is not set"
+		fi
+	else
+		:
+	fi
+
+	# set out
+	# always stdout
+	set_output -
+
+}
+
+# to override
+#function parse_option(){
+#	# parse option from "${args[@]}"
+#}
+
+# to override
+#function process(){
+#	# $1: inpFile
+#	# limit 'cat "$1"' to one execution because of cat -
+#}
+
+function main(){
+	set_args "$@"
+	parse_args
+
+	process "$inpFile"
+}
+
+
+
+

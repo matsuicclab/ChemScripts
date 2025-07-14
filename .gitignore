@@ -1,2 +1,6 @@
 # for eclipse temporary files
 .project
+.pydevproject
+
+__pycache__/
+

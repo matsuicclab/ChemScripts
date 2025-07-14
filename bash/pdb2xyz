@@ -1,0 +1,113 @@
+#!/bin/bash
+
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+source "${SCRIPT_DIR}"/abstract/files2files
+
+function help(){
+	abstract_help "pdb2xyz" "pdb" "xyz" "PDB: protein data bank file" "xyz file"
+}
+
+function comment_about_script(){
+cat <<EOF
+    If you want to process trajectory data with python,
+    you should load mdcrd(s) directly into pytraj.
+
+EOF
+}
+
+function option_help(){
+cat <<EOF
+    -h, -help, --help | display this help
+    -m, --model | model number
+
+EOF
+}
+
+function parse_option(){
+	# set default
+	modelnum=all
+
+	while [ "${#args[@]}" -gt 1 ]
+	do
+		case "${args[1]}" in
+		-h | -help | --help)
+			help
+			exit
+			# shift_args 1
+			;;
+		-O)
+			parse_O_option
+			;;
+		-m | --model)
+			modelnum="${args[2]}"
+			shift_args 2
+			;;
+		-*)
+			error "unknown option: '${args[1]}'"
+			;;
+		*)
+			break
+			;;
+		esac
+	done
+}
+
+function get_default_conversion_patt(){
+	if [ "$modelnum" = all ]; then
+		echo '{s/.pdb$//; s/$/.xyz/}'
+	else
+		echo "{s/.pdb$//; s/$/.${modelnum}.xyz/}"
+	fi
+}
+
+function trimmodel(){
+	if [ "$modelnum" = all ]; then
+		cat -
+	else
+		sed -r -n "/^MODEL +${modelnum}/,/^MODEL/p"
+	fi
+}
+
+function process(){
+	# $1: inpFile
+	#
+	local pdbFile pdbData atomData
+	local prexyzData minNumChar elementList
+	local xyzData numAtom title
+
+	pdbFile="$1"
+	title="pdb2xyz: from ${pdbFile} model ${modelnum}: `date`"
+
+	cat "$pdbFile" |
+		trimmodel |
+		grep -e '^ATOM' -e '^HETATM' |
+		sed -r 's/^(.{6}).{6}(.{4}).{14}(.{8})(.{8})(.{8}).*$/\1 \2 \3 \4 \5/' |
+		tac |
+		awk -v title="$title" \
+			'$1=="ATOM"{
+				$2=substr($2,1,1); print $2,$3,$4,$5
+			}$1=="HETATM"{
+				gsub(/[0-9]/, "", $2); print $2,$3,$4,$5
+			}{
+				numAtom+=1
+			}END{
+				print title;
+				print numAtom
+			}' |
+		tac
+
+}
+
+main "$@"
+
+
+
+
+
+
+
+
+
+
+
