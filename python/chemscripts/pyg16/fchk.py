@@ -541,6 +541,12 @@ class Fchk:
                   numSplitの数だけ計算を小分けにする
         return: np.ndarray: shape:(*,)
         """
+        if r.shape == (3,):
+            r = r.reshape(1,3)
+        elif len(r.shape) == 2 and r.shape[1] == 3:
+            pass
+        else:
+            raise ValueError('shape of r must be (*,3) or (3,)')
         # 単位変換
         factor = getUnitConversionFactor(oldunit=unit, newunit='Bohr')
         r *= factor # unit: Bohr
