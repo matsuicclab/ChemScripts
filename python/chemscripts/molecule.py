@@ -24,9 +24,9 @@ class Molecule:
             if any([type(n) not in [int, np.int32, np.int64] for n in atomicnumList]):
                 # 要素は整数のみ
                 raise TypeError('type of elements of atomicnumList must be int')
-            if any([n<1 for n in atomicnumList]):
-                # 要素は自然数のみ
-                raise ValueError('elements of atomicnumList must be positive')
+            if any([n<0 for n in atomicnumList]):
+                # 要素は非負数のみ
+                raise ValueError('elements of atomicnumList must not be negative')
             numAtom = len(atomicnumList)
             symbolList = [table.GetElementSymbol(int(n)) for n in atomicnumList]
 
@@ -199,10 +199,8 @@ class Molecule:
             xyzformat = ''
         lineformat = '{} {'+xyzformat+'} {'+xyzformat+'} {'+xyzformat+'}'
 
-        result = [str(self.__numAtom), comment]
-        result.extend(
-            [lineformat.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, atomfilter=atomfilter)]
-        )
+        result = [lineformat.format(s,x,y,z) for s, x, y, z in self.iterateAtoms(unit=unit, elementSymbol=elementSymbol, atomfilter=atomfilter)]
+        result = [str(len(result)), comment, *result]
         result = '\n'.join(result)
 
         return result
@@ -229,7 +227,7 @@ class Molecule:
         #    unsatu /= 2
 
         # Chem.MolFromXYZBlock()は固定小数点しか付けつけないのでformatする
-        xyzblock = self.giveXYZBlock(unit='Angstrom', elementSymbol=True, xyzformat=':.8f')
+        xyzblock = self.giveXYZBlock(unit='Angstrom', elementSymbol=True, xyzformat=':.8f', atomfilter=[0])
         mol = Chem.MolFromXYZBlock(xyzblock)
         rdDetermineBonds.DetermineBonds(mol, charge=self.__charge)
         return mol
