@@ -28,6 +28,7 @@ octetcharge=
 scf=HF
 basis='6-31G(d)'
 modifyBond=false
+forceField=gaff
 
 
 # parse options
@@ -83,20 +84,19 @@ if [ ! "$octetcharge" ]; then
 	octetcharge="$charge"
 fi
 
-
-xyzFile="$1"
-gjfFile=resp.gjf
-glogFile=resp.log
-mol2File=resp.mol2
+basename="${xyzFile%.*}"
+gjfFile="${basename}.gjf"
+glogFile="${basename}.log"
+mol2File="${basename}.mol2"
 
 
 xyz2gjf --link0 '%chk=resp.chk' \
-		--route "opt ${scf}/${basis}" \
+		--route "# opt ${scf}/${basis}" \
 		--title 'auto-generated gjf by xyz2amberff' \
 		--charge "$charge" \
 		--multi "$multi" \
-		--resp
-		-O "$gjfFile"
+		--resp \
+		"$xyzFile" > "$gjfFile"
 
 # ESP計算
 g16 "$gjfFile" > "$glogFile"
@@ -105,6 +105,7 @@ g16 "$gjfFile" > "$glogFile"
 antechamber -i "$glogFile" -fi gout -o "$mol2File" -fo mol2 -c resp -nc "$charge" -m "$multi" -at "$forceField"
 
 if "$modifyBond"; then
+	cp "$mol2File" "$mol2File".bk
 	# mol2修正
 	python <<EOF
 from chemscripts.mol2 import Mol2
