@@ -58,7 +58,7 @@ function process(){
 	encodedname=`echo -n "$name" | xxd -p | sed -r 's/(..)/%\1/g'`
 
 	# get and print
-	wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodedname}/record/SDF"
+	wget -qO- "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodedname}/record/SDF?record_type=3d"
 
 }
 
