@@ -91,7 +91,7 @@ mol2File="${basename}.mol2"
 
 
 xyz2gjf --link0 '%chk=resp.chk' \
-		--route "# opt ${scf}/${basis}" \
+		--route "# opt freq ${scf}/${basis}" \
 		--title 'auto-generated gjf by xyz2amberff' \
 		--charge "$charge" \
 		--multi "$multi" \
