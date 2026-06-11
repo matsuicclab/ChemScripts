@@ -191,6 +191,9 @@ class Molecule:
 
     def giveAtomicnumList(self):
         return copy.deepcopy(self.__atomicnumList)
+    
+    def giveSymbolList(self):
+        return copy.deepcopy(self.__symbolList)
 
     def giveXYZArray(self, unit='Angstrom', atomfilter=None):
         if atomfilter is None:
