@@ -8,7 +8,7 @@ from rdkit import Chem
 from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Molecule:
-    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, charge=None, multiplicity=None, spinState='low', unit='Angstrom'):
+    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, xyzFile=None, charge=None, multiplicity=None, spinState='low', unit='Angstrom'):
         # Noneチェック
         if unit is None:
             raise ValueError('unit is None')
@@ -43,11 +43,18 @@ class Molecule:
             numAtom = len(symbolList)
             atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
 
-        elif xyzBlock is not None:
-            if type(xyzBlock) is not str:
+        elif xyzBlock is not None or xyzFile is not None:
+            if xyzBlock is not None and type(xyzBlock) is not str:
                 raise TypeError('type of xyzBlock must be str')
-            xyzBlock = [line.strip().split() for line in xyzBlock.splitlines()]
+            if xyzFile  is not None and type(xyzFile) is not str:
+                raise TypeError('type of xyzFile must be str')
+            if xyzFile is None:
+                xyzBlock = [line.strip().split() for line in xyzBlock.splitlines()]
+            else:
+                with open(xyzFile, mode='r') as f:
+                    xyzBlock = [line.strip().split() for line in f.readlines()]
             if len(xyzBlock[0]) == 1:
+                # 一行目に一つしか値がなかった場合 (= xyzデータではなかった場合)はヘッダー行のあるデータと見做す
                 # ヘッダー行を除去
                 xyzBlock = xyzBlock[2:]
 
