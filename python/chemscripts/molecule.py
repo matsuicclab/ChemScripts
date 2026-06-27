@@ -8,7 +8,12 @@ from rdkit import Chem
 from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Molecule:
-    def __init__(self, atomicnumList=None, symbolList=None, xyzList=None, xyzBlock=None, xyzFile=None, charge=None, multiplicity=None, spinState='low', unit='Angstrom'):
+    def __init__(self,
+        atomicnumList=None, symbolList=None, xyzList=None,
+        xyzBlock=None, xyzFile=None,
+        pyscfmol=None,
+        charge=None, multiplicity=None, spinState='low', unit='Angstrom'
+    ):
         # Noneチェック
         if unit is None:
             raise ValueError('unit is None')
@@ -72,6 +77,20 @@ class Molecule:
 
             xyzList = [[float(x),float(y),float(z)] for _,x,y,z in xyzBlock]
             numAtom = len(xyzBlock)
+
+        elif pyscfmol is not None:
+            symbolList = [l[1] for l in pyscfmol.atom]
+            atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
+            xyzList = [l[1] for l in pyscfmol.atom]
+            numAtom = pyscfmol.natm
+            charge = pyscfmol.charge
+            multiplicity = 2 * pyscfmol.spin + 1
+            unit = pyscfmol.unit.upper()
+            if unit.startswith('B') or unit.startswith('AU'):
+                # https://pyscf.org/user/gto.html
+                unit = 'Bohr'
+            else:
+                unit = 'Angstrom'
 
         else:
             raise ValueError('The arguments on a molecular geometry are not specified.')
@@ -191,7 +210,7 @@ class Molecule:
 
     def giveAtomicnumList(self):
         return copy.deepcopy(self.__atomicnumList)
-    
+
     def giveSymbolList(self):
         return copy.deepcopy(self.__symbolList)
 
