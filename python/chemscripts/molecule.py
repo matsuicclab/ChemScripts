@@ -18,6 +18,9 @@ class Molecule:
         if unit is None:
             raise ValueError('unit is None')
 
+        # numAtom, atomicnumList, symbolList, xyzList設定
+        # - (atomicnumList, xyzList) > (symbolList, xyzList) > xyzBlock > xyzFile > PySCF Mole
+        # の優先順で設定
         table = Chem.GetPeriodicTable()
         if atomicnumList is not None and xyzList is not None:
             # atomicnumListチェック
@@ -84,7 +87,7 @@ class Molecule:
             xyzList = [l[1] for l in pyscfmol.atom]
             numAtom = pyscfmol.natm
             charge = pyscfmol.charge
-            multiplicity = 2 * pyscfmol.spin + 1
+            multiplicity = pyscfmol.spin + 1 # 2S+1
             unit = pyscfmol.unit.upper()
             if unit.startswith('B') or unit.startswith('AU'):
                 # https://pyscf.org/user/gto.html
@@ -94,7 +97,6 @@ class Molecule:
 
         else:
             raise ValueError('The arguments on a molecular geometry are not specified.')
-
 
         # xyzListチェック
         if type(xyzList) not in [np.ndarray, list, tuple]:
@@ -112,13 +114,16 @@ class Molecule:
         if checkInvalidUnit(unit):
             raise ValueError('Invalid unit: {}'.format(unit))
 
-        # charge
+
+        # charge設定
         if charge is None:
             charge = 0
         if type(charge) is not int:
             raise TypeError('type of charge must be int')
+        numElectron = sum(atomicnumList) - charge
 
-        # multiplicity, spinState
+        # multiplicity, spinState設定
+        # - spinState > multiplicityの優先順で設定する
         if multiplicity is None:
             _spinState = 0
         elif type(multiplicity) is int:
@@ -142,6 +147,9 @@ class Molecule:
         else:
             raise ValueError()
 
+        multiplicity = 2 * _spinState + 1 + numElectron%2
+
+
         # メンバ変数に追加
         self.__numAtom = numAtom
         self.__atomicnumList = atomicnumList
@@ -149,6 +157,7 @@ class Molecule:
         self.__xyzArray = xyzArray
         self.__charge = charge
         self.__spinState = _spinState
+        self.__multiplicity = multiplicity
         self.__unit = unit
 
     def __str__(self):
@@ -259,6 +268,19 @@ class Molecule:
         xyzblock = self.giveXYZBlock(unit='Angstrom', elementSymbol=True, xyzformat=':.8f', atomfilter=[0])
         mol = Chem.MolFromXYZBlock(xyzblock)
         rdDetermineBonds.DetermineBonds(mol, charge=self.__charge)
+        return mol
+
+    def generatePySCFMolObj(self):
+        """
+        Requires PySCF
+        """
+        from pyscf import gto
+        mol = gto.Mole(
+            atom=[[s, xyz] for s, xyz in zip(self.__symbolList, self.__xyzArray)],
+            charge=self.__charge,
+            spin=self.__multiplicity - 1
+        )
+        mol.build()
         return mol
 
     def generateStandardizedCoordSystem(self, unit='Angstrom', method='PCA'):
