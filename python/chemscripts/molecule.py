@@ -82,7 +82,7 @@ class Molecule:
             numAtom = len(xyzBlock)
 
         elif pyscfmol is not None:
-            symbolList    = [l[1] for l in pyscfmol.atom]
+            symbolList    = [l[0] for l in pyscfmol.atom]
             atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
             xyzList       = [l[1] for l in pyscfmol.atom]
             numAtom       = pyscfmol.natm
