@@ -243,6 +243,12 @@ class Molecule:
 
         return result
 
+    def writeXYZFile(self, xyzFile=None, unit='Angstrom', elementSymbol=True, comment='', atomfilter=None, xyzformat=None):
+        xyzBlock = self.giveXYZBlock(unit=unit, elementSymbol=elementSymbol, comment=comment, atomfilter=atomfilter, xyzformat=xyzformat)
+        with open(xyzFile, mode='w') as f:
+            f.write(xyzBlock)
+
+
     def generateRDKitMolObj(self):
         """
         Requires RDKit 2022.09 or higher
@@ -264,7 +270,7 @@ class Molecule:
         #    isHalfint = (unsatu % 2 == 1)
         #    unsatu /= 2
 
-        # Chem.MolFromXYZBlock()は固定小数点しか付けつけないのでformatする
+        # Chem.MolFromXYZBlock()は固定小数点しか受け付けないのでformatする
         xyzblock = self.giveXYZBlock(unit='Angstrom', elementSymbol=True, xyzformat=':.8f', atomfilter=[0])
         mol = Chem.MolFromXYZBlock(xyzblock)
         rdDetermineBonds.DetermineBonds(mol, charge=self.__charge)
