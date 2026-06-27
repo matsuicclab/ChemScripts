@@ -82,13 +82,13 @@ class Molecule:
             numAtom = len(xyzBlock)
 
         elif pyscfmol is not None:
-            symbolList = [l[1] for l in pyscfmol.atom]
+            symbolList    = [l[1] for l in pyscfmol.atom]
             atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
-            xyzList = [l[1] for l in pyscfmol.atom]
-            numAtom = pyscfmol.natm
-            charge = pyscfmol.charge
-            multiplicity = pyscfmol.spin + 1 # 2S+1
-            unit = pyscfmol.unit.upper()
+            xyzList       = [l[1] for l in pyscfmol.atom]
+            numAtom       = pyscfmol.natm
+            charge        = pyscfmol.charge
+            multiplicity  = pyscfmol.multiplicity # 2S+1
+            unit          = pyscfmol.unit.upper()
             if unit.startswith('B') or unit.startswith('AU'):
                 # https://pyscf.org/user/gto.html
                 unit = 'Bohr'
@@ -276,9 +276,10 @@ class Molecule:
         """
         from pyscf import gto
         mol = gto.Mole(
-            atom=[[s, xyz] for s, xyz in zip(self.__symbolList, self.__xyzArray)],
+            atom=[[s, xyz] for s, xyz in zip(self.giveSymbolList(), self.giveXYZArray(unit='Bohr'))],
             charge=self.__charge,
-            spin=self.__multiplicity - 1
+            spin=self.__multiplicity - 1,
+            unit='Bohr'
         )
         mol.build()
         return mol
