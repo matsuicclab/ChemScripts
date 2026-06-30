@@ -82,9 +82,12 @@ class Molecule:
             numAtom = len(xyzBlock)
 
         elif pyscfmol is not None:
-            symbolList    = [l[0] for l in pyscfmol.atom]
-            atomicnumList = [table.GetAtomicNumber(s) for s in symbolList]
-            xyzList       = [l[1] for l in pyscfmol.atom]
+            # pyscfmol.atomでも元素記号と座標を取得できる場合があるが、
+            # pyscfmolがxyzファイルから入力されていた場合、
+            # pyscfmol.atomはxyzファイルのパスにしかならないため、各メソッドを明示的に使うように実装
+            atomicnumList = [int(i) for i in pyscfmol.atom_charges()]
+            symbolList    = [table.GetElementSymbol(n) for n in atomicnumList]
+            xyzList       = np.copy(pyscfmol.atom_coords())
             numAtom       = pyscfmol.natm
             charge        = pyscfmol.charge
             multiplicity  = pyscfmol.multiplicity # 2S+1
