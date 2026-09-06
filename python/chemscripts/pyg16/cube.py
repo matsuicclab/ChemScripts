@@ -4,6 +4,8 @@ import copy
 
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
+from scipy.spatial.distance import cdist
+from scipy.spatial import ConvexHull
 
 from chemscripts.molecule import Molecule
 from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
@@ -460,6 +462,8 @@ class CubeGrid:
     def __init__(self, **args):
         if 'moleculeObj' in args.keys():
             self.__init__fromMoleculeObj(**args)
+        elif 'coords' in args.keys():
+            self.__init__fromCubicCoords(**args)
         elif 'startingPoint' in args.keys():
             self.__init__fromParam(**args)
         elif 'cubeGrid' in args.keys():
@@ -660,10 +664,10 @@ class CubeGrid:
         # この2乗和からグリッド数を推定することができる。
         c = np.linalg.solve(V.T, (coords-startingPoint).T)
         N = coords.shape[0]
-        numGridPoints = 1 + 1 / (6 / N * np.sum(c**2, axis=1) - 2)
-        numGridPoints = np.round(numGridPoints).astype(np.int32)
-        if np.prod(numGridPoints) != N:
-            raise ValueError('Invalid numGridPoints: {} != {} * {} * {}'.format(N, *numGridPoints))
+        numGridPoint = 1 + 1 / (6 / N * np.sum(c**2, axis=1) - 2)
+        numGridPoint = np.round(numGridPoint).astype(np.int32)
+        if np.prod(numGridPoint) != N:
+            raise ValueError('Invalid numGridPoint: {} != {} * {} * {}'.format(N, *numGridPoint))
         
         # メンバ変数に設定
         self.__init__fromParam(startingPoint=startingPoint, numGridPoint=numGridPoint, endingPoint=endingPoint, unit=unit)
