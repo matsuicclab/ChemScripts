@@ -117,11 +117,6 @@ class Cube:
         if cubeData is None:
             raise ValueError('cubeData is None')
 
-        if moleculeObj is not None and type(moleculeObj) is not Molecule:
-            # Noneは許容するが型チェックだけしとく
-            raise TypeError('type of moleculeObj must be chemscripts.molecule.Molecule')
-
-
         numGridPoint = cubeGrid.giveNumGridPoint()
         # cubeData
         if type(cubeData) not in [np.ndarray, list, tuple]:
@@ -152,7 +147,8 @@ class Cube:
         self.__cubeData = cubeData
         self.__valueDim = valueDim
 
-        self.__molecule = moleculeObj
+        # moleculeObj設定
+        self.setMoleculeObj(moleculeObj)
 
         self.__sourceFilePath = None
 
@@ -315,6 +311,13 @@ class Cube:
         elif '\n' in comment:
             raise ValueError('Multi-line string is invalid as comment')
         self.__comment = comment
+
+    def setMoleculeObj(self, moleculeObj):
+        if moleculeObj is not None and type(moleculeObj) is not Molecule:
+            # Noneは許容するが型チェックだけしとく
+            raise TypeError('type of moleculeObj must be chemscripts.molecule.Molecule')
+
+        self.__molecule = moleculeObj
 
     def giveComment(self):
         return self.__comment
@@ -616,6 +619,55 @@ class CubeGrid:
         self.__stepVector = stepVector
         self.__numGridPoint = numGridPoint
         self.__unit = unit
+
+    def __init__fromCubicCoords(self, coords=None, unit=None):
+        # 最初に凸包を考えて全体の平行六面体の頂点座標を割り出す
+        hull = ConvexHull(coords)
+        vertices = coords[hull.vertices] # shape: (6,3)
+    
+        # 全体平行六面体の最も離れた頂点同士をstartingPointとendingPointにする
+        # 幾つか候補がある場合にはendingPoint-startingPointがベクトル[1,1,1]に近い向きになるペアを使用
+        dist2 = cdist(vertices, vertices)
+        distmax_pairidxs = np.where(dist2 == dist2.reshape(-1)[np.argmax(dist2)]) # shape: (numCandidates, 2)
+        vs = np.array([vertices[i]-vertices[j] for i,j in zip(*distmax_pairidxs)]) # shape: (numCandidates, 3)
+        # 候補から一つだけ選び出す
+        overlaps = vs / np.linalg.norm(vs, axis=1)[:,np.newaxis] @ np.array([1,1,1]) # shape: (numCandidates,)
+        endingVertexIdx   = distmax_pairidxs[0][np.argmax(overlaps)]
+        startingVertexIdx = distmax_pairidxs[1][np.argmax(overlaps)]
+        endingPoint = vertices[endingVertexIdx]
+        startingPoint = vertices[startingVertexIdx]
+        v = endingPoint - startingPoint
+    
+        # 全体平行六面体の各頂点とstartingPoint間の距離を計算
+        dist = np.linalg.norm(vertices - startingPoint, axis=1)
+        # 1番目と2番目に近い距離にある頂点をstartingPointと隣り合う頂点として選定
+        # (三角不等式により2番目までは隣り合う頂点の選定をすることができる)
+        v1 = vertices[np.argsort(dist)[1]] - startingPoint
+        v2 = vertices[np.argsort(dist)[2]] - startingPoint
+        v3 = v - v1 - v2
+    
+        # v1,v2,v3の順番を調整する
+        #  - v1ができるだけx軸方向になるようにする
+        #  - [v1,v2,v3]の行列式が正になるようにする (右手系)
+        V = np.array([v1,v2,v3])
+        V = V[np.argsort(-1 * V / np.linalg.norm(V, axis=1)[:,np.newaxis] @ np.array([1,0,0]))]
+        if np.linalg.det(V) < 0:
+            V = V[[0,2,1]]
+        v1, v2, v3 = V
+    
+        # 各軸方向のグリッド数を推定する
+        # 各グリッドの座標を[v1,v2,v3]で展開すると座標成分は[i/(N1-1), j/(N2-1), k/(N3-1)] (i,j,k in [0,N-1])
+        # この2乗和からグリッド数を推定することができる。
+        c = np.linalg.solve(V.T, (coords-startingPoint).T)
+        N = coords.shape[0]
+        numGridPoints = 1 + 1 / (6 / N * np.sum(c**2, axis=1) - 2)
+        numGridPoints = np.round(numGridPoints).astype(np.int32)
+        if np.prod(numGridPoints) != N:
+            raise ValueError('Invalid numGridPoints: {} != {} * {} * {}'.format(N, *numGridPoints))
+        
+        # メンバ変数に設定
+        self.__init__fromParam(startingPoint=startingPoint, numGridPoint=numGridPoint, endingPoint=endingPoint, unit=unit)
+        
 
     def __init__fromCubeGrid(self, cubeGrid=None, stepDetailRatio=1, numMarginGrid=0, shiftGrid=0):
         """
