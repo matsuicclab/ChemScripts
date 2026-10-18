@@ -1,3 +1,4 @@
+import sys
 
 import numpy as np
 import pyvista as pv
@@ -8,6 +9,20 @@ from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 
 def generate_cubemesh(cube, unit=None):
+    """
+    cubeオブジェクトからPyVistaのmeshオブジェクトを構築
+    cubeDataはpoint_data['cubedata']に格納
+    
+    args:
+        cube:
+            chemscripts.pyg16.cube.Cube
+            cubeオブジェクト
+        
+    return:
+        cubemesh:
+            pyvista.StructuredGrid
+            cubeオブジェクトを変換して得られるmeshオブジェクト
+    """
     # cubeデータをmeshに変換
     startingPoint = cube.giveStartingPoint(unit=unit)
     stepVector = cube.giveStepVector(unit=unit)
@@ -24,6 +39,37 @@ def generate_cubemesh(cube, unit=None):
     return cubemesh
 
 def generate_slicemesh(cube, pos=None, normal=None, pcaAuto=None, unit=None):
+    """
+    cubeオブジェクトから断面(スライス)をPyVistaのmeshオブジェクトとして構築
+    
+    args:
+        cube:
+            chemscripts.pyg16.cube.Cube
+            cubeオブジェクト
+        pos:
+            np.ndarray (shape: (3,))
+            スライスの位置ベクトル
+        normal:
+            np.ndarray (shape: (3,))
+            スライスの法線ベクトル
+        pcaAuto:
+            bool
+            分子の原子座標についてPCAを実行し、その第1軸・第2軸でスライス面を定義する場合はTrue
+        unit:
+            str
+            posの単位系 ('Angstrom' / 'Bohr')
+    
+    return:
+        slicemesh:
+            pyvista.UnstructuredGrid
+            スライスを表すPyVistaのmeshオブジェクト
+        pos:
+            np.ndarray (shape: (3,))
+            スライスの位置ベクトル
+        normal:
+            np.ndarray (shape: (3,))
+            スライスの法線ベクトル
+    """
     # cubicなmeshを生成
     cubemesh = generate_cubemesh(cube, unit=unit)
 
@@ -47,11 +93,26 @@ def generate_slicemesh(cube, pos=None, normal=None, pcaAuto=None, unit=None):
 
 def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=None, epsz=1e-2):
     """
-    スライス上の等値線プロットを生成
-    numIsoline: 等値線の数を設定
-    stepIsoline: 等値線の間隔を設定
-
+    スライス上の等値線をPyVistaのmeshオブジェクトとして生成
+    
+    args:
+        numIsoline: 等値線の数を設定
+        stepIsoline: 等値線の間隔を設定
+        
+    return:
+        frontIsolineList:
+            list of pyvista.UnstructuredGrid 
+            スライスの表面に配置する等値線のリスト
+        backIsolineList:
+            list of pyvista.UnstructuredGrid
+            スライスの裏面に配置する等値線のリスト
+        labelDictList:
+            list of dict
+            等値線の値をラベルとして表示する際に使う設定のリスト
+            pyvista.Plotter.add_point_labels()に入力する
     """
+    # TODO 本当にisolineがUnstructuredGridなのか確認する
+    
     if labelFormat is None:
         labelFormat = ''
     labelFormat = '{' + labelFormat + '}'
@@ -124,18 +185,34 @@ def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=Non
 
 def atomicnum_to_radius(n, scale=1.0, unit=None):
     """
-    原子半径
-    周期      2r[A]
-    1(1-2)       0.7878
-    2(3-10)      1.0918
-    3(11-18)     1.1801
-    4(19-36)     1.2477
-    5(37-54)     1.29
-    6(55-86)     1.34
-    7(87-118)    1.3903
+    原子番号リストから原子半径リストを与える
+    
+    原子半径はGaussViewのデフォルトを参考に設定:
+        周期      2r[A]
+        1(1-2)       0.7878
+        2(3-10)      1.0918
+        3(11-18)     1.1801
+        4(19-36)     1.2477
+        5(37-54)     1.29
+        6(55-86)     1.34
+        7(87-118)    1.3903
 
+    args:
+        n:
+            list of int
+            原子番号リスト
+        scale:
+            float
+            原子半径のスケール
+            半径を大きくしたい場合は1.0より大きい数を指定する
+        unit:
+            str
+            戻り値の原子半径の単位の指定
 
-    n: 原子番号 (np.ndarray, shape:(n,))
+    return:
+        radius:
+            np.ndarray (shape: (numAtom,))
+            各原子の原子半径リスト
     """
     def __func(n):
         if n<=2:
@@ -158,7 +235,18 @@ def atomicnum_to_radius(n, scale=1.0, unit=None):
 
 def atomicnum_to_rgb(n):
     """
-    原子番号から色を設定
+    原子番号から原子の色を設定
+    色はGaussViewのデフォルトを参考に設定
+    
+    args:
+        n:
+            list of int
+            原子番号リスト
+    return:
+        rgb:
+            np.ndarray (shape: (numAtom, 3))
+            原子の色のリスト
+            r,g,bの順であり、値は0 ~ 1に規格化されている
     """
     colorDict = {
         1 : [204,204,204],
@@ -293,6 +381,32 @@ def atomicnum_to_rgb(n):
     return np.array(rgb) / 255
 
 def generate_molmesh(molecule, addBonds=False, bondScale=1.0, unit=None):
+    """
+    moleculeオブジェクトからPyVistaのmeshオブジェクトを構築する
+    
+    args:
+        molecule:
+            chemscripts.molecule.Molecule
+            変換するmoleculeオブジェクト
+        addBonds:
+            bool
+            結合を表現するmeshオブジェクトを構築する(True)かしない(False)かを指定
+        bondScale:
+            float
+            結合を表現する円柱の半径のscaleを指定
+        unit:
+            str
+            meshオブジェクトのpoint座標の単位を指定
+    
+    return:
+        atommeshList:
+            list of ?
+            原子を表すPyVistaの球meshオブジェクトのリスト
+        bondmeshList:
+            list of ?
+            結合を表すPyVistaの円柱meshオブジェクトのリスト
+    """
+    # TODO 要検証
     # 分子構造の可視化
     atomicnumList = molecule.giveAtomicnumList()
     centerList = molecule.giveXYZArray(unit=unit)
@@ -337,12 +451,55 @@ def generate_molmesh(molecule, addBonds=False, bondScale=1.0, unit=None):
 
 def visualizeCubeSlice(
         cube=None, cubeFile=None, outFile=None, 
-        slicePos=None, sliceNormal=None, pcaAuto=None, cmin=None, cmax=None, 
+        slicePos=None, sliceNormal=None, pcaAuto=None, 
+        cmin=None, cmax=None, 
         numIsoline=None, stepIsoline=None, cutIsolineNote=None, 
         labelFormat=None, showNote=True, thresholdNoteArrow=None, 
         cameraZoom=100, cameraRotate=0, 
         printParam=False
     ):
+    """
+    cubeデータを入力し、
+    スライス上のコンター(と等値線)と分子構造を可視化する
+    
+    args:
+        cube:
+            chemscripts.pyg16.cube.Cube
+            可視化するcubeオブジェクト
+        cubeFile:
+            str
+            可視化するcubeファイルへのパス
+        outFile:
+            str
+            可視化結果の出力先パス
+            Noneを指定した場合、GUIウインドウ上に描画を試みる
+        slicePos:
+            np.ndarray (shape: (3,))
+            スライスの位置ベクトル
+        sliceNormal:
+            np.ndarray (shape: (3,))
+            スライスの法線ベクトル
+        pcaAuto:
+            bool
+            スライスの位置と法線を分子構造のPCA結果をもとに決定するかどうか
+        cmin:
+            float
+            カラーバーの最小値
+        cmax:
+            float
+            カラーバーの最大値
+        numIsoline
+        stepIsoline
+        cutIsolineNote
+        labelFormat
+        showNote
+        thresholdNoteArrow
+        cameraZoom
+        cameraRotate
+        printParam
+            
+    """
+    #TODO: cminとcmaxが反映されていないので実装する
     # load cube data
     if cube is None:
         cube = Cube(filePath=cubeFile)
@@ -364,18 +521,26 @@ def visualizeCubeSlice(
     else:
         atommeshList, bondmeshList = [], []
 
-    # 画面作成
-    pl = pv.Plotter()
+    # Plotter用意
+    window_size = (1440, 810)
+    if outFile is None:
+        # 出力先が指定されていない場合はGUIウインドウに描画を試みる
+        pl = pv.Plotter(window_size=window_size)
+    else:
+        # 出力先が指定されている場合は画像出力を試みる
+        pl = pv.Plotter(off_screen=True, window_size=window_size)
     pl.add_axes()
 
+    # cubeのスライスと等値線を描画
     pl.add_mesh(slicemesh, scalars='cubedata', cmap='turbo', lighting=False)
     for frontIsoline, backIsoline, labelDict in zip(frontIsolineList, backIsolineList, labelDictList):
         pl.add_mesh(frontIsoline, scalars='rgb', rgb=True, line_width=2)
         pl.add_mesh(backIsoline, scalars='rgb', rgb=True, line_width=2)
         pl.add_point_labels(**labelDict)
+    # 原子の球と結合の円柱を描画
+    # これらはローポリで綺麗に表示したいので、スムーズシェードを有効にする
     for atommesh in atommeshList:
         pl.add_mesh(atommesh, scalars='rgb', rgb=True, smooth_shading=True, ambient=0.3)
-        
     for bondmesh in bondmeshList:
         pl.add_mesh(bondmesh, scalars='rgb', rgb=True, smooth_shading=True, ambient=0.3)
 
@@ -386,18 +551,40 @@ def visualizeCubeSlice(
     viewup = np.array([0,0,1])
     viewup = viewup - (viewup @ sliceNormal) * sliceNormal
     viewup = viewup / np.linalg.norm(viewup)
+    #TODO: 回転角での指定の方がよくない？
     cp = pv.CameraPosition(position=camera_position, focal_point=focal_point, viewup=viewup)
     pl.camera_position = cp
-    pl.enable_parallel_projection()
+    pl.enable_parallel_projection() # 平行投影: この呼び出しはカメラの位置を指定した後でなければ正しく反映されない
 
-    # TODO: png出力を追加する
+    if outFile is None:
+        # GUIウインドウへ
+        pl.show()
+    else:
+        # 画像ファイルへ
+        pl.screenshot(outFile)
         
-    pl.show()
+    if printParam:
+        print('cubeFile: {}'.format(cubeFile))
+        level_min = np.nanmin(slicemesh.point_data['cubedata'])
+        level_max = np.nanmax(slicemesh.point_data['cubedata'])
+        print('minValue: {}'.format(level_min))
+        print('maxValue: {}'.format(level_max))
+        print('cmin: {}'.format(cmin))
+        print('cmax: {}'.format(cmax))
+        print('slice.position: {} {}'.format(slicePos,unit))
+        print('slice.normal: {}'.format(sliceNormal))
+        print('camera.position: {}'.format(camera_position))
+        print('camera.viewup: {}'.format(viewup))
+        
 
 if __name__ == '__main__':
+    cubeFile = sys.argv[1]
     visualizeCubeSlice(
-        cubeFile='reactionField_2_8.0.cub',
-        stepIsoline=0.25,
+        cubeFile=cubeFile,
+        stepIsoline=0.5,
         pcaAuto=True,
         labelFormat=':.2f'
     )
+    
+    
+    
