@@ -1,4 +1,5 @@
 import sys
+import re
 
 import numpy as np
 import pyvista as pv
@@ -20,7 +21,7 @@ def generate_cubemesh(cube, unit=None):
         
     return:
         cubemesh:
-            pyvista.StructuredGrid
+            pyvista.core.pointset.StructuredGrid
             cubeオブジェクトを変換して得られるmeshオブジェクト
     """
     # cubeデータをmeshに変換
@@ -61,7 +62,7 @@ def generate_slicemesh(cube, pos=None, normal=None, pcaAuto=None, unit=None):
     
     return:
         slicemesh:
-            pyvista.UnstructuredGrid
+            pyvista.core.pointset.PolyData
             スライスを表すPyVistaのmeshオブジェクト
         pos:
             np.ndarray (shape: (3,))
@@ -101,18 +102,16 @@ def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=Non
         
     return:
         frontIsolineList:
-            list of pyvista.UnstructuredGrid 
+            list of pyvista.core.pointset.PolyData 
             スライスの表面に配置する等値線のリスト
         backIsolineList:
-            list of pyvista.UnstructuredGrid
+            list of pyvista.core.pointset.PolyData
             スライスの裏面に配置する等値線のリスト
         labelDictList:
             list of dict
             等値線の値をラベルとして表示する際に使う設定のリスト
             pyvista.Plotter.add_point_labels()に入力する
     """
-    # TODO 本当にisolineがUnstructuredGridなのか確認する
-    
     if labelFormat is None:
         labelFormat = ''
     labelFormat = '{' + labelFormat + '}'
@@ -147,7 +146,6 @@ def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=Non
     # sliceの面の法線を計算しておく -> 'Normals'
     # これを使ってisolineをsliceから少しずらした位置に配置するようにする
     slicemesh.compute_normals(cell_normals=False, point_normals=True, inplace=True)
-    print(slicemesh.point_data.keys())
 
     frontIsolineList = []
     backIsolineList = []
@@ -177,8 +175,15 @@ def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=Non
             "points": labelcoord[np.newaxis,:],
             "labels": [labelFormat.format(level)],
             "point_size": 0,
-            "shape": "rect",
-            "shape_color": "white"
+            "shadow": True,
+            "shape": None,
+            "shape_color": "white",
+            "justification_horizontal": 'center',
+            "justification_vertical": 'center',
+            # 本当は"shape": "rect"で文字の後ろに白い四角を配置したかったが、
+            # 文字の中心が指定した座標にくるように(justification: center)設定すると、
+            # 四角がズレてしまう(PyVistaのバグ)ので、
+            # 一旦文字に影をつけて対応する
         })
 
     return frontIsolineList, backIsolineList, labelDictList
@@ -400,13 +405,12 @@ def generate_molmesh(molecule, addBonds=False, bondScale=1.0, unit=None):
     
     return:
         atommeshList:
-            list of ?
+            list of pyvista.core.pointset.PolyData
             原子を表すPyVistaの球meshオブジェクトのリスト
         bondmeshList:
-            list of ?
+            list of pyvista.core.pointset.PolyData
             結合を表すPyVistaの円柱meshオブジェクトのリスト
     """
-    # TODO 要検証
     # 分子構造の可視化
     atomicnumList = molecule.giveAtomicnumList()
     centerList = molecule.giveXYZArray(unit=unit)
@@ -454,7 +458,7 @@ def visualizeCubeSlice(
         slicePos=None, sliceNormal=None, pcaAuto=None, 
         cmin=None, cmax=None, 
         numIsoline=None, stepIsoline=None, cutIsolineNote=None, 
-        labelFormat=None, showNote=True, thresholdNoteArrow=None, 
+        labelFormat=None, showLabels=True, thresholdNoteArrow=None, 
         cameraZoom=100, cameraRotate=0, 
         printParam=False
     ):
@@ -488,18 +492,23 @@ def visualizeCubeSlice(
         cmax:
             float
             カラーバーの最大値
-        numIsoline
-        stepIsoline
-        cutIsolineNote
+        numIsoline:
+            int
+            等値線の数
+        stepIsoline:
+            float
+            等値線のレベル間隔
+        cutIsolineNote:
         labelFormat
-        showNote
+        showLabels:
+            bool
+            等値線のレベルのラベルを表示するかどうか
         thresholdNoteArrow
         cameraZoom
         cameraRotate
         printParam
             
     """
-    #TODO: cminとcmaxが反映されていないので実装する
     # load cube data
     if cube is None:
         cube = Cube(filePath=cubeFile)
@@ -532,11 +541,17 @@ def visualizeCubeSlice(
     pl.add_axes()
 
     # cubeのスライスと等値線を描画
-    pl.add_mesh(slicemesh, scalars='cubedata', cmap='turbo', lighting=False)
+    pl.add_mesh(
+        slicemesh, 
+        scalars='cubedata', cmap='turbo', clim=[cmin, cmax], 
+        scalar_bar_args={'title': ''},
+        lighting=False
+    )
     for frontIsoline, backIsoline, labelDict in zip(frontIsolineList, backIsolineList, labelDictList):
         pl.add_mesh(frontIsoline, scalars='rgb', rgb=True, line_width=2)
         pl.add_mesh(backIsoline, scalars='rgb', rgb=True, line_width=2)
-        pl.add_point_labels(**labelDict)
+        if showLabels:
+            pl.add_point_labels(**labelDict)
     # 原子の球と結合の円柱を描画
     # これらはローポリで綺麗に表示したいので、スムーズシェードを有効にする
     for atommesh in atommeshList:
@@ -579,8 +594,11 @@ def visualizeCubeSlice(
 
 if __name__ == '__main__':
     cubeFile = sys.argv[1]
+    outFile = re.sub('\.cube?$', '', cubeFile) + '.png'
     visualizeCubeSlice(
         cubeFile=cubeFile,
+        outFile=outFile,
+        cmin=None, cmax=None,
         stepIsoline=0.5,
         pcaAuto=True,
         labelFormat=':.2f'
