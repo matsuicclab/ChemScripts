@@ -8,6 +8,11 @@ from rdkit import Chem
 from chemscripts.unit import checkInvalidUnit, getUnitConversionFactor
 
 class Molecule:
+    """
+    分子の3次元構造に関するクラス
+    xyzファイルやPySCFのmolオブジェクトなどから構築することができる。
+    主に原子の座標などの取り出しやxyzファイルへの書き出しなどに使用する。
+    """
     def __init__(self,
         atomicnumList=None, symbolList=None, xyzList=None,
         xyzBlock=None, xyzFile=None,
@@ -171,6 +176,9 @@ class Molecule:
                 ])
 
     def giveNumAtom(self):
+        """
+        この分子に含まれる原子の数を取得する
+        """
         return self.__numAtom
 
     def giveStoichiometry(self):
@@ -196,6 +204,11 @@ class Molecule:
 
     def iterateAtoms(self, unit='Angstrom', elementSymbol=True, atomfilter=None):
         """
+        この分子に含まれる各原子についてのイテレータを生成する
+        for n, x, y, z in molecule.iterateAtoms(elementSymbol=False):
+            print(n, x, y, z)
+        のように使用する。
+
         unit: unit of xyz
         elementSymbol: Whether to output element symbol or atomic number
         atomfilter: Specify element symbols (atomic numbers) to exclude (type is list)
