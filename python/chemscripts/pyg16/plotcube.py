@@ -92,13 +92,27 @@ def generate_slicemesh(cube, pos=None, normal=None, pcaAuto=None, unit=None):
     slicemesh = cubemesh.slice(normal=normal, origin=pos)
     return slicemesh, pos, normal
 
-def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=None, epsz=1e-2):
+def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=None, cutIsolineLabel=None, epsz=1e-2):
     """
     スライス上の等値線をPyVistaのmeshオブジェクトとして生成
     
     args:
-        numIsoline: 等値線の数を設定
-        stepIsoline: 等値線の間隔を設定
+        numIsoline:
+            int
+            等値線の数を設定
+        stepIsoline:
+            float
+            等値線の間隔を設定
+        labelFormat:
+            str
+            labelの数値のformatを設定
+        cutIsolineLabel:
+            function
+            labelを非表示にしたいlevelを関数で指定
+        epsz:
+            float
+            等値線とスライスの間の距離
+            epsz=0でスライス上に等値線を配置することになるが、重なってしまうために正常に描画されないため、基本epsz!=0とする
         
     return:
         frontIsolineList:
@@ -112,6 +126,8 @@ def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=Non
             等値線の値をラベルとして表示する際に使う設定のリスト
             pyvista.Plotter.add_point_labels()に入力する
     """
+    if cutIsolineLabel is None:
+        cutIsolineLabel = lambda level: False
     if labelFormat is None:
         labelFormat = ''
     labelFormat = '{' + labelFormat + '}'
@@ -169,6 +185,9 @@ def generate_isolines(slicemesh, numIsoline=None, stepIsoline=1, labelFormat=Non
         frontIsolineList.append(isoline1)
         backIsolineList.append(isoline2)
 
+        if cutIsolineLabel(level):
+            # ラベルを非表示にしたいlevelであればラベルの追加処理を行わない
+            continue
         # 等値線のラベルを追加
         labelcoord = isoline.points[len(isoline.points)//2]
         labelDictList.append({
@@ -457,9 +476,8 @@ def visualizeCubeSlice(
         cube=None, cubeFile=None, outFile=None, 
         slicePos=None, sliceNormal=None, pcaAuto=None, 
         cmin=None, cmax=None, 
-        numIsoline=None, stepIsoline=None, cutIsolineNote=None, 
-        labelFormat=None, showLabels=True, thresholdNoteArrow=None, 
-        cameraZoom=100, cameraRotate=0, 
+        numIsoline=None, stepIsoline=None, cutIsolineLabel=None, 
+        labelFormat=None, showLabels=True,
         printParam=False
     ):
     """
@@ -498,15 +516,20 @@ def visualizeCubeSlice(
         stepIsoline:
             float
             等値線のレベル間隔
-        cutIsolineNote:
-        labelFormat
+        cutIsolineLabel:
+            function
+            labelを非表示にしたいlevelを関数で指定
+            lambda level: (level > 10) | (level < -10)
+            など
+        labelFormat:
+            str
+            labelの数値のformat指定: ':.2f'など
         showLabels:
             bool
             等値線のレベルのラベルを表示するかどうか
-        thresholdNoteArrow
-        cameraZoom
-        cameraRotate
-        printParam
+        printParam:
+            bool
+            デバッグ用
             
     """
     # load cube data
@@ -521,7 +544,7 @@ def visualizeCubeSlice(
     slicemesh, slicePos, sliceNormal = generate_slicemesh(cube=cube, pos=slicePos, normal=sliceNormal, pcaAuto=pcaAuto, unit=unit)
 
     # 等値線
-    frontIsolineList, backIsolineList, labelDictList = generate_isolines(slicemesh, numIsoline=numIsoline, stepIsoline=stepIsoline, labelFormat=labelFormat)
+    frontIsolineList, backIsolineList, labelDictList = generate_isolines(slicemesh, numIsoline=numIsoline, stepIsoline=stepIsoline, labelFormat=labelFormat, cutIsolineLabel=cutIsolineLabel)
 
     # 分子構造
     molecule = cube.giveMoleculeObj()
@@ -561,10 +584,12 @@ def visualizeCubeSlice(
 
     # カメラの位置設定
     focal_point = slicePos
+    # カメラとmeshの間の距離を決定: スライスの幅に応じて距離をとるように設定
     distance = 4.0 * np.max(np.linalg.norm(slicemesh.points - focal_point, axis=1))
     camera_position = slicePos + distance * sliceNormal
     viewup = np.array([0,0,1])
     viewup = viewup - (viewup @ sliceNormal) * sliceNormal
+
     viewup = viewup / np.linalg.norm(viewup)
     #TODO: 回転角での指定の方がよくない？
     cp = pv.CameraPosition(position=camera_position, focal_point=focal_point, viewup=viewup)
